@@ -1,9 +1,10 @@
-import numpy as np
-import matplotlib.pyplot as plt
+import numpy               as np
+import matplotlib.pyplot   as plt
+import matplotlib.gridspec as gridspec
 from itertools import combinations
-from SuPyModes.Config import *
 
-from SuPyModes.utils import RecomposeSymmetries, gradientO4
+from SuPyModes.Config import *
+from SuPyModes.utils  import RecomposeSymmetries, gradientO4
 
 class SuperMode(object):
 
@@ -44,11 +45,11 @@ class SuperMode(object):
 
     def GeoGradient(self, iter):
         Ygrad, Xgrad = gradientO4(self.Profile.T**2,
-                                  self.Axes[iter].real['dx'],
-                                  self.Axes[iter].real['dy'] )
+                                  self.Axes[iter].Direct.dx,
+                                  self.Axes[iter].Direct.dy )
 
-        return ( Xgrad * self.Axes[iter].real['xmeshes'].T +
-                 Ygrad * self.Axes[iter].real['ymeshes'].T )
+        return ( Xgrad * self.Axes[iter].Direct.XX.T +
+                 Ygrad * self.Axes[iter].Direct.YY.T )
 
 
     def Coupling(self, SuperMode):
@@ -77,7 +78,7 @@ class SuperMode(object):
 
         Delta = beta0 * beta1
 
-        Coupling = -0.5j * self.Axes[iter].real['k']**2 / np.sqrt(Delta)
+        Coupling = -0.5j * self.Axes[iter].Direct.k**2 / np.sqrt(Delta)
 
         Coupling *= np.abs(1/(beta0 - beta1))
 
@@ -119,6 +120,7 @@ class SuperMode(object):
         plt.grid()
         plt.show()
 
+
     def PlotCoupling(self, *SuperModes):
         for supermode in SuperModes:
             C = self.Coupling( SuperMode=supermode )
@@ -151,16 +153,23 @@ class SuperMode(object):
         return True
 
 
+    def GetFullField(self, iter):
+        Field      = self.Field[iter]
+        Symmetries = [self.xSym[iter], self.ySym[iter]]
+
+        return RecomposeSymmetries(Input      = Field,
+                                   Symmetries = Symmetries,
+                                   Xaxis      = self.Axes[iter].Direct.X,
+                                   Yaxis      = self.Axes[iter].Direct.Y)
+
+
     def PlotFields(self, iter=18):
         plt.figure()
 
         Field      = self.Field[iter]
         Symmetries = [self.xSym[iter], self.ySym[iter]]
 
-        image, Xaxis, Yaxis = RecomposeSymmetries(Input = Field,
-                                                  Symmetries = Symmetries,
-                                                  Xaxis = self.Axes[iter].real['xvector'],
-                                                  Yaxis = self.Axes[iter].real['yvector'])
+        image, Xaxis, Yaxis = self.GetFullField(iter)
 
         plt.pcolormesh(Xaxis, Yaxis, image.T, shading='auto')
 
@@ -203,6 +212,15 @@ class SuperSet(object):
 
 
     @property
+    def Beta(self):
+        B = []
+        for i in range(self.NSolutions):
+            B.append( self[i].Index )
+
+        return B
+
+
+    @property
     def Coupling(self):
         C = []
         for (i,j) in self.combinations:
@@ -228,7 +246,7 @@ class SuperSet(object):
             plt.plot(self.ITR, I[i], label=f'{i}')
 
         plt.grid()
-        plt.legend(fontsize=6)
+        plt.legend(fontsize=6, title="Modes", fancybox=True)
         plt.xlabel('ITR')
         plt.ylabel('Index')
 
@@ -242,7 +260,7 @@ class SuperSet(object):
             plt.plot(self.ITR[:-1], C[n], label=f'{i} - {j}')
 
         plt.grid()
-        plt.legend()
+        plt.legend(fontsize=6, title="Modes", fancybox=True)
         plt.xlabel('ITR')
         plt.ylabel('Mode coupling')
 
@@ -256,14 +274,30 @@ class SuperSet(object):
             plt.semilogy(self.ITR[:-1], A[n], label=f'{i} - {j}')
 
         plt.grid()
-        plt.legend(fontsize=6)
+        plt.legend(fontsize=6, title="Modes", fancybox=True)
         plt.xlabel('ITR')
 
         plt.ylabel(AdiabaticDict['name'] + AdiabaticDict['unit'])
 
 
+    def PlotFields(self, iter):
 
-    def Plot(self, *args):
+        fig = plt.figure(figsize=(self.NSolutions*3,3))
+
+        spec2 = gridspec.GridSpec(ncols=self.NSolutions, nrows=3, figure=fig)
+
+        for mode in range(self.NSolutions):
+            Field, xaxis, yaxis = self[mode].GetFullField(iter)
+            axes = fig.add_subplot(spec2[0:2,mode])
+            axes.pcolormesh(xaxis, yaxis, Field, shading='auto')
+            axes.set_aspect('equal')
+            str   = r"$n_{eff}$"
+            title = f"Mode {mode} [{str}: {self[mode].Index[iter]:.4f}]"
+            axes.set_title(title, fontsize=8)
+
+
+
+    def Plot(self, *args, iter):
         self.OrderingModes()
         if 'Index' in args:
             self.PlotIndex()
@@ -273,6 +307,9 @@ class SuperSet(object):
 
         if 'Adiabatic' in args:
             self.PlotAdiabatic()
+
+        if 'Fields' in args:
+            self.PlotFields(iter)
 
         plt.show()
 
@@ -287,7 +324,7 @@ class SuperSet(object):
     def OrderingModes(self):
         for (i,j) in self.combinations:
             for n, ITR in enumerate(self.ITR):
-                if i < j  and self[i].Index[n] > self[j].Index[n]:
+                if i < j  and self[i].Index[n] < self[j].Index[n]:
                     self.SwapProperties(self[i], self[j], n)
 
 

@@ -340,13 +340,13 @@ class SuPyFinitdifference(object):
         if x_symmetry == -1:
             e0, e1, e2, e3, e4 = self.second_order_x_Anti_symmetry(e0, e1, e2, e3, e4)
 
-        E0 = e0*(1./self.Axes.real['dy']**2 + 1./self.Axes.real['dx']**2) - nk
+        E0 = e0*(1./self.Axes.Direct.dy**2 + 1./self.Axes.Direct.dx**2) - nk
 
-        E1 = e1/self.Axes.real['dx']**2
-        E2 = e2/self.Axes.real['dx']**2
+        E1 = e1/self.Axes.Direct.dx**2
+        E2 = e2/self.Axes.Direct.dx**2
 
-        E3 = e3/self.Axes.real['dy']**2
-        E4 = e4/self.Axes.real['dy']**2
+        E3 = e3/self.Axes.Direct.dy**2
+        E4 = e4/self.Axes.Direct.dy**2
 
         self.Matrix = spdiags([E1, E2, E0, E3, E4],
                               [-1, 1, 0, -self.Axes.Nx, self.Axes.Nx],
@@ -385,17 +385,17 @@ class SuPyFinitdifference(object):
             e0, e1, e2, e3, e4, e5, e6, e7, e8 = self.third_order_x_Anti_symmetry(e0, e1, e2, e3, e4, e5, e6, e7, e8)
 
 
-        E0 = e0*(1./self.Axes.real['dy']**2 + 1./self.Axes.real['dx']**2) - nk
+        E0 = e0*(1./self.Axes.Direct.dy**2 + 1./self.Axes.Direct.dx**2) - nk
 
-        E1 = e1/self.Axes.real['dx']**2
-        E2 = e2/self.Axes.real['dx']**2
-        E3 = e3/self.Axes.real['dx']**2
-        E4 = e4/self.Axes.real['dx']**2
+        E1 = e1/self.Axes.Direct.dx**2
+        E2 = e2/self.Axes.Direct.dx**2
+        E3 = e3/self.Axes.Direct.dx**2
+        E4 = e4/self.Axes.Direct.dx**2
 
-        E5 = e5/self.Axes.real['dy']**2
-        E6 = e6/self.Axes.real['dy']**2
-        E7 = e7/self.Axes.real['dy']**2
-        E8 = e8/self.Axes.real['dy']**2
+        E5 = e5/self.Axes.Direct.dy**2
+        E6 = e6/self.Axes.Direct.dy**2
+        E7 = e7/self.Axes.Direct.dy**2
+        E8 = e8/self.Axes.Direct.dy**2
 
         self.Matrix = spdiags([E1, E2, E3, E4, E0, E5, E6, E7, E8],
                               [-2, -1, 1, 2, 0, -2*self.Axes.Nx, -self.Axes.Nx, self.Axes.Nx, 2*self.Axes.Nx],

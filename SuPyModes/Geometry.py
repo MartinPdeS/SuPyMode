@@ -357,7 +357,7 @@ class Coupler2(object):
         return obj_ext
 
 
-    def rasterize_mesh(self, Xbound, Ybound, Nx, Ny):
+    def CreateMesh(self, Xbound, Ybound, Nx, Ny):
 
         self.mesh = np.ones((Nx, Ny))
 
@@ -374,7 +374,7 @@ class Coupler2(object):
 
         for k, v in self.Geometry.items():
             obj = self.rasterize_polygone(v['shape'], points, Nx, Ny)
-            self.add_object_to_mesh(self.mesh, obj, v['index']*3)
+            self.add_object_to_mesh(self.mesh, obj, v['index'])
 
 
         self.info = {
