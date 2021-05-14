@@ -1,0 +1,10 @@
+*.DS_store
+*.ipynb_checkpoints*
+*__pycache__*
+solution_data_json.txt
+persos
+*.gif
+*.pickle
+*.pkl
+pycallgraph.png
+venv

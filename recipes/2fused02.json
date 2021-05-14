@@ -1,0 +1,46 @@
+{
+"geometry": {
+
+      "Clad": {"fusion": 2,
+               "degree":0.999,
+               "radius0": 125.0,
+               "radius1": 100.0,
+               "index": "Fused_silica(1.3)"},
+
+      "A": {"function": "circle",
+            "position": "core1",
+            "radius": 4.5,
+            "index": "Fused_silica(1.3)+0.05"},
+
+      "B": {"function": "circle",
+            "position": "core0",
+            "radius": 10.0,
+            "index": "Fused_silica(1.3)+0.02"},
+
+      "C": {"function": "circle",
+            "position": "core0",
+            "radius": 4.5,
+            "index": "Fused_silica(1.3)+0.07"}
+
+              },
+
+    "mesh": {"X_boundary": [-150, 150],
+             "Y_boundary": [0, 150],
+             "NX_point": 200,
+             "NY_point": 200},
+
+  "physics": {"lambda": 1.3,
+             "x_symmetry": false,
+             "y_symmetry": true,
+             "error order": 2,
+             "tolerance": 0,
+             "coupler length": 8000},
+
+   "iteration": {"variable": "ITR",
+                 "start": 1,
+                 "stop": 0.01,
+                 "N_step": 50,
+                 "symmetric": false,
+                 "N_solution": 4}
+
+}

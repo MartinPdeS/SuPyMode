@@ -1,0 +1,11 @@
+numpy
+scipy
+matplotlib
+opencv-python
+gitpython
+pandas
+shapely
+descartes
+pycallgraph
+progressbar
+graphviz

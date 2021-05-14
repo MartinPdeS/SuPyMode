@@ -1,0 +1,54 @@
+classes package
+===============
+
+Submodules
+----------
+
+classes.functions module
+------------------------
+
+.. automodule:: classes.functions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+classes.geometry module
+-----------------------
+
+.. automodule:: classes.geometry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+classes.set module
+------------------
+
+.. automodule:: classes.set
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+classes.solver module
+---------------------
+
+.. automodule:: classes.solver
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+classes.tesst module
+--------------------
+
+.. automodule:: classes.tesst
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: classes
+    :members:
+    :undoc-members:
+    :show-inheritance:

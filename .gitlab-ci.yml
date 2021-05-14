@@ -1,0 +1,14 @@
+stages:
+  - setup
+
+build_project:
+  stage: setup
+  image: python:3.6
+  script:
+    - pip3 install -r requirements.txt
+    - pip3 install ../SuPyModes
+    - make test
+
+
+  tags:
+    - linux

@@ -1,0 +1,37 @@
+build package
+=============
+
+Subpackages
+-----------
+
+.. toctree::
+
+    build.classes
+
+Submodules
+----------
+
+build.run\_simulation module
+----------------------------
+
+.. automodule:: build.run_simulation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+build.simulation\_parameter module
+----------------------------------
+
+.. automodule:: build.simulation_parameter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: build
+    :members:
+    :undoc-members:
+    :show-inheritance:
