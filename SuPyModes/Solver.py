@@ -14,7 +14,7 @@ from SuPyModes.toolbox.SuPyAxes import SuPyAxes
 from SuPyModes.toolbox.LPModes import LP_names
 from SuPyModes.toolbox.SuPyFinitDiff import SuPyFinitdifference
 from SuPyModes.SuperMode import SuperMode, SuperSet
-from SuPyModes.utils            import RecomposeSymmetries, gradientO4
+from SuPyModes.utils            import RecomposeSymmetries
 #-------------------------Importations------------------------------------------
 
 
@@ -154,14 +154,14 @@ class SuPySolver(object):
 
             self.initiate_finit_difference_matrix()
 
-            self._eigen_sol(Nsol)
+            self.GetEigenVectors(Nsol)
 
             self.iter += 1
 
             bar.update(self.iter)
 
 
-    def _eigen_sol(self, Nsol=1, Tolerance=1e-8, MaxIter=None):
+    def GetEigenVectors(self, Nsol=1, Tolerance=1e-8, MaxIter=None):
 
         beta_square, v0 = self.PreSolution()
 

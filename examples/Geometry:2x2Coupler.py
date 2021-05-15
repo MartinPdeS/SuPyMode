@@ -13,15 +13,12 @@ Coupler.add_cores(position='core1', radius=4.1, index=Fused_silica(1.55) + 0.005
 
 Coupler.CreateMesh(Xbound=[0,100], Ybound=[0,100], Nx=60, Ny=60)
 
-
 #Coupler.Plot()
 
 Sol = SuPySolver(coupler=Coupler)
 
-SuperModes = Sol.GetModes(wavelength=1.55,
-                          Nstep=100,
-                          Nsol=3,
-                          Xsym=1,
-                          Ysym=1)
+SuperModes = Sol.GetModes(wavelength=1.55, Nstep=50, Nsol=6, Xsym=1, Ysym=1)
 
-SuperModes.Plot('Coupling',iter=0)
+SuperModes.Plot('Adiabatic')
+
+#SuperModes.Plot('Coupling',iter=0)
