@@ -1,24 +1,30 @@
-from SuPyModes.Geometry          import Coupler2, Coupler1
+from SuPyModes.Geometry          import Coupler2, Coupler1, Fused2, Circle
 from SuPyModes.Solver            import SuPySolver
-from SuPyModes.toolbox.sellmeier import Fused_silica
+from SuPyModes.sellmeier         import Fused_silica
 
-Coupler = Coupler2()
+#Coupler = Coupler2()
+#Obj0 = Fused2(init=200, R_clad0=62.5, R_clad1=62.5, fusion=0.99, index=Fused_silica(1.55))
 
+#Obj0.Plot()
 
-Coupler.add_clad(init=200, R_clad0=62.5, R_clad1=62.5, fusion=0.99, index=Fused_silica(1.55) )
+Obj1 = Circle( Position=[(0,0), (50,0)], Radi = [60, 30], Index = 1.5 )
 
-Coupler.add_cores(position='core0', radius=4.1, index=Fused_silica(1.55)+0.005 )
+Obj1.Plot()
 
-Coupler.add_cores(position='core1', radius=4.1, index=Fused_silica(1.55) + 0.005 )
+#Coupler.add_clad(init=200, R_clad0=62.5, R_clad1=62.5, fusion=0.99, index=Fused_silica(1.55) )
 
-Coupler.CreateMesh(Xbound=[0,100], Ybound=[0,100], Nx=60, Ny=60)
+#Coupler.add_cores(position='core0', radius=4.1, index=Fused_silica(1.55)+0.005 )
+
+#Coupler.add_cores(position='core1', radius=4.1, index=Fused_silica(1.55) + 0.005 )
+
+#Coupler.CreateMesh(Xbound=[0,100], Ybound=[0,100], Nx=60, Ny=60)
 
 #Coupler.Plot()
 
-Sol = SuPySolver(coupler=Coupler)
+#Sol = SuPySolver(coupler=Coupler)
 
-SuperModes = Sol.GetModes(wavelength=1.55, Nstep=50, Nsol=6, Xsym=1, Ysym=1)
+#SuperModes = Sol.GetModes(wavelength=1.55, Nstep=50, Nsol=6, Xsym=1, Ysym=1)
 
-SuperModes.Plot('Adiabatic')
+#SuperModes.Plot('Adiabatic')
 
 #SuperModes.Plot('Coupling',iter=0)
