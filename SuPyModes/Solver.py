@@ -25,11 +25,13 @@ class SuPySolver(object):
 
     """
 
-    def __init__(self, coupler):
+    def __init__(self, Coupler):
 
-        self.profile = coupler.mesh
+        self.Geometry  = Coupler
 
-        self.info = coupler.info
+        self.profile = Coupler.mesh
+
+        self.info = Coupler.info
 
         self.vectors = []
 
@@ -48,7 +50,7 @@ class SuPySolver(object):
 
         self.nk = self.profile**2 * self.Axes.Dual.k**2
 
-        self.nk = np.reshape(self.nk, self.info['size'], order = 'F')
+        self.nk = np.reshape(self.nk, self.info['Size'], order = 'F')
 
 
     def laplacian_sparse(self):
@@ -61,9 +63,9 @@ class SuPySolver(object):
 
         self.Finit_diff = SuPyFinitdifference(self.Axes)
 
-        self.Finit_diff.laplacian_sparse(self.nk, self.Xsym, self.Ysym)
-
-
+        self.Finit_diff.laplacian_sparse(self.nk,
+                                         self.Geometry.Ysym,
+                                         self.Geometry.Xsym)
 
 
     def initiate_finit_difference_matrix(self):
@@ -82,8 +84,6 @@ class SuPySolver(object):
                   wavelength: float,
                   Nstep:      int   = 2,
                   Nsol:       int   = 5,
-                  Xsym:       int   = 0,
-                  Ysym:       int   = 0,
                   ITRf:       float = 0.1,
                   tolerance:  float = 0.0004,
                   error:      int   = 2,
@@ -93,17 +93,15 @@ class SuPySolver(object):
         metadata = {'wavelength': wavelength,
                     'Xbound'    : self.info['Xbound'],
                     'Ybound'    : self.info['Ybound'],
-                    'Nx'        : self.info['Nx'],
-                    'Ny'        : self.info['Ny']}
+                    'Nx'        : self.info['Shape'][0],
+                    'Ny'        : self.info['Shape'][1]}
 
 
-        self.Shape = self.info['shape']
-
-        self.Xsym, self.Ysym = Xsym, Ysym
+        self.Shape = self.info['Shape']
 
         self.Nstep, self.ITRf, self.Nsol = Nstep, ITRf, Nsol
 
-        ITRList = np.linspace(1,ITRf, Nstep)
+        ITRList = np.linspace(1, ITRf, Nstep)
 
         self.Set = SuperSet(IndexProfile = self.profile,
                             NSolutions   = self.Nsol,
@@ -114,6 +112,8 @@ class SuPySolver(object):
         self.Axes = SuPyAxes(Meta=metadata)
 
         self.Solve(ITRList, Nsol)
+
+        self.Set.Symmetries = [self.Geometry.Xsym, self.Geometry.Ysym]
 
         return self.Set
 
@@ -191,8 +191,8 @@ class SuPySolver(object):
                                       Beta   = betas[solution],
                                       ITR    = self.Axes.ITR,
                                       Field  = vectors[:,solution].reshape(self.Shape),
-                                      xSym   = self.Xsym,
-                                      ySym   = self.Ysym,
+                                      xSym   = self.Geometry.Xsym,
+                                      ySym   = self.Geometry.Ysym,
                                       Axes   = self.Axes)
 
 

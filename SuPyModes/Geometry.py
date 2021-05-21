@@ -1,529 +1,87 @@
 #-------------------------Importations------------------------------------------
 """ standard imports """
-import pickle, json, sys
+import sys
 import numpy as np
-import os
 from matplotlib.path import Path
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
-from scipy.optimize import least_squares
+from itertools        import combinations
+from scipy.optimize   import minimize_scalar
+from shapely.geometry import Point, LineString, MultiPolygon, Polygon
+from shapely.geometry.collection import GeometryCollection
 pi, cos, sin, sqrt = np.pi, np.cos, np.sin, np.sqrt
 
-import shapely.geometry as geometry
 from shapely.geometry import Polygon
 from shapely.geometry.point import Point
-import shapely.ops as so
-from shapely.geometry import LineString, box
 from shapely.ops import cascaded_union
 from descartes import PolygonPatch
-from shapely.ops import nearest_points
+
 
 """ package imports"""
-from SuPyModes.toolbox.utils import get_project_root
-from SuPyModes.utils import NearestPoints, MakeCircles, ObjectUnion, PlotObject
 from SuPyModes.Directories import RootPath
+from SuPyModes.Special     import Overlap, Intersection
+from SuPyModes.utils       import ( NearestPoints,
+                                    Deg2Rad,
+                                    Rotate,
+                                    MakeCircles,
+                                    ObjectUnion,
+                                    PlotObject,
+                                    ToList        )
 
 
+
+import logging
+from numpy            import pi, cos, sin, sqrt, abs, exp, array, ndarray
 
 #-------------------------Importations------------------------------------------
 
-def Overlap(object0, object1):
-    return object0.intersection(object1)
 
-def Intersection(object0, object1):
-    return object0.exterior.intersection(object1.exterior)
 
-class Coupler2(object):
 
-    def __init__(self, kwargs = {}):
+class Geometry(object):
+    def __init__(self, Objects, Xbound, Ybound, Nx, Ny, Xsym, Ysym):
 
-        self.debug = False
-        self.N = 0
-        self.cst = 2*(2-sqrt(2))
-        self.Points    = {'P': [], 'F': [], 'C': []}
-        self.Triangles = {}
-        self.Circles   = {}
-        self.Cladding  = {}
-        self.Cores     = {}
-        self.Geometry  = {}
-        self.InitClad  = {}
-        self.BuildGeo  = {}
 
+        Xsym, Ysym      = Ysym, Xsym  # <-------- something is fucked somewhere else!
 
+        self.Xsym       = Xsym
 
-    def Plot(self):
+        self.Ysym       = Ysym
 
-        fig = plt.figure(figsize=(15,5))
+        self.Symmetries = [ Xsym, Ysym ]
 
-        ax = fig.add_subplot(131)
-        ax1 = fig.add_subplot(132)
-        ax2 = fig.add_subplot(133)
+        self.Objects    = ToList(Objects)
 
-        ax.grid()
-        ax1.grid()
+        self.Boundaries = [Xbound, Ybound]
 
-        ax.set_ylabel(r'Distance Y-axis [$\mu m$]')
-        ax.set_xlabel(r'Distance X-axis [$\mu m$]')
-        ax.set_title(r'Geometrical configuration', fontsize=10)
+        self.Shape = [Nx, Ny]
 
-        [ax.plot(*object.exterior.xy) for object in self.Triangles.values()]
-
-        [ax.plot(*object.exterior.xy) for object in self.Circles.values()]
-
-        for key, object in self.Geometry.items():
-            ax1.add_patch(PolygonPatch(object['shape'], alpha=0.5))
-
-
-        for key, points in self.Points.items():
-            [ ax.scatter(p.x, p.y) for p in points]
-            [ ax.text(p.x,p.y,f'{key}{n+1}') for n, p in enumerate(points) ]
-
-
-        if not self.coupler.is_empty:
-
-            ax1.add_patch(PolygonPatch(self.coupler, alpha=0.5,))
-            ax1.plot()
-            ax1.grid()
-            ax1.set_xlim([-2*self.R_clad[0],2*self.R_clad[0]])
-            ax1.set_ylim([-2*self.R_clad[0],2*self.R_clad[0]])
-            ax1.set_title('Fusion degree:{0:.3f}'.format(self.f), fontsize=10)
-
-        ax2.set_title('Rasterized RI profil', fontsize=10)
-
-        pcm = ax2.pcolormesh(np.linspace(*self.Ybound, np.shape(self.mesh)[1]),
-                             np.linspace(*self.Xbound, np.shape(self.mesh)[0]),
-                             self.mesh,
-                             cmap='PuBu_r',
-                             shading='auto',
-                             norm=colors.LogNorm(vmin = 1.42, vmax=self.mesh.max()))
-
-        plt.show()
-
-
-    def compute_limit(self):
-
-        temp =  cascaded_union([self.Clad[0], self.Clad[1]])
-
-        return temp.convex_hull.difference(temp).area
-
-
-    def construct_fibers(self):
-
-        self.Clad = []
-
-        F = [Point(-self.delta/2, 0), Point(self.delta/2, 0)]
-
-        self.Clad = ( F[0].buffer(self.R_clad[0]),
-                      F[1].buffer(self.R_clad[1]) )
-
-        self.BuildGeo['clad'] = ( F[0].buffer(self.R_clad[0]),
-                                  F[1].buffer(self.R_clad[1]) )
-
-        self.BuildGeo['overlap'] = Overlap(self.BuildGeo['clad'][0],
-                                           self.BuildGeo['clad'][1])
-
-        self.Points['F'] = ( *F,
-                             *Intersection( self.BuildGeo['clad'][0],
-                                            self.BuildGeo['clad'][1] ) )
-
-        self.topo = 'concave' if self.BuildGeo['overlap'].area > self.compute_limit() else 'convex'
-
-
-
-    def find_virtual_coord_from_Rv(self, Rv):
-
-        if self.topo == 'convex':
-            p0 = Point(self.Points['F'][0]).buffer(self.R_clad[0] + Rv)
-
-            p1 = Point(self.Points['F'][1]).buffer(self.R_clad[1] + Rv)
-
-        else:
-
-            p0 = Point(self.Points['F'][0]).buffer(Rv - self.R_clad[0])
-
-            p1 = Point(self.Points['F'][1]).buffer(Rv - self.R_clad[1])
-
-        self.Points['C'] = Intersection(p0, p1)
-
-
-    def construct_triangle_from_Rv(self, Rv):
-
-        if self.topo == 'concave' and Rv < self.R_clad[0] :
-            Rv = self.R_clad[0]*1.1
-
-        self.find_virtual_coord_from_Rv(Rv)
-
-        self.Triangles['top']    = Polygon([self.Points['F'][0],
-                                            self.Points['F'][1],
-                                            self.Points['C'][0]])
-
-        self.Triangles['bottom'] = Polygon([self.Points['F'][0],
-                                            self.Points['F'][1],
-                                            self.Points['C'][1]])
-
-        return Rv
-
-
-
-
-    def construct_virtual(self, Rv):
-
-        self.Circles['2'] = self.Points['C'][0].buffer(Rv)
-
-        self.Circles['3'] = self.Points['C'][1].buffer(Rv)
-
-        self.Points['P']  = [nearest_points(self.Clad[1].exterior, self.Circles['3'].exterior)[1],
-                             nearest_points(self.Clad[0].exterior, self.Circles['3'].exterior)[1],
-                             nearest_points(self.Clad[0].exterior, self.Circles['2'].exterior)[1],
-                             nearest_points(self.Clad[1].exterior, self.Circles['2'].exterior)[1] ]
-
-
-    def compute_added(self):
-
-        if self.topo == 'convex':
-            union_top = so.cascaded_union([self.Clad[0],self.Clad[1], self.Circles['2']])
-
-            union_bottom = so.cascaded_union([self.Clad[0],self.Clad[1], self.Circles['3']])
-
-            added_top = self.self.Triangles['top'].difference(union_top)
-
-            added_bottom = self.self.Triangles['bottom'].difference(union_bottom)
-
-            self.added = so.cascaded_union([added_top, added_bottom])
-
-            self.coupler = so.cascaded_union([self.added, self.Clad[0], self.Clad[1]])
-
-
-        else:
-            Circles = so.cascaded_union([ self.Clad[0], self.Clad[1]])
-
-            envelop = self.Circles['2'].intersection(self.Circles['3']).intersection(self.mask)
-
-            self.coupler = so.cascaded_union([ Circles, envelop])
-
-            self.added = self.coupler.difference(Circles)
-
-
-
-
-
-    def create_mask(self):
-
-        P1 = nearest_points(self.Clad[1].exterior,self.Circles['2'].exterior)
-
-        P2 = nearest_points(self.Clad[0],self.Circles['2'].exterior)
-
-        P3 = nearest_points(self.Clad[1].exterior,self.Circles['3'].exterior)
-
-        P4 = nearest_points(self.Clad[0].exterior,self.Circles['3'].exterior)
-
-        P1 = Point(P1[1].x, 1000)
-        P2 = Point(P2[1].x, 1000)
-        P3 = Point(P3[1].x, -1000)
-        P4 = Point(P4[1].x, -1000)
-
-        pointList = [P1, P2, P3, P4]
-
-        self.mask = Polygon(pointList).convex_hull
-
-
-
-    def fusion_cost(self, Rv):
-
-        self.InitClad['0'] = {'shape': self.Clad[0], 'index': None}
-
-        self.InitClad['1'] = {'shape': self.Clad[1], 'index': None}
-
-        Rv = self.construct_triangle_from_Rv(Rv)
-
-        self.construct_virtual(Rv)
-
-        self.create_mask()
-
-        self.compute_added()
-
-        cost = np.abs( self.added.area - self.BuildGeo['overlap'].area )
-
-        if self.debug:
-            sys.stdout.write('Topology:{0} \t Cost:{1:.5f} \t Rv:{2:.0f}\n'.format(self.topo, cost, float(Rv)))
-
-        return cost
-
-
-    def add_cores(self, position, radius, index=1):
-
-        if position == 'center':
-            position = (0,0)
-
-        elif position == 'core0':
-            position = self.core_position[0]
-
-        elif position == 'core1':
-            position = self.core_position[1]
-
-        shape = Point(position).buffer(radius)
-
-        self.Cores[self.N] = {'shape': shape, 'index': index}
-
-        self.Geometry[f'Core {self.N}'] = {'shape': shape, 'index': index}
-
-
-    def measure_side_area(self, centers):
-
-        p1_right = Point(centers[1], self.Ybound[0])
-
-        p2_right = Point(centers[1], self.Ybound[1])
-
-        p3_right = Point(self.Xbound[1], self.Ybound[1])
-
-        p4_right = Point(self.Xbound[1], self.Ybound[0])
-
-
-        p1_left = Point(centers[0], self.Ybound[0])
-
-        p2_left = Point(centers[0], self.Ybound[1])
-
-        p3_left = Point(self.Xbound[0], self.Ybound[1])
-
-        p4_left = Point(self.Xbound[0], self.Ybound[0])
-
-
-        left_point_list = [p1_left, p2_left, p3_left, p4_left]
-
-        right_point_list = [p1_right, p2_right, p3_right, p4_right]
-
-        left_mask = Polygon([[p.x, p.y] for p in left_point_list])
-
-        right_mask = Polygon([[p.x, p.y] for p in right_point_list])
-
-        cost0 = np.abs(self.coupler.intersection(left_mask).area - pi *self.R_clad[0]**2/2)
-
-        cost1 = np.abs(self.coupler.intersection(right_mask).area - pi *self.R_clad[1]**2/2)
-
-        if self.debug:
-            sys.stdout.write('Cost:{0:.2f} \t position left:{1:.2f} \t position right:{2:.2f}\n'.format(cost0 + cost1, centers[0], centers[1]))
-
-        return cost1, cost0
-
-
-    def add_clad(self, init, R_clad0, R_clad1, fusion=0.9, index=1):
-
-        self.f = fusion
-
-        self.R_clad = R_clad0, R_clad1
-
-        self.Xbound = [-2*max(self.R_clad[0],self.R_clad[1]),2*max(self.R_clad[0],self.R_clad[1])]
-
-        self.Ybound = [-max(self.R_clad[0],self.R_clad[1]),max(self.R_clad[0],self.R_clad[1])]
-
-        self.delta = self.R_clad[0] + self.R_clad[1] - 2 * self.f * (self.R_clad[0] + self.R_clad[1] - np.sqrt(self.R_clad[0]**2 + self.R_clad[1]**2) )
-
-        self.construct_fibers()
-
-        if self.topo == 'concave':
-            bounds = ((self.R_clad[0]+self.delta+self.R_clad[1])/2,10000)
-        else:
-            bounds = (0,10000)
-
-        z = least_squares(self.fusion_cost,init,bounds=bounds)
-
-        self.Cladding = {'shape': self.coupler, "index": index}
-
-        self.Geometry['clad'] = {'shape': self.coupler, "index": index}
-
-        self.optimize_core_position()
-
-
-    def optimize_core_position(self, init=0):
-
-        z = fsolve(self.measure_side_area, [self.Points['F'][0].x, self.Points['F'][1].x])
-
-        self.core_position = list( zip( z,[0,0] ) )
-
-
-    def add_object_to_mesh(self, mesh, obj, index):
-
-        mesh *= (-1 * obj + 1)
-
-        mesh += obj * index
-
-        return mesh
+        self.CreateMesh()
 
 
     def rasterize_polygone(self, polygone, points, Nx, Ny):
 
         obj_ext = Path(list( polygone.exterior.coords))
 
-        obj_ext = obj_ext.contains_points(points).reshape([Nx, Ny])
+        obj_ext = obj_ext.contains_points(points).reshape(self.Shape)
 
         return obj_ext
 
 
-    def CreateMesh(self, Xbound, Ybound, Nx, Ny):
-
-        self.mesh = np.ones((Nx, Ny))
-
-        self.Xbound, self.Ybound = Xbound, Ybound
-
-        xv = np.linspace(*Xbound,Nx)
-        yv = np.linspace(*Ybound,Ny)
-
-        x, y = np.meshgrid(xv,yv)
-
-        x, y = x.flatten(), y.flatten()
-
-        points = np.vstack((x,y)).T
-
-        for k, v in self.Geometry.items():
-            obj = self.rasterize_polygone(v['shape'], points, Nx, Ny)
-            self.add_object_to_mesh(self.mesh, obj, v['index'])
-
-
-        self.info = {
-                     'Xbound': Xbound,
-                     'Ybound': Ybound,
-                     'Nx': Nx,
-                     'Ny': Ny,
-                     'shape': [Nx, Ny],
-                     'size': np.size(self.mesh),
-                     'x_symmetry': None,
-                     'y_symmetry': None
-                     }
-
-
-
-    def save_data(self, dir: str):
-        """
-        This method update the class Data with new data_set.
-
-        arguments:
-            :param dir: Directory to save geometry file.
-            :type dir: str.
-
-        calls:
-            :call1: processing.process_geometry()
-
-        """
-
-        with open(dir, 'wb+') as f:
-
-            pickle.dump(self.mesh.T, f)
-
-
-
-
-
-
-class Coupler1(object):
-
-    def __init__(self, debug: bool = False):
-
-        self.OBJECT = {}
-
-        self.N = 0
-
-        self.debug = debug
-
-
-
-    def Plot(self):
-
-        fig = plt.figure(figsize=(15,5))
-
-        ax = fig.add_subplot(131)
-        ax1 = fig.add_subplot(132)
-        ax2 = fig.add_subplot(133)
-
-        ax.grid()
-        ax1.grid()
-
-        ax.set_ylabel(r'Distance Y-axis [$\mu m$]')
-        ax.set_xlabel(r'Distance X-axis [$\mu m$]')
-        ax.set_title(r'Geometrical configuration', fontsize=10)
-
-
-        [ ax.plot(*object['shape'].exterior.xy) for object in self.OBJECT.values()]
-
-
-        [ax1.add_patch(PolygonPatch(object['shape'], alpha=0.5)) for object in self.OBJECT.values() ]
-
-        ax1.plot()
-        ax1.grid()
-        ax1.set_xlim([-2*self.R_clad,2*self.R_clad])
-        ax1.set_ylim([-2*self.R_clad,2*self.R_clad])
-
-
-
-        ax2.set_title('Rasterized RI profil', fontsize=10)
-
-        pcm = ax2.pcolormesh(np.linspace(*self.Ybound, np.shape(self.mesh)[1]),
-                             np.linspace(*self.Xbound, np.shape(self.mesh)[0]),
-                             self.mesh,
-                             cmap='PuBu_r',
-                             norm=colors.LogNorm(vmin = 1.42, vmax=self.mesh.max()))
-
-        plt.show()
-
-
-
-
-
-    def add_cores(self, position, radius, index=1):
-
-        if position == 'center':
-            position = (0,0)
-
-
-        shape = Point(position).buffer(radius)
-
-        self.OBJECT[self.N] = {'shape': shape,
-                                'index': index}
-
-
-
-    def add_clad(self, R_clad, index=1):
-
-        shape = Point([0,0]).buffer(R_clad)
-        self.Cladding = {'shape': shape, 'index': index}
-        self.R_clad = R_clad
-
-
-    def optimize_core_position(self, init=0):
-
-
-        z = fsolve(self.measure_side_area, [self.Points['F'][0].x, self.Points['F'][1].x])
-
-        self.core_position = list( zip( z,[0,0] ) )
-
-
-
-    def add_object_to_mesh(self, mesh, obj, index):
+    def add_object_to_mesh(self, obj, index):
 
         self.mesh *= (-1 * obj + 1)
 
         self.mesh += obj * index
 
 
+    def CreateMesh(self):
 
-    def rasterize_polygone(self, polygone, points, Nx, Ny):
+        self.mesh = np.ones(self.Shape)
 
-        obj_ext = Path(list( polygone.exterior.coords))
-
-        obj_ext = obj_ext.contains_points(points).reshape([Nx, Ny])
-
-        return obj_ext
-
-
-
-    def rasterize_mesh(self, Xbound, Ybound, Nx, Ny):
-
-        self.Xbound, self.Ybound = Xbound, Ybound
-
-        self.mesh = np.ones((Nx, Ny))
-
-        xv = np.linspace(*Xbound,Nx)
-        yv = np.linspace(*Ybound,Ny)
+        xv = np.linspace(*self.Boundaries[0], self.Shape[0])
+        yv = np.linspace(*self.Boundaries[1], self.Shape[1])
 
         x, y = np.meshgrid(xv,yv)
 
@@ -531,437 +89,37 @@ class Coupler1(object):
 
         points = np.vstack((x,y)).T
 
-        for k, v in self.Geometry.items():
-
-            if self.debug:
-                sys.stdout.write('Processing:{0} \t'.format(k))
-
-            obj = self.rasterize_polygone(v['shape'], points, Nx, Ny)
-
-            self.add_object_to_mesh(self.mesh, obj, v['index'])
-
-        self.info = {
-                     'Xbound': Xbound,
-                     'Ybound': Ybound,
-                     'Nx': Nx,
-                     'Ny': Ny,
-                     'shape': [Nx, Ny],
-                     'size': np.size(self.mesh),
-                     'x_symmetry': None,
-                     'y_symmetry': None
-                     }
+        for object in self.Objects:
+            obj = self.rasterize_polygone(object.Object, points, *self.Shape)
+            self.add_object_to_mesh(obj, object.Index)
 
 
-
-    def save_data(self, dir: str):
-        """
-        This method update the class Data with new data_set.
-
-        arguments:
-            :param dir: Directory to save geometry file.
-            :type dir: str.
-
-        calls:
-            :call1: processing.process_geometry()
-
-        """
-
-        with open(dir, 'wb+') as f:
-
-            pickle.dump(self.mesh.T, f)
-
-
-
-
-
-class Coupler2(object):
-
-    def __init__(self, kwargs = {}):
-
-        self.debug = False
-        self.N = 0
-        self.cst = 2*(2-sqrt(2))
-        self.Points    = {'P': [], 'F': [], 'C': []}
-        self.Triangles = {}
-        self.Circles   = {}
-        self.Cladding  = {}
-        self.Cores     = {}
-        self.Geometry  = {}
-        self.InitClad  = {}
-        self.BuildGeo  = {}
-
+        self.info = { 'Xbound': self.Boundaries[0],
+                      'Ybound': self.Boundaries[1],
+                      'Shape':  self.Shape,
+                      'Size':   np.size(self.mesh) }
 
 
     def Plot(self):
 
-        fig = plt.figure(figsize=(15,5))
+        fig = plt.figure(figsize=(5,5))
 
-        ax = fig.add_subplot(131)
-        ax1 = fig.add_subplot(132)
-        ax2 = fig.add_subplot(133)
+        ax = fig.add_subplot(111)
 
-        ax.grid()
-        ax1.grid()
+        ax.set_title('Rasterized RI profil', fontsize=10)
+        ax.set_ylabel(r'Y-distance [$\mu$m]')
+        ax.set_xlabel(r'X-distance [$\mu$m]')
 
-        ax.set_ylabel(r'Distance Y-axis [$\mu m$]')
-        ax.set_xlabel(r'Distance X-axis [$\mu m$]')
-        ax.set_title(r'Geometrical configuration', fontsize=10)
+        pcm = ax.pcolormesh(
+                            np.linspace(*self.Boundaries[0], np.shape(self.mesh)[0]),
+                            np.linspace(*self.Boundaries[1], np.shape(self.mesh)[1]),
+                            self.mesh,
+                            cmap    = 'PuBu_r',
+                            shading = 'auto',
+                            norm    = colors.LogNorm(vmin = 1.42, vmax=self.mesh.max()))
 
-        [ax.plot(*object.exterior.xy) for object in self.Triangles.values()]
-
-        [ax.plot(*object.exterior.xy) for object in self.Circles.values()]
-
-        for key, object in self.Geometry.items():
-            ax1.add_patch(PolygonPatch(object['shape'], alpha=0.5))
-
-
-        for key, points in self.Points.items():
-            [ ax.scatter(p.x, p.y) for p in points]
-            [ ax.text(p.x,p.y,f'{key}{n+1}') for n, p in enumerate(points) ]
-
-
-        if not self.coupler.is_empty:
-
-            ax1.add_patch(PolygonPatch(self.coupler, alpha=0.5,))
-            ax1.plot()
-            ax1.grid()
-            ax1.set_xlim([-2*self.R_clad[0],2*self.R_clad[0]])
-            ax1.set_ylim([-2*self.R_clad[0],2*self.R_clad[0]])
-            ax1.set_title('Fusion degree:{0:.3f}'.format(self.f), fontsize=10)
-
-        ax2.set_title('Rasterized RI profil', fontsize=10)
-
-        pcm = ax2.pcolormesh(np.linspace(*self.Ybound, np.shape(self.mesh)[1]),
-                             np.linspace(*self.Xbound, np.shape(self.mesh)[0]),
-                             self.mesh,
-                             cmap='PuBu_r',
-                             shading='auto',
-                             norm=colors.LogNorm(vmin = 1.42, vmax=self.mesh.max()))
-
+        ax.set_aspect('equal')
         plt.show()
-
-
-    def compute_limit(self):
-
-        temp =  so.cascaded_union([self.Clad[0], self.Clad[1]])
-
-        return temp.convex_hull.difference(temp).area
-
-
-    def construct_fibers(self):
-
-        self.Clad = []
-
-        F = [Point(-self.delta/2, 0), Point(self.delta/2, 0)]
-
-        self.Clad = ( F[0].buffer(self.R_clad[0]),
-                      F[1].buffer(self.R_clad[1]) )
-
-        self.BuildGeo['clad'] = ( F[0].buffer(self.R_clad[0]),
-                                  F[1].buffer(self.R_clad[1]) )
-
-        self.BuildGeo['overlap'] = Overlap(self.BuildGeo['clad'][0],
-                                           self.BuildGeo['clad'][1])
-
-        self.Points['F'] = ( *F,
-                             *Intersection( self.BuildGeo['clad'][0],
-                                            self.BuildGeo['clad'][1] ) )
-
-        self.topo = 'concave' if self.BuildGeo['overlap'].area > self.compute_limit() else 'convex'
-
-
-
-    def find_virtual_coord_from_Rv(self, Rv):
-
-        if self.topo == 'convex':
-            p0 = Point(self.Points['F'][0]).buffer(self.R_clad[0] + Rv)
-
-            p1 = Point(self.Points['F'][1]).buffer(self.R_clad[1] + Rv)
-
-        else:
-
-            p0 = Point(self.Points['F'][0]).buffer(Rv - self.R_clad[0])
-
-            p1 = Point(self.Points['F'][1]).buffer(Rv - self.R_clad[1])
-
-        self.Points['C'] = Intersection(p0, p1)
-
-
-    def construct_triangle_from_Rv(self, Rv):
-
-        if self.topo == 'concave' and Rv < self.R_clad[0] :
-            Rv = self.R_clad[0]*1.1
-
-        self.find_virtual_coord_from_Rv(Rv)
-
-        self.Triangles['top']    = Polygon([self.Points['F'][0],
-                                            self.Points['F'][1],
-                                            self.Points['C'][0]])
-
-        self.Triangles['bottom'] = Polygon([self.Points['F'][0],
-                                            self.Points['F'][1],
-                                            self.Points['C'][1]])
-
-        return Rv
-
-
-
-
-    def construct_virtual(self, Rv):
-
-        self.Circles['2'] = self.Points['C'][0].buffer(Rv)
-
-        self.Circles['3'] = self.Points['C'][1].buffer(Rv)
-
-        self.Points['P']  = [nearest_points(self.Clad[1].exterior, self.Circles['3'].exterior)[1],
-                             nearest_points(self.Clad[0].exterior, self.Circles['3'].exterior)[1],
-                             nearest_points(self.Clad[0].exterior, self.Circles['2'].exterior)[1],
-                             nearest_points(self.Clad[1].exterior, self.Circles['2'].exterior)[1] ]
-
-
-    def compute_added(self):
-
-        if self.topo == 'convex':
-            union_top = so.cascaded_union([self.Clad[0],self.Clad[1], self.Circles['2']])
-
-            union_bottom = so.cascaded_union([self.Clad[0],self.Clad[1], self.Circles['3']])
-
-            added_top = self.self.Triangles['top'].difference(union_top)
-
-            added_bottom = self.self.Triangles['bottom'].difference(union_bottom)
-
-            self.added = so.cascaded_union([added_top, added_bottom])
-
-            self.coupler = so.cascaded_union([self.added, self.Clad[0], self.Clad[1]])
-
-
-        else:
-            Circles = so.cascaded_union([ self.Clad[0], self.Clad[1]])
-
-            envelop = self.Circles['2'].intersection(self.Circles['3']).intersection(self.mask)
-
-            self.coupler = so.cascaded_union([ Circles, envelop])
-
-            self.added = self.coupler.difference(Circles)
-
-
-
-    def create_mask(self):
-
-        P1 = nearest_points(self.Clad[1].exterior,self.Circles['2'].exterior)
-
-        P2 = nearest_points(self.Clad[0],self.Circles['2'].exterior)
-
-        P3 = nearest_points(self.Clad[1].exterior,self.Circles['3'].exterior)
-
-        P4 = nearest_points(self.Clad[0].exterior,self.Circles['3'].exterior)
-
-        P1 = Point(P1[1].x, 1000)
-        P2 = Point(P2[1].x, 1000)
-        P3 = Point(P3[1].x, -1000)
-        P4 = Point(P4[1].x, -1000)
-
-        pointList = [P1, P2, P3, P4]
-
-        self.mask = Polygon(pointList).convex_hull
-
-
-
-    def fusion_cost(self, Rv):
-
-        self.InitClad['0'] = {'shape': self.Clad[0], 'index': None}
-
-        self.InitClad['1'] = {'shape': self.Clad[1], 'index': None}
-
-        Rv = self.construct_triangle_from_Rv(Rv)
-
-        self.construct_virtual(Rv)
-
-        self.create_mask()
-
-        self.compute_added()
-
-        cost = np.abs( self.added.area - self.BuildGeo['overlap'].area )
-
-        if self.debug:
-            sys.stdout.write('Topology:{0} \t Cost:{1:.5f} \t Rv:{2:.0f}\n'.format(self.topo, cost, float(Rv)))
-
-        return cost
-
-
-    def add_cores(self, position, radius, index=1):
-
-        if position == 'center':
-            position = (0,0)
-
-        elif position == 'core0':
-            position = self.core_position[0]
-
-        elif position == 'core1':
-            position = self.core_position[1]
-
-        shape = Point(position).buffer(radius)
-
-        self.Cores[self.N] = {'shape': shape, 'index': index}
-
-        self.Geometry[f'Core {self.N}'] = {'shape': shape, 'index': index}
-
-
-    def measure_side_area(self, centers):
-
-        p1_right = Point(centers[1], self.Ybound[0])
-
-        p2_right = Point(centers[1], self.Ybound[1])
-
-        p3_right = Point(self.Xbound[1], self.Ybound[1])
-
-        p4_right = Point(self.Xbound[1], self.Ybound[0])
-
-
-        p1_left = Point(centers[0], self.Ybound[0])
-
-        p2_left = Point(centers[0], self.Ybound[1])
-
-        p3_left = Point(self.Xbound[0], self.Ybound[1])
-
-        p4_left = Point(self.Xbound[0], self.Ybound[0])
-
-
-        left_point_list = [p1_left, p2_left, p3_left, p4_left]
-
-        right_point_list = [p1_right, p2_right, p3_right, p4_right]
-
-        left_mask = Polygon([[p.x, p.y] for p in left_point_list])
-
-        right_mask = Polygon([[p.x, p.y] for p in right_point_list])
-
-        cost0 = np.abs(self.coupler.intersection(left_mask).area - pi *self.R_clad[0]**2/2)
-
-        cost1 = np.abs(self.coupler.intersection(right_mask).area - pi *self.R_clad[1]**2/2)
-
-        if self.debug:
-            sys.stdout.write('Cost:{0:.2f} \t position left:{1:.2f} \t position right:{2:.2f}\n'.format(cost0 + cost1, centers[0], centers[1]))
-
-        return cost1, cost0
-
-
-    def add_clad(self, init, R_clad0, R_clad1, fusion=0.9, index=1):
-
-        self.f = fusion
-
-        self.R_clad = R_clad0, R_clad1
-
-        self.Xbound = [-2*max(self.R_clad[0],self.R_clad[1]),2*max(self.R_clad[0],self.R_clad[1])]
-
-        self.Ybound = [-max(self.R_clad[0],self.R_clad[1]),max(self.R_clad[0],self.R_clad[1])]
-
-        self.delta = self.R_clad[0] + self.R_clad[1] - 2 * self.f * (self.R_clad[0] + self.R_clad[1] - np.sqrt(self.R_clad[0]**2 + self.R_clad[1]**2) )
-
-        self.construct_fibers()
-
-        if self.topo == 'concave':
-            bounds = ((self.R_clad[0]+self.delta+self.R_clad[1])/2,10000)
-        else:
-            bounds = (0,10000)
-
-        z = least_squares(self.fusion_cost,init,bounds=bounds)
-
-        self.Cladding = {'shape': self.coupler, "index": index}
-
-        self.Geometry['clad'] = {'shape': self.coupler, "index": index}
-
-        self.optimize_core_position()
-
-
-    def optimize_core_position(self, init=0):
-
-        z = fsolve(self.measure_side_area, [self.Points['F'][0].x, self.Points['F'][1].x])
-
-        self.core_position = list( zip( z,[0,0] ) )
-
-
-    def add_object_to_mesh(self, mesh, obj, index):
-
-        mesh *= (-1 * obj + 1)
-
-        mesh += obj * index
-
-        return mesh
-
-
-    def rasterize_polygone(self, polygone, points, Nx, Ny):
-
-        obj_ext = Path(list( polygone.exterior.coords))
-
-        obj_ext = obj_ext.contains_points(points).reshape([Nx, Ny])
-
-        return obj_ext
-
-
-    def CreateMesh(self, Xbound, Ybound, Nx, Ny):
-
-        self.mesh = np.ones((Nx, Ny))
-
-        self.Xbound, self.Ybound = Xbound, Ybound
-
-        xv = np.linspace(*Xbound,Nx)
-        yv = np.linspace(*Ybound,Ny)
-
-        x, y = np.meshgrid(xv,yv)
-
-        x, y = x.flatten(), y.flatten()
-
-        points = np.vstack((x,y)).T
-
-        for k, v in self.Geometry.items():
-            obj = self.rasterize_polygone(v['shape'], points, Nx, Ny)
-            self.add_object_to_mesh(self.mesh, obj, v['index'])
-
-
-        self.info = {
-                     'Xbound': Xbound,
-                     'Ybound': Ybound,
-                     'Nx': Nx,
-                     'Ny': Ny,
-                     'shape': [Nx, Ny],
-                     'size': np.size(self.mesh),
-                     'x_symmetry': None,
-                     'y_symmetry': None
-                     }
-
-
-
-    def save_data(self, dir: str):
-        """
-        This method update the class Data with new data_set.
-
-        arguments:
-            :param dir: Directory to save geometry file.
-            :type dir: str.
-
-        calls:
-            :call1: processing.process_geometry()
-
-        """
-
-        with open(dir, 'wb+') as f:
-
-            pickle.dump(self.mesh.T, f)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -969,14 +127,14 @@ class Coupler2(object):
 
 class Circle(object):
     def __init__(self, Position, Radi, Index):
-        self.Points   = [ Point(Pos) for Pos in Position ]
+        self.Points   = Position
         self.Radi     = Radi
         self.Index    = Index
         self.Init()
 
 
     def Init(self):
-        self.Object = MakeCircles(self.Points, self.Radi)
+        self.Object = MakeCircles([self.Points], [self.Radi])[0]
 
 
     def Plot(self):
@@ -1008,251 +166,436 @@ class Circle(object):
         plt.show()
 
 
-class Fused2(object):
+class BaseFused():
+    def __init__(self, Radius, Fusion, Angle, Theta, Index):
+        self.Index   = Index
+        self.Radius  = Radius
+        self.Fusion  = Fusion
+        self.Angle   = Angle
+        self.N       = len(self.Angle)
+        self.Theta   = Deg2Rad(Theta)
+        self.GetFibers()
+        self.GetTopology()
 
-    def __init__(self,  init,  R_clad0, R_clad1, fusion,  index):
 
-        self.debug     = False
-        self.N         = 0
-        self.cst       = 2*(2-sqrt(2))
-        self.Points    = {'P': [], 'F': [], 'C': []}
-        self.Triangles = {}
-        self.Circles   = {}
-        self.f         = fusion
-        self.index     = index
-        self.Radius    = [R_clad0, R_clad1]
 
-        self.Init(init)
+    def OptimizeGeometry(self):
+        res = minimize_scalar(self.ComputeCost, bounds=self.Bound, method='bounded')
+        print('Result Rv =',res.x)
+        return self.BuildCoupler(Rv=res.x)
 
 
-    def compute_limit(self):
+    def GetHole(self):
+        CenterPart = Polygon(self.C)
 
-        temp =  cascaded_union([self.Circles['left'], self.Circles['right']])
+        Coupler  = ObjectUnion(self.Fibers)
 
-        return temp.convex_hull.difference(temp).area
+        return CenterPart.difference(Coupler)
 
 
-    def construct_fibers(self):
+    def GetFibers(self):
+        self.GetDistance()
 
-        F = [Point(-self.delta/2, 0), Point(self.delta/2, 0)]
+        self.GetCenters()
 
-        self.Circles['left'], self.Circles['right'] = MakeCircles( F[:2], self.Radius[:2] )
+        self.Fibers = []
 
-        self.Overlap = Overlap(self.Circles['left'], self.Circles['right'])
-
-        self.Points['F'] = ( *F, *Intersection( self.Circles['left'], self.Circles['right'] ) )
-
-        self.topo = 'concave' if self.Overlap.area > self.compute_limit() else 'convex'
-
-
-    def find_virtual_coord_from_Rv(self, Rv):
-
-        points = self.Points['F'][:2]
-
-        if self.topo == 'convex':
-            radi = [ Radius + Rv for Radius in self.Radius ]
-
-        if self.topo == 'concave':
-            radi = [ Rv - Radius for Radius in self.Radius ]
-
-        p0, p1 = MakeCircles(Points=points, Radi = radi)
-
-        self.Points['C'] = Intersection(p0, p1)
-
-
-    def construct_triangle_from_Rv(self, Rv):
-
-        if self.topo == 'concave' and Rv < self.Radius[0] :
-            Rv = self.Radius[0]*1.1
-
-        self.find_virtual_coord_from_Rv(Rv)
-
-        self.Triangles['top']    = Polygon([self.Points['F'][0],
-                                            self.Points['F'][1],
-                                            self.Points['C'][0]])
-
-        self.Triangles['bottom'] = Polygon([self.Points['F'][0],
-                                            self.Points['F'][1],
-                                            self.Points['C'][1]])
-
-        return Rv
-
-
-    def construct_virtual(self, Rv):
-
-        self.Circles['bottom'], self.Circles['top'] = MakeCircles(self.Points['C'], [Rv,Rv])
-
-        self.Points['P']  = [ NearestPoints(self.Circles['right'], self.Circles['top'])[1],
-                              NearestPoints(self.Circles['left'],  self.Circles['top'])[1],
-                              NearestPoints(self.Circles['left'],  self.Circles['bottom'])[1],
-                              NearestPoints(self.Circles['right'], self.Circles['bottom'])[1] ]
-
-
-    def compute_added(self):
-
-        if self.topo == 'convex':
-
-            union_bottom = ObjectUnion(self.Circles, 'left', 'right', 'bottom')
-
-            union_top = ObjectUnion(self.Circles, 'left', 'right', 'top')
-
-            added_top = self.Triangles['top'].difference(union_top)
-
-            added_bottom = self.Triangles['bottom'].difference(union_bottom)
-
-            self.added = cascaded_union([added_top, added_bottom])
-
-            self.Object = cascaded_union( [ self.added,
-                                             self.Circles['left'],
-                                             self.Circles['right'] ] )
-
-
-        if self.topo == 'concave':
-            mask = self.create_mask()
-
-            Circles = ObjectUnion(self.Circles, 'left', 'right')
-
-            envelop = self.Circles['bottom'].intersection(self.Circles['top']).intersection(mask)
-
-            self.Object = cascaded_union( [ Circles, envelop ] )
-
-            self.added = self.Object.difference(Circles)
-
-
-
-    def create_mask(self):
-
-        _, miny, _, maxy = cascaded_union(self.Circles.values()).bounds
-
-        pointList = [ Point(self.Points['P'][0].x, miny),
-                      Point(self.Points['P'][1].x, miny),
-                      Point(self.Points['P'][2].x, maxy),
-                      Point(self.Points['P'][3].x, maxy), ]
-
-        return Polygon(pointList).convex_hull
-
-
-    def fusion_cost(self, Rv):
-
-        Rv = self.construct_triangle_from_Rv(Rv)
-
-        self.construct_virtual(Rv)
-
-        self.compute_added()
-
-        cost = ( self.added.area - self.Overlap.area )**2
-
-        if self.debug:
-            sys.stdout.write(f'Topology:{self.topo} \t Cost:{cost:.5f} \t Rv:{float(Rv):.0f}\n' )
-
-        return cost
-
-
-    def measure_side_area(self, centers):
-
-
-        allCircles = ObjectUnion(self.Circles)
-
-        minx, miny, maxx, maxy = allCircles.bounds
-
-        LeftPoints = [ Point(centers[0], miny),
-                       Point(centers[0], maxy),
-                       Point(minx, maxy),
-                       Point(minx, miny) ]
-
-        RightPoints = [ Point(centers[1], miny),
-                        Point(centers[1], maxy),
-                        Point(maxx, maxy),
-                        Point(maxx, miny) ]
-
-        left_mask = Polygon( [ p for p in LeftPoints])
-
-        right_mask = Polygon( [ p for p in RightPoints])
-
-        cost0 = np.abs(self.Object.intersection(left_mask).area - pi * self.Radius[0]**2/2)
-
-        cost1 = np.abs(self.Object.intersection(right_mask).area - pi * self.Radius[1]**2/2)
-
-        if self.debug:
-            sys.stdout.write( f'Cost:{cost0 + cost1:.2f} \t position left:{centers[0]:.2f} \t position right:{centers[1]:.2f}\n' )
-
-        return cost1, cost0
-
-
-    def Init(self, init):
-
-        D = self.Radius[0] + self.Radius[1]
-
-        self.delta = D - 2 * self.f * (D - np.sqrt(self.Radius[0]**2 + self.Radius[1]**2) )
-
-        self.construct_fibers()
-
-        if self.topo == 'concave': bounds = ( 0.5*( D + self.delta ), 10000)
-
-        if self.topo == 'convex': bounds = (0, 10000)
-
-        z = least_squares(self.fusion_cost, init, bounds=bounds)
-
-        self.optimize_core_position()
-
-
-    def optimize_core_position(self, init=0):
-
-        z = fsolve(self.measure_side_area, [self.Points['F'][0].x, self.Points['F'][1].x])
-
-        self.core_position = list( zip( z,[0,0] ) )
-
-        self.C0 = self.core_position[0]
-
-        self.C1 = self.core_position[1]
-
+        for i in range(self.N):
+            self.Fibers.append( self.C[i].buffer(self.Radius) )
 
     def Plot(self):
-
-        fig = plt.figure(figsize=(15,5))
-
-        ax = fig.add_subplot(121)
-        ax1 = fig.add_subplot(122)
-
-        ax.grid()
-        ax1.grid()
-
-        ax.set_ylabel(r'Distance Y-axis [$\mu m$]')
-        ax.set_xlabel(r'Distance X-axis [$\mu m$]')
-        ax1.set_ylabel(r'Distance Y-axis [$\mu m$]')
-        ax1.set_xlabel(r'Distance X-axis [$\mu m$]')
-        ax.set_title(r'Geometrical configuration', fontsize=10)
-
-        [ax.plot(*object.exterior.xy) for object in self.Triangles.values()]
-
-        [ax.plot(*object.exterior.xy) for object in self.Circles.values()]
-
-        ax1.add_patch(PolygonPatch(self.Object, alpha=0.5))
+        PlotObject(Full = [self.Object] + self.C)
 
 
-        for key, points in self.Points.items():
-            [ ax.scatter(p.x, p.y) for p in points]
-            [ ax.text(p.x,p.y,f'{key}{n+1}') for n, p in enumerate(points) ]
+    def ComputeDifference(self, Added, Removed):
+        return abs(Added.area - Removed.Area)
 
 
-        ax1.add_patch(PolygonPatch(self.Object, alpha=0.5,))
-        ax1.plot()
-        ax1.grid()
-        ax1.set_xlim([-2*self.Radius[0],2*self.Radius[0]])
-        ax1.set_ylim([-2*self.Radius[0],2*self.Radius[0]])
-        ax1.set_title(f'Fusion degree: {self.f:.3f}', fontsize=10)
+    def GetDistance(self):
+        alpha    = (2 - self.N) * pi / ( 2 * self.N)
 
-        plt.show()
+        self.d = ( 1 + cos(alpha) ) - sqrt(self.N) * cos(alpha)
 
+        self.d =  ( self.Radius - ( self.d * self.Radius ) * self.Fusion)
 
+        self.d *= 1 / ( cos(alpha) )
 
 
+    def GetMask(self, Circles):
+        bound = GetBoundaries(ObjectUnion(Circles))
+        n0 = NearestPoints(self.Fibers[2], Circles[0])[0]
+        n1 = NearestPoints(self.Fibers[3], Circles[0])[0]
+
+        factor = 4
+        P0 = Point(factor*n0.x, factor*n0.y)
+        P1 = Point(factor*n1.x, factor*n1.y)
+        P2 = Point(0,0)
+
+        mask0  = Polygon([P0, P1, P2])
+
+        mask   = [ Rotate(Object=mask0, Angle=angle) for angle in self.Angle ]
+
+        mask   = ObjectUnion(mask)
+
+        return mask
+
+
+    def BuildCoupler(self, Rv):
+        Circles, Triangles = self.MakeVirtual(Rv=Rv)
+
+        Added = self.GetAdded(Circles, Triangles)
+
+        Removed = self.GetRemoved()
+
+        Coupler = ObjectUnion(self.Fibers + [Added])
+
+        return Coupler
+
+
+    def ComputeCost(self, Rv):
+        Circles, Triangles = self.MakeVirtual(Rv=Rv)
+
+        Added = self.GetAdded(Circles, Triangles)
+
+        Removed = self.GetRemoved()
+
+        Cost = self.ComputeDifference(Added, Removed)
+
+        logging.info(f'Topology: {self.Topology} \t Rv: {Rv:.0f} \t Cost: {Cost}')
+
+        return Cost
+
+
+    def GetCenters(self):
+        P0 = Point(0, self.d)
+        Points = Rotate(Object=P0, Angle=self.Angle)
+        self.C = [ *Points ]
+
+
+    def GetAdded(self, Circles, Triangles):
+        if self.Topology == 'convex':
+            All          = ObjectUnion(Circles+self.Fibers)
+
+            AllTriangles = ObjectUnion(Triangles)
+
+            Added        = AllTriangles.difference(All)
+
+        if self.Topology == 'concave':
+            f      = ObjectUnion(self.Fibers)
+
+            b      = ObjectIntersection(Circles)
+
+            edge   = b.difference(f)
+
+            hole   = self.GetHole()
+
+            mask   = self.GetMask(Circles)
+
+            Added  = mask.intersection(edge).difference(hole)
+
+        return Added
+
+
+    def GetRemoved(self):
+        combination = combinations(range(self.N), 2)
+        Removed     = []
+        for i,j in combination:
+            Removed.append( self.Fibers[i].intersection( self.Fibers[j] ) )
+
+        CenterPart = Removed[0]
+        for geo in Removed:
+            CenterPart = CenterPart.intersection(geo)
+
+        Removed.append(CenterPart)
+
+        area = Removed[0].area * self.N - Removed[-1].area
+
+        Removed = ObjectUnion(Removed)
+
+        Removed.Area = area
+
+        return Removed
+
+    def MakeVirtual(self, Rv):
+        Triangles, Points = self.MakeTriangles(Rv=Rv)
+
+        Circles = []
+        for point in Points:
+            Circles.append(Point(point).buffer(Rv))
+            Circles[-1].center = point
+
+        return Circles, Triangles
 
 
 
+class Fused4(BaseFused):
+    def __init__(self, Radius, Fusion, Index):
+        super().__init__(Radius  = Radius,
+                         Fusion  = Fusion,
+                         Angle   = [0, 90, 180, 270],
+                         Theta   = 45,
+                         Index   = Index)
+
+        if self.Topology == 'concave':
+            self.Bound = (Radius*1.5, 4000)
+
+        else:
+            self.Bound = (0, 4000)
+
+        self.Object = self.OptimizeGeometry()
+
+
+    def GetTopology(self):
+        CenterTriangle = Polygon(self.C)
+
+        Coupler  = ObjectUnion(self.Fibers)
+
+        hole     = CenterTriangle.difference(Coupler)
+
+        Convex   = Coupler.convex_hull.difference(hole)
+
+        MaxAdded = Convex.difference(Coupler)
+
+        Removed  = self.GetRemoved()
+
+        if MaxAdded.area > Removed.Area: self.Topology = 'convex'
+        else:                            self.Topology = 'concave'
+
+
+    def GetAdded(self, Circles, Triangles):
+        if self.Topology == 'convex':
+            All          = ObjectUnion(Circles+self.Fibers)
+
+            AllTriangles = ObjectUnion(Triangles)
+
+            Added        = AllTriangles.difference(All)
+
+        if self.Topology == 'concave':
+            f      = ObjectUnion(self.Fibers)
+
+            b      = ObjectIntersection(Circles)
+
+            edge   = b.difference(f)
+
+            hole   = self.GetHole()
+
+            mask   = self.GetMask(Circles)
+
+            Added  = mask.intersection(edge).difference(hole)
+
+        return Added
+
+
+    def MakeTriangles(self, Rv):
+        self.GetCenters()
+
+        s = self.d * cos(self.Theta)
+
+        if self.Topology == 'concave':
+            H  = -sqrt( (Rv - self.Radius)**2 - s**2 )
+            sign = 1
+
+        if self.Topology == 'convex':
+            H  = -sqrt( (self.Radius + Rv)**2 - s**2 )
+            sign = -1
+
+        R  = sign * self.d * sin(self.Theta) + H
+
+        Points    = Rotate( Object=Point(0, R), Angle=self.Theta * 180/pi )
+
+        Points    = [ *Rotate( Object=Points, Angle  = self.Angle ) ]
+
+        Triangle  = Polygon( [ self.C[0], self.C[1], Points[2] ] )
+
+        Triangles = [ *Rotate( Object=Triangle, Angle=self.Angle ) ]
+
+        Triangles = ObjectUnion( Triangles )
+
+        if self.Topology == 'concave':
+            Triangles = Rotate( Object=Triangles, Angle=[180] )
+            Points    = [ Rotate( Object=pts, Angle=[180] ) for pts in Points]
+
+        return Triangles, Points
+
+
+class Fused3(BaseFused):
+    def __init__(self, Radius, Fusion, Index):
+        super().__init__(Radius  = Radius,
+                         Fusion  = Fusion,
+                         Angle   = [0, 120, 240],
+                         Theta   = 30,
+                         Index   = Index)
+
+        if self.Topology == 'concave':
+            self.Bound = (Radius*1.5, 4000)
+
+        else:
+            self.Bound = (0, 4000)
+
+        self.Object = self.OptimizeGeometry()
 
 
 
+    def GetTopology(self):
+        hole     = self.GetHole()
+
+        Coupler  = ObjectUnion(self.Fibers)
+
+        Convex   = Coupler.convex_hull.difference(hole)
+
+        MaxAdded = Convex.difference(Coupler)
+
+        Removed  = self.GetRemoved()
+
+        if MaxAdded.area > Removed.Area: self.Topology = 'convex'
+        else:                            self.Topology = 'concave'
 
 
-# -
+    def GetMask(self, Circles):
+        bound = GetBoundaries(ObjectUnion(Circles))
+        n0 = NearestPoints(self.Fibers[0], Circles[0])[0]
+        n1 = NearestPoints(self.Fibers[1], Circles[0])[0]
+
+        P0 = Point(2*n0.x, 2*n0.y)
+        P1 = Point(2*n1.x, 2*n1.y)
+        P2 = Point(0,0)
+
+        mask0  = Polygon([P0, P1, P2])
+
+        mask   = [Rotate(Object=mask0, Angle=angle) for angle in self.Angle]
+
+        mask   = ObjectUnion(mask)
+
+        return mask
+
+
+    def MakeTriangles(self, Rv):
+        self.GetCenters()
+
+        s = self.d * cos(self.Theta)
+
+        if self.Topology == 'concave':
+            H  = -sqrt( (Rv - self.Radius)**2 - s**2 )
+            sign = 1
+
+        if self.Topology == 'convex':
+            H  = -sqrt( (self.Radius + Rv)**2 - s**2 )
+            sign = -1
+
+        R  = sign * self.d * sin(self.Theta) + H
+
+        Points    = Rotate( Object=Point(0, R), Angle=240 )
+
+        Points    = [ *Rotate( Object=Points, Angle  = self.Angle ) ]
+
+        Triangle  = Polygon( [ self.C[0], self.C[1], Points[0] ] )
+
+        Triangles = [ *Rotate( Object=Triangle, Angle=self.Angle ) ]
+
+        Triangles = ObjectUnion(Triangles)
+
+        if self.Topology == 'concave':
+            Triangles = Rotate( Object=Triangles, Angle=[180] )
+            Points    = [ Rotate( Object=pts, Angle=[180] ) for pts in Points]
+
+        return Triangles, Points
+
+
+class Fused2(BaseFused):
+    def __init__(self, Radius, Fusion, Index):
+        super().__init__(Radius  = Radius,
+                         Fusion  = Fusion,
+                         Angle   = [0, 180],
+                         Theta   = 90,
+                         Index   = Index)
+
+        if self.Topology == 'concave':
+            self.Bound = (Radius*1.5, 4000)
+
+        else:
+            self.Bound = (0, 4000)
+
+        self.Object = self.OptimizeGeometry()
+
+
+    def GetTopology(self):
+        Coupler  = ObjectUnion(self.Fibers)
+
+        Convex   = Coupler.convex_hull
+
+        MaxAdded = Convex.difference(Coupler)
+
+        Removed  = self.GetRemoved()
+
+        if MaxAdded.area > Removed.Area: self.Topology = 'convex'
+        else:                            self.Topology = 'concave'
+
+
+    def GetMask(self, Circles):
+        bound = GetBoundaries(ObjectUnion(Circles))
+        n0 = NearestPoints(self.Fibers[0], Circles[0])[0]
+        n1 = NearestPoints(self.Fibers[1], Circles[0])[0]
+
+        factor = 4
+        P0 = Point(factor*n0.x, factor*n0.y)
+        P1 = Point(factor*n1.x, factor*n1.y)
+        P2 = Point(0,0)
+
+        mask0  = Polygon([P0, P1, P2])
+
+        mask   = [ Rotate(Object=mask0, Angle=angle) for angle in self.Angle ]
+
+        mask   = ObjectUnion(mask)
+
+        return mask
+
+    def GetAdded(self, Circles, Triangles):
+        if self.Topology == 'convex':
+            All          = ObjectUnion(Circles+self.Fibers)
+
+            AllTriangles = ObjectUnion(Triangles)
+
+            Added        = AllTriangles.difference(All)
+
+        if self.Topology == 'concave':
+            f      = ObjectUnion(self.Fibers)
+
+            b      = ObjectIntersection(Circles)
+
+            edge   = b.difference(f)
+
+            mask   = self.GetMask(Circles)
+
+            Added  = mask.intersection(edge)
+
+
+        return Added
+
+
+    def MakeTriangles(self, Rv):
+        self.GetCenters()
+
+        if self.Topology == 'concave':
+            H  = -sqrt( (Rv - self.Radius)**2 - self.d**2 )
+
+        if self.Topology == 'convex':
+            H  = -sqrt( (self.Radius + Rv)**2 - self.d**2 )
+
+        R  =  abs(H)
+
+        Points    = Rotate( Object=Point(0, R), Angle=90 )
+
+        Points    = [ *Rotate( Object=Points, Angle  = self.Angle ) ]
+
+        Triangle  = Polygon( [ self.C[0], self.C[1], Points[0] ] )
+
+        Triangles = [ *Rotate( Object=Triangle, Angle=self.Angle ) ]
+
+        Triangles = ObjectUnion(Triangles)
+
+
+        if self.Topology == 'concave':
+            Triangles = Rotate( Object=Triangles, Angle=[180] )
+            Points    = [ Rotate( Object=pts, Angle=[180] ) for pts in Points]
+
+        return Triangles, Points

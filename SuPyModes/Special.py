@@ -1,8 +1,8 @@
 import numpy as np
 
-from SuPyModes.utils import CheckSymmetries
+from SuPyModes.utils import CheckSymmetries, ToList
 
-def Overlap(SuperMode0, SuperMode1, iter):
+def FieldOverlap(SuperMode0, SuperMode1, iter):
     return SuperMode0.Field[iter-1] * SuperMode1.Field[iter]
 
 
@@ -30,7 +30,7 @@ def ModeCoupling(SuperMode0, SuperMode1, k, Profile, iter):
 
         Coupling *= np.abs(1/(beta0 - beta1))
 
-        O = Overlap(SuperMode0, SuperMode1, iter)
+        O = FieldOverlap(SuperMode0, SuperMode1, iter)
 
         G = GeoGradient(Profile, SuperMode0.Axes, iter)
 
@@ -57,6 +57,19 @@ def ModeAdiabatic(SuperMode0, SuperMode1, k, Profile, iter):
 
     return Adiabatic
 
+
+def Overlap(Objects):
+    Objects = ToList(Objects)
+    object0 = Objects[0]
+
+    for object in Objects:
+        object0 = object0.intersection(object)
+
+    return object0
+
+
+def Intersection(object0, object1):
+    return object0.exterior.intersection(object1.exterior)
 
 
 #4th order accurate gradient function based on 2nd order version from http://projects.scipy.org/scipy/numpy/browser/trunk/numpy/lib/function_base.py

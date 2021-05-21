@@ -1,6 +1,5 @@
 import numpy               as np
 import matplotlib.pyplot   as plt
-import matplotlib.gridspec as gridspec
 from itertools             import combinations
 from mayavi                import mlab
 
@@ -76,7 +75,7 @@ class SuperMode(object):
 
     def PlotPropagation(self):
 
-        image = np.abs( self.FullField(0) )
+        image, xAxis, yAxis = np.abs( self.FullField(0) )
 
         mlab.surf(image, warp_scale="auto")
 
@@ -95,12 +94,12 @@ class SuperMode(object):
         Field      = self.Field[iter]
         Symmetries = [self.xSym[iter], self.ySym[iter]]
 
-        Field, _, _ = RecomposeSymmetries(Input      = Field,
-                                          Symmetries = Symmetries,
-                                          Xaxis      = self.Axes[iter].Direct.X,
-                                          Yaxis      = self.Axes[iter].Direct.Y)
+        Field, xAxis, yAxis = RecomposeSymmetries(Input      = Field,
+                                                  Symmetries = Symmetries,
+                                                  Xaxis      = self.Axes[iter].Direct.X,
+                                                  Yaxis      = self.Axes[iter].Direct.Y)
 
-        return Field
+        return Field, xAxis, yAxis
 
 
 
@@ -110,6 +109,7 @@ class SuperSet(SetProperties, SetPlots):
         self.NSolutions   = NSolutions
         self.SuperModes   = []
         self.ITR          = ITR
+        self.Symmetries   = None
         self.Init()
 
         self.combinations = tuple(combinations( np.arange(NSolutions), 2 ) )
