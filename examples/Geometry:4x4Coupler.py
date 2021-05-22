@@ -1,10 +1,6 @@
 from SuPyModes.Geometry          import Geometry, Circle, Fused4
-from SuPyModes.Solver            import SuPySolver
 from SuPyModes.sellmeier         import Fused_silica
 
-Clad = Fused4(Radius =  62.5,
-              Fusion  = 0.2,
-              Index   = Fused_silica(1.55))
-
+Clad = Fused4(Radius = 62.5, Fusion = 0.2, Index = Fused_silica(1.55))
 
 Clad.Plot()
