@@ -4,3 +4,9 @@ upload:
 
 read:
 	google-chrome docs/build/html/index.html
+
+doc:
+	make -C docs html
+
+clean:
+	make -C docs clean
