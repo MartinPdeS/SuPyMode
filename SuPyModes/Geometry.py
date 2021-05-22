@@ -127,8 +127,6 @@ class Geometry(object):
 
 
 
-
-
 class Circle(object):
     def __init__(self, Position, Radi, Index):
         self.Points   = Position
@@ -136,38 +134,13 @@ class Circle(object):
         self.Index    = Index
         self.Init()
 
-
     def Init(self):
         self.Object = MakeCircles([self.Points], [self.Radi])[0]
+        self.C      = [Point(0,0)]
 
 
     def Plot(self):
-
-        fig = plt.figure(figsize=(5,5))
-
-        ax = fig.add_subplot(111)
-
-        ax.grid()
-
-        ax.set_ylabel(r'Distance Y-axis [$\mu m$]')
-        ax.set_xlabel(r'Distance X-axis [$\mu m$]')
-        ax.set_title(r'Geometrical configuration', fontsize=10)
-
-
-        for object in self.Object:
-            ax.add_patch(PolygonPatch(object, alpha=0.5))
-
-
-        for n, point in enumerate( self.Points ):
-            ax.scatter(point.x, point.y)
-            ax.text(point.x, point.y, f'P{n+1}')
-
-        minx, miny, maxx, maxy = cascaded_union(self.Object).bounds
-
-        ax.set_xlim( [ minx, maxx ] )
-        ax.set_ylim( [ miny, maxy ] )
-
-        plt.show()
+        PlotObject(Full = [self.Object] + self.C)
 
 
 class BaseFused():
@@ -252,8 +225,8 @@ class BaseFused():
         Removed = self.GetRemoved()
 
         Coupler = ObjectUnion(self.Fibers + [Added])
-
-        Coupler = MultiPolygon([P for P in ToList(Coupler) if not isinstance(P, Point)])
+        if isinstance(Coupler, GeometryCollection):
+            Coupler = MultiPolygon([P for P in Coupler if not isinstance(P, Point)])
 
         eps = 0.2
         Coupler = Coupler.buffer(eps).buffer(-eps)

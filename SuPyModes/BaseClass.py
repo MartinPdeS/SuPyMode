@@ -18,7 +18,6 @@ class SetPlots(object):
         I = self.Index
         self.GetFigure(CouplingDict)
         for i in range(self.NSolutions):
-            print(i)
             plt.plot(self.ITR, I[i], label=f'{i}')
         plt.legend(fontsize=6, title="Modes", fancybox=True)
 
@@ -72,8 +71,6 @@ class SetPlots(object):
 
 
     def Plot(self, *args, iter=0):
-        self.OrderingModes()
-
         if 'Index' in args: self.PlotIndex()
 
         if 'Coupling' in args: self.PlotCoupling()

@@ -17,7 +17,7 @@
     <link rel="search" title="Search" href="search.html" /> 
   </head><body>
         <div style="background-color: gray; text-align: left; padding: 10px 10px 15px 15px">
-        <a href="index.html"><h1 style="font-size: 3em;">PyMieSim</h1></a>
+        <a href="index.html"><h1 style="font-size: 3em;">SuPyModes</h1></a>
         </div>
         
     <div class="related" role="navigation" aria-label="related navigation">
@@ -44,42 +44,35 @@
             
   <div class="section" id="examples">
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="generate-geometry">
+<h2>Generate Geometry<a class="headerlink" href="#generate-geometry" title="Permalink to this headline">¶</a></h2>
 <div class="literal-block-wrapper docutils container" id="id1">
 <div class="code-block-caption"><span class="caption-text"><strong>Scatterer: Index</strong></span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SuPyModes.Geometry</span>          <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Fused2</span><span class="p">,</span> <span class="n">Circle</span>
-<span class="kn">from</span> <span class="nn">SuPyModes.Solver</span>            <span class="kn">import</span> <span class="n">SuPySolver</span>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SuPyModes.Geometry</span>          <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Circle</span>
+<span class="kn">from</span> <span class="nn">SuPyModes.sellmeier</span>         <span class="kn">import</span> <span class="n">Fused_silica</span>
+
+<span class="n">Clad</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span><span class="n">Radi</span> <span class="o">=</span>  <span class="mf">62.5</span><span class="p">,</span> <span class="n">Position</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">))</span>
+
+<span class="n">Clad</span><span class="o">.</span><span class="n">Plot</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<a class="reference internal image-reference" href="_images/Geometry:1x1coupler.png"><img alt="_images/Geometry:1x1coupler.png" src="_images/Geometry:1x1coupler.png" style="width: 600px;" /></a>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text"><strong>Scatterer: Index</strong></span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SuPyModes.Geometry</span>          <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Fused2</span>
 <span class="kn">from</span> <span class="nn">SuPyModes.sellmeier</span>         <span class="kn">import</span> <span class="n">Fused_silica</span>
 
 <span class="n">Clad</span> <span class="o">=</span> <span class="n">Fused2</span><span class="p">(</span><span class="n">Radius</span> <span class="o">=</span>  <span class="mf">62.5</span><span class="p">,</span>
@@ -87,117 +80,29 @@
               <span class="n">Index</span>   <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">))</span>
 
 <span class="n">Clad</span><span class="o">.</span><span class="n">Plot</span><span class="p">()</span>
-
-<span class="n">Core0</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span> <span class="n">Position</span><span class="o">=</span><span class="n">Clad</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Radi</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">)</span><span class="o">+</span><span class="mf">0.005</span> <span class="p">)</span>
-
-<span class="n">Core1</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span> <span class="n">Position</span><span class="o">=</span><span class="n">Clad</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Radi</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">)</span><span class="o">+</span><span class="mf">0.005</span> <span class="p">)</span>
-
-<span class="n">Geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="p">(</span><span class="n">Objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">Clad</span><span class="p">,</span> <span class="n">Core0</span><span class="p">,</span> <span class="n">Core1</span><span class="p">],</span>
-               <span class="n">Xbound</span>  <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">120</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span>
-               <span class="n">Ybound</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span>
-               <span class="n">Nx</span>      <span class="o">=</span> <span class="mi">150</span><span class="p">,</span>
-               <span class="n">Ny</span>      <span class="o">=</span> <span class="mi">150</span><span class="p">,</span>
-               <span class="n">Xsym</span>    <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-               <span class="n">Ysym</span>    <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-
-<span class="n">Geo</span><span class="o">.</span><span class="n">Plot</span><span class="p">()</span>
-
-<span class="n">Sol</span> <span class="o">=</span> <span class="n">SuPySolver</span><span class="p">(</span><span class="n">Coupler</span><span class="o">=</span><span class="n">Geo</span><span class="p">)</span>
-
-<span class="n">SuperModes</span> <span class="o">=</span> <span class="n">Sol</span><span class="o">.</span><span class="n">GetModes</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mf">1.55</span><span class="p">,</span> <span class="n">Nstep</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">Nsol</span><span class="o">=</span><span class="mi">5</span> <span class="p">)</span>
-
-<span class="n">SuperModes</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="s1">&#39;Adiabatic&#39;</span><span class="p">)</span>
-
-<span class="n">SuperModes</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="s1">&#39;Fields&#39;</span><span class="p">)</span>
-
-<span class="n">SuperModes</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="s1">&#39;Coupling&#39;</span><span class="p">,</span><span class="nb">iter</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
 </div>
-<a class="reference internal image-reference" href="_images/2x2coupler_0.png"><img alt="_images/2x2coupler_0.png" src="_images/2x2coupler_0.png" style="width: 600px;" /></a>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text"><strong>Scatterer: Index</strong></span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SuPyModes.Geometry</span>          <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">Fused3</span>
-<span class="kn">from</span> <span class="nn">SuPyModes.Solver</span>            <span class="kn">import</span> <span class="n">SuPySolver</span>
-<span class="kn">from</span> <span class="nn">SuPyModes.sellmeier</span>         <span class="kn">import</span> <span class="n">Fused_silica</span>
-
-<span class="n">Clad</span> <span class="o">=</span> <span class="n">Fused3</span><span class="p">(</span><span class="n">Radius</span> <span class="o">=</span>  <span class="mf">62.5</span><span class="p">,</span>
-              <span class="n">Fusion</span>  <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
-              <span class="n">Index</span>   <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">))</span>
-
-<span class="n">Clad</span><span class="o">.</span><span class="n">Plot</span><span class="p">()</span>
-
-<span class="n">Core0</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span> <span class="n">Position</span><span class="o">=</span><span class="n">Clad</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Radi</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">)</span><span class="o">+</span><span class="mf">0.005</span> <span class="p">)</span>
-
-<span class="n">Core1</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span> <span class="n">Position</span><span class="o">=</span><span class="n">Clad</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Radi</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">)</span><span class="o">+</span><span class="mf">0.005</span> <span class="p">)</span>
-
-<span class="n">Core2</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span> <span class="n">Position</span><span class="o">=</span><span class="n">Clad</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">Radi</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">)</span><span class="o">+</span><span class="mf">0.005</span> <span class="p">)</span>
-
-
-<span class="n">Geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="p">(</span><span class="n">Objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">Clad</span><span class="p">,</span> <span class="n">Core0</span><span class="p">,</span> <span class="n">Core1</span><span class="p">,</span> <span class="n">Core2</span><span class="p">],</span>
-               <span class="n">Xbound</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span>
-               <span class="n">Ybound</span>  <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="mi">130</span><span class="p">],</span>
-               <span class="n">Nx</span>      <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-               <span class="n">Ny</span>      <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-               <span class="n">Xsym</span>    <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-               <span class="n">Ysym</span>    <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
-
-<span class="n">Geo</span><span class="o">.</span><span class="n">Plot</span><span class="p">()</span>
-
-<span class="n">Sol</span> <span class="o">=</span> <span class="n">SuPySolver</span><span class="p">(</span><span class="n">Coupler</span><span class="o">=</span><span class="n">Geo</span><span class="p">)</span>
-
-<span class="n">SuperModes</span> <span class="o">=</span> <span class="n">Sol</span><span class="o">.</span><span class="n">GetModes</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mf">1.55</span><span class="p">,</span> <span class="n">Nstep</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">Nsol</span><span class="o">=</span><span class="mi">3</span> <span class="p">)</span>
-
-
-
-<span class="c1">#SuperModes.Plot(&#39;Adiabatic&#39;)</span>
-
-<span class="c1">#SuperModes.Plot(&#39;Fields&#39;)</span>
-
-<span class="c1">#SuperModes.Plot(&#39;Coupling&#39;,iter=0)</span>
-</pre></div>
-</td></tr></table></div>
-</div>
-<a class="reference internal image-reference" href="_images/3x3coupler_0.png"><img alt="_images/3x3coupler_0.png" src="_images/3x3coupler_0.png" style="width: 600px;" /></a>
+<a class="reference internal image-reference" href="_images/Geometry:2x2coupler.png"><img alt="_images/Geometry:2x2coupler.png" src="_images/Geometry:2x2coupler.png" style="width: 600px;" /></a>
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text"><strong>Scatterer: Index</strong></span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SuPyModes.Geometry</span>          <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">Fused3</span>
+<span class="kn">from</span> <span class="nn">SuPyModes.sellmeier</span>         <span class="kn">import</span> <span class="n">Fused_silica</span>
+
+<span class="n">Clad</span> <span class="o">=</span> <span class="n">Fused3</span><span class="p">(</span><span class="n">Radius</span> <span class="o">=</span>  <span class="mf">62.5</span><span class="p">,</span> <span class="n">Fusion</span>  <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">Index</span>   <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">))</span>
+
+<span class="n">Clad</span><span class="o">.</span><span class="n">Plot</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<a class="reference internal image-reference" href="_images/Geometry:3x3coupler.png"><img alt="_images/Geometry:3x3coupler.png" src="_images/Geometry:3x3coupler.png" style="width: 600px;" /></a>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text"><strong>Scatterer: Index</strong></span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -207,36 +112,7 @@
  7
  8
  9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SuPyModes.Geometry</span>          <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">Fused4</span>
+10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SuPyModes.Geometry</span>          <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">Fused4</span>
 <span class="kn">from</span> <span class="nn">SuPyModes.Solver</span>            <span class="kn">import</span> <span class="n">SuPySolver</span>
 <span class="kn">from</span> <span class="nn">SuPyModes.sellmeier</span>         <span class="kn">import</span> <span class="n">Fused_silica</span>
 
@@ -246,6 +122,208 @@
 
 
 <span class="n">Clad</span><span class="o">.</span><span class="n">Plot</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<a class="reference internal image-reference" href="_images/Geometry:4x4coupler.png"><img alt="_images/Geometry:4x4coupler.png" src="_images/Geometry:4x4coupler.png" style="width: 600px;" /></a>
+</div>
+<div class="section" id="compute-indexes">
+<h2>Compute indexes<a class="headerlink" href="#compute-indexes" title="Permalink to this headline">¶</a></h2>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text"><strong>Scatterer: Index</strong></span><a class="headerlink" href="#id5" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SuPyModes.Geometry</span>          <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Circle</span>
+<span class="kn">from</span> <span class="nn">SuPyModes.Solver</span>            <span class="kn">import</span> <span class="n">SuPySolver</span>
+<span class="kn">from</span> <span class="nn">SuPyModes.sellmeier</span>         <span class="kn">import</span> <span class="n">Fused_silica</span>
+
+<span class="n">Clad</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span><span class="n">Radi</span> <span class="o">=</span>  <span class="mf">62.5</span><span class="p">,</span> <span class="n">Position</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>
+
+<span class="n">Core0</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span> <span class="n">Position</span><span class="o">=</span><span class="n">Clad</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Radi</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="o">+</span><span class="mf">0.005</span> <span class="p">)</span>
+
+<span class="n">Geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="p">(</span><span class="n">Objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">Clad</span><span class="p">,</span> <span class="n">Core0</span><span class="p">],</span>
+               <span class="n">Xbound</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span>
+               <span class="n">Ybound</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span>
+               <span class="n">Nx</span>      <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+               <span class="n">Ny</span>      <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+               <span class="n">Xsym</span>    <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+               <span class="n">Ysym</span>    <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">Sol</span> <span class="o">=</span> <span class="n">SuPySolver</span><span class="p">(</span><span class="n">Coupler</span><span class="o">=</span><span class="n">Geo</span><span class="p">)</span>
+
+<span class="n">SuperModes</span> <span class="o">=</span> <span class="n">Sol</span><span class="o">.</span><span class="n">GetModes</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">Nstep</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">Nsol</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span>
+
+<span class="n">SuperModes</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="s1">&#39;Index&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<a class="reference internal image-reference" href="_images/Index:1x1coupler.png"><img alt="_images/Index:1x1coupler.png" src="_images/Index:1x1coupler.png" style="width: 600px;" /></a>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text"><strong>Scatterer: Index</strong></span><a class="headerlink" href="#id6" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SuPyModes.Geometry</span>          <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Fused2</span><span class="p">,</span> <span class="n">Circle</span>
+<span class="kn">from</span> <span class="nn">SuPyModes.Solver</span>            <span class="kn">import</span> <span class="n">SuPySolver</span>
+<span class="kn">from</span> <span class="nn">SuPyModes.sellmeier</span>         <span class="kn">import</span> <span class="n">Fused_silica</span>
+
+<span class="n">Clad</span> <span class="o">=</span> <span class="n">Fused2</span><span class="p">(</span><span class="n">Radius</span> <span class="o">=</span>  <span class="mf">62.5</span><span class="p">,</span>
+              <span class="n">Fusion</span>  <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+              <span class="n">Index</span>   <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">))</span>
+
+<span class="n">Core0</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span> <span class="n">Position</span><span class="o">=</span><span class="n">Clad</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Radi</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">)</span><span class="o">+</span><span class="mf">0.005</span> <span class="p">)</span>
+
+<span class="n">Core1</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span> <span class="n">Position</span><span class="o">=</span><span class="n">Clad</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Radi</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">)</span><span class="o">+</span><span class="mf">0.005</span> <span class="p">)</span>
+
+<span class="n">Geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="p">(</span><span class="n">Objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">Clad</span><span class="p">,</span> <span class="n">Core0</span><span class="p">,</span> <span class="n">Core1</span><span class="p">],</span>
+               <span class="n">Xbound</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span>
+               <span class="n">Ybound</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">],</span>
+               <span class="n">Nx</span>      <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+               <span class="n">Ny</span>      <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+               <span class="n">Xsym</span>    <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+               <span class="n">Ysym</span>    <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">Sol</span> <span class="o">=</span> <span class="n">SuPySolver</span><span class="p">(</span><span class="n">Coupler</span><span class="o">=</span><span class="n">Geo</span><span class="p">)</span>
+
+<span class="n">SuperModes</span> <span class="o">=</span> <span class="n">Sol</span><span class="o">.</span><span class="n">GetModes</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mf">1.55</span><span class="p">,</span> <span class="n">Nstep</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">Nsol</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span>
+
+<span class="n">SuperModes</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="s1">&#39;Index&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<a class="reference internal image-reference" href="_images/Index:2x2coupler.png"><img alt="_images/Index:2x2coupler.png" src="_images/Index:2x2coupler.png" style="width: 600px;" /></a>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text"><strong>Scatterer: Index</strong></span><a class="headerlink" href="#id7" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SuPyModes.Geometry</span>          <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">Fused3</span>
+<span class="kn">from</span> <span class="nn">SuPyModes.Solver</span>            <span class="kn">import</span> <span class="n">SuPySolver</span>
+<span class="kn">from</span> <span class="nn">SuPyModes.sellmeier</span>         <span class="kn">import</span> <span class="n">Fused_silica</span>
+
+<span class="n">Clad</span> <span class="o">=</span> <span class="n">Fused3</span><span class="p">(</span><span class="n">Radius</span> <span class="o">=</span>  <span class="mf">62.5</span><span class="p">,</span> <span class="n">Fusion</span>  <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">Index</span>   <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">))</span>
+
+<span class="n">Core0</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span> <span class="n">Position</span><span class="o">=</span><span class="n">Clad</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Radi</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">)</span><span class="o">+</span><span class="mf">0.005</span> <span class="p">)</span>
+
+<span class="n">Core1</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span> <span class="n">Position</span><span class="o">=</span><span class="n">Clad</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Radi</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">)</span><span class="o">+</span><span class="mf">0.005</span> <span class="p">)</span>
+
+<span class="n">Core2</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span> <span class="n">Position</span><span class="o">=</span><span class="n">Clad</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">Radi</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">)</span><span class="o">+</span><span class="mf">0.005</span> <span class="p">)</span>
+
+<span class="n">Geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="p">(</span><span class="n">Objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">Clad</span><span class="p">,</span> <span class="n">Core0</span><span class="p">,</span> <span class="n">Core1</span><span class="p">,</span> <span class="n">Core2</span><span class="p">],</span>
+               <span class="n">Xbound</span>  <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">120</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span>
+               <span class="n">Ybound</span>  <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">110</span><span class="p">,</span> <span class="mi">130</span><span class="p">],</span>
+               <span class="n">Nx</span>      <span class="o">=</span> <span class="mi">150</span><span class="p">,</span>
+               <span class="n">Ny</span>      <span class="o">=</span> <span class="mi">150</span><span class="p">,</span>
+               <span class="n">Xsym</span>    <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+               <span class="n">Ysym</span>    <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="n">Sol</span> <span class="o">=</span> <span class="n">SuPySolver</span><span class="p">(</span><span class="n">Coupler</span><span class="o">=</span><span class="n">Geo</span><span class="p">)</span>
+
+<span class="n">SuperModes</span> <span class="o">=</span> <span class="n">Sol</span><span class="o">.</span><span class="n">GetModes</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mf">1.55</span><span class="p">,</span> <span class="n">Nstep</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">Nsol</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span>
+
+<span class="n">SuperModes</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="s1">&#39;Index&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<a class="reference internal image-reference" href="_images/Index:3x3coupler.png"><img alt="_images/Index:3x3coupler.png" src="_images/Index:3x3coupler.png" style="width: 600px;" /></a>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text"><strong>Scatterer: Index</strong></span><a class="headerlink" href="#id8" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SuPyModes.Geometry</span>          <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">Fused4</span>
+<span class="kn">from</span> <span class="nn">SuPyModes.Solver</span>            <span class="kn">import</span> <span class="n">SuPySolver</span>
+<span class="kn">from</span> <span class="nn">SuPyModes.sellmeier</span>         <span class="kn">import</span> <span class="n">Fused_silica</span>
+
+<span class="n">Clad</span> <span class="o">=</span> <span class="n">Fused4</span><span class="p">(</span><span class="n">Radius</span> <span class="o">=</span>  <span class="mf">62.5</span><span class="p">,</span>
+              <span class="n">Fusion</span>  <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+              <span class="n">Index</span>   <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">))</span>
 
 <span class="n">Core0</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span> <span class="n">Position</span><span class="o">=</span><span class="n">Clad</span><span class="o">.</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Radi</span> <span class="o">=</span> <span class="mf">4.2</span><span class="p">,</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">Fused_silica</span><span class="p">(</span><span class="mf">1.55</span><span class="p">)</span><span class="o">+</span><span class="mf">0.005</span> <span class="p">)</span>
 
@@ -259,26 +337,28 @@
 <span class="n">Geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="p">(</span><span class="n">Objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">Clad</span><span class="p">,</span> <span class="n">Core0</span><span class="p">,</span> <span class="n">Core1</span><span class="p">,</span> <span class="n">Core2</span><span class="p">,</span> <span class="n">Core3</span><span class="p">],</span>
                <span class="n">Xbound</span>  <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">120</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span>
                <span class="n">Ybound</span>  <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">120</span><span class="p">,</span> <span class="mi">120</span><span class="p">],</span>
-               <span class="n">Nx</span>      <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
-               <span class="n">Ny</span>      <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+               <span class="n">Nx</span>      <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+               <span class="n">Ny</span>      <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
                <span class="n">Xsym</span>    <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                <span class="n">Ysym</span>    <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 
-<span class="n">Geo</span><span class="o">.</span><span class="n">Plot</span><span class="p">()</span>
-
 <span class="n">Sol</span> <span class="o">=</span> <span class="n">SuPySolver</span><span class="p">(</span><span class="n">Coupler</span><span class="o">=</span><span class="n">Geo</span><span class="p">)</span>
 
-<span class="n">SuperModes</span> <span class="o">=</span> <span class="n">Sol</span><span class="o">.</span><span class="n">GetModes</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mf">1.55</span><span class="p">,</span> <span class="n">Nstep</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">Nsol</span><span class="o">=</span><span class="mi">4</span> <span class="p">)</span>
+<span class="n">SuperModes</span> <span class="o">=</span> <span class="n">Sol</span><span class="o">.</span><span class="n">GetModes</span><span class="p">(</span><span class="n">wavelength</span><span class="o">=</span><span class="mf">1.55</span><span class="p">,</span> <span class="n">Nstep</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">Nsol</span><span class="o">=</span><span class="mi">15</span> <span class="p">)</span>
 
-<span class="n">SuperModes</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="s1">&#39;Adiabatic&#39;</span><span class="p">)</span>
-
-<span class="n">SuperModes</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="s1">&#39;Fields&#39;</span><span class="p">)</span>
-
-<span class="n">SuperModes</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="s1">&#39;Coupling&#39;</span><span class="p">,</span><span class="nb">iter</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">SuperModes</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="s1">&#39;Index&#39;</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
 </div>
-<a class="reference internal image-reference" href="_images/4x4coupler_0.png"><img alt="_images/4x4coupler_0.png" src="_images/4x4coupler_0.png" style="width: 600px;" /></a>
+<a class="reference internal image-reference" href="_images/Index:4x4coupler.png"><img alt="_images/Index:4x4coupler.png" src="_images/Index:4x4coupler.png" style="width: 600px;" /></a>
+</div>
+<div class="section" id="compute-coupling">
+<h2>Compute coupling<a class="headerlink" href="#compute-coupling" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="compute-adiabatic">
+<h2>Compute adiabatic<a class="headerlink" href="#compute-adiabatic" title="Permalink to this headline">¶</a></h2>
+<p># -</p>
+</div>
 </div>
 
 
@@ -288,6 +368,17 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Examples</a><ul>
+<li><a class="reference internal" href="#generate-geometry">Generate Geometry</a></li>
+<li><a class="reference internal" href="#compute-indexes">Compute indexes</a></li>
+<li><a class="reference internal" href="#compute-coupling">Compute coupling</a></li>
+<li><a class="reference internal" href="#compute-adiabatic">Compute adiabatic</a></li>
+</ul>
+</li>
+</ul>
+
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">

@@ -3,6 +3,7 @@
 import sys, copy, pickle
 from progressbar import Bar, Percentage, ETA, ProgressBar
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import matplotlib.colors as colors
 import copy
 import pandas as pd
@@ -97,6 +98,7 @@ class SuPySolver(object):
                     'Ny'        : self.info['Shape'][1]}
 
 
+        self.debug = debug
         self.Shape = self.info['Shape']
 
         self.Nstep, self.ITRf, self.Nsol = Nstep, ITRf, Nsol
@@ -160,6 +162,8 @@ class SuPySolver(object):
 
             bar.update(self.iter)
 
+        self.Set.OrderingModes()
+
 
     def GetEigenVectors(self, Nsol=1, Tolerance=1e-8, MaxIter=None):
 
@@ -194,6 +198,19 @@ class SuPySolver(object):
                                       xSym   = self.Geometry.Xsym,
                                       ySym   = self.Geometry.Ysym,
                                       Axes   = self.Axes)
+
+        if self.debug:
+            fig   = plt.figure(figsize=((Nsol)*3,3))
+            spec2 = gridspec.GridSpec(ncols=(Nsol), nrows=3, figure=fig)
+
+            for solution in range(Nsol):
+                axes = fig.add_subplot(spec2[0:2,solution])
+                axes.pcolormesh(vectors[:,solution].reshape(self.Shape).T, shading='auto')
+                axes.set_title(f'neff: {betas[solution] / self.Axes.Direct.k:.4f}', fontsize=7)
+
+            plt.show()
+
+
 
 
     def load_file(self, dir: str):
