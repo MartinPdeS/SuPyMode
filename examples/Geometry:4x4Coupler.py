@@ -30,7 +30,7 @@ Geo.Plot()
 
 Sol = SuPySolver(Coupler=Geo)
 
-SuperModes = Sol.GetModes(wavelength=1.55, Nstep=50, Nsol=4 )
+SuperModes = Sol.GetModes(wavelength=1.55, Nstep=5, Nsol=4 )
 
 SuperModes.Plot('Adiabatic')
 

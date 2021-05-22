@@ -253,7 +253,7 @@ class BaseFused():
 
         Coupler = ObjectUnion(self.Fibers + [Added])
 
-        Coupler = MultiPolygon([P for P in ToList(Coupler) if not isinstance(P, Point)])
+        Coupler = MultiPolygon([P for P in Coupler if not isinstance(P, Point)])
 
         eps = 0.2
         Coupler = Coupler.buffer(eps).buffer(-eps)
