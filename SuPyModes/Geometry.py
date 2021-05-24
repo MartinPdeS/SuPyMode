@@ -5,7 +5,9 @@ import numpy as np
 from matplotlib.path import Path
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
+import matplotlib        as mpl
 import matplotlib.colors as colors
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from itertools        import combinations
 from scipy.optimize   import minimize_scalar
 from shapely.geometry import Point, LineString, MultiPolygon, Polygon
@@ -42,18 +44,10 @@ from numpy            import pi, cos, sin, sqrt, abs, exp, array, ndarray
 
 
 class Geometry(object):
-    def __init__(self, Objects, Xbound, Ybound, Nx, Ny, Xsym, Ysym):
-
-
-        #Xsym, Ysym      = Ysym, Xsym  # <-------- something is fucked somewhere else!
-
-        self.Xsym       = Xsym
-
-        self.Ysym       = Ysym
-
-        self.Symmetries = [ Xsym, Ysym ]
-
+    def __init__(self, Objects, Xbound, Ybound, Nx, Ny):
         self.Objects    = ToList(Objects)
+
+        self.Indices = [1] + [obj.Index for obj in Objects]
 
         self.Boundaries = [Xbound, Ybound]
 
@@ -114,14 +108,29 @@ class Geometry(object):
         ax.set_ylabel(r'Y-distance [$\mu$m]')
         ax.set_xlabel(r'X-distance [$\mu$m]')
 
-        pcm = ax.pcolormesh(
-                            np.linspace(*self.Boundaries[0], np.shape(self.mesh)[0]),
-                            np.linspace(*self.Boundaries[1], np.shape(self.mesh)[1]),
+        x = np.linspace(*self.Boundaries[0], np.shape(self.mesh)[0])
+        y = np.linspace(*self.Boundaries[1], np.shape(self.mesh)[1])
+
+        pcm = ax.contourf(
+                            x,
+                            y,
                             self.mesh,
                             cmap    = 'PuBu_r',
                             shading = 'auto',
-                            norm    = colors.LogNorm(vmin = 1.42, vmax=self.mesh.max()))
+                            #norm    = colors.LogNorm(vmin=self.mesh.min(), vmax=self.mesh.max())
+                            )
 
+        ax.contour(x, y, self.mesh, levels=self.Indices, colors='k')
+
+        cmap = mpl.cm.viridis
+
+        norm = colors.BoundaryNorm(self.Indices, cmap.N, extend='both')
+
+
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes("right", size="5%", pad=0.05)
+
+        fig.colorbar(pcm, ax=ax, cax=cax, format='%.4f')
         ax.set_aspect('equal')
         plt.show()
 

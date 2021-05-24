@@ -1,10 +1,11 @@
 import numpy               as np
+import copy                as cp
 import matplotlib.pyplot   as plt
-from itertools             import combinations
+from itertools             import combinations, combinations_with_replacement as Combinations
 from mayavi                import mlab
 
 from SuPyModes.Config      import *
-from SuPyModes.utils       import RecomposeSymmetries
+from SuPyModes.utils       import RecomposeSymmetries, SortSuperSet
 from SuPyModes.BaseClass   import SetPlots, SetProperties
 from SuPyModes.Special     import Overlap, GeoGradient, ModeCoupling, ModeAdiabatic
 
@@ -114,9 +115,12 @@ class SuperSet(SetProperties, SetPlots):
         self.SuperModes   = []
         self.ITR          = ITR
         self.Symmetries   = None
+        self._Coupling     = None
+        self._Adiabatic    = None
         self.Init()
 
         self.combinations = tuple(combinations( np.arange(NSolutions), 2 ) )
+        self.Combinations = tuple(Combinations( np.arange(NSolutions), 2 ) )
 
 
     def Init(self):
@@ -131,18 +135,49 @@ class SuperSet(SetProperties, SetPlots):
         return self.SuperModes[N]
 
 
+    def __setitem__(self, N, val):
+        self.SuperModes[N] = val
+
+
     def SwapProperties(self, SuperMode0, SuperMode1, N):
-        S0 = SuperMode0
-        S1 = SuperMode1
+        S0, S1 = SuperMode0, SuperMode1
+
         for p in PROPERTIES:
-            getattr(S0, p)[N], getattr(S1, p)[N] = getattr(S1, p)[N], getattr(S0, p)[N]
+            getattr(S0, p)[N] = getattr(S1, p)[N]
 
 
-    def OrderingModes(self):
-        for (i,j) in self.combinations:
-            for n, ITR in enumerate(self.ITR):
-                if i < j  and self[i].Index[n] < self[j].Index[n]:
-                    self.SwapProperties(self[i], self[j], n)
+    def Ordering(self):
+        pass
+        #self.SuperModes = SortFields(self.SuperModes)
+        #for iter, _ in enumerate( self.ITR ):
+        #    self.OrderingModes(iter)
+
+    def Debug(self):
+        for n, itr in enumerate( self.ITR ):
+            self.Plot('Fields', iter=n)
+
+
+    def OrderingModes(self, iter):
+        lst = [ self[mode].Index[iter] for mode in range( self.NSolutions ) ]
+
+        sortedIndex = sorted(range(len(lst)), key = lambda k: lst[k])
+
+        self.SortedIndex = sortedIndex[::-1]
+
+        temporary = cp.deepcopy( self.SuperModes )
+
+        for n, m  in enumerate( self.SortedIndex ):
+            if n != m:
+                self.SwapProperties(self[n], temporary[m], iter)
+            # plt.figure()
+            # plt.plot(self[n].Index)
+            # plt.plot(self.SuperModes[n].Index,'*')
+            # plt.show()
+
+
+
+
+
 
 
 

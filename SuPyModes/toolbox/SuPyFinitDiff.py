@@ -3,9 +3,6 @@
 import numpy as np
 from scipy.sparse import spdiags
 
-""" package imports """
-global config
-import SuPyModes.config.config as config
 #-------------------------Importations------------------------------------------
 
 class SuPyFinitdifference(object):
@@ -16,7 +13,7 @@ class SuPyFinitdifference(object):
         self.Axes = Axes
 
 
-    def second_order_y_symmetry(self, e0, e1, e2, e3, e4):
+    def second_order_x_symmetry(self, e0, e1, e2, e3, e4):
         """
         Function that return 5 tables, the last of which has been modified
         (part of the coefficients has been multiplied by 2)
@@ -38,7 +35,7 @@ class SuPyFinitdifference(object):
         return e0, e1, e2, e3, e4
 
 
-    def second_order_y_Anti_symmetry(self, e0, e1, e2, e3, e4):
+    def second_order_x_Anti_symmetry(self, e0, e1, e2, e3, e4):
         """
         Function that return 5 tables, the last of which has been modified
         (part of the coefficients has been replaced by 0).
@@ -59,7 +56,7 @@ class SuPyFinitdifference(object):
         return e0, e1, e2, e3, e4
 
 
-    def third_order_y_symmetry(self, e0, e1, e2, e3, e4, e5, e6, e7, e8):
+    def third_order_x_symmetry(self, e0, e1, e2, e3, e4, e5, e6, e7, e8):
         """
         Functions that return 9 tables, the last two of which has been modified
         (part of the coefficients has been multiplied by 2)
@@ -83,7 +80,7 @@ class SuPyFinitdifference(object):
         return e0, e1, e2, e3, e4, e5, e6, e7, e8
 
 
-    def third_order_y_Anti_symmetry(self, e0, e1, e2, e3, e4, e5, e6, e7, e8):
+    def third_order_x_Anti_symmetry(self, e0, e1, e2, e3, e4, e5, e6, e7, e8):
         """
         Functions that return 9 tables, the last two of which has been modified
         (part of the coefficients has been replaced by 0)
@@ -107,7 +104,7 @@ class SuPyFinitdifference(object):
 
 
 
-    def second_order_x_symmetry(self, e0, e1, e2, e3, e4):
+    def second_order_y_symmetry(self, e0, e1, e2, e3, e4):
         """
         Function that return 5 tables, the last of which has been modified
         (part of the coefficients has been multiplied by 2)
@@ -129,7 +126,7 @@ class SuPyFinitdifference(object):
         return e0, e1, e2, e3, e4
 
 
-    def second_order_x_Anti_symmetry(self, e0, e1, e2, e3, e4):
+    def second_order_y_Anti_symmetry(self, e0, e1, e2, e3, e4):
         """
         Function that return 5 tables, the last of which has been modified
         (part of the coefficients has been replaced by 0).
@@ -151,7 +148,7 @@ class SuPyFinitdifference(object):
         return e0, e1, e2, e3, e4
 
 
-    def third_order_x_symmetry(self, e0, e1, e2, e3, e4, e5, e6, e7, e8):
+    def third_order_y_symmetry(self, e0, e1, e2, e3, e4, e5, e6, e7, e8):
         """
         Functions that return 9 tables, the last two of which has been modified
         (part of the coefficients has been multiplied by 2)
@@ -176,7 +173,7 @@ class SuPyFinitdifference(object):
         return e0, e1, e2, e3, e4, e5, e6, e7, e8
 
 
-    def third_order_x_Anti_symmetry(self, e0, e1, e2, e3, e4, e5, e6, e7, e8):
+    def third_order_y_Anti_symmetry(self, e0, e1, e2, e3, e4, e5, e6, e7, e8):
         """
         Functions that return 9 tables, the last two of which has been modified
         (part of the coefficients has been replaced by 0)
@@ -291,7 +288,7 @@ class SuPyFinitdifference(object):
         return e0, e1, e2, e3, e4, e5, e6, e7, e8
 
 
-    def laplacian_sparse(self, nk, x_symmetry=False, y_symmetry=False):
+    def laplacian_sparse(self, nk, x_symmetry=False, y_symmetry=False, error=2):
         """
         arguments:
             : param nk: Matrix containing the values n**2*k**2 for solving the
@@ -305,10 +302,10 @@ class SuPyFinitdifference(object):
             :call1: solver.laplacian_sparse()
         """
 
-        if config.error_order == 2:
-            self.second_order_laplacian_sparse(nk, x_symmetry, y_symmetry)
+        if error == 2:
+            self.second_order_laplacian_sparse(nk, x_symmetry, y_symmetry)  #<------------something fishy here
 
-        if config.error_order == 3:
+        if error == 3:
             self.third_order_laplacian_sparse(nk, x_symmetry, y_symmetry)
 
 

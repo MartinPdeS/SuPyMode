@@ -13,13 +13,20 @@ Core2 = Circle( Position=Clad.C[2], Radi = 4.2, Index = Fused_silica(1.55)+0.005
 Geo = Geometry(Objects = [Clad, Core0, Core1, Core2],
                Xbound  = [-120, 120],
                Ybound  = [-110, 130],
-               Nx      = 150,
-               Ny      = 150,
+               Nx      = 100,
+               Ny      = 100,
                Xsym    = 0,
                Ysym    = 0)
 
 Sol = SuPySolver(Coupler=Geo)
 
-SuperModes = Sol.GetModes(wavelength=1.55, Nstep=200, Nsol=12, debug=False )
+SuperModes = Sol.GetModes(wavelength = 1.55,
+                          Nstep      = 100,
+                          Nsol       = 12,
+                          debug      = False,
+                          ITRi       = .5,
+                          ITRf       = 0.25 )
 
-SuperModes.Plot('Coupling')
+SuperModes.GetCoupling()
+
+SuperModes.Plot('Coupling', nMax=4)

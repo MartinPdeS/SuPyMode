@@ -1,12 +1,14 @@
-import numpy as np
+import logging
+import numpy               as np
 import matplotlib.pyplot   as plt
 import matplotlib.gridspec as gridspec
+from itertools             import combinations
 
-from SuPyModes.Config import *
-from SuPyModes.utils  import RecomposeSymmetries
+from SuPyModes.Config      import *
+from SuPyModes.utils       import RecomposeSymmetries
+
 
 class SetPlots(object):
-
     def GetFigure(self, Dict):
         plt.figure(figsize=(8,4))
         plt.grid()
@@ -14,42 +16,47 @@ class SetPlots(object):
         plt.xlabel('ITR')
 
 
-    def PlotIndex(self):
+    def PlotIndex(self, nMax):
         I = self.Index
-        self.GetFigure(CouplingDict)
-        for i in range(self.NSolutions):
+        self.GetFigure(IndexDict)
+
+        for i in range(nMax):
             plt.plot(self.ITR, I[i], label=f'{i}')
         plt.legend(fontsize=6, title="Modes", fancybox=True)
 
 
-    def PlotCoupling(self):
+    def PlotCoupling(self, nMax):
         C = self.Coupling
+        comb = tuple(combinations( np.arange(nMax), 2 ) )
         self.GetFigure(IndexDict)
-        for n, (i,j) in enumerate( self.combinations ):
-            plt.plot(self.ITR[:-1], C[n], label=f'{i} - {j}')
+
+        for n, (i,j) in enumerate( comb ):
+            plt.plot(self.ITR[1:-1], C[i,j,1:], label=f'{i} - {j}')
         plt.legend(fontsize=6, title="Modes", fancybox=True)
 
 
-    def PlotAdiabatic(self):
+    def PlotAdiabatic(self, nMax):
         A = self.Adiabatic
         self.GetFigure(AdiabaticDict)
-        for n, (i,j) in enumerate( self.combinations ):
-            plt.semilogy(self.ITR[:-1], A[n], label=f'{i} - {j}')
+        comb = tuple(combinations( np.arange(nMax), 2 ) )
+
+        for n, (i,j) in enumerate( comb ):
+            plt.semilogy(self.ITR[1:-1], A[i,j,1:], label=f'{i} - {j}')
         plt.legend(fontsize=6, title="Modes", fancybox=True)
 
 
-    def PlotFields(self, iter):
+    def PlotFields(self, iter, nMax):
 
-        fig   = plt.figure(figsize=((self.NSolutions+1)*3,3))
-        spec2 = gridspec.GridSpec(ncols=(self.NSolutions+1), nrows=3, figure=fig)
+        fig   = plt.figure(figsize=((nMax+1)*3,3))
+        spec2 = gridspec.GridSpec(ncols=(nMax+1), nrows=3, figure=fig)
 
-        for mode in range(self.NSolutions):
+        for mode in range(nMax):
             Field, xaxis, yaxis = self[mode].FullField(iter)
             axes = fig.add_subplot(spec2[0:2,mode])
             axes.pcolormesh(yaxis, xaxis, Field, shading='auto')
             axes.set_aspect('equal')
             str   = r"$n_{eff}$"
-            title = f"Mode {mode} [{str}: {self[mode].Index[iter]:.4f}]"
+            title = f"Mode {mode} [{str}: {self[mode].Index[iter]:.6f}]"
             axes.set_title(title, fontsize=8)
             if mode == 0:
                 axes.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
@@ -64,20 +71,21 @@ class SetPlots(object):
 
         axes.pcolormesh(yaxis, xaxis, np.abs(Profile), shading='auto')
         axes.set_aspect('equal')
-        title = f"Index profile"
+        title = f"Index profile [ITR: {self.ITR[iter]:.3f}]"
         axes.set_title(title, fontsize=8)
         plt.tight_layout()
 
 
 
-    def Plot(self, *args, iter=0):
-        if 'Index' in args: self.PlotIndex()
+    def Plot(self, args, iter=0, nMax=None):
+        if not nMax: nMax = len(self.SuperModes)
+        if 'Index'     in args: self.PlotIndex(nMax=nMax)
 
-        if 'Coupling' in args: self.PlotCoupling()
+        if 'Coupling'  in args: self.PlotCoupling(nMax=nMax)
 
-        if 'Adiabatic' in args: self.PlotAdiabatic()
+        if 'Adiabatic' in args: self.PlotAdiabatic(nMax=nMax)
 
-        if 'Fields' in args: self.PlotFields(iter)
+        if 'Fields'    in args: self.PlotFields(iter, nMax=nMax)
 
         plt.show()
 
@@ -85,6 +93,7 @@ class SetPlots(object):
 class SetProperties(object):
     @property
     def Index(self):
+        logging.info('Computing effective indices...')
         I = []
         for i in range(self.NSolutions):
             I.append( self[i].Index )
@@ -94,6 +103,7 @@ class SetProperties(object):
 
     @property
     def Beta(self):
+        logging.info(r'Computing mode propagation constant ($\beta$)...')
         B = []
         for i in range(self.NSolutions):
             B.append( self[i].Beta )
@@ -103,17 +113,48 @@ class SetProperties(object):
 
     @property
     def Coupling(self):
-        C = []
-        for (i,j) in self.combinations:
-            C.append( self[i].GetCoupling(self[j]) )
-
-        return C
+        if not isinstance(self._Coupling, np.ndarray):
+            self.GetCoupling()
+            return self._Coupling
+        else:
+            return self._Coupling
 
 
     @property
     def Adiabatic(self):
+        if not isinstance(self._Adiabatic, np.ndarray):
+            self.GetAdiabatic()
+            return self._Adiabatic
+        else:
+            return self._Adiabatic
+
+
+    def GetCoupling(self):
+        logging.info('Computing mode coupling...')
         C = []
         for (i,j) in self.combinations:
-            C.append( self[i].GetAdiabatic(self[j]) )
+            C.append( self[i].GetCoupling(self[j]) )
 
-        return C
+        tri = np.zeros( ( self.NSolutions, self.NSolutions, len(self.ITR)-1 ) )
+        tri[np.triu_indices(self.NSolutions, 1)] = C
+        tri[np.tril_indices(self.NSolutions, -1)] = C
+
+
+        self._Coupling = tri
+
+        return tri
+
+
+    def GetAdiabatic(self):
+        logging.info('Computing adiabatic criterion...')
+        A = []
+        for (i,j) in self.combinations:
+            A.append( self[i].GetAdiabatic(self[j]) )
+
+        tri = np.zeros( ( self.NSolutions, self.NSolutions, len(self.ITR)-1 ) )
+        tri[np.triu_indices(self.NSolutions, 1)]  = A
+        tri[np.tril_indices(self.NSolutions, -1)] = A
+
+        self._Adiabatic = tri
+
+        return tri

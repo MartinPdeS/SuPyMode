@@ -1,21 +1,18 @@
 #-------------------------Importations------------------------------------------
 """ standard imports """
 import sys, copy, pickle
-from progressbar import Bar, Percentage, ETA, ProgressBar
-import matplotlib.pyplot as plt
+from progressbar           import Bar, Percentage, ETA, ProgressBar
+import matplotlib.pyplot   as plt
 import matplotlib.gridspec as gridspec
-import matplotlib.colors as colors
-import copy
-import pandas as pd
-import numpy as np
-from scipy.sparse.linalg import eigs as LA
+import numpy               as np
+from scipy.sparse.linalg   import eigs as LA
 
 """ package imports """
-from SuPyModes.toolbox.SuPyAxes import SuPyAxes
-from SuPyModes.toolbox.LPModes import LP_names
+from SuPyModes.toolbox.SuPyAxes      import SuPyAxes
+from SuPyModes.toolbox.LPModes       import LP_names
 from SuPyModes.toolbox.SuPyFinitDiff import SuPyFinitdifference
-from SuPyModes.SuperMode import SuperMode, SuperSet
-from SuPyModes.utils            import RecomposeSymmetries
+from SuPyModes.SuperMode             import SuperMode, SuperSet
+from SuPyModes.utils                 import RecomposeSymmetries, SortSuperSet
 #-------------------------Importations------------------------------------------
 
 
@@ -64,18 +61,14 @@ class SuPySolver(object):
 
         self.Finit_diff = SuPyFinitdifference(self.Axes)
 
-        self.Finit_diff.laplacian_sparse(self.nk,
-                                         self.Geometry.Ysym,
-                                         self.Geometry.Xsym)
+        self.Finit_diff.laplacian_sparse(self.nk, self.Symmetries[1], self.Symmetries[0])
 
 
     def initiate_finit_difference_matrix(self):
-        """
-        Generate the finit difference matrix for eigenvalues optimisation
+        """ Generate the finit difference matrix for eigenvalues optimisation
         protocol.
 
         """
-
         self.compute_nk()
 
         self.laplacian_sparse()
@@ -85,8 +78,11 @@ class SuPySolver(object):
                   wavelength: float,
                   Nstep:      int   = 2,
                   Nsol:       int   = 5,
+                  ITRi:       float = 1.0,
                   ITRf:       float = 0.1,
-                  tolerance:  float = 0.0004,
+                  Ysym:       int   = 0,
+                  Xsym:       int   = 0,
+                  tolerance:  float = 1e-16,
                   error:      int   = 2,
                   naming:     bool  = False,
                   debug:      bool  = False):
@@ -98,12 +94,13 @@ class SuPySolver(object):
                     'Ny'        : self.info['Shape'][1]}
 
 
+        self.Symmetries = [Xsym, Ysym]
         self.debug = debug
         self.Shape = self.info['Shape']
 
         self.Nstep, self.ITRf, self.Nsol = Nstep, ITRf, Nsol
 
-        ITRList = np.linspace(1, ITRf, Nstep)
+        ITRList = np.linspace(ITRi, ITRf, Nstep)
 
         self.Set = SuperSet(IndexProfile = self.profile,
                             NSolutions   = self.Nsol,
@@ -115,7 +112,7 @@ class SuPySolver(object):
 
         self.Solve(ITRList, Nsol)
 
-        self.Set.Symmetries = [self.Geometry.Xsym, self.Geometry.Ysym]
+        self.Set.Symmetries = self.Symmetries
 
         return self.Set
 
@@ -162,10 +159,12 @@ class SuPySolver(object):
 
             bar.update(self.iter)
 
-        self.Set.OrderingModes()
+        self.Set = SortSuperSet(self.Set)
 
 
-    def GetEigenVectors(self, Nsol=1, Tolerance=1e-8, MaxIter=None):
+
+
+    def GetEigenVectors(self, Nsol=1, MaxIter=None):
 
         beta_square, v0 = self.PreSolution()
 
@@ -173,11 +172,11 @@ class SuPySolver(object):
                              k                   = Nsol,
                              M                   = None,
                              sigma               = beta_square,
-                             which               = 'LM',
+                             which               = 'LR',
                              v0                  = v0,
                              ncv                 = None,
                              maxiter             = MaxIter,
-                             tol                 = Tolerance,
+                             tol                 = 1e-30,
                              return_eigenvectors = True,
                              Minv                = None,
                              OPinv               = None,
@@ -195,8 +194,8 @@ class SuPySolver(object):
                                       Beta   = betas[solution],
                                       ITR    = self.Axes.ITR,
                                       Field  = vectors[:,solution].reshape(self.Shape),
-                                      xSym   = self.Geometry.Xsym,
-                                      ySym   = self.Geometry.Ysym,
+                                      xSym   = self.Symmetries[0],
+                                      ySym   = self.Symmetries[1],
                                       Axes   = self.Axes)
 
         if self.debug:
