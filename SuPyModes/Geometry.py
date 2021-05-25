@@ -47,7 +47,7 @@ class Geometry(object):
     def __init__(self, Objects, Xbound, Ybound, Nx, Ny):
         self.Objects    = ToList(Objects)
 
-        self.Indices = [1] + [obj.Index for obj in Objects]
+        self.Indices = sorted( list( set( [1] + [obj.Index for obj in Objects] ) ) )
 
         self.Boundaries = [Xbound, Ybound]
 

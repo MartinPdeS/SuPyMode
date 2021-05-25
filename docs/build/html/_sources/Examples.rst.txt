@@ -50,123 +50,96 @@ Generate Geometry
 
 
 
-Compute indexes
----------------
+Compute indexes-coupling-adiabatic
+----------------------------------
 
-
-.. literalinclude:: ../../examples/Index:1x1Coupler.py
+.. literalinclude:: ../../examples/Full:1x1Coupler.py
     :language: python
-    :caption: **Effective index: 1x1**
+    :caption: **1x1 Coupler**
     :lines: 1-
     :linenos:
 
-.. image:: ../images/Index:1x1coupler.png
+.. image:: ../images/Full:1x1Coupler_profile.png
+   :width: 600
+
+.. image:: ../images/Full:1x1Coupler_index.png
+   :width: 600
+
+.. image:: ../images/Full:1x1Coupler_coupling.png
+   :width: 600
+
+.. image:: ../images/Full:1x1Coupler_adiabatic.png
+   :width: 600
+
+.. image:: ../images/Full:1x1Coupler_fields.png
    :width: 600
 
 
 
-.. literalinclude:: ../../examples/Index:2x2Coupler.py
+.. literalinclude:: ../../examples/Full:2x2Coupler.py
    :language: python
-   :caption: **Effective index: 2x2**
+   :caption: **2x2 Coupler**
    :lines: 1-
    :linenos:
 
-.. image:: ../images/Index:2x2coupler.png
+.. image:: ../images/Full:2x2Coupler_profile.png
    :width: 600
 
-
-.. literalinclude:: ../../examples/Index:3x3Coupler.py
-   :language: python
-   :caption: **Effective index: 3x3**
-   :lines: 1-
-   :linenos:
-
-.. image:: ../images/Index:3x3coupler.png
+.. image:: ../images/Full:2x2Coupler_index.png
    :width: 600
 
+.. image:: ../images/Full:2x2Coupler_coupling.png
+   :width: 600
 
+.. image:: ../images/Full:2x2Coupler_adiabatic.png
+   :width: 600
 
-.. literalinclude:: ../../examples/Index:4x4Coupler.py
-   :language: python
-   :caption: **Effective index: 4x4**
-   :lines: 1-
-   :linenos:
-
-.. image:: ../images/Index:4x4coupler.png
+.. image:: ../images/Full:2x2Coupler_fields.png
    :width: 600
 
 
 
-Compute coupling
-----------------
-
-.. literalinclude:: ../../examples/Coupling:1x1Coupler.py
-    :language: python
-    :caption: **Mode coupling: 1x1**
-    :lines: 1-
-    :linenos:
-
-
-.. literalinclude:: ../../examples/Coupling:2x2Coupler.py
+.. literalinclude:: ../../examples/Full:3x3Coupler.py
    :language: python
-   :caption: **Mode coupling: 2x2**
+   :caption: **3x3 Coupler**
+   :lines: 1-
+   :linenos:
+
+.. image:: ../images/Full:3x3Coupler_profile.png
+   :width: 600
+
+.. image:: ../images/Full:3x3Coupler_index.png
+   :width: 600
+
+.. image:: ../images/Full:3x3Coupler_coupling.png
+   :width: 600
+
+.. image:: ../images/Full:3x3Coupler_adiabatic.png
+   :width: 600
+
+.. image:: ../images/Full:3x3Coupler_fields.png
+   :width: 600
+
+
+
+.. literalinclude:: ../../examples/Full:4x4Coupler.py
+   :language: python
+   :caption: **4x4 Coupler**
    :lines: 1-
    :linenos:
 
 
+.. image:: ../images/Full:4x4Coupler_profile.png
+   :width: 600
 
-.. literalinclude:: ../../examples/Coupling:3x3Coupler.py
-   :language: python
-   :caption: **Mode coupling: 3x3**
-   :lines: 1-
-   :linenos:
+.. image:: ../images/Full:4x4Coupler_index.png
+   :width: 600
 
+.. image:: ../images/Full:4x4Coupler_coupling.png
+   :width: 600
 
+.. image:: ../images/Full:4x4Coupler_adiabatic.png
+   :width: 600
 
-
-.. literalinclude:: ../../examples/Coupling:4x4Coupler.py
-   :language: python
-   :caption: **Mode coupling: 4x4**
-   :lines: 1-
-   :linenos:
-
-
-
-
-Compute adiabatic
------------------
-
-.. literalinclude:: ../../examples/Adiabatic:1x1Coupler.py
-    :language: python
-    :caption: **Adiabatic criterion: 1x1**
-    :lines: 1-
-    :linenos:
-
-
-.. literalinclude:: ../../examples/Adiabatic:2x2Coupler.py
-   :language: python
-   :caption: **Adiabatic criterion: 2x2**
-   :lines: 1-
-   :linenos:
-
-
-
-.. literalinclude:: ../../examples/Adiabatic:3x3Coupler.py
-   :language: python
-   :caption: **Adiabatic criterion: 3x3**
-   :lines: 1-
-   :linenos:
-
-
-
-
-.. literalinclude:: ../../examples/Adiabatic:4x4Coupler.py
-   :language: python
-   :caption: **Adiabatic criterion: 4x4**
-   :lines: 1-
-   :linenos:
-
-
-
-
-# -
+.. image:: ../images/Full:4x4Coupler_fields.png
+   :width: 600

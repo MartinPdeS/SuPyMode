@@ -14,19 +14,21 @@ Geo = Geometry(Objects = [Clad, Core0, Core1, Core2],
                Xbound  = [-120, 120],
                Ybound  = [-110, 130],
                Nx      = 100,
-               Ny      = 100,
-               Xsym    = 0,
-               Ysym    = 0)
+               Ny      = 100)
+
+Geo.Plot()
 
 Sol = SuPySolver(Coupler=Geo)
 
 SuperModes = Sol.GetModes(wavelength = 1.55,
-                          Nstep      = 100,
-                          Nsol       = 12,
+                          Nstep      = 250,
+                          Nsol       = 7,
                           debug      = False,
-                          ITRi       = .5,
-                          ITRf       = 0.25 )
+                          ITRi       = 1,
+                          ITRf       = 0.05,
+                          tolerance  = 1e-20,
+                          error      = 3,
+                          Xsym       = 0,
+                          Ysym       = 0 )
 
-SuperModes.GetCoupling()
-
-SuperModes.Plot('Coupling', nMax=4)
+SuperModes.Plot(Input = ['Index', 'Coupling', 'Adiabatic', 'Fields'], nMax=4)

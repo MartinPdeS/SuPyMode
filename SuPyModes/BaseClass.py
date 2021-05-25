@@ -77,15 +77,15 @@ class SetPlots(object):
 
 
 
-    def Plot(self, args, iter=0, nMax=None):
+    def Plot(self, Input, iter=0, nMax=None):
         if not nMax: nMax = len(self.SuperModes)
-        if 'Index'     in args: self.PlotIndex(nMax=nMax)
+        if 'Index'     in Input: self.PlotIndex(nMax=nMax)
 
-        if 'Coupling'  in args: self.PlotCoupling(nMax=nMax)
+        if 'Coupling'  in Input: self.PlotCoupling(nMax=nMax)
 
-        if 'Adiabatic' in args: self.PlotAdiabatic(nMax=nMax)
+        if 'Adiabatic' in Input: self.PlotAdiabatic(nMax=nMax)
 
-        if 'Fields'    in args: self.PlotFields(iter, nMax=nMax)
+        if 'Fields'    in Input: self.PlotFields(iter, nMax=nMax)
 
         plt.show()
 
