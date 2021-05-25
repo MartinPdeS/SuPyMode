@@ -3,6 +3,8 @@ import logging
 import numpy               as np
 import matplotlib.pyplot   as plt
 import matplotlib.gridspec as gridspec
+import matplotlib.colors   as colors
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from itertools             import combinations
 
 from SuPyModes.Config      import *
@@ -86,10 +88,38 @@ class SetPlots(object):
                                             Xaxis      = None,
                                             Yaxis      = None)
 
-        axes.pcolormesh(yaxis, xaxis, np.abs(Profile), shading='auto')
+
+
+
+        axes.set_title('Rasterized RI profil', fontsize=10)
+        axes.set_ylabel(r'Y-distance [$\mu$m]')
+        axes.set_xlabel(r'X-distance [$\mu$m]')
+
+        Indices = np.unique(np.abs(Profile))
+        print(Indices)
+        vmin=sorted(Indices)[1]/1.1
+        vmax=sorted(Indices)[-1]
+
+        pcm = axes.pcolormesh( yaxis,
+                               xaxis,
+                               np.abs(Profile),
+                               cmap    = plt.cm.coolwarm,
+                               norm=colors.LogNorm(vmin=vmin, vmax=vmax),
+                               shading='auto'
+                              )
+
+        divider = make_axes_locatable(axes)
+        cax = divider.append_axes("right", size="5%", pad=0.05)
+
+        sm = plt.cm.ScalarMappable(cmap=plt.cm.coolwarm, norm=colors.LogNorm(vmin=vmin, vmax=vmax))
+
+        axes.contour(yaxis, xaxis, np.abs(Profile), levels=Indices, colors='k')
+
+        sm._A = []
+        cbar = plt.colorbar(sm, ax=axes, cax=cax)
+
         axes.set_aspect('equal')
-        title = f"Index profile [ITR: {self.ITR[iter]:.3f}]"
-        axes.set_title(title, fontsize=8)
+
         plt.tight_layout()
 
         return fig
@@ -99,7 +129,7 @@ class SetPlots(object):
     def Plot(self, Input, iter=0, nMax=None, PlotKwarg=None):
         if not nMax: nMax = len(self.SuperModes)
 
-        self.UpdatePlotWkargs(PlotKwargs)
+        self.UpdatePlotKwarg(PlotKwarg)
 
         figures = []
 
@@ -138,7 +168,7 @@ class SetPlots(object):
 
         if 'Fields'    in Input: figures.append( self.PlotFields(iter, nMax=nMax) )
 
-        dir = os.path.join(RootPath, Directory)
+        dir = os.path.join(ZeroPath, Directory)
 
         Multipage(dir, figs=figures, dpi=dpi)
 

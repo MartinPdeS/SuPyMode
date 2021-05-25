@@ -138,24 +138,27 @@ class Geometry(object):
         x = np.linspace(*self.Boundaries[0], np.shape(self.mesh)[0])
         y = np.linspace(*self.Boundaries[1], np.shape(self.mesh)[1])
 
-        pcm = ax.contourf(  x,
-                            y,
-                            self.mesh,
-                            cmap    = 'PuBu_r',
-                            shading = 'auto',
-                            )
+        vmin=sorted(self.Indices)[1]/1.1
+        vmax=sorted(self.Indices)[-1]
 
-        ax.contour(x, y, self.mesh, levels=self.Indices, colors='k')
-
-        cmap = mpl.cm.viridis
-
-        norm = colors.BoundaryNorm(self.Indices, cmap.N, extend='both')
-
+        pcm = ax.pcolormesh(  x,
+                              y,
+                              self.mesh,
+                              cmap    = plt.cm.coolwarm,
+                              norm=colors.LogNorm(vmin=vmin, vmax=vmax),
+                              shading='auto'
+                              )
 
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="5%", pad=0.05)
 
-        fig.colorbar(pcm, ax=ax, cax=cax, format='%.4f')
+        sm = plt.cm.ScalarMappable(cmap=plt.cm.coolwarm, norm=colors.LogNorm(vmin=vmin, vmax=vmax))
+
+        ax.contour(x, y, self.mesh, levels=self.Indices, colors='k')
+
+        sm._A = []
+        cbar = plt.colorbar(sm, ax=ax, cax=cax)
+
         ax.set_aspect('equal')
         plt.show()
 
@@ -192,7 +195,7 @@ class BaseFused():
 
     def OptimizeGeometry(self):
         res = minimize_scalar(self.ComputeCost, bounds=self.Bound, method='bounded')
-        logging.info('Result Rv =',res.x)
+        logging.info(f'Result Rv = {res.x}')
         return self.BuildCoupler(Rv=res.x)
 
 

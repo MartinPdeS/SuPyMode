@@ -188,10 +188,9 @@ def VerifySorting(SuperSet, Plot=False):
         for n, itr in enumerate( SuperSet.ITR[:-2] ):
             O = GetOverlap(mode.Field[n+1], mode.Field[n])
             if O < 0.6:
-                print(f'Error at {n} \t Mode:{nm} \t ITR:{itr} \t Overlap:{O}')
-                if Plot:
-                    SuperSet.Plot('Fields', iter=n)
-                    SuperSet.Plot('Fields', iter=n+1)
+                logging.debug(f'Overlap mismatch at {n} \t Mode:{nm} \t ITR:{itr} \t Overlap:{O}')
+                SuperSet.Plot('Fields', iter=n)
+                SuperSet.Plot('Fields', iter=n+1)
 
 def SwapProperties(SuperMode0, SuperMode1, N):
     S0, S1 = SuperMode0, SuperMode1
@@ -203,7 +202,7 @@ def GetOverlap(mode0, mode1):
     return np.abs( np.sum( mode0 * mode1 ) )
 
 
-def SortSuperSet(SuperSet, Plot=False):
+def SortSuperSet(SuperSet):
     logging.info('Sorting modes...')
     SuperSet1 = cp.deepcopy(SuperSet)
     Overlap = np.zeros(len( SuperSet.Combinations ) )
@@ -217,10 +216,9 @@ def SortSuperSet(SuperSet, Plot=False):
                 Overlap[j] = GetOverlap(mode0.Field[n], mode1.Field[n+1])
 
             if np.max(Overlap) < 0.5:
-                print(n, i,'New mode swapping is occuring...\n', Overlap, '\n\n\n')
-                if Plot:
-                    SuperSet.Plot('Fields', iter=n)
-                    SuperSet1.Plot('Fields', iter=n+1)
+                logging.debug(n, i,'New mode swapping is occuring...\n', Overlap, '\n\n\n')
+                #SuperSet.Plot('Fields', iter=n)
+                #SuperSet1.Plot('Fields', iter=n+1)
 
 
             k = np.argmax(Overlap)

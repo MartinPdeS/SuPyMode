@@ -1,6 +1,7 @@
 #-------------------------Importations------------------------------------------
 """ standard imports """
 import sys, copy, pickle
+import logging
 from progressbar           import Bar, Percentage, ETA, ProgressBar
 import matplotlib.pyplot   as plt
 import matplotlib.gridspec as gridspec
@@ -15,7 +16,8 @@ from SuPyModes.SuperMode             import SuperSet
 from SuPyModes.utils                 import SortSuperSet
 #-------------------------Importations------------------------------------------
 
-
+import logging
+logging.basicConfig(level=logging.INFO)
 
 class SuPySolver(object):
     """ This object corresponds to the solutioner.
@@ -146,7 +148,7 @@ class SuPySolver(object):
         bar.start()
 
         for n, value in enumerate(iteration_list):
-            print(f"{n}/{len(iteration_list)}")
+            logging.info(f"{n}/{len(iteration_list)}")
 
             self.Axes.Scale(value)
 

@@ -5,13 +5,9 @@ from itertools             import combinations, combinations_with_replacement as
 from mayavi                import mlab
 
 from SuPyModes.Config      import *
-from SuPyModes.utils       import RecomposeSymmetries, SortSuperSet
+from SuPyModes.utils       import RecomposeSymmetries
 from SuPyModes.BaseClass   import SetPlots, SetProperties
 from SuPyModes.Special     import Overlap, GeoGradient, ModeCoupling, ModeAdiabatic
-
-
-
-
 
 
 
