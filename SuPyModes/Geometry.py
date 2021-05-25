@@ -1,9 +1,10 @@
-#-------------------------Importations------------------------------------------
+
 """ standard imports """
 import sys
 import numpy as np
+import logging
+from numpy           import pi, cos, sin, sqrt, abs, exp, array, ndarray
 from matplotlib.path import Path
-from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
 import matplotlib        as mpl
 import matplotlib.colors as colors
@@ -12,38 +13,34 @@ from itertools        import combinations
 from scipy.optimize   import minimize_scalar
 from shapely.geometry import Point, LineString, MultiPolygon, Polygon
 from shapely.geometry.collection import GeometryCollection
-pi, cos, sin, sqrt = np.pi, np.cos, np.sin, np.sqrt
-
-from shapely.geometry import Polygon
-from shapely.geometry.point import Point
 from shapely.ops import cascaded_union
-from descartes import PolygonPatch
 
 
-""" package imports"""
+""" package imports """
 from SuPyModes.Directories import RootPath
-from SuPyModes.Special     import Overlap, Intersection
-from SuPyModes.utils       import ( NearestPoints,
-                                    Deg2Rad,
-                                    ObjectIntersection,
-                                    Rotate,
-                                    GetBoundaries,
-                                    MakeCircles,
-                                    ObjectUnion,
-                                    PlotObject,
-                                    ToList        )
-
-
-
-import logging
-from numpy            import pi, cos, sin, sqrt, abs, exp, array, ndarray
-
-#-------------------------Importations------------------------------------------
-
+from SuPyModes.Special     import Intersection
+from SuPyModes.utils       import *
 
 
 
 class Geometry(object):
+    """ Class represent the refractive index (RI) geometrique profile which
+    can be used to retrieve the supermodes.
+
+    Parameters
+    ----------
+    Objects : type
+        Geometrique object representing the element of the RI profile.
+    Xbound : :class:`list`
+        X-dimension boundary for the rasterized profile.
+    Ybound : :class:`list`
+        Y-dimension boundary for the rasterized profile.
+    Nx : :class:`int`
+        Number of point for X dimensions discretization.
+    Ny : :class:`int`
+        Number of point for Y dimensions discretization.
+    """
+
     def __init__(self, Objects, Xbound, Ybound, Nx, Ny):
         self.Objects    = ToList(Objects)
 
@@ -56,18 +53,42 @@ class Geometry(object):
         self.CreateMesh()
 
 
-    def rasterize_polygone(self, polygone, points, Nx, Ny):
+    def rasterize_polygone(self, polygone):
+        """ The method rasterize individual polygone object.
+
+        Parameters
+        ----------
+        polygone : :class:`geo`
+            The polygone to be rasterize.
+
+        Returns
+        -------
+        :class:`np.ndarray`
+            The rasterized object.
+
+        """
 
         poly = cascaded_union(polygone)
 
         obj_ext = Path(list( polygone.exterior.coords))
 
-        obj_ext = obj_ext.contains_points(points).reshape(self.Shape)
+        obj_ext = obj_ext.contains_points(self.coords).reshape(self.Shape)
 
         return obj_ext
 
 
     def add_object_to_mesh(self, obj, index):
+        """ Method add a rasterized object to the pre-existing profile mesh
+        with its provided refractive index.
+
+        Parameters
+        ----------
+        obj : :class:`np.ndarray`
+            Rasterized object to be added to the mesh.
+        index : :class:`float`
+            Refractive index of the object to be added.
+
+        """
 
         self.mesh *= (-1 * obj + 1)
 
@@ -75,6 +96,9 @@ class Geometry(object):
 
 
     def CreateMesh(self):
+        """ The method create the RI profile mesh according to the user input.
+
+        """
 
         self.mesh = np.ones(self.Shape)
 
@@ -85,10 +109,10 @@ class Geometry(object):
 
         x, y = x.flatten(), y.flatten()
 
-        points = np.vstack((x,y)).T
+        self.coords = np.vstack((x,y)).T
 
         for object in self.Objects:
-            obj = self.rasterize_polygone(object.Object, points, *self.Shape)
+            obj = self.rasterize_polygone(object.Object)
             self.add_object_to_mesh(obj, object.Index)
 
 
@@ -99,6 +123,9 @@ class Geometry(object):
 
 
     def Plot(self):
+        """ The methode plot the rasterized RI profile.
+
+        """
 
         fig = plt.figure(figsize=(5,5))
 
@@ -111,13 +138,11 @@ class Geometry(object):
         x = np.linspace(*self.Boundaries[0], np.shape(self.mesh)[0])
         y = np.linspace(*self.Boundaries[1], np.shape(self.mesh)[1])
 
-        pcm = ax.contourf(
-                            x,
+        pcm = ax.contourf(  x,
                             y,
                             self.mesh,
                             cmap    = 'PuBu_r',
                             shading = 'auto',
-                            #norm    = colors.LogNorm(vmin=self.mesh.min(), vmax=self.mesh.max())
                             )
 
         ax.contour(x, y, self.mesh, levels=self.Indices, colors='k')
@@ -167,7 +192,7 @@ class BaseFused():
 
     def OptimizeGeometry(self):
         res = minimize_scalar(self.ComputeCost, bounds=self.Bound, method='bounded')
-        print('Result Rv =',res.x)
+        logging.info('Result Rv =',res.x)
         return self.BuildCoupler(Rv=res.x)
 
 

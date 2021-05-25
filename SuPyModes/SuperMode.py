@@ -23,13 +23,11 @@ class SuperMode(object):
         self.Index      = []
         self.Field      = []
         self.Beta       = []
-        self.xSym       = []
-        self.ySym       = []
-        self.GeoID      = None
         self.Axes       = []
         self.Profile    = Profile
         self._Adiabatic = None
         self._Coupling  = None
+
 
 
     def Append(self, **kwargs):
@@ -41,12 +39,11 @@ class SuperMode(object):
     def DegenerateFactor(self):
         Factor = 1
 
-        if self.xSym[0] in [1,-1]: Factor *= 2
+        if self.Symmetries[0] in [1,-1]: Factor *= 2
 
-        if self.ySym[0] in [1,-1]: Factor *= 2
+        if self.Symmetries[0] in [1,-1]: Factor *= 2
 
         return Factor
-
 
 
     def GetCoupling(self, SuperMode):
@@ -97,7 +94,7 @@ class SuperMode(object):
 
     def FullField(self, iter):
         Field      = self.Field[iter]
-        Symmetries = [self.xSym[iter], self.ySym[iter]]
+        Symmetries = [self.xSym, self.ySym]
 
         Field, xAxis, yAxis = RecomposeSymmetries(Input      = Field,
                                                   Symmetries = Symmetries,
@@ -109,12 +106,12 @@ class SuperMode(object):
 
 
 class SuperSet(SetProperties, SetPlots):
-    def __init__(self, IndexProfile, NSolutions, ITR):
+    def __init__(self, IndexProfile, NSolutions, ITR, Symmetries):
         self.IndexProfile = IndexProfile
         self.NSolutions   = NSolutions
         self.SuperModes   = []
         self.ITR          = ITR
-        self.Symmetries   = None
+        self.Symmetries   = Symmetries
         self._Coupling     = None
         self._Adiabatic    = None
         self.Init()
@@ -127,6 +124,8 @@ class SuperSet(SetProperties, SetPlots):
         for solution in range(self.NSolutions):
             supermode = SuperMode(Profile = self.IndexProfile,
                                   Name = f"Mode {solution}")
+
+            supermode.Symmetries = self.Symmetries
 
             self.SuperModes.append(supermode)
 
@@ -147,10 +146,9 @@ class SuperSet(SetProperties, SetPlots):
 
 
     def Ordering(self):
-        pass
-        #self.SuperModes = SortFields(self.SuperModes)
-        #for iter, _ in enumerate( self.ITR ):
-        #    self.OrderingModes(iter)
+        for iter, _ in enumerate( self.ITR ):
+            self.OrderingModes(iter)
+
 
     def Debug(self):
         for n, itr in enumerate( self.ITR ):
@@ -169,10 +167,6 @@ class SuperSet(SetProperties, SetPlots):
         for n, m  in enumerate( self.SortedIndex ):
             if n != m:
                 self.SwapProperties(self[n], temporary[m], iter)
-            # plt.figure()
-            # plt.plot(self[n].Index)
-            # plt.plot(self.SuperModes[n].Index,'*')
-            # plt.show()
 
 
 

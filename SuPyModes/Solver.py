@@ -11,8 +11,8 @@ from scipy.sparse.linalg   import eigs as LA
 from SuPyModes.toolbox.SuPyAxes      import SuPyAxes
 from SuPyModes.toolbox.LPModes       import LP_names
 from SuPyModes.toolbox.SuPyFinitDiff import SuPyFinitdifference
-from SuPyModes.SuperMode             import SuperMode, SuperSet
-from SuPyModes.utils                 import RecomposeSymmetries, SortSuperSet
+from SuPyModes.SuperMode             import SuperSet
+from SuPyModes.utils                 import SortSuperSet
 #-------------------------Importations------------------------------------------
 
 
@@ -104,15 +104,14 @@ class SuPySolver(object):
 
         self.Set = SuperSet(IndexProfile = self.profile,
                             NSolutions   = self.Nsol,
-                            ITR          = ITRList)
+                            ITR          = ITRList,
+                            Symmetries   = self.Symmetries)
 
         self.tolerance, self.error = tolerance, error
 
         self.Axes = SuPyAxes(Meta=metadata)
 
         self.Solve(ITRList, Nsol)
-
-        self.Set.Symmetries = self.Symmetries
 
         return self.Set
 
@@ -194,8 +193,6 @@ class SuPySolver(object):
                                       Beta   = betas[solution],
                                       ITR    = self.Axes.ITR,
                                       Field  = vectors[:,solution].reshape(self.Shape),
-                                      xSym   = self.Symmetries[0],
-                                      ySym   = self.Symmetries[1],
                                       Axes   = self.Axes)
 
         if self.debug:

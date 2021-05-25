@@ -35,13 +35,13 @@ def RecomposeSymmetries(Input, Symmetries, Xaxis=None, Yaxis=None):
 
 
 def CheckSymmetries(SuperMode0, SuperMode1):
-    if SuperMode0.xSym[0] == 0 or SuperMode1.xSym[0] == 0: return True
+    if SuperMode0.Symmetries[0] == 0 or SuperMode1.Symmetries[0] == 0: return True
 
-    if SuperMode0.ySym[0] == 0 or SuperMode1.ySym[0] == 0: return True
+    if SuperMode0.Symmetries[1] == 0 or SuperMode1.Symmetries[1] == 0: return True
 
-    if SuperMode0.xSym[0] == - SuperMode1.xSym[0]: return False
+    if SuperMode0.Symmetries[0] == - SuperMode1.Symmetries[0]: return False
 
-    if SuperMode0.ySym[0] == - SuperMode1.ySym[0]: return False
+    if SuperMode0.Symmetries[1] == - SuperMode1.Symmetries[1]: return False
 
     return True
 
