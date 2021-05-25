@@ -2,6 +2,7 @@ import numpy             as np
 import copy              as cp
 import logging
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 from descartes           import PolygonPatch
 from shapely.geometry    import Point, LineString, MultiPolygon, Polygon
 from shapely.geometry.collection import GeometryCollection
@@ -228,3 +229,13 @@ def SortSuperSet(SuperSet, Plot=False):
                 getattr(SuperSet[i], p)[n+1] = getattr(SuperSet1[k], p)[n+1]
 
     return SuperSet
+
+
+
+def Multipage(filename, figs=None, dpi=200):
+    pp = PdfPages(filename)
+    if figs is None:
+        figs = [plt.figure(n) for n in plt.get_fignums()]
+    for fig in figs:
+        fig.savefig(pp, format='pdf')
+    pp.close()

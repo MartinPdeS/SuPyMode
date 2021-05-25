@@ -11,3 +11,19 @@ IndexDict = { 'name' : r'Effective Index',
 
 BetaDict = { 'name' : r'Beta value $\beta_{i,j}$',
              'unit' : r' [1]'}
+
+BasePlotKwarg = {'Index'    : {'xlim'  : None,
+                               'ylim'  : None,
+                               'xscale' : 'lin',
+                               'yscale' : 'lin'},
+
+                 'Coupling' : {'xlim'  : None,
+                               'ylim'  : None,
+                               'xscale' : 'lin',
+                               'yscale' : 'lin'},
+
+                 'Adiabatic': {'xlim'  : None,
+                               'ylim'  : [1e-7, 1],
+                               'xscale' : 'lin',
+                               'yscale' : 'log'}
+                               }

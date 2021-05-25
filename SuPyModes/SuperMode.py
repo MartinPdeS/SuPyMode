@@ -94,10 +94,9 @@ class SuperMode(object):
 
     def FullField(self, iter):
         Field      = self.Field[iter]
-        Symmetries = [self.xSym, self.ySym]
 
         Field, xAxis, yAxis = RecomposeSymmetries(Input      = Field,
-                                                  Symmetries = Symmetries,
+                                                  Symmetries = self.Symmetries,
                                                   Xaxis      = self.Axes[iter].Direct.X,
                                                   Yaxis      = self.Axes[iter].Direct.Y)
 
