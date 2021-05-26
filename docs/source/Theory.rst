@@ -1,2 +1,75 @@
 Theoretical background
 ======================
+
+
+Super-modes
+-----------
+
+The 6-equation system for the electric field in a bounded environment can be reduced to
+the Helmholtz equation as follows:
+
+.. math::
+  H(z)\psi(x,y,z) = \lambda^2\psi(x,y,z)
+
+| Here we have:
+|    :math:`H` the Hamiltonian of the system
+|    :math:`\psi` the amplitude of the electric field
+|    :math:`\lambda` the eigenvalue of the problem
+
+Applied to the optical mode propagation problem we retrieve the following relation:
+
+.. math::
+  \left( \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + k^2n^2(x,y) \right) \psi(x,y,z) = \lambda^2\psi(x,y,z)
+
+| Here we have:
+|    :math:`k` the wave-number in of the light field
+|    :math:`n(x,y)` the refractive index (RI) profile of the optical component
+|    :math:`\psi` the amplitude of the electric field
+
+-----
+
+Couple mode theory
+------------------
+In order to study the behavior of the solutions (super-modes) we need to know,
+how they couple together.
+
+In the same RI configuration the modes or orthogonal, i.e:
+
+.. math::
+   \left< \psi_{l,m} \, |  \psi_{l',m'} \, \right> = \delta_{l,l'} \,\, \delta_{m,m'}
+
+However if the RI configuration is varying in the z-direction coupling can occur between modes.
+This coupling is defined as follows:
+
+.. math::
+  C_{ij} = \frac{-i}{2}
+           \frac{k^2}{\sqrt{\lambda_i \lambda_2}}
+           \frac{1}{\Delta \lambda_{ij}}
+           \int_A \psi_i(r, \theta) \psi_j(r, \theta) \frac{d}{dz}n^2(r, \theta, z) dr d\theta
+
+-----
+
+Mode propagation
+----------------
+
+Knowing all the coupling factors and propagation constant for each supermodes
+at each z-axis slices we can compute the mode-propagation.
+
+.. math::
+  \frac{dU}{dz} = i \begin{bmatrix}
+                        \lambda_1 & C_{12} & C_{13} \\
+                        C_{21} & \lambda_2 & C_{23} \\
+                        C_{31} & C_{32} & \lambda_3
+                    \end{bmatrix} U
+
+Where U is a vector array containing all the super-modes amplitudes.
+
+
+Adiabatic criterion
+-------------------
+
+.. math::
+  \widetilde{C}_{ij} (z) = C_{ij} . \left( \frac{1}{\rho} \frac{d\rho}{dz} \right)^{-1}
+
+
+The respect of the adiabatic criterion ensure that modes wont be coupling together.

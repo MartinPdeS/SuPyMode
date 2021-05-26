@@ -1,16 +1,16 @@
 import os
 import logging
-import numpy               as np
-from numpy                 import min, max
-import matplotlib.pyplot   as plt
-import matplotlib.gridspec as gridspec
-import matplotlib.colors   as colors
+import numpy                 as np
+import matplotlib.pyplot     as plt
+import matplotlib.gridspec   as gridspec
+import matplotlib.colors     as colors
+from numpy                   import min, max
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from itertools             import combinations
+from itertools               import combinations
 
-from SuPyModes.Config      import *
-from SuPyModes.utils       import RecomposeSymmetries, Multipage, prePlot
-from SuPyModes.Directories import *
+from SuPyModes.Config        import *
+from SuPyModes.utils         import RecomposeSymmetries, Multipage, prePlot
+from SuPyModes.Directories   import *
 
 
 class SetPlots(object):
@@ -105,34 +105,7 @@ class SetPlots(object):
 
 
 
-    def Plot(self, Input, iter=0, nMax=None, PlotKwarg=None):
-        if not nMax: nMax = len(self.SuperModes)
-
-        self.UpdatePlotKwarg(PlotKwarg)
-
-        figures = []
-
-        if Input & set( ['All', 'Index'] ):     figures.append( self.PlotIndex(nMax=nMax) )
-
-        if Input & set( ['All', 'Coupling'] ):  figures.append( self.PlotCoupling(nMax=nMax) )
-
-        if Input & set( ['All', 'Adiabatic'] ): figures.append( self.PlotAdiabatic(nMax=nMax) )
-
-        if Input & set( ['All', 'Fields'] ):    figures.append( self.PlotFields(iter, nMax=nMax) )
-
-        plt.show()
-
-
-    def UpdatePlotKwarg(self, kwargs):
-        if isinstance(kwargs, dict):
-            for key, val in kwargs.items():
-                BasePlotKwarg[key].update(kwargs[key])
-
-        self.PlotKwarg = BasePlotKwarg
-
-
-    def SaveFig(self, Input, Directory, iter=0, nMax=None, dpi=200, PlotKwarg=None):
-
+    def GenFigures(self, Input, iter, nMax, PlotKwarg):
         Input = set(Input)
 
         if not nMax: nMax = len(self.SuperModes)
@@ -148,6 +121,25 @@ class SetPlots(object):
         if Input & set( ['All', 'Adiabatic'] ): figures.append( self.PlotAdiabatic(nMax=nMax) )
 
         if Input & set( ['All', 'Fields'] ):    figures.append( self.PlotFields(iter, nMax=nMax) )
+
+        return figures
+
+    def Plot(self, Input, iter=0, nMax=None, PlotKwarg=None):
+        figures = self.GenFigures(Input, iter, nMax, PlotKwarg)
+
+        plt.show()
+
+
+    def UpdatePlotKwarg(self, kwargs):
+        if isinstance(kwargs, dict):
+            for key, val in kwargs.items():
+                BasePlotKwarg[key].update(kwargs[key])
+
+        self.PlotKwarg = BasePlotKwarg
+
+
+    def SaveFig(self, Input, Directory, iter=0, nMax=None, dpi=200, PlotKwarg=None):
+        figures = self.GenFigures(Input, iter, nMax, PlotKwarg)
 
         dir = os.path.join(ZeroPath, Directory) + '.pdf'
 

@@ -59,7 +59,19 @@ Compute indexes-coupling-adiabatic
     :lines: 1-
     :linenos:
 
-.. download:: ../images/Full:3x3Coupler.pdf
+.. image:: ../images/Full:1x1Coupler_profile.png
+   :width: 600
+
+.. image:: ../images/Full:1x1Coupler_index.png
+   :width: 600
+
+.. image:: ../images/Full:1x1Coupler_coupling.png
+   :width: 600
+
+.. image:: ../images/Full:1x1Coupler_adiabatic.png
+   :width: 600
+
+.. image:: ../images/Full:1x1Coupler_fields.png
    :width: 600
 
 
