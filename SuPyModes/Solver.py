@@ -194,19 +194,8 @@ class SuPySolver(object):
             self.Set[solution].Append(Index  = index,
                                       Beta   = betas[solution],
                                       ITR    = self.Axes.ITR,
-                                      Field  = vectors[:,solution].reshape(self.Shape),
+                                      Field  = ModeArray( vectors[:,solution].reshape(self.Shape) ),
                                       Axes   = self.Axes)
-
-        if self.debug:
-            fig   = plt.figure(figsize=((Nsol)*3,3))
-            spec2 = gridspec.GridSpec(ncols=(Nsol), nrows=3, figure=fig)
-
-            for solution in range(Nsol):
-                axes = fig.add_subplot(spec2[0:2,solution])
-                axes.pcolormesh(vectors[:,solution].reshape(self.Shape).T, shading='auto')
-                axes.set_title(f'neff: {betas[solution] / self.Axes.Direct.k:.4f}', fontsize=7)
-
-            plt.show()
 
 
 
@@ -241,6 +230,29 @@ class SuPySolver(object):
         """
 
         self.Fields.to_pickle(dir)
+
+
+
+
+class ModeArray(np.ndarray):
+
+    def __new__(cls, input_array, title='unnamed'):
+        self = input_array.view(ModeArray)
+        self.title = title
+        return self
+
+    def __array_finalize__(self, viewed):
+        pass
+
+
+    def __mul__(self, other):
+        assert isinstance(other, ModeArray), f'Cannot multiply supermodes with {other.__class__}'
+
+        overlap = np.abs( np.sum( np.multiply( self, other ) ) )
+
+        return float( overlap )
+
+
 
 
 

@@ -31,4 +31,6 @@ SuperModes = Sol.GetModes(wavelength = 1.55,
                           Xsym       = 1,
                           Ysym       = 1 )
 
-SuperModes.Plot(Input = ['Index', 'Coupling', 'Adiabatic', 'Fields'], nMax=4)
+SuperModes.SaveFig(Directory  = '2x2Coupler',
+                   Input      = ['All'],
+                   nMax       = 4)

@@ -173,11 +173,6 @@
 </pre></div>
 </td></tr></table></div>
 </div>
-<a class="reference internal image-reference" href="_images/Full:1x1Coupler_profile.png"><img alt="_images/Full:1x1Coupler_profile.png" src="_images/Full:1x1Coupler_profile.png" style="width: 600px;" /></a>
-<a class="reference internal image-reference" href="_images/Full:1x1Coupler_index.png"><img alt="_images/Full:1x1Coupler_index.png" src="_images/Full:1x1Coupler_index.png" style="width: 600px;" /></a>
-<a class="reference internal image-reference" href="_images/Full:1x1Coupler_coupling.png"><img alt="_images/Full:1x1Coupler_coupling.png" src="_images/Full:1x1Coupler_coupling.png" style="width: 600px;" /></a>
-<a class="reference internal image-reference" href="_images/Full:1x1Coupler_adiabatic.png"><img alt="_images/Full:1x1Coupler_adiabatic.png" src="_images/Full:1x1Coupler_adiabatic.png" style="width: 600px;" /></a>
-<a class="reference internal image-reference" href="_images/Full:1x1Coupler_fields.png"><img alt="_images/Full:1x1Coupler_fields.png" src="_images/Full:1x1Coupler_fields.png" style="width: 600px;" /></a>
 <div class="literal-block-wrapper docutils container" id="id6">
 <div class="code-block-caption"><span class="caption-text"><strong>2x2 Coupler</strong></span><a class="headerlink" href="#id6" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
@@ -369,7 +364,9 @@
 33
 34
 35
-36</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SuPyModes.Geometry</span>          <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">Fused4</span>
+36
+37
+38</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">SuPyModes.Geometry</span>          <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">Fused4</span>
 <span class="kn">from</span> <span class="nn">SuPyModes.Solver</span>            <span class="kn">import</span> <span class="n">SuPySolver</span>
 <span class="kn">from</span> <span class="nn">SuPyModes.sellmeier</span>         <span class="kn">import</span> <span class="n">Fused_silica</span>
 
@@ -386,15 +383,15 @@
 <span class="n">Geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="p">(</span><span class="n">Objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">Clad</span><span class="p">,</span> <span class="n">Core0</span><span class="p">,</span> <span class="n">Core1</span><span class="p">,</span> <span class="n">Core2</span><span class="p">,</span> <span class="n">Core3</span><span class="p">],</span>
                <span class="n">Xbound</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">160</span><span class="p">],</span>
                <span class="n">Ybound</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">160</span><span class="p">],</span>
-               <span class="n">Nx</span>      <span class="o">=</span> <span class="mi">70</span><span class="p">,</span>
-               <span class="n">Ny</span>      <span class="o">=</span> <span class="mi">70</span><span class="p">)</span>
+               <span class="n">Nx</span>      <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+               <span class="n">Ny</span>      <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
 
 <span class="n">Geo</span><span class="o">.</span><span class="n">Plot</span><span class="p">()</span>
 
 <span class="n">Sol</span> <span class="o">=</span> <span class="n">SuPySolver</span><span class="p">(</span><span class="n">Coupler</span><span class="o">=</span><span class="n">Geo</span><span class="p">)</span>
 
 <span class="n">SuperModes</span> <span class="o">=</span> <span class="n">Sol</span><span class="o">.</span><span class="n">GetModes</span><span class="p">(</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1.55</span><span class="p">,</span>
-                          <span class="n">Nstep</span>      <span class="o">=</span> <span class="mi">250</span><span class="p">,</span>
+                          <span class="n">Nstep</span>      <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
                           <span class="n">Nsol</span>       <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
                           <span class="n">debug</span>      <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                           <span class="n">ITRi</span>       <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -404,7 +401,9 @@
                           <span class="n">Xsym</span>       <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                           <span class="n">Ysym</span>       <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">)</span>
 
-<span class="n">SuperModes</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="n">Input</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Index&#39;</span><span class="p">,</span> <span class="s1">&#39;Coupling&#39;</span><span class="p">,</span> <span class="s1">&#39;Adiabatic&#39;</span><span class="p">,</span> <span class="s1">&#39;Fields&#39;</span><span class="p">],</span> <span class="n">nMax</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">SuperModes</span><span class="o">.</span><span class="n">SaveFig</span><span class="p">(</span><span class="n">Directory</span><span class="o">=</span><span class="s1">&#39;docs/images/Full:4x4Couplerlol&#39;</span><span class="p">,</span>
+                   <span class="n">Input</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;All&#39;</span><span class="p">],</span>
+                   <span class="n">nMax</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
 </div>

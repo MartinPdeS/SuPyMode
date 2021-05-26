@@ -30,7 +30,7 @@ def ModeCoupling(SuperMode0, SuperMode1, k, Profile, iter):
 
         Coupling *= np.abs(1/(beta0 - beta1))
 
-        O = FieldOverlap(SuperMode0, SuperMode1, iter)
+        O = SuperMode0.Field[iter-1] * SuperMode1.Field[iter]
 
         G = GeoGradient(Profile, SuperMode0.Axes, iter)
 

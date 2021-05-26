@@ -1,6 +1,7 @@
 import os
 import logging
 import numpy               as np
+from numpy                 import min, max
 import matplotlib.pyplot   as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.colors   as colors
@@ -8,60 +9,42 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from itertools             import combinations
 
 from SuPyModes.Config      import *
-from SuPyModes.utils       import RecomposeSymmetries, Multipage
+from SuPyModes.utils       import RecomposeSymmetries, Multipage, prePlot
 from SuPyModes.Directories import *
 
+
 class SetPlots(object):
-    def GetFigure(self, Dict, kwargs):
-        fig = plt.figure(figsize=(8,4))
-        ax = fig.add_subplot(111)
-        ax.grid()
-        ax.set_ylabel(Dict['name'] + Dict['unit'])
-        ax.set_xlabel('ITR')
-        if kwargs['xlim'] is not None: ax.set_xlim(left  = kwargs['xlim'][0],
-                                                   right = kwargs['xlim'][1])
 
-        if kwargs['ylim'] is not None: ax.set_ylim( bottom = kwargs['ylim'][0],
-                                                    top    = kwargs['ylim'][1] )
-
-        if kwargs['yscale'] == 'log': ax.set_yscale('log')
-        if kwargs['xscale'] == 'log': ax.set_xscale('log')
-        return fig
-
-
-    def PlotIndex(self, nMax):
+    @prePlot
+    def PlotIndex(self, nMax, fig):
         I = self.Index
-        fig = self.GetFigure(IndexDict, self.PlotKwarg['Index'])
 
         for i in range(nMax):
             plt.plot(self.ITR, I[i], label=f'{i}')
-        plt.legend(fontsize=6, title="Modes", fancybox=True)
 
-        return fig
+        return self.PlotKwarg['Index'], [min(I), max(I)]
 
 
-    def PlotCoupling(self, nMax):
+    @prePlot
+    def PlotCoupling(self, nMax, fig):
         C = self.Coupling
         comb = tuple(combinations( np.arange(nMax), 2 ) )
-        fig = self.GetFigure(CouplingDict, self.PlotKwarg['Coupling'])
 
         for n, (i,j) in enumerate( comb ):
             plt.plot(self.ITR[1:-1], C[i,j,1:], label=f'{i} - {j}')
-        plt.legend(fontsize=6, title="Modes", fancybox=True)
 
-        return fig
+        return self.PlotKwarg['Coupling'], [min(C), max(C)]
 
 
-    def PlotAdiabatic(self, nMax):
+    @prePlot
+    def PlotAdiabatic(self, nMax, fig):
         A = self.Adiabatic
-        fig = self.GetFigure(AdiabaticDict, self.PlotKwarg['Adiabatic'])
         comb = tuple(combinations( np.arange(nMax), 2 ) )
 
         for n, (i,j) in enumerate( comb ):
-            plt.semilogy(self.ITR[1:-1], A[i,j,1:], label=f'{i} - {j}')
-        plt.legend(fontsize=6, title="Modes", fancybox=True)
+            plt.plot(self.ITR[1:-1], A[i,j,1:], label=f'{i} - {j}')
 
-        return fig
+        return self.PlotKwarg['Adiabatic'], [min(A), max(A)]
 
 
     def PlotFields(self, iter, nMax):
@@ -88,15 +71,11 @@ class SetPlots(object):
                                             Xaxis      = None,
                                             Yaxis      = None)
 
-
-
-
         axes.set_title('Rasterized RI profil', fontsize=10)
         axes.set_ylabel(r'Y-distance [$\mu$m]')
         axes.set_xlabel(r'X-distance [$\mu$m]')
 
         Indices = np.unique(np.abs(Profile))
-        print(Indices)
         vmin=sorted(Indices)[1]/1.1
         vmax=sorted(Indices)[-1]
 
@@ -133,13 +112,13 @@ class SetPlots(object):
 
         figures = []
 
-        if 'Index'     in Input: figures.append( self.PlotIndex(nMax=nMax, kwargs=kwargs) )
+        if Input & set( ['All', 'Index'] ):     figures.append( self.PlotIndex(nMax=nMax) )
 
-        if 'Coupling'  in Input: figures.append( self.PlotCoupling(nMax=nMax, kwargs=kwargs) )
+        if Input & set( ['All', 'Coupling'] ):  figures.append( self.PlotCoupling(nMax=nMax) )
 
-        if 'Adiabatic' in Input: figures.append( self.PlotAdiabatic(nMax=nMax, kwargs=kwargs) )
+        if Input & set( ['All', 'Adiabatic'] ): figures.append( self.PlotAdiabatic(nMax=nMax) )
 
-        if 'Fields'    in Input: figures.append( self.PlotFields(iter, nMax=nMax, kwargs=kwargs) )
+        if Input & set( ['All', 'Fields'] ):    figures.append( self.PlotFields(iter, nMax=nMax) )
 
         plt.show()
 
@@ -152,7 +131,9 @@ class SetPlots(object):
         self.PlotKwarg = BasePlotKwarg
 
 
-    def Save(self, Input, Directory, iter=0, nMax=None, dpi=200, PlotKwarg=None):
+    def SaveFig(self, Input, Directory, iter=0, nMax=None, dpi=200, PlotKwarg=None):
+
+        Input = set(Input)
 
         if not nMax: nMax = len(self.SuperModes)
 
@@ -160,15 +141,15 @@ class SetPlots(object):
 
         figures = []
 
-        if 'Index'     in Input: figures.append( self.PlotIndex(nMax=nMax) )
+        if Input & set( ['All', 'Index'] ):     figures.append( self.PlotIndex(nMax=nMax) )
 
-        if 'Coupling'  in Input: figures.append( self.PlotCoupling(nMax=nMax) )
+        if Input & set( ['All', 'Coupling'] ):  figures.append( self.PlotCoupling(nMax=nMax) )
 
-        if 'Adiabatic' in Input: figures.append( self.PlotAdiabatic(nMax=nMax) )
+        if Input & set( ['All', 'Adiabatic'] ): figures.append( self.PlotAdiabatic(nMax=nMax) )
 
-        if 'Fields'    in Input: figures.append( self.PlotFields(iter, nMax=nMax) )
+        if Input & set( ['All', 'Fields'] ):    figures.append( self.PlotFields(iter, nMax=nMax) )
 
-        dir = os.path.join(ZeroPath, Directory)
+        dir = os.path.join(ZeroPath, Directory) + '.pdf'
 
         Multipage(dir, figs=figures, dpi=dpi)
 

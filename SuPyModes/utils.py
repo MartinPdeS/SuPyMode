@@ -186,11 +186,12 @@ def MakeCircles(Points, Radi):
 def VerifySorting(SuperSet, Plot=False):
     for nm, mode in enumerate( SuperSet.SuperModes ):
         for n, itr in enumerate( SuperSet.ITR[:-2] ):
-            O = GetOverlap(mode.Field[n+1], mode.Field[n])
+            O = mode.Field[n+1] * mode.Field[n]
             if O < 0.6:
                 logging.debug(f'Overlap mismatch at {n} \t Mode:{nm} \t ITR:{itr} \t Overlap:{O}')
                 SuperSet.Plot('Fields', iter=n)
                 SuperSet.Plot('Fields', iter=n+1)
+
 
 def SwapProperties(SuperMode0, SuperMode1, N):
     S0, S1 = SuperMode0, SuperMode1
@@ -198,8 +199,6 @@ def SwapProperties(SuperMode0, SuperMode1, N):
     for p in PROPERTIES:
         getattr(S0, p)[N] = getattr(S1, p)[N]
 
-def GetOverlap(mode0, mode1):
-    return np.abs( np.sum( mode0 * mode1 ) )
 
 
 def SortSuperSet(SuperSet):
@@ -213,13 +212,10 @@ def SortSuperSet(SuperSet):
 
             for j, mode1 in enumerate( SuperSet1.SuperModes ):
 
-                Overlap[j] = GetOverlap(mode0.Field[n], mode1.Field[n+1])
+                Overlap[j] = mode0.Field[n] * mode1.Field[n+1]
 
             if np.max(Overlap) < 0.5:
                 logging.debug(n, i,'New mode swapping is occuring...\n', Overlap, '\n\n\n')
-                #SuperSet.Plot('Fields', iter=n)
-                #SuperSet1.Plot('Fields', iter=n+1)
-
 
             k = np.argmax(Overlap)
 
@@ -228,6 +224,40 @@ def SortSuperSet(SuperSet):
 
     return SuperSet
 
+
+def prePlot(func):
+    def inner(*args, **kwargs):
+        fig = plt.figure(figsize=(8,4))
+        ax = fig.add_subplot(111)
+        ax.grid()
+        kwargs, ybound = func(*args, **kwargs, fig=fig)
+
+        ax.set_ylabel(kwargs['name'] + kwargs['unit'])
+        ax.set_xlabel('ITR')
+
+        if kwargs['xlim'] is not None:
+            ax.set_xlim(left  = kwargs['xlim'][0],  right = kwargs['xlim'][1])
+
+        if kwargs['ylim'] is not None:
+            if kwargs['ylim'][0] is None: ymin = ybound[0]
+            else: ymin = kwargs['ylim'][0]
+
+            ymin = max(1e-12, ymin)
+
+            if kwargs['ylim'][1] is None: ymax = ybound[1]
+            else: ymax = kwargs['ylim'][1]
+
+            ax.set_ylim( ymin = ymin, ymax = ymax )
+
+        if kwargs['yscale'] == 'log': ax.set_yscale('log')
+
+        if kwargs['xscale'] == 'log': ax.set_xscale('log')
+
+        plt.legend(fontsize=6, title="Modes", fancybox=True)
+
+        return fig
+
+    return inner
 
 
 def Multipage(filename, figs=None, dpi=200):

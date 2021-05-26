@@ -15,15 +15,15 @@ Core3 = Circle( Position=Clad.C[3], Radi = 4.2, Index = Fused_silica(1.55)+0.005
 Geo = Geometry(Objects = [Clad, Core0, Core1, Core2, Core3],
                Xbound  = [0, 160],
                Ybound  = [0, 160],
-               Nx      = 70,
-               Ny      = 70)
+               Nx      = 10,
+               Ny      = 10)
 
 Geo.Plot()
 
 Sol = SuPySolver(Coupler=Geo)
 
 SuperModes = Sol.GetModes(wavelength = 1.55,
-                          Nstep      = 250,
+                          Nstep      = 200,
                           Nsol       = 7,
                           debug      = False,
                           ITRi       = 1,
@@ -33,4 +33,6 @@ SuperModes = Sol.GetModes(wavelength = 1.55,
                           Xsym       = 1,
                           Ysym       = -1 )
 
-SuperModes.Plot(Input = ['Index', 'Coupling', 'Adiabatic', 'Fields'], nMax=4)
+SuperModes.SaveFig(Directory='4x4Coupler',
+                   Input = ['All'],
+                   nMax=4)

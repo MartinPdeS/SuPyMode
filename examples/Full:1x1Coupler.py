@@ -9,8 +9,8 @@ Core0 = Circle( Position=Clad.C[0], Radi = 4.2, Index = Fused_silica(1.0)+0.005 
 Geo = Geometry(Objects = [Clad, Core0],
                Xbound  = [0, 70],
                Ybound  = [0, 70],
-               Nx      = 80,
-               Ny      = 80)
+               Nx      = 10,
+               Ny      = 10)
 
 Geo.Plot()
 
@@ -23,4 +23,6 @@ SuperModes = Sol.GetModes(wavelength = 1.0,
                           Xsym       = 1,
                           Ysym       = -1 )
 
-SuperModes.Plot(Input = ['Index', 'Coupling', 'Adiabatic', 'Fields'], nMax=4)
+SuperModes.SaveFig(Directory  = '1x1Coupler',
+                   Input      = ['All'],
+                   nMax       = 4)

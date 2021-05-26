@@ -7,7 +7,7 @@ from mayavi                import mlab
 from SuPyModes.Config      import *
 from SuPyModes.utils       import RecomposeSymmetries
 from SuPyModes.BaseClass   import SetPlots, SetProperties
-from SuPyModes.Special     import Overlap, GeoGradient, ModeCoupling, ModeAdiabatic
+from SuPyModes.Special     import GeoGradient, ModeCoupling, ModeAdiabatic
 
 
 
@@ -45,7 +45,6 @@ class SuperMode(object):
     def GetCoupling(self, SuperMode):
         C = []
         for n, itr in enumerate(self.ITR[:-1]):
-
             C.append( ModeCoupling(SuperMode0 = self,
                                    SuperMode1 = SuperMode,
                                    k          = self.Axes[n].Direct.k,
