@@ -70,3 +70,6 @@ Adiabatic criterion
 
 .. math::
   \widetilde{C}_{ij} (z) = C_{ij} . \left( \frac{1}{\rho} \frac{d\rho}{dz} \right)^{-1}
+
+
+The respect of the adiabatic criterion ensure that modes wont be coupling together.

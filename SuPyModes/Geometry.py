@@ -68,11 +68,16 @@ class Geometry(object):
 
         """
 
-        poly = cascaded_union(polygone)
-
-        obj_ext = Path(list( polygone.exterior.coords))
+        obj_ext = Path(list( polygone.Object.exterior.coords))
 
         obj_ext = obj_ext.contains_points(self.coords).reshape(self.Shape)
+
+        if polygone.hole is not None:
+            obj_int = Path(list( polygone.hole.exterior.coords))
+
+            obj_int = np.logical_not( obj_int.contains_points(self.coords).reshape(self.Shape) )
+
+            obj_ext = np.logical_and( obj_ext, obj_int )
 
         return obj_ext
 
@@ -112,7 +117,7 @@ class Geometry(object):
         self.coords = np.vstack((x,y)).T
 
         for object in self.Objects:
-            obj = self.rasterize_polygone(object.Object)
+            obj = self.rasterize_polygone(object)
             self.add_object_to_mesh(obj, object.Index)
 
 
@@ -160,6 +165,7 @@ class Geometry(object):
         cbar = plt.colorbar(sm, ax=ax, cax=cax)
 
         ax.set_aspect('equal')
+        plt.tight_layout()
         plt.show()
 
 
@@ -169,6 +175,7 @@ class Circle(object):
         self.Points   = Position
         self.Radi     = Radi
         self.Index    = Index
+        self.hole     = None
         self.Init()
 
     def Init(self):
@@ -186,6 +193,7 @@ class BaseFused():
         self.Radius  = Radius
         self.Fusion  = Fusion
         self.Angle   = Angle
+        self.hole    = None
         self.N       = len(self.Angle)
         self.Theta   = Deg2Rad(Theta)
         self.GetFibers()
@@ -355,6 +363,7 @@ class Fused4(BaseFused):
                          Theta   = 45,
                          Index   = Index)
 
+
         if self.Topology == 'concave':
             self.Bound = (Radius*1.5, 4000)
 
@@ -370,6 +379,8 @@ class Fused4(BaseFused):
         Coupler  = ObjectUnion(self.Fibers)
 
         hole     = CenterTriangle.difference(Coupler)
+
+        self.hole = hole
 
         Convex   = Coupler.convex_hull.difference(hole)
 
