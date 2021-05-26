@@ -18,7 +18,7 @@ Geo = Geometry(Objects = [Clad, Core0, Core1, Core2, Core3],
                Nx      = 100,
                Ny      = 100)
 
-Geo.Plot()
+Geo.Plot(
 
 Sol = SuPySolver(Coupler=Geo)
 

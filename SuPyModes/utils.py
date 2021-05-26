@@ -186,7 +186,7 @@ def MakeCircles(Points, Radi):
 def VerifySorting(SuperSet, Plot=False):
     for nm, mode in enumerate( SuperSet.SuperModes ):
         for n, itr in enumerate( SuperSet.ITR[:-2] ):
-            O = mode.Field[n+1] * mode.Field[n]
+            O = mode.Field[n+1] ** mode.Field[n]
             if O < 0.6:
                 logging.debug(f'Overlap mismatch at {n} \t Mode:{nm} \t ITR:{itr} \t Overlap:{O}')
                 SuperSet.Plot('Fields', iter=n)
@@ -212,7 +212,7 @@ def SortSuperSet(SuperSet):
 
             for j, mode1 in enumerate( SuperSet1.SuperModes ):
 
-                Overlap[j] = mode0.Field[n] * mode1.Field[n+1]
+                Overlap[j] = mode0.Field[n] ** mode1.Field[n+1]
 
             if np.max(Overlap) < 0.5:
                 logging.debug(n, i,'New mode swapping is occuring...\n', Overlap, '\n\n\n')
@@ -261,6 +261,7 @@ def prePlot(func):
 
 
 def Multipage(filename, figs=None, dpi=200):
+    logging.info(f'Saving results into {filename}...')
     pp = PdfPages(filename)
     if figs is None:
         figs = [plt.figure(n) for n in plt.get_fignums()]

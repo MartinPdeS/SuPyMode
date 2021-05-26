@@ -37,7 +37,7 @@ class SuperMode(object):
 
         if self.Symmetries[0] in [1,-1]: Factor *= 2
 
-        if self.Symmetries[0] in [1,-1]: Factor *= 2
+        if self.Symmetries[1] in [1,-1]: Factor *= 2
 
         return Factor
 
@@ -67,12 +67,9 @@ class SuperMode(object):
 
 
     def PlotPropagation(self):
-
         image, _, _ = self.FullField(0)
 
         image = np.abs(image)
-
-
 
         mlab.surf(image, warp_scale="auto")
 
@@ -86,6 +83,16 @@ class SuperMode(object):
         anim_loc()
         mlab.show()
 
+        import os
+        fps = 20
+        prefix = 'ani'
+        ext = '.png'
+
+        import subprocess
+        animate_plots(base_directory='yolo', fname_prefix='dasda')
+
+
+
 
     def FullField(self, iter):
         Field      = self.Field[iter]
@@ -97,6 +104,27 @@ class SuperMode(object):
 
         return Field, xAxis, yAxis
 
+
+
+def animate_plots(base_directory, fname_prefix):
+    """
+    This function creates a movie of the plots using ffmpeg
+
+    Args:
+        base_directory (str): the directory with the plots.
+        fname_prefix (str): the filename for the model run
+
+    Returns:
+        none but creates mp4 from pngs in base directory
+
+    Author: FJC
+    """
+    import subprocess
+
+    # animate the pngs using ffmpeg
+    system_call = "ffmpeg -framerate 5 -pattern_type glob -i '"+base_directory+"*.png' -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p "+base_directory+fname_prefix+"_movie.mp4"
+    print(system_call)
+    subprocess.call(system_call, shell=True)
 
 
 class SuperSet(SetProperties, SetPlots):

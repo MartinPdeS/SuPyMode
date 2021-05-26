@@ -24,7 +24,6 @@ class SuPySolver(object):
     It solves the eigenvalues problems for a given geometry.
 
     """
-
     def __init__(self, Coupler):
 
         self.Geometry  = Coupler
@@ -245,7 +244,7 @@ class ModeArray(np.ndarray):
         pass
 
 
-    def __mul__(self, other):
+    def __pow__(self, other):
         assert isinstance(other, ModeArray), f'Cannot multiply supermodes with {other.__class__}'
 
         overlap = np.abs( np.sum( np.multiply( self, other ) ) )
