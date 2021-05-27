@@ -22,8 +22,8 @@ Core2 = Circle( Position=Clad.C[2], Radi = 4.2, Index = Fused_silica(1.55)+0.005
 Geo = Geometry(Objects = [Clad, Clad0, Clad1, Clad2, Core0, Core1, Core2],
                Xbound  = [-120, 120],
                Ybound  = [-110, 130],
-               Nx      = 80,
-               Ny      = 80)
+               Nx      = 10,
+               Ny      = 10)
 
 #Geo.Plot()
 

@@ -2,6 +2,7 @@
 """ standard imports """
 import sys, copy, pickle
 import logging
+import copy  as cp
 from progressbar           import Bar, Percentage, ETA, ProgressBar
 import matplotlib.pyplot   as plt
 import matplotlib.gridspec as gridspec
@@ -12,7 +13,7 @@ from scipy.sparse.linalg   import eigs as LA
 from SuPyModes.toolbox.SuPyAxes      import SuPyAxes
 from SuPyModes.toolbox.LPModes       import LP_names
 from SuPyModes.toolbox.SuPyFinitDiff import SuPyFinitdifference
-from SuPyModes.SuperMode             import SuperSet
+from SuPyModes.SuperMode             import SuperSet, ModeSlice
 from SuPyModes.utils                 import SortSuperSet, RecomposeSymmetries
 #-------------------------Importations------------------------------------------
 
@@ -125,9 +126,9 @@ class SuPySolver(object):
 
         else:
 
-            beta_square = -(self.Set[0].Beta[0]*self.Geometry.Axes.ITR)**2
+            beta_square = -(self.Set[0][0].Beta*self.Geometry.Axes.ITR)**2
 
-            v0 = self.Set[0].Field[-1].ravel()
+            v0 = self.Set[0][-1].ravel()
 
         return beta_square, v0
 
@@ -187,80 +188,7 @@ class SuPySolver(object):
 
             Field = vectors[:,solution].reshape(self.Geometry.Shape)
 
-            self.Set[solution].Append(Index  = index,
-                                      Beta   = betas[solution],
-                                      ITR    = self.Geometry.Axes.ITR,
-                                      Field  = ModeArray( Field, self.Geometry.Axes ),
-                                      Axes   = self.Geometry.Axes)
-
-
-
-
-    def load_file(self, dir: str):
-        """
-        This method load data in pickle (json style) form (.p) and convert
-        to dict.
-
-        arguments:
-            :param dir: Directory of the .p file to load.
-            :type dir: str.
-
-        calls:
-        :call1:
-        """
-
-        with open(dir, 'rb') as handle:
-            self.Geometry.mesh = pickle.load(handle)
-
-
-
-    def save_file(self, dir: str):
-        """
-        arguments:
-
-            :param dir: Directory to save solver file
-            :type dir: str.
-
-        calls:
-            :call1: XXX
-        """
-
-        self.Fields.to_pickle(dir)
-
-
-
-
-class ModeArray(np.ndarray):
-
-    def __new__(cls, input_array, Axes=None):
-        self = input_array.view(ModeArray)
-        self.Axes = Axes
-        return self
-
-    def __array_finalize__(self, viewed):
-        pass
-
-
-    def __pow__(self, other):
-        assert isinstance(other, ModeArray), f'Cannot multiply supermodes with {other.__class__}'
-
-        overlap = np.abs( np.sum( np.multiply( self, other ) ) )
-
-        return float( overlap )
-
-
-    def __plot__(self, ax, title=None):
-        Field, xaxis, yaxis = RecomposeSymmetries(self, self.Axes)
-
-        ax.pcolormesh(yaxis, xaxis, Field, shading='auto')
-
-        ax.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
-
-        ax.set_xlabel(r'X-distance [$\mu$m]', fontsize=6)
-
-        ax.set_aspect('equal')
-        if title:
-            ax.set_title(title, fontsize=8)
+            self.Set[solution].Slice.append(ModeSlice( Field, self.Geometry.Axes, Index=index, Beta=betas[solution] ),)
 
 
 

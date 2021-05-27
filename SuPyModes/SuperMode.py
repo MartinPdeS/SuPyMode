@@ -7,7 +7,7 @@ from mayavi                import mlab
 from SuPyModes.Config      import *
 from SuPyModes.utils       import RecomposeSymmetries
 from SuPyModes.BaseClass   import SetPlots, SetProperties
-from SuPyModes.Special     import GeoGradient, ModeCoupling, ModeAdiabatic
+from SuPyModes.Special     import ModeCoupling, ModeAdiabatic
 
 
 
@@ -15,10 +15,7 @@ class SuperMode(object):
 
     def __init__(self, Name, Geometry):
         self.Name       = Name
-        self.Index      = []
-        self.Field      = []
-        self.Beta       = []
-        self.Axes       = []
+        self.Slice      = []
         self._Adiabatic = None
         self._Coupling  = None
         self.Geometry   = Geometry
@@ -26,8 +23,15 @@ class SuperMode(object):
 
 
     def Append(self, **kwargs):
-        for property in PROPERTIES:
-            getattr(self, property).append( kwargs[property] )
+        self.Field.append(kwargs['Field'])
+
+
+    def __getitem__(self, N):
+        return self.Slice[N]
+
+
+    def __setitem__(self, N, val):
+        self.Slice[N] = val
 
 
     @property
@@ -91,14 +95,45 @@ class SuperMode(object):
         animate_plots(base_directory='yolo', fname_prefix='dasda')
 
 
-
-
     def FullField(self, iter):
         Field      = self.Field[iter]
 
         Field, xAxes, yAxes = RecomposeSymmetries(Input = Field, Axes = self.Axes)
 
         return Field, xAxes, yAxes
+
+
+    def __copy__(self):
+        to_be_copied = ['Slice']
+
+        copy_ = SuperSet( self.Name, self.Geometry)
+
+        for attr in self.__dict__:
+            if attr in to_be_copied:
+
+                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
+            else:
+
+                copy_.__dict__[attr] = self.__dict__[attr]
+
+        return copy_
+
+
+    def __deepcopy__(self, memo):
+        to_be_copied = ['Slice']
+
+        copy_ = SuperMode( self.Name, self.Geometry)
+
+        for attr in self.__dict__:
+
+            if attr in to_be_copied:
+
+                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
+            else:
+
+                copy_.__dict__[attr] = self.__dict__[attr]
+
+        return copy_
 
 
 
@@ -116,6 +151,7 @@ class SuperSet(SetProperties, SetPlots):
 
 
     def Init(self):
+
         for solution in range(self.NSolutions):
             supermode = SuperMode(Name     = f"Mode {solution}",
                                   Geometry = self.Geometry)
@@ -162,10 +198,104 @@ class SuperSet(SetProperties, SetPlots):
                 self.SwapProperties(self[n], temporary[m], iter)
 
 
+    def __copy__(self):
+        to_be_copied = ['SuperModes']
+
+        copy_ = SuperSet(self.NSolutions, self.Geometry)
+
+        for attr in self.__dict__:
+
+            if attr in to_be_copied:
+                copy_.__dict__[attr] =  cp.deepcopy( self.__dict__[attr] )
+            else:
+                copy_.__dict__[attr] = self.__dict__[attr]
+
+        return copy_
 
 
 
 
+
+
+class ModeSlice(np.ndarray):
+
+    def __new__(cls, Field, Axes, Index, Beta):
+        self      = Field.view(ModeSlice)
+
+        return self
+
+
+    def __init__(self, Field, Axes, Index, Beta):
+        self.Axes  = Axes
+        self.Index = Index
+        self.Beta  = Beta
+
+
+    def __array_finalize__(self, viewed):
+        pass
+
+
+    def __pow__(self, other):
+        assert isinstance(other, ModeSlice), f'Cannot multiply supermodes with {other.__class__}'
+
+        overlap = np.abs( np.sum( np.multiply( self, other ) ) )
+
+        return float( overlap )
+
+
+    def Overlap(self, other):
+        assert isinstance(other, ModeSlice), f'Cannot multiply supermodes with {other.__class__}'
+
+        overlap = np.abs( np.sum( np.multiply( self, other ) ) )
+
+        return float( overlap )
+
+
+    def __plot__(self, ax, title=None):
+        Field, xaxis, yaxis = RecomposeSymmetries(self, self.Axes)
+
+        ax.pcolormesh(yaxis, xaxis, Field, shading='auto')
+
+        ax.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
+
+        ax.set_xlabel(r'X-distance [$\mu$m]', fontsize=6)
+
+        ax.set_aspect('equal')
+        if title:
+            ax.set_title(title, fontsize=8)
+
+
+    def __copy__(self):
+        to_be_copied = ['Index', 'Axes', 'Beta']
+
+        copy_ = ModeSlice(self, self.Axes, self.Index, self.Beta)
+
+        for attr in self.__dict__:
+            if attr in to_be_copied:
+
+                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
+            else:
+
+                copy_.__dict__[attr] = self.__dict__[attr]
+
+        return copy_
+
+
+
+    def __deepcopy__(self, memo):
+        to_be_copied = ['Index', 'Axes', 'Beta']
+
+        copy_ = ModeSlice(self, self.Axes, self.Index, self.Beta)
+
+        for attr in self.__dict__:
+            if attr in to_be_copied:
+
+                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
+            else:
+
+                copy_.__dict__[attr] = self.__dict__[attr]
+
+        return copy_
 
 
 

@@ -40,13 +40,16 @@ def RecomposeSymmetries(Input, Axes):
 
 
 def CheckSymmetries(SuperMode0, SuperMode1):
-    if SuperMode0.Geometry.Axes.Symmetries[0] == 0 or SuperMode1.Geometry.Axes.Symmetries[0] == 0: return True
+    Sym0 = SuperMode0.Geometry.Axes.Symmetries
+    Sym1 = SuperMode1.Geometry.Axes.Symmetries
 
-    if SuperMode0.Geometry.Axes.Symmetries[1] == 0 or SuperMode1.Geometry.Axes.Symmetries[1] == 0: return True
+    if Sym0[0] == 0 or Sym1[0] == 0: return True
 
-    if SuperMode0.Geometry.Axes.Symmetries[0] == - SuperMode1.Geometry.Axes.Symmetries[0]: return False
+    if Sym0[1] == 0 or Sym1[1] == 0: return True
 
-    if SuperMode0.Geometry.Axes.Symmetries[1] == - SuperMode1.Geometry.Axes.Symmetries[1]: return False
+    if Sym0[0] == - Sym1[0]: return False
+
+    if Sym0[1] == - Sym1[1]: return False
 
     return True
 
@@ -207,7 +210,8 @@ def SwapProperties(SuperMode0, SuperMode1, N):
 
 def SortSuperSet(SuperSet):
     logging.info('Sorting modes...')
-    SuperSet1 = cp.deepcopy(SuperSet)
+    SuperSet1 = cp.deepcopy( SuperSet )
+
     Overlap = np.zeros(len( SuperSet.Combinations ) )
 
     for n, itr in enumerate( SuperSet.Geometry.ITRList[:-1] ):
@@ -215,16 +219,15 @@ def SortSuperSet(SuperSet):
         for i, mode0 in enumerate( SuperSet.SuperModes ):
 
             for j, mode1 in enumerate( SuperSet1.SuperModes ):
-
-                Overlap[j] = mode0.Field[n] ** mode1.Field[n+1]
+                Overlap[j] = mode0.Slice[n].Overlap( mode1.Slice[n+1] )
 
             if np.max(Overlap) < 0.5:
                 logging.debug(n, i,'New mode swapping is occuring...\n', Overlap, '\n\n\n')
 
             k = np.argmax(Overlap)
 
-            for p in PROPERTIES:
-                getattr(SuperSet[i], p)[n+1] = getattr(SuperSet1[k], p)[n+1]
+            if i != k :
+                SuperSet[i].Slice[n+1] = SuperSet1[k].Slice[n+1]
 
     return SuperSet
 

@@ -3,15 +3,16 @@ import numpy as np
 from SuPyModes.utils import CheckSymmetries, ToList
 
 def FieldOverlap(SuperMode0, SuperMode1, iter):
-    return SuperMode0.Field[iter-1] * SuperMode1.Field[iter]
+    return SuperMode0.Slice[iter-1] * SuperMode1.Slice[iter]
 
 
 def GeoGradient(Profile, Axes, iter):
-    Ygrad, Xgrad = gradientO4(Profile.T**2,
-                              Axes[iter].Direct.dx,
-                              Axes[iter].Direct.dy )
 
-    return Xgrad * Axes[iter].Direct.XX.T + Ygrad * Axes[iter].Direct.YY.T
+    Ygrad, Xgrad = gradientO4(Profile.T**2,
+                              Axes.Direct.dx,
+                              Axes.Direct.dy )
+
+    return Xgrad * Axes.Direct.XX.T + Ygrad * Axes.Direct.YY.T
 
 
 def ModeCoupling(SuperMode0, SuperMode1, k, Profile, iter):
@@ -20,9 +21,9 @@ def ModeCoupling(SuperMode0, SuperMode1, k, Profile, iter):
 
         if not CheckSymmetries(SuperMode0, SuperMode1): return 0
 
-        beta0 = SuperMode0.Beta[iter-1]
+        beta0 = SuperMode0.Slice[iter-1].Beta
 
-        beta1 = SuperMode1.Beta[iter]
+        beta1 = SuperMode1.Slice[iter].Beta
 
         Delta = beta0 * beta1
 
@@ -30,9 +31,9 @@ def ModeCoupling(SuperMode0, SuperMode1, k, Profile, iter):
 
         Coupling *= np.abs(1/(beta0 - beta1))
 
-        O = np.multiply( SuperMode0.Field[iter-1], SuperMode1.Field[iter] )
+        O = np.multiply( SuperMode0.Slice[iter-1], SuperMode1.Slice[iter] )
 
-        G = GeoGradient(Profile, SuperMode0.Axes, iter)
+        G = GeoGradient(Profile, SuperMode0.Geometry.Axes, iter)
 
         I = np.trapz( [np.trapz(Ix, dx=1) for Ix in O*G], dx=1)
 
@@ -43,9 +44,9 @@ def ModeCoupling(SuperMode0, SuperMode1, k, Profile, iter):
 
 def ModeAdiabatic(SuperMode0, SuperMode1, k, Profile, iter):
 
-    beta0 = SuperMode0.Beta[iter]
+    beta0 = SuperMode0.Slice[iter].Beta
 
-    beta1 = SuperMode1.Beta[iter+1]
+    beta1 = SuperMode1.Slice[iter+1].Beta
 
     Coupling = ModeCoupling(SuperMode0 = SuperMode0,
                             SuperMode1 = SuperMode1,

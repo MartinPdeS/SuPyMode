@@ -9,8 +9,8 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from itertools               import combinations
 
 from SuPyModes.Config        import *
-from SuPyModes.utils         import Multipage, prePlot
 from SuPyModes.Directories   import *
+from SuPyModes.utils         import Multipage, prePlot
 
 
 class SetPlots(object):
@@ -55,9 +55,9 @@ class SetPlots(object):
         for mode in range(nMax):
             axes = fig.add_subplot(spec2[0:2,mode])
             str   = r"$n_{eff}$"
-            title = f"Mode {mode} [{str}: {self[mode].Index[iter]:.6f}]"
+            title = f"Mode {mode} [{str}: {self[mode][iter].Index:.6f}]"
 
-            self[mode].Field[iter].__plot__(axes, title)
+            self[mode][iter].__plot__(axes, title)
 
         axes = fig.add_subplot(spec2[0:2,-1])
 
@@ -66,7 +66,6 @@ class SetPlots(object):
         plt.tight_layout()
 
         return fig
-
 
 
     def GenFigures(self, Input, iter, nMax, PlotKwarg):
@@ -87,6 +86,7 @@ class SetPlots(object):
         if Input & set( ['All', 'Fields'] ):    figures.append( self.PlotFields(iter, nMax=nMax) )
 
         return figures
+
 
     def Plot(self, Input, iter=0, nMax=None, PlotKwarg=None):
         figures = self.GenFigures(Input, iter, nMax, PlotKwarg)
@@ -116,21 +116,23 @@ class SetProperties(object):
     def Index(self):
         logging.info('Computing effective indices...')
         I = []
-        for i in range(self.NSolutions):
-            I.append( self[i].Index )
+        for i, Supermode in enumerate( self.SuperModes ):
+            for j, iter in enumerate( Supermode.Slice ):
+                I.append(iter.Index)
 
-        return I
+        return np.reshape(I, [i+1, j+1])
+
 
 
     @property
     def Beta(self):
         logging.info(r'Computing mode propagation constant ($\beta$)...')
         B = []
-        for i in range(self.NSolutions):
-            B.append( self[i].Beta )
+        for i, Supermode in enumerate( self.SuperModes ):
+            for j, iter in enumerate( Supermode.Slice ):
+                B.append(iter.Beta)
 
-        return B
-
+        return np.reshape(B, [i+1, j+1])
 
     @property
     def Coupling(self):
