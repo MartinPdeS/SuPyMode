@@ -41,14 +41,16 @@ class Geometry(object):
         Number of point for Y dimensions discretization.
     """
 
-    def __init__(self, Objects, Xbound, Ybound, Nx, Ny):
+    def __init__(self, Objects, Xbound, Ybound, Nx, Ny, Length=None):
         self.Objects    = ToList(Objects)
 
-        self.Indices = sorted( list( set( [1] + [obj.Index for obj in Objects] ) ) )
+        self.Indices    = sorted( list( set( [1] + [obj.Index for obj in Objects] ) ) )
 
         self.Boundaries = [Xbound, Ybound]
 
-        self.Shape = [Nx, Ny]
+        self.Shape      = [Nx, Ny]
+
+        self.Length     = Length
 
         self.CreateMesh()
 
@@ -127,6 +129,41 @@ class Geometry(object):
                       'Size':   np.size(self.mesh) }
 
 
+    def __plot__(self, ax):
+        Field, xaxis, yaxis = RecomposeSymmetries(self.mesh, self.Axes)
+        
+        vmin=sorted(self.Indices)[1]/1.1
+        vmax=sorted(self.Indices)[-1]
+
+        pcm = ax.pcolormesh(  xaxis,
+                              yaxis,
+                              Field.T,
+                              cmap    = plt.cm.coolwarm,
+                              norm=colors.LogNorm(vmin=vmin, vmax=vmax),
+                              shading='auto'
+                              )
+
+        ax.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
+
+        ax.set_xlabel(r'X-distance [$\mu$m]', fontsize=6)
+
+        divider = make_axes_locatable(ax)
+
+        cax = divider.append_axes("right", size="5%", pad=0.05)
+
+        sm = plt.cm.ScalarMappable(cmap=plt.cm.coolwarm, norm=colors.LogNorm(vmin=vmin, vmax=vmax))
+
+        sm._A = []
+
+        cbar = plt.colorbar(sm, ax=ax, cax=cax)
+
+        ax.contour(xaxis, yaxis, Field.T, levels=self.Indices, colors='k')
+
+        ax.set_title('Rasterized RI profil', fontsize=10)
+
+        ax.set_aspect('equal')
+
+
     def Plot(self):
         """ The methode plot the rasterized RI profile.
 
@@ -136,36 +173,10 @@ class Geometry(object):
 
         ax = fig.add_subplot(111)
 
-        ax.set_title('Rasterized RI profil', fontsize=10)
-        ax.set_ylabel(r'Y-distance [$\mu$m]')
-        ax.set_xlabel(r'X-distance [$\mu$m]')
+        self.__plot__(ax)
 
-        x = np.linspace(*self.Boundaries[0], np.shape(self.mesh)[0])
-        y = np.linspace(*self.Boundaries[1], np.shape(self.mesh)[1])
-
-        vmin=sorted(self.Indices)[1]/1.1
-        vmax=sorted(self.Indices)[-1]
-
-        pcm = ax.pcolormesh(  x,
-                              y,
-                              self.mesh,
-                              cmap    = plt.cm.coolwarm,
-                              norm=colors.LogNorm(vmin=vmin, vmax=vmax),
-                              shading='auto'
-                              )
-
-        divider = make_axes_locatable(ax)
-        cax = divider.append_axes("right", size="5%", pad=0.05)
-
-        sm = plt.cm.ScalarMappable(cmap=plt.cm.coolwarm, norm=colors.LogNorm(vmin=vmin, vmax=vmax))
-
-        ax.contour(x, y, self.mesh, levels=self.Indices, colors='k')
-
-        sm._A = []
-        cbar = plt.colorbar(sm, ax=ax, cax=cax)
-
-        ax.set_aspect('equal')
         plt.tight_layout()
+
         plt.show()
 
 

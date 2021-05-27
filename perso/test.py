@@ -22,15 +22,15 @@ Core2 = Circle( Position=Clad.C[2], Radi = 4.2, Index = Fused_silica(1.55)+0.005
 Geo = Geometry(Objects = [Clad, Clad0, Clad1, Clad2, Core0, Core1, Core2],
                Xbound  = [-120, 120],
                Ybound  = [-110, 130],
-               Nx      = 10,
-               Ny      = 10)
+               Nx      = 80,
+               Ny      = 80)
 
-Geo.Plot()
+#Geo.Plot()
 
 Sol = SuPySolver(Coupler=Geo)
 
 SuperModes = Sol.GetModes(wavelength = 1.55,
-                          Nstep      = 50,
+                          Nstep      = 100,
                           Nsol       = 7,
                           debug      = False,
                           ITRi       = 1,
@@ -40,6 +40,9 @@ SuperModes = Sol.GetModes(wavelength = 1.55,
                           Xsym       = 0,
                           Ysym       = 0 )
 
+SuperModes.Plot(Input=['All'], nMax=3)
+"""
 SuperModes.Save(Directory  = 'lol.pdf',
                 Input      = ['Index', 'Coupling', 'Adiabatic', 'Fields'],
                 nMax       = 4)
+"""

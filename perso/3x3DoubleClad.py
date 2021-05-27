@@ -23,7 +23,8 @@ Geo = Geometry(Objects = [Clad, Clad0, Clad2, Core0, Core1, Core2],
                Xbound  = [-120, 120],
                Ybound  = [-110, 130],
                Nx      = 10,
-               Ny      = 10)
+               Ny      = 10,
+               Length  = None)
 
 
 Sol = SuPySolver(Coupler=Geo)
@@ -45,4 +46,5 @@ SuperModes[0].PlotPropagation()
 SuperModes.SaveFig(Directory  = 'perso/DoubleClad_2',
                    Input      = ['All'],
                    nMax       = 4,
-                   iter       = -1,)"""
+                   iter       = -1,)
+"""

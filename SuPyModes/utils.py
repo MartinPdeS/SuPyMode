@@ -12,37 +12,41 @@ from shapely.affinity    import rotate
 
 from SuPyModes.Config    import *
 
-def RecomposeSymmetries(Input, Symmetries, Xaxis=None, Yaxis=None):
+def RecomposeSymmetries(Input, Axes):
 
-    if Symmetries[1] == 1:
+    if Axes.Symmetries[1] == 1:
         Input = np.concatenate((Input[::-1,:],Input),axis=0)
 
-    if Symmetries[1] == -1:
+    if Axes.Symmetries[1] == -1:
         Input = np.concatenate((-Input[::-1,:],Input),axis=0)
 
-    if Symmetries[0] == 1:
+    if Axes.Symmetries[0] == 1:
         Input = np.concatenate((Input[:,::-1],Input),axis=1)
 
-    if Symmetries[0] == -1:
+    if Axes.Symmetries[0] == -1:
         Input = np.concatenate((-Input[:,::-1],Input),axis=1)
 
-    if Xaxis is not None and Symmetries[0] != 0:
-        Xaxis = np.concatenate( (-Xaxis[::-1],Xaxis) )
+    if Axes.Direct.X is not None and Axes.Symmetries[0] != 0:
+        Xaxis = np.concatenate( (-Axes.Direct.X[::-1], Axes.Direct.X) )
+    else:
+        Xaxis = Axes.Direct.X
 
-    if Yaxis is not None and Symmetries[1] != 0:
-        Yaxis = np.concatenate( (-Yaxis[::-1],Yaxis) )
+    if Axes.Direct.Y is not None and Axes.Symmetries[1] != 0:
+        Yaxis = np.concatenate( (-Axes.Direct.Y[::-1], Axes.Direct.Y) )
+    else:
+        Yaxis = Axes.Direct.Y
 
     return Input, Xaxis, Yaxis
 
 
 def CheckSymmetries(SuperMode0, SuperMode1):
-    if SuperMode0.Symmetries[0] == 0 or SuperMode1.Symmetries[0] == 0: return True
+    if SuperMode0.Geometry.Axes.Symmetries[0] == 0 or SuperMode1.Geometry.Axes.Symmetries[0] == 0: return True
 
-    if SuperMode0.Symmetries[1] == 0 or SuperMode1.Symmetries[1] == 0: return True
+    if SuperMode0.Geometry.Axes.Symmetries[1] == 0 or SuperMode1.Geometry.Axes.Symmetries[1] == 0: return True
 
-    if SuperMode0.Symmetries[0] == - SuperMode1.Symmetries[0]: return False
+    if SuperMode0.Geometry.Axes.Symmetries[0] == - SuperMode1.Geometry.Axes.Symmetries[0]: return False
 
-    if SuperMode0.Symmetries[1] == - SuperMode1.Symmetries[1]: return False
+    if SuperMode0.Geometry.Axes.Symmetries[1] == - SuperMode1.Geometry.Axes.Symmetries[1]: return False
 
     return True
 
@@ -206,7 +210,7 @@ def SortSuperSet(SuperSet):
     SuperSet1 = cp.deepcopy(SuperSet)
     Overlap = np.zeros(len( SuperSet.Combinations ) )
 
-    for n, itr in enumerate( SuperSet.ITR[:-1] ):
+    for n, itr in enumerate( SuperSet.Geometry.ITRList[:-1] ):
 
         for i, mode0 in enumerate( SuperSet.SuperModes ):
 
@@ -268,3 +272,24 @@ def Multipage(filename, figs=None, dpi=200):
     for fig in figs:
         fig.savefig(pp, format='pdf')
     pp.close()
+
+
+def animate_plots(base_directory, fname_prefix):
+    """
+    This function creates a movie of the plots using ffmpeg
+
+    Args:
+        base_directory (str): the directory with the plots.
+        fname_prefix (str): the filename for the model run
+
+    Returns:
+        none but creates mp4 from pngs in base directory
+
+    Author: FJC
+    """
+    import subprocess
+
+    # animate the pngs using ffmpeg
+    system_call = "ffmpeg -framerate 5 -pattern_type glob -i '"+base_directory+"*.png' -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p "+base_directory+fname_prefix+"_movie.mp4"
+    print(system_call)
+    subprocess.call(system_call, shell=True)

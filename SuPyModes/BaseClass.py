@@ -9,7 +9,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from itertools               import combinations
 
 from SuPyModes.Config        import *
-from SuPyModes.utils         import RecomposeSymmetries, Multipage, prePlot
+from SuPyModes.utils         import Multipage, prePlot
 from SuPyModes.Directories   import *
 
 
@@ -20,7 +20,7 @@ class SetPlots(object):
         I = self.Index
 
         for i in range(nMax):
-            plt.plot(self.ITR, I[i], label=f'{i}')
+            plt.plot(self.Geometry.ITRList, I[i], label=f'{i}')
 
         return self.PlotKwarg['Index'], [min(I), max(I)]
 
@@ -31,7 +31,7 @@ class SetPlots(object):
         comb = tuple(combinations( np.arange(nMax), 2 ) )
 
         for n, (i,j) in enumerate( comb ):
-            plt.plot(self.ITR[1:-1], C[i,j,1:], label=f'{i} - {j}')
+            plt.plot(self.Geometry.ITRList[1:-1], C[i,j,1:], label=f'{i} - {j}')
 
         return self.PlotKwarg['Coupling'], [min(C), max(C)]
 
@@ -42,7 +42,7 @@ class SetPlots(object):
         comb = tuple(combinations( np.arange(nMax), 2 ) )
 
         for n, (i,j) in enumerate( comb ):
-            plt.plot(self.ITR[1:-1], A[i,j,1:], label=f'{i} - {j}')
+            plt.plot(self.Geometry.ITRList[1:-1], A[i,j,1:], label=f'{i} - {j}')
 
         return self.PlotKwarg['Adiabatic'], [min(A), max(A)]
 
@@ -53,51 +53,15 @@ class SetPlots(object):
         spec2 = gridspec.GridSpec(ncols=(nMax+1), nrows=3, figure=fig)
 
         for mode in range(nMax):
-            Field, xaxis, yaxis = self[mode].FullField(iter)
             axes = fig.add_subplot(spec2[0:2,mode])
-            axes.pcolormesh(yaxis, xaxis, Field, shading='auto')
-            axes.set_aspect('equal')
             str   = r"$n_{eff}$"
             title = f"Mode {mode} [{str}: {self[mode].Index[iter]:.6f}]"
-            axes.set_title(title, fontsize=8)
-            if mode == 0:
-                axes.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
-                axes.set_xlabel(r'X-distance [$\mu$m]', fontsize=6)
+
+            self[mode].Field[iter].__plot__(axes, title)
 
         axes = fig.add_subplot(spec2[0:2,-1])
 
-        Profile, _, _ = RecomposeSymmetries(Input      = self.IndexProfile.T,
-                                            Symmetries = self.Symmetries,
-                                            Xaxis      = None,
-                                            Yaxis      = None)
-
-        axes.set_title('Rasterized RI profil', fontsize=10)
-        axes.set_ylabel(r'Y-distance [$\mu$m]')
-        axes.set_xlabel(r'X-distance [$\mu$m]')
-
-        Indices = np.unique(np.abs(Profile))
-        vmin=sorted(Indices)[1]/1.1
-        vmax=sorted(Indices)[-1]
-
-        pcm = axes.pcolormesh( yaxis,
-                               xaxis,
-                               np.abs(Profile),
-                               cmap    = plt.cm.coolwarm,
-                               norm=colors.LogNorm(vmin=vmin, vmax=vmax),
-                               shading='auto'
-                              )
-
-        divider = make_axes_locatable(axes)
-        cax = divider.append_axes("right", size="5%", pad=0.05)
-
-        sm = plt.cm.ScalarMappable(cmap=plt.cm.coolwarm, norm=colors.LogNorm(vmin=vmin, vmax=vmax))
-
-        axes.contour(yaxis, xaxis, np.abs(Profile), levels=Indices, colors='k')
-
-        sm._A = []
-        cbar = plt.colorbar(sm, ax=axes, cax=cax)
-
-        axes.set_aspect('equal')
+        self.Geometry.__plot__(axes)
 
         plt.tight_layout()
 
@@ -192,7 +156,7 @@ class SetProperties(object):
         for (i,j) in self.combinations:
             C.append( self[i].GetCoupling(self[j]) )
 
-        tri = np.zeros( ( self.NSolutions, self.NSolutions, len(self.ITR)-1 ) )
+        tri = np.zeros( ( self.NSolutions, self.NSolutions, len(self.Geometry.ITRList)-1 ) )
         tri[np.triu_indices(self.NSolutions, 1)] = C
         tri[np.tril_indices(self.NSolutions, -1)] = C
 
@@ -208,7 +172,7 @@ class SetProperties(object):
         for (i,j) in self.combinations:
             A.append( self[i].GetAdiabatic(self[j]) )
 
-        tri = np.zeros( ( self.NSolutions, self.NSolutions, len(self.ITR)-1 ) )
+        tri = np.zeros( ( self.NSolutions, self.NSolutions, len(self.Geometry.ITRList)-1 ) )
         tri[np.triu_indices(self.NSolutions, 1)]  = A
         tri[np.tril_indices(self.NSolutions, -1)] = A
 

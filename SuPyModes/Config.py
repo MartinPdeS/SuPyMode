@@ -1,4 +1,4 @@
-PROPERTIES = ['Index', 'ITR', 'Field', 'Beta', 'Axes']
+PROPERTIES = ['Index', 'Field', 'Beta', 'Axes']
 
 BasePlotKwarg = {'Index'    : { 'name' : r'Effective Index',
                                 'unit' : r' [1]',

@@ -13,7 +13,7 @@ from SuPyModes.toolbox.SuPyAxes      import SuPyAxes
 from SuPyModes.toolbox.LPModes       import LP_names
 from SuPyModes.toolbox.SuPyFinitDiff import SuPyFinitdifference
 from SuPyModes.SuperMode             import SuperSet
-from SuPyModes.utils                 import SortSuperSet
+from SuPyModes.utils                 import SortSuperSet, RecomposeSymmetries
 #-------------------------Importations------------------------------------------
 
 import logging
@@ -27,8 +27,6 @@ class SuPySolver(object):
     def __init__(self, Coupler):
 
         self.Geometry  = Coupler
-
-        self.profile = Coupler.mesh
 
         self.info = Coupler.info
 
@@ -47,7 +45,7 @@ class SuPySolver(object):
             :call1: .initiate_finit_difference_matrix()
         """
 
-        self.nk = self.profile**2 * self.Axes.Dual.k**2
+        self.nk = self.Geometry.mesh**2 * self.Geometry.Axes.Dual.k**2
 
         self.nk = np.reshape(self.nk, self.info['Size'], order = 'F')
 
@@ -60,9 +58,11 @@ class SuPySolver(object):
             :call1: .initiate_finit_difference_matrix()
         """
 
-        self.Finit_diff = SuPyFinitdifference(self.Axes)
+        self.Finit_diff = SuPyFinitdifference(self.Geometry.Axes)
 
-        self.Finit_diff.laplacian_sparse(self.nk, self.Symmetries[1], self.Symmetries[0])
+        self.Finit_diff.laplacian_sparse(self.nk,
+                                         self.Geometry.Axes.Symmetries[1],
+                                         self.Geometry.Axes.Symmetries[0])
 
 
     def initiate_finit_difference_matrix(self):
@@ -95,24 +95,21 @@ class SuPySolver(object):
                     'Ny'        : self.info['Shape'][1]}
 
 
-        self.Symmetries = [Xsym, Ysym]
         self.debug = debug
-        self.Shape = self.info['Shape']
 
-        self.Nstep, self.ITRf, self.Nsol = Nstep, ITRf, Nsol
+        self.Nstep, self.Nsol = Nstep, Nsol
 
-        ITRList = np.linspace(ITRi, ITRf, Nstep)
+        self.Geometry.Axes = SuPyAxes(Meta=metadata)
 
-        self.Set = SuperSet(IndexProfile = self.profile,
-                            NSolutions   = self.Nsol,
-                            ITR          = ITRList,
-                            Symmetries   = self.Symmetries)
+        self.Geometry.ITRList =  np.linspace(ITRi, ITRf, Nstep)
+
+        self.Geometry.Axes.Symmetries = [Xsym, Ysym]
+
+        self.Set = SuperSet(NSolutions = self.Nsol, Geometry = self.Geometry)
 
         self.tolerance, self.error = tolerance, error
 
-        self.Axes = SuPyAxes(Meta=metadata)
-
-        self.Solve(ITRList, Nsol)
+        self.Solve(self.Geometry.ITRList, Nsol)
 
         return self.Set
 
@@ -120,15 +117,15 @@ class SuPySolver(object):
     def PreSolution(self):
 
         if self.iter == 0:
-            v0 =  self.profile/np.sum(self.profile)
+            v0 =  self.Geometry.mesh/np.sum(self.Geometry.mesh)
 
-            max_n = np.max(self.profile)
+            max_n = np.max(self.Geometry.mesh)
 
-            beta_square = copy.copy(-(self.Axes.Dual.k*max_n)**2)
+            beta_square = copy.copy(-(self.Geometry.Axes.Dual.k*max_n)**2)
 
         else:
 
-            beta_square = -(self.Set[0].Beta[0]*self.Axes.ITR)**2
+            beta_square = -(self.Set[0].Beta[0]*self.Geometry.Axes.ITR)**2
 
             v0 = self.Set[0].Field[-1].ravel()
 
@@ -149,7 +146,7 @@ class SuPySolver(object):
         for n, value in enumerate(iteration_list):
             logging.info(f"{n}/{len(iteration_list)}")
 
-            self.Axes.Scale(value)
+            self.Geometry.Axes.Scale(value)
 
             self.initiate_finit_difference_matrix()
 
@@ -165,7 +162,6 @@ class SuPySolver(object):
 
 
     def GetEigenVectors(self, Nsol=1, MaxIter=None):
-
         beta_square, v0 = self.PreSolution()
 
         values, vectors = LA(self.Finit_diff.Matrix,
@@ -182,19 +178,20 @@ class SuPySolver(object):
                              OPinv               = None,
                              OPpart              = 'r' )
 
-        betas = np.real(np.sqrt(-values) / self.Axes.ITR)
+        betas = np.real(np.sqrt(-values) / self.Geometry.Axes.ITR)
 
         vectors = np.real(vectors)
 
         for solution in range(Nsol):
+            index = betas[solution] / self.Geometry.Axes.Direct.k
 
-            index = betas[solution] / self.Axes.Direct.k
+            Field = vectors[:,solution].reshape(self.Geometry.Shape)
 
             self.Set[solution].Append(Index  = index,
                                       Beta   = betas[solution],
-                                      ITR    = self.Axes.ITR,
-                                      Field  = ModeArray( vectors[:,solution].reshape(self.Shape) ),
-                                      Axes   = self.Axes)
+                                      ITR    = self.Geometry.Axes.ITR,
+                                      Field  = ModeArray( Field, self.Geometry.Axes ),
+                                      Axes   = self.Geometry.Axes)
 
 
 
@@ -213,7 +210,7 @@ class SuPySolver(object):
         """
 
         with open(dir, 'rb') as handle:
-            self.profile = pickle.load(handle)
+            self.Geometry.mesh = pickle.load(handle)
 
 
 
@@ -235,9 +232,9 @@ class SuPySolver(object):
 
 class ModeArray(np.ndarray):
 
-    def __new__(cls, input_array, title='unnamed'):
+    def __new__(cls, input_array, Axes=None):
         self = input_array.view(ModeArray)
-        self.title = title
+        self.Axes = Axes
         return self
 
     def __array_finalize__(self, viewed):
@@ -251,6 +248,19 @@ class ModeArray(np.ndarray):
 
         return float( overlap )
 
+
+    def __plot__(self, ax, title=None):
+        Field, xaxis, yaxis = RecomposeSymmetries(self, self.Axes)
+
+        ax.pcolormesh(yaxis, xaxis, Field, shading='auto')
+
+        ax.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
+
+        ax.set_xlabel(r'X-distance [$\mu$m]', fontsize=6)
+
+        ax.set_aspect('equal')
+        if title:
+            ax.set_title(title, fontsize=8)
 
 
 

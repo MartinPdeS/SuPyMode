@@ -13,16 +13,15 @@ from SuPyModes.Special     import GeoGradient, ModeCoupling, ModeAdiabatic
 
 class SuperMode(object):
 
-    def __init__(self, Name, Profile):
+    def __init__(self, Name, Geometry):
         self.Name       = Name
-        self.ITR        = []
         self.Index      = []
         self.Field      = []
         self.Beta       = []
         self.Axes       = []
-        self.Profile    = Profile
         self._Adiabatic = None
         self._Coupling  = None
+        self.Geometry   = Geometry
 
 
 
@@ -35,20 +34,20 @@ class SuperMode(object):
     def DegenerateFactor(self):
         Factor = 1
 
-        if self.Symmetries[0] in [1,-1]: Factor *= 2
+        if self.Geometry.Axes.Symmetries[0] in [1,-1]: Factor *= 2
 
-        if self.Symmetries[1] in [1,-1]: Factor *= 2
+        if self.Geometry.Axes.Symmetries[1] in [1,-1]: Factor *= 2
 
         return Factor
 
 
     def GetCoupling(self, SuperMode):
         C = []
-        for n, itr in enumerate(self.ITR[:-1]):
+        for n, itr in enumerate(self.Geometry.ITRList[:-1]):
             C.append( ModeCoupling(SuperMode0 = self,
                                    SuperMode1 = SuperMode,
-                                   k          = self.Axes[n].Direct.k,
-                                   Profile    = self.Profile,
+                                   k          = self.Geometry.Axes.Direct.k,
+                                   Profile    = self.Geometry.mesh,
                                    iter       = n) )
 
         return C
@@ -56,11 +55,11 @@ class SuperMode(object):
 
     def GetAdiabatic(self, SuperMode):
         A = []
-        for n, itr in enumerate(self.ITR[:-1]):
+        for n, itr in enumerate(self.Geometry.ITRList[:-1]):
             A.append( ModeAdiabatic(SuperMode0 = self,
                                     SuperMode1 = SuperMode,
-                                    k          = self.Axes[n].Direct.k,
-                                    Profile    = self.Profile,
+                                    k          = self.Geometry.Axes.Direct.k,
+                                    Profile    = self.Geometry.mesh,
                                     iter       = n) )
 
         return A
@@ -97,45 +96,19 @@ class SuperMode(object):
     def FullField(self, iter):
         Field      = self.Field[iter]
 
-        Field, xAxis, yAxis = RecomposeSymmetries(Input      = Field,
-                                                  Symmetries = self.Symmetries,
-                                                  Xaxis      = self.Axes[iter].Direct.X,
-                                                  Yaxis      = self.Axes[iter].Direct.Y)
+        Field, xAxes, yAxes = RecomposeSymmetries(Input = Field, Axes = self.Axes)
 
-        return Field, xAxis, yAxis
+        return Field, xAxes, yAxes
 
-
-
-def animate_plots(base_directory, fname_prefix):
-    """
-    This function creates a movie of the plots using ffmpeg
-
-    Args:
-        base_directory (str): the directory with the plots.
-        fname_prefix (str): the filename for the model run
-
-    Returns:
-        none but creates mp4 from pngs in base directory
-
-    Author: FJC
-    """
-    import subprocess
-
-    # animate the pngs using ffmpeg
-    system_call = "ffmpeg -framerate 5 -pattern_type glob -i '"+base_directory+"*.png' -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p "+base_directory+fname_prefix+"_movie.mp4"
-    print(system_call)
-    subprocess.call(system_call, shell=True)
 
 
 class SuperSet(SetProperties, SetPlots):
-    def __init__(self, IndexProfile, NSolutions, ITR, Symmetries):
-        self.IndexProfile = IndexProfile
-        self.NSolutions   = NSolutions
-        self.SuperModes   = []
-        self.ITR          = ITR
-        self.Symmetries   = Symmetries
+    def __init__(self, NSolutions, Geometry):
+        self.NSolutions    = NSolutions
+        self.SuperModes    = []
         self._Coupling     = None
         self._Adiabatic    = None
+        self.Geometry      = Geometry
         self.Init()
 
         self.combinations = tuple(combinations( np.arange(NSolutions), 2 ) )
@@ -144,10 +117,8 @@ class SuperSet(SetProperties, SetPlots):
 
     def Init(self):
         for solution in range(self.NSolutions):
-            supermode = SuperMode(Profile = self.IndexProfile,
-                                  Name = f"Mode {solution}")
-
-            supermode.Symmetries = self.Symmetries
+            supermode = SuperMode(Name     = f"Mode {solution}",
+                                  Geometry = self.Geometry)
 
             self.SuperModes.append(supermode)
 
@@ -168,12 +139,12 @@ class SuperSet(SetProperties, SetPlots):
 
 
     def Ordering(self):
-        for iter, _ in enumerate( self.ITR ):
+        for iter, _ in enumerate( self.Geometry.ITR ):
             self.OrderingModes(iter)
 
 
     def Debug(self):
-        for n, itr in enumerate( self.ITR ):
+        for n, itr in enumerate( self.Geometry.ITR ):
             self.Plot('Fields', iter=n)
 
 
