@@ -1,12 +1,12 @@
-#-------------------------Importations------------------------------------------
+
 """ standard imports """
 import sys, copy, pickle
 import logging
 import copy  as cp
-from progressbar           import Bar, Percentage, ETA, ProgressBar
 import matplotlib.pyplot   as plt
 import matplotlib.gridspec as gridspec
 import numpy               as np
+from progressbar           import ProgressBar
 from scipy.sparse.linalg   import eigs as LA
 
 """ package imports """
@@ -14,18 +14,20 @@ from SuPyModes.toolbox.SuPyAxes      import SuPyAxes
 from SuPyModes.toolbox.LPModes       import LP_names
 from SuPyModes.toolbox.SuPyFinitDiff import SuPyFinitdifference
 from SuPyModes.SuperMode             import SuperSet, ModeSlice
-from SuPyModes.utils                 import SortSuperSet, RecomposeSymmetries
-#-------------------------Importations------------------------------------------
+from SuPyModes.utils                 import SortSuperSet, RecomposeSymmetries, GetWidgetBar
 
-import logging
 logging.basicConfig(level=logging.INFO)
+
+Mlogger = logging.getLogger(__name__)
+
 
 class SuPySolver(object):
     """ This object corresponds to the solutioner.
     It solves the eigenvalues problems for a given geometry.
 
     """
-    def __init__(self, Coupler):
+    def __init__(self, Coupler,  debug='INFO'):
+        Mlogger.setLevel(getattr(logging, debug))
 
         self.Geometry  = Coupler
 
@@ -135,17 +137,16 @@ class SuPySolver(object):
 
 
     def Solve(self, iteration_list: list, Nsol=1):
-
         self.iter = 0
 
-        widgets=[Bar('=', '[',  ']'), ' ', Percentage(),  ' ', ETA()]
+        WidgetBar = GetWidgetBar('Computing super modes: ')
 
-        bar = ProgressBar(maxval=self.Nstep, widgets=widgets)
+        bar = ProgressBar(maxval=self.Nstep, widgets=WidgetBar)
 
         bar.start()
 
         for n, value in enumerate(iteration_list):
-            logging.info(f"{n}/{len(iteration_list)}")
+            bar.update(self.iter)
 
             self.Geometry.Axes.Scale(value)
 
@@ -155,9 +156,10 @@ class SuPySolver(object):
 
             self.iter += 1
 
-            bar.update(self.iter)
+        bar.finish()
 
-        self.Set = SortSuperSet(self.Set)
+
+        self.Set = self.Set.Sort()
 
 
 

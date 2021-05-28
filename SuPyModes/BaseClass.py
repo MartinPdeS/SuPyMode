@@ -7,10 +7,11 @@ import matplotlib.colors     as colors
 from numpy                   import min, max
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from itertools               import combinations
+from progressbar             import ProgressBar
 
 from SuPyModes.Config        import *
 from SuPyModes.Directories   import *
-from SuPyModes.utils         import Multipage, prePlot
+from SuPyModes.utils         import Multipage, prePlot, ToList, GetWidgetBar
 
 
 class SetPlots(object):
@@ -58,6 +59,7 @@ class SetPlots(object):
             title = f"Mode {mode} [{str}: {self[mode][iter].Index:.6f}]"
 
             self[mode][iter].__plot__(axes, title)
+            fig.suptitle(f'ITR:{self.Geometry.ITRList[iter]}')
 
         axes = fig.add_subplot(spec2[0:2,-1])
 
@@ -69,6 +71,7 @@ class SetPlots(object):
 
 
     def GenFigures(self, Input, iter, nMax, PlotKwarg):
+        iter = ToList(iter)
         Input = set(Input)
 
         if not nMax: nMax = len(self.SuperModes)
@@ -83,7 +86,8 @@ class SetPlots(object):
 
         if Input & set( ['All', 'Adiabatic'] ): figures.append( self.PlotAdiabatic(nMax=nMax) )
 
-        if Input & set( ['All', 'Fields'] ):    figures.append( self.PlotFields(iter, nMax=nMax) )
+        for i in iter:
+            if Input & set( ['All', 'Fields'] ):    figures.append( self.PlotFields(i, nMax=nMax) )
 
         return figures
 
@@ -153,10 +157,19 @@ class SetProperties(object):
 
 
     def GetCoupling(self):
-        logging.info('Computing mode coupling...')
+        WidgetBar = GetWidgetBar('Computing mode coupling... ')
+
+        bar = ProgressBar(maxval=len(self.combinations), widgets=WidgetBar)
+
+        bar.start()
+
         C = []
-        for (i,j) in self.combinations:
+        for n, (i,j) in enumerate( self.combinations ):
+            bar.update(n)
+
             C.append( self[i].GetCoupling(self[j]) )
+
+        bar.finish()
 
         tri = np.zeros( ( self.NSolutions, self.NSolutions, len(self.Geometry.ITRList)-1 ) )
         tri[np.triu_indices(self.NSolutions, 1)] = C
@@ -169,10 +182,19 @@ class SetProperties(object):
 
 
     def GetAdiabatic(self):
-        logging.info('Computing adiabatic criterion...')
+        WidgetBar = GetWidgetBar('Computing adiabatic criterion... ')
+
+        bar = ProgressBar(maxval=len(self.combinations), widgets=WidgetBar)
+
+        bar.start()
+
         A = []
-        for (i,j) in self.combinations:
+        for n, (i,j) in enumerate( self.combinations ):
+            bar.update(n)
+
             A.append( self[i].GetAdiabatic(self[j]) )
+
+        bar.finish()    
 
         tri = np.zeros( ( self.NSolutions, self.NSolutions, len(self.Geometry.ITRList)-1 ) )
         tri[np.triu_indices(self.NSolutions, 1)]  = A

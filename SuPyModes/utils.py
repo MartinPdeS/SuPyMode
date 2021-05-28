@@ -1,6 +1,6 @@
+import logging
 import numpy             as np
 import copy              as cp
-import logging
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from descartes           import PolygonPatch
@@ -9,6 +9,7 @@ from shapely.geometry.collection import GeometryCollection
 from shapely.ops         import nearest_points, cascaded_union
 from numpy               import pi, cos, sin, sqrt, abs, exp, array, ndarray
 from shapely.affinity    import rotate
+from progressbar         import Bar, Percentage, ETA, ProgressBar
 
 from SuPyModes.Config    import *
 
@@ -249,7 +250,7 @@ def prePlot(func):
             if kwargs['ylim'][0] is None: ymin = ybound[0]
             else: ymin = kwargs['ylim'][0]
 
-            ymin = max(1e-12, ymin)
+            ymin = max(1e-8, ymin)
 
             if kwargs['ylim'][1] is None: ymax = ybound[1]
             else: ymax = kwargs['ylim'][1]
@@ -296,3 +297,15 @@ def animate_plots(base_directory, fname_prefix):
     system_call = "ffmpeg -framerate 5 -pattern_type glob -i '"+base_directory+"*.png' -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p "+base_directory+fname_prefix+"_movie.mp4"
     print(system_call)
     subprocess.call(system_call, shell=True)
+
+
+def Index2NA(nCore, nClad):
+    return np.sqrt(nCore**2 - nClad**2)
+
+
+def NA2nCore(NA, nClad):
+    return np.sqrt(NA**2+nClad**2)
+
+
+def GetWidgetBar(msg):
+    return [msg, Bar('=', '[',  ']'), ' ', Percentage(),  ' ', ETA()]

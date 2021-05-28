@@ -21,7 +21,7 @@ from SuPyModes.Directories import RootPath
 from SuPyModes.Special     import Intersection
 from SuPyModes.utils       import *
 
-
+Mlogger = logging.getLogger(__name__)
 
 class Geometry(object):
     """ Class represent the refractive index (RI) geometrique profile which
@@ -41,7 +41,10 @@ class Geometry(object):
         Number of point for Y dimensions discretization.
     """
 
-    def __init__(self, Objects, Xbound, Ybound, Nx, Ny, Length=None):
+    def __init__(self, Objects, Xbound, Ybound, Nx, Ny, Length=None, debug='INFO'):
+
+        Mlogger.setLevel(getattr(logging, debug))
+
         self.Objects    = ToList(Objects)
 
         self.Indices    = sorted( list( set( [1] + [obj.Index for obj in Objects] ) ) )
@@ -130,8 +133,14 @@ class Geometry(object):
 
 
     def __plot__(self, ax):
-        Field, xaxis, yaxis = RecomposeSymmetries(self.mesh, self.Axes)
-        
+        if not hasattr(self, 'Axes'):
+            Field = self.mesh
+            xaxis = np.arange(self.mesh.shape[0])
+            yaxis = np.arange(self.mesh.shape[1])
+
+        else:
+            Field, xaxis, yaxis = RecomposeSymmetries(self.mesh, self.Axes)
+
         vmin=sorted(self.Indices)[1]/1.1
         vmax=sorted(self.Indices)[-1]
 
@@ -182,7 +191,10 @@ class Geometry(object):
 
 
 class Circle(object):
-    def __init__(self, Position, Radi, Index):
+    def __init__(self, Position, Radi, Index, debug='INFO'):
+
+        Mlogger.setLevel(getattr(logging, debug))
+
         self.Points   = Position
         self.Radi     = Radi
         self.Index    = Index
@@ -199,7 +211,10 @@ class Circle(object):
 
 
 class BaseFused():
-    def __init__(self, Radius, Fusion, Angle, Theta, Index):
+    def __init__(self, Radius, Fusion, Angle, Theta, Index, debug):
+
+        Mlogger.setLevel(getattr(logging, debug))
+
         self.Index   = Index
         self.Radius  = Radius
         self.Fusion  = Fusion
@@ -214,7 +229,7 @@ class BaseFused():
 
     def OptimizeGeometry(self):
         res = minimize_scalar(self.ComputeCost, bounds=self.Bound, method='bounded')
-        logging.info(f'Result Rv = {res.x}')
+        Mlogger.info(f'Result Rv = {res.x}')
         return self.BuildCoupler(Rv=res.x)
 
 
@@ -299,7 +314,7 @@ class BaseFused():
 
         Cost = self.ComputeDifference(Added, Removed)
 
-        logging.info(f'Topology: {self.Topology} \t Rv: {Rv:.0f} \t Cost: {Cost}')
+        Mlogger.info(f'Topology: {self.Topology} \t Rv: {Rv:.0f} \t Cost: {Cost}')
 
         return Cost
 
@@ -367,12 +382,13 @@ class BaseFused():
 
 
 class Fused4(BaseFused):
-    def __init__(self, Radius, Fusion, Index):
+    def __init__(self, Radius, Fusion, Index, debug='INFO'):
         super().__init__(Radius  = Radius,
                          Fusion  = Fusion,
                          Angle   = [0, 90, 180, 270],
                          Theta   = 45,
-                         Index   = Index)
+                         Index   = Index,
+                         debug   = debug)
 
 
         if self.Topology == 'concave':
@@ -460,12 +476,13 @@ class Fused4(BaseFused):
 
 
 class Fused3(BaseFused):
-    def __init__(self, Radius, Fusion, Index):
+    def __init__(self, Radius, Fusion, Index, debug='INFO'):
         super().__init__(Radius  = Radius,
                          Fusion  = Fusion,
                          Angle   = [0, 120, 240],
                          Theta   = 30,
-                         Index   = Index)
+                         Index   = Index,
+                         debug   = debug )
 
         if self.Topology == 'concave':
             self.Bound = (Radius*1.5, 4000)
@@ -543,12 +560,13 @@ class Fused3(BaseFused):
 
 
 class Fused2(BaseFused):
-    def __init__(self, Radius, Fusion, Index):
+    def __init__(self, Radius, Fusion, Index, debug='INFO'):
         super().__init__(Radius  = Radius,
                          Fusion  = Fusion,
                          Angle   = [0, 180],
                          Theta   = 90,
-                         Index   = Index)
+                         Index   = Index,
+                         debug   = debug)
 
         if self.Topology == 'concave':
             self.Bound = (Radius*1.5, 4000)

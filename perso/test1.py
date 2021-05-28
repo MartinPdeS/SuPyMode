@@ -1,7 +1,7 @@
 from SuPyModes.Geometry          import Geometry, Circle, Fused3
 from SuPyModes.Solver            import SuPySolver
 from SuPyModes.sellmeier         import Fused_silica
-from SuPyModes.utils             import NA2nCore
+from SuPyModes.utils             import *
 
 nCore = NA2nCore( 0.12, Fused_silica(1.55) )
 nClad = NA2nCore( 0.11, Fused_silica(1.55)   )
@@ -16,19 +16,15 @@ FiberB = {'Core':(nCore, 4.5), 'Clad': (nClad, 33/2)}
 
 Clad = Fused3(Radius =  62.5, Fusion  = 0.8, Index   = Fused_silica(1.55))
 
-
-
-
-
 Clad0 = Circle( Position = Clad.C[0],
                 Radi     = FiberA['Clad'][1],
                 Index    = FiberA['Clad'][0] )
 
-Clad1 = Circle( Position = Clad.C[0],
+Clad1 = Circle( Position = Clad.C[1],
                 Radi     = FiberA['Clad'][1],
                 Index    = FiberA['Clad'][0] )
 
-Clad2 = Circle( Position = Clad.C[0],
+Clad2 = Circle( Position = Clad.C[2],
                 Radi     = FiberB['Clad'][1],
                 Index    = FiberB['Clad'][0] )
 
@@ -37,28 +33,28 @@ Core0 = Circle( Position = Clad.C[0],
                 Radi     = FiberA['Core'][1],
                 Index    = FiberA['Core'][0] )
 
-Core1 = Circle( Position = Clad.C[0],
+Core1 = Circle( Position = Clad.C[1],
                 Radi     = FiberA['Core'][1],
                 Index    = FiberA['Core'][0] )
 
-Core2 = Circle( Position = Clad.C[0],
+Core2 = Circle( Position = Clad.C[2],
                 Radi     = FiberB['Core'][1],
                 Index    = FiberB['Core'][0] )
 
-Geo = Geometry(Objects = [Clad, Clad0, Clad2, Core0, Core1, Core2],
+Geo = Geometry(Objects = [Clad, Clad0, Clad1, Clad2, Core0, Core1, Core2],
                Xbound  = [-120, 120],
                Ybound  = [-110, 130],
                Nx      = 10,
                Ny      = 10,
+               debug   = 'INFO',
                Length  = None)
 
 
 Sol = SuPySolver(Coupler=Geo)
 
 SuperModes = Sol.GetModes(wavelength = 1.55,
-                          Nstep      = 20,
+                          Nstep      = 200,
                           Nsol       = 7,
-                          debug      = False,
                           ITRi       = 1,
                           ITRf       = 0.05,
                           tolerance  = 1e-20,
@@ -66,11 +62,8 @@ SuperModes = Sol.GetModes(wavelength = 1.55,
                           Xsym       = 0,
                           Ysym       = 0 )
 
-SuperModes[0].PlotPropagation()
 
-"""
-SuperModes.SaveFig(Directory  = 'perso/DoubleClad_2',
+SuperModes.SaveFig(Directory  = 'perso/DoubleClad',
                    Input      = ['All'],
                    nMax       = 4,
-                   iter       = -1,)
-"""
+                   iter       = [0,-1])

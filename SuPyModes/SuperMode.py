@@ -1,15 +1,19 @@
+import logging
 import numpy               as np
 import copy                as cp
 import matplotlib.pyplot   as plt
+from progressbar           import ProgressBar
 from itertools             import combinations, combinations_with_replacement as Combinations
 from mayavi                import mlab
 
 from SuPyModes.Config      import *
-from SuPyModes.utils       import RecomposeSymmetries
+from SuPyModes.utils       import RecomposeSymmetries, GetWidgetBar, SortSuperSet
 from SuPyModes.BaseClass   import SetPlots, SetProperties
 from SuPyModes.Special     import ModeCoupling, ModeAdiabatic
 
 
+
+Mlogger = logging.getLogger(__name__)
 
 class SuperMode(object):
 
@@ -23,7 +27,7 @@ class SuperMode(object):
 
 
     def Append(self, **kwargs):
-        self.Field.append(kwargs['Field'])
+        self.Slice.append(kwargs['Field'])
 
 
     def __getitem__(self, N):
@@ -85,20 +89,20 @@ class SuperMode(object):
 
         anim_loc()
         mlab.show()
-
+        """
         import os
         fps = 20
         prefix = 'ani'
         ext = '.png'
 
         import subprocess
-        animate_plots(base_directory='yolo', fname_prefix='dasda')
+        animate_plots(base_directory='yolo', fname_prefix='dasda')"""
 
 
     def FullField(self, iter):
-        Field      = self.Field[iter]
+        Field      = self.Slice[iter]
 
-        Field, xAxes, yAxes = RecomposeSymmetries(Input = Field, Axes = self.Axes)
+        Field, xAxes, yAxes = RecomposeSymmetries(Input = Field, Axes = self.Geometry.Axes)
 
         return Field, xAxes, yAxes
 
@@ -138,7 +142,9 @@ class SuperMode(object):
 
 
 class SuperSet(SetProperties, SetPlots):
-    def __init__(self, NSolutions, Geometry):
+    def __init__(self, NSolutions, Geometry, debug='INFO'):
+        Mlogger.setLevel(getattr(logging, debug))
+
         self.NSolutions    = NSolutions
         self.SuperModes    = []
         self._Coupling     = None
@@ -151,7 +157,6 @@ class SuperSet(SetProperties, SetPlots):
 
 
     def Init(self):
-
         for solution in range(self.NSolutions):
             supermode = SuperMode(Name     = f"Mode {solution}",
                                   Geometry = self.Geometry)
@@ -175,27 +180,23 @@ class SuperSet(SetProperties, SetPlots):
 
 
     def Ordering(self):
+        WidgetBar = GetWidgetBar('Sorting super modes... ')
+
+        bar = ProgressBar(maxval=len(self.Geometry.ITR), widgets=WidgetBar)
+
+        bar.start()
+
         for iter, _ in enumerate( self.Geometry.ITR ):
+            bar.update(self.iter)
+
             self.OrderingModes(iter)
+
+        bar.finish()
 
 
     def Debug(self):
         for n, itr in enumerate( self.Geometry.ITR ):
             self.Plot('Fields', iter=n)
-
-
-    def OrderingModes(self, iter):
-        lst = [ self[mode].Index[iter] for mode in range( self.NSolutions ) ]
-
-        sortedIndex = sorted(range(len(lst)), key = lambda k: lst[k])
-
-        self.SortedIndex = sortedIndex[::-1]
-
-        temporary = cp.deepcopy( self.SuperModes )
-
-        for n, m  in enumerate( self.SortedIndex ):
-            if n != m:
-                self.SwapProperties(self[n], temporary[m], iter)
 
 
     def __copy__(self):
@@ -213,6 +214,8 @@ class SuperSet(SetProperties, SetPlots):
         return copy_
 
 
+    def Sort(self):
+        return SortSuperSet(self)
 
 
 
