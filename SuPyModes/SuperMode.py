@@ -7,7 +7,7 @@ from itertools             import combinations, combinations_with_replacement as
 from mayavi                import mlab
 
 from SuPyModes.Config      import *
-from SuPyModes.utils       import RecomposeSymmetries, GetWidgetBar, SortSuperSet
+from SuPyModes.utils       import RecomposeSymmetries, GetWidgetBar, SortSuperSet, Enumerate
 from SuPyModes.BaseClass   import SetPlots, SetProperties
 from SuPyModes.Special     import ModeCoupling, ModeAdiabatic
 
@@ -180,18 +180,9 @@ class SuperSet(SetProperties, SetPlots):
 
 
     def Ordering(self):
-        WidgetBar = GetWidgetBar('Sorting super modes... ')
 
-        bar = ProgressBar(maxval=len(self.Geometry.ITR), widgets=WidgetBar)
-
-        bar.start()
-
-        for iter, _ in enumerate( self.Geometry.ITR ):
-            bar.update(self.iter)
-
+        for iter, _ in Enumerate( self.Geometry.ITRList, msg='Sorting super modes... '):
             self.OrderingModes(iter)
-
-        bar.finish()
 
 
     def Debug(self):

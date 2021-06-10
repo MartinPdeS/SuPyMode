@@ -4,7 +4,7 @@ from SuPyModes.sellmeier         import Fused_silica
 from SuPyModes.utils             import NA2nCore
 
 nCore = NA2nCore( 0.12, Fused_silica(1.55) )
-nClad = NA2nCore( 0.11, Fused_silica(1.55)   )
+nClad = NA2nCore( 0.11, Fused_silica(1.55) )
 FiberA = {'Core':(nCore, 4.6), 'Clad': (nClad,19.9/2)}
 
 
@@ -15,9 +15,6 @@ FiberB = {'Core':(nCore, 4.5), 'Clad': (nClad, 33/2)}
 
 
 Clad = Fused3(Radius =  62.5, Fusion  = 0.8, Index   = Fused_silica(1.55))
-
-
-
 
 
 Clad0 = Circle( Position = Clad.C[0],
@@ -48,8 +45,8 @@ Core2 = Circle( Position = Clad.C[0],
 Geo = Geometry(Objects = [Clad, Clad0, Clad2, Core0, Core1, Core2],
                Xbound  = [-120, 120],
                Ybound  = [-110, 130],
-               Nx      = 10,
-               Ny      = 10,
+               Nx      = 100,
+               Ny      = 100,
                Length  = None)
 
 
@@ -68,9 +65,8 @@ SuperModes = Sol.GetModes(wavelength = 1.55,
 
 SuperModes[0].PlotPropagation()
 
-"""
+
 SuperModes.SaveFig(Directory  = 'perso/DoubleClad_2',
                    Input      = ['All'],
                    nMax       = 4,
-                   iter       = -1,)
-"""
+                   iter       = [0,-1])

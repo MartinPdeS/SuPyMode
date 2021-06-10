@@ -14,7 +14,7 @@ from SuPyModes.toolbox.SuPyAxes      import SuPyAxes
 from SuPyModes.toolbox.LPModes       import LP_names
 from SuPyModes.toolbox.SuPyFinitDiff import SuPyFinitdifference
 from SuPyModes.SuperMode             import SuperSet, ModeSlice
-from SuPyModes.utils                 import SortSuperSet, RecomposeSymmetries, GetWidgetBar
+from SuPyModes.utils                 import SortSuperSet, RecomposeSymmetries, GetWidgetBar, Enumerate
 
 logging.basicConfig(level=logging.INFO)
 
@@ -139,15 +139,7 @@ class SuPySolver(object):
     def Solve(self, iteration_list: list, Nsol=1):
         self.iter = 0
 
-        WidgetBar = GetWidgetBar('Computing super modes: ')
-
-        bar = ProgressBar(maxval=self.Nstep, widgets=WidgetBar)
-
-        bar.start()
-
-        for n, value in enumerate(iteration_list):
-            bar.update(self.iter)
-
+        for n, value in Enumerate(iteration_list, msg='Computing super modes: '):
             self.Geometry.Axes.Scale(value)
 
             self.initiate_finit_difference_matrix()
@@ -156,7 +148,6 @@ class SuPySolver(object):
 
             self.iter += 1
 
-        bar.finish()
 
 
         self.Set = self.Set.Sort()

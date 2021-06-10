@@ -11,7 +11,7 @@ from progressbar             import ProgressBar
 
 from SuPyModes.Config        import *
 from SuPyModes.Directories   import *
-from SuPyModes.utils         import Multipage, prePlot, ToList, GetWidgetBar
+from SuPyModes.utils         import Multipage, prePlot, ToList, Enumerate
 
 
 class SetPlots(object):
@@ -157,19 +157,11 @@ class SetProperties(object):
 
 
     def GetCoupling(self):
-        WidgetBar = GetWidgetBar('Computing mode coupling... ')
-
-        bar = ProgressBar(maxval=len(self.combinations), widgets=WidgetBar)
-
-        bar.start()
-
         C = []
-        for n, (i,j) in enumerate( self.combinations ):
-            bar.update(n)
+        for n, (i,j) in Enumerate( self.combinations, msg='Computing mode coupling... ' ):
 
             C.append( self[i].GetCoupling(self[j]) )
 
-        bar.finish()
 
         tri = np.zeros( ( self.NSolutions, self.NSolutions, len(self.Geometry.ITRList)-1 ) )
         tri[np.triu_indices(self.NSolutions, 1)] = C
@@ -182,19 +174,10 @@ class SetProperties(object):
 
 
     def GetAdiabatic(self):
-        WidgetBar = GetWidgetBar('Computing adiabatic criterion... ')
-
-        bar = ProgressBar(maxval=len(self.combinations), widgets=WidgetBar)
-
-        bar.start()
-
         A = []
-        for n, (i,j) in enumerate( self.combinations ):
-            bar.update(n)
+        for n, (i,j) in Enumerate( self.combinations, msg='Computing adiabatic criterion... '):
 
             A.append( self[i].GetAdiabatic(self[j]) )
-
-        bar.finish()    
 
         tri = np.zeros( ( self.NSolutions, self.NSolutions, len(self.Geometry.ITRList)-1 ) )
         tri[np.triu_indices(self.NSolutions, 1)]  = A
@@ -203,3 +186,20 @@ class SetProperties(object):
         self._Adiabatic = tri
 
         return tri
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# -

@@ -210,12 +210,11 @@ def SwapProperties(SuperMode0, SuperMode1, N):
 
 
 def SortSuperSet(SuperSet):
-    logging.info('Sorting modes...')
     SuperSet1 = cp.deepcopy( SuperSet )
 
     Overlap = np.zeros(len( SuperSet.Combinations ) )
 
-    for n, itr in enumerate( SuperSet.Geometry.ITRList[:-1] ):
+    for n, itr in Enumerate( SuperSet.Geometry.ITRList[:-1], msg = 'Sorting modes...' ):
 
         for i, mode0 in enumerate( SuperSet.SuperModes ):
 
@@ -295,7 +294,6 @@ def animate_plots(base_directory, fname_prefix):
 
     # animate the pngs using ffmpeg
     system_call = "ffmpeg -framerate 5 -pattern_type glob -i '"+base_directory+"*.png' -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p "+base_directory+fname_prefix+"_movie.mp4"
-    print(system_call)
     subprocess.call(system_call, shell=True)
 
 
@@ -309,3 +307,36 @@ def NA2nCore(NA, nClad):
 
 def GetWidgetBar(msg):
     return [msg, Bar('=', '[',  ']'), ' ', Percentage(),  ' ', ETA()]
+
+
+def Enumerate(iterator, msg=''):
+    WidgetBar = [msg, Bar('=', '[',  ']'), ' ', Percentage(),  ' ', ETA()]
+
+    bar = ProgressBar(maxval=len(iterator), widgets=WidgetBar)
+
+    bar.start()
+
+    for n, iteration in enumerate(iterator):
+        bar.update(n)
+        if n == len(iterator)-1:
+            bar.finish()
+        yield n, iteration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# -

@@ -3,13 +3,13 @@ from SuPyModes.Solver            import SuPySolver
 from SuPyModes.sellmeier         import Fused_silica
 from SuPyModes.utils             import *
 
-nCore = NA2nCore( 0.12, Fused_silica(1.55) )
-nClad = NA2nCore( 0.11, Fused_silica(1.55)   )
+nCore = NA2nCore( 0.120, Fused_silica(1.55) )
+nClad = NA2nCore( 0.110, Fused_silica(1.55) )
 FiberA = {'Core':(nCore, 4.6), 'Clad': (nClad,19.9/2)}
 
 
-nCore = NA2nCore( 0.125, Fused_silica(1.55) )
-nClad = NA2nCore( 0.11, Fused_silica(1.55)  )
+nCore = NA2nCore( 0.125,  Fused_silica(1.55) )
+nClad = NA2nCore( 0.110,  Fused_silica(1.55) )
 FiberB = {'Core':(nCore, 4.5), 'Clad': (nClad, 33/2)}
 
 
