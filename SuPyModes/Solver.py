@@ -2,15 +2,17 @@
 """ standard imports """
 import sys, copy, pickle
 import logging
+import timeit
 import copy  as cp
-import matplotlib.pyplot   as plt
-import matplotlib.gridspec as gridspec
-import numpy               as np
-from progressbar           import ProgressBar
-from scipy.sparse.linalg   import eigs as LA
+import matplotlib.pyplot             as plt
+import matplotlib.gridspec           as gridspec
+import numpy                         as np
+from progressbar                     import ProgressBar
+from scipy.sparse.linalg             import eigs as LA
 
 """ package imports """
 from SuPyModes.toolbox.SuPyAxes      import SuPyAxes
+from SuPyModes.Special               import EigenSolve
 from SuPyModes.toolbox.LPModes       import LP_names
 from SuPyModes.toolbox.SuPyFinitDiff import SuPyFinitdifference
 from SuPyModes.SuperMode             import SuperSet, ModeSlice
@@ -29,53 +31,36 @@ class SuPySolver(object):
     def __init__(self, Coupler,  debug='INFO'):
         Mlogger.setLevel(getattr(logging, debug))
 
-        self.Geometry  = Coupler
+        self.Geometry     = Coupler
 
-        self.info = Coupler.info
+        self.info         = Coupler.info
 
-        self.vectors = []
+        self.vectors      = []
 
         self.pre_solution = {}
 
+        self._nk          = None
+
+        self._Laplacian   = None
 
 
-    def compute_nk(self):
-        """
-        This method compute the value n**2*k**2 which is one of the termes of
-        the eigen value probleme.
+    @property
+    def nk(self):
+        temp = self.Geometry.mesh**2 * self.Geometry.Axes.Dual.k**2
 
-        calls:
-            :call1: .initiate_finit_difference_matrix()
-        """
+        self._nk = np.reshape(temp, self.info['Size'], order = 'F')
 
-        self.nk = self.Geometry.mesh**2 * self.Geometry.Axes.Dual.k**2
-
-        self.nk = np.reshape(self.nk, self.info['Size'], order = 'F')
+        return self._nk
 
 
-    def laplacian_sparse(self):
-        """
-        Function that constructs a sparse matrix that applies the 5-point laplacian discretization.
+    @property
+    def Laplacian(self):
+        self._Laplacian = SuPyFinitdifference(self.Geometry.Axes)
 
-        calls:
-            :call1: .initiate_finit_difference_matrix()
-        """
-
-        self.Finit_diff = SuPyFinitdifference(self.Geometry.Axes)
-
-        self.Finit_diff.laplacian_sparse(self.nk,
+        self._Laplacian.laplacian_sparse(self.nk,
                                          self.Geometry.Axes.Symmetries[1],
                                          self.Geometry.Axes.Symmetries[0])
-
-
-    def initiate_finit_difference_matrix(self):
-        """ Generate the finit difference matrix for eigenvalues optimisation
-        protocol.
-
-        """
-        self.compute_nk()
-
-        self.laplacian_sparse()
+        return self._Laplacian
 
 
     def GetModes(self,
@@ -142,23 +127,19 @@ class SuPySolver(object):
         for n, value in Enumerate(iteration_list, msg='Computing super modes: '):
             self.Geometry.Axes.Scale(value)
 
-            self.initiate_finit_difference_matrix()
-
             self.GetEigenVectors(Nsol)
 
             self.iter += 1
 
-
-
         self.Set = self.Set.Sort()
-
-
 
 
     def GetEigenVectors(self, Nsol=1, MaxIter=None):
         beta_square, v0 = self.PreSolution()
 
-        values, vectors = LA(self.Finit_diff.Matrix,
+        starttime = timeit.default_timer()
+
+        values, vectors = LA(self.Laplacian.Matrix,
                              k                   = Nsol,
                              M                   = None,
                              sigma               = beta_square,
@@ -171,6 +152,7 @@ class SuPySolver(object):
                              Minv                = None,
                              OPinv               = None,
                              OPpart              = 'r' )
+
 
         betas = np.real(np.sqrt(-values) / self.Geometry.Axes.ITR)
 

@@ -220,9 +220,10 @@ class ModeSlice(np.ndarray):
 
 
     def __init__(self, Field, Axes, Index, Beta):
-        self.Axes  = Axes
-        self.Index = Index
-        self.Beta  = Beta
+        self.Field = Field
+        self.Axes   = Axes
+        self.Index  = Index
+        self.Beta   = Beta
 
 
     def __array_finalize__(self, viewed):
@@ -260,7 +261,7 @@ class ModeSlice(np.ndarray):
 
 
     def __copy__(self):
-        to_be_copied = ['Index', 'Axes', 'Beta']
+        to_be_copied = ['Field', 'Index', 'Axes', 'Beta']
 
         copy_ = ModeSlice(self, self.Axes, self.Index, self.Beta)
 

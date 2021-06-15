@@ -141,8 +141,9 @@ class Geometry(object):
         else:
             Field, xaxis, yaxis = RecomposeSymmetries(self.mesh, self.Axes)
 
-        vmin=sorted(self.Indices)[1]/1.1
-        vmax=sorted(self.Indices)[-1]
+        vmin = sorted(self.Indices)[1]/1.1
+
+        vmax = sorted(self.Indices)[-1]
 
         pcm = ax.pcolormesh(  xaxis,
                               yaxis,

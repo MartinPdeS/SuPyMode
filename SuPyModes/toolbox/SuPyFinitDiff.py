@@ -9,7 +9,6 @@ class SuPyFinitdifference(object):
 
 
     def __init__(self, Axes):
-
         self.Axes = Axes
 
 
@@ -98,6 +97,7 @@ class SuPyFinitdifference(object):
             :call1: XXX
         """
         e7[1:2*self.Axes.Nx] = 0
+
         e8[1:4*self.Axes.Nx] = 0
 
         return e0, e1, e2, e3, e4, e5, e6, e7, e8
@@ -121,7 +121,8 @@ class SuPyFinitdifference(object):
             :call1: .second_order_laplacian_sparse
         """
         for j in range(self.Axes.Ny):
-            e2[j*self.Axes.Nx+1] *= 2
+
+            e2[ j * self.Axes.Nx + 1 ] *= 2
 
         return e0, e1, e2, e3, e4
 
@@ -143,7 +144,7 @@ class SuPyFinitdifference(object):
             :call1: XXX
         """
         for j in range(self.Axes.Ny):
-            e2[j*self.Axes.Nx+1] = 0
+            e2[ j * self.Axes.Nx + 1 ] = 0
 
         return e0, e1, e2, e3, e4
 
@@ -166,9 +167,9 @@ class SuPyFinitdifference(object):
                 :call1: .third_order_laplacian_sparse()
         """
         for j in range(self.Axes.Ny):
-            e3[j*self.Axes.Nx+1] *= 2
-            e4[j*self.Axes.Nx+2] *= 2
-            e4[j*self.Axes.Nx+3] *= 2
+            e3[ j * self.Axes.Nx + 1 ] *= 2
+            e4[ j * self.Axes.Nx + 2 ] *= 2
+            e4[ j * self.Axes.Nx + 3 ] *= 2
 
         return e0, e1, e2, e3, e4, e5, e6, e7, e8
 
@@ -212,28 +213,18 @@ class SuPyFinitdifference(object):
         calls:
             :call1: .second_order_laplacian_sparse()
         """
+        e0 = np.array( [2] * self.Axes.Nx * self.Axes.Ny )
 
-        e0 = np.array(
-                     [2] * self.Axes.Nx * self.Axes.Ny)
+        e1 = np.array( ([-1]*(self.Axes.Nx-1) + [0]) * (self.Axes.Ny) )
 
+        e2 = np.array( ([0] + [-1]*(self.Axes.Nx-1)) * (self.Axes.Ny) )
 
-        e1 = np.array(
-                     ([-1]*(self.Axes.Nx-1) + [0]) * (self.Axes.Ny))
+        e3 = np.array( [-1]*self.Axes.Nx * self.Axes.Ny )
 
-
-        e2 = np.array(
-                     ([0] + [-1]*(self.Axes.Nx-1)) * (self.Axes.Ny))
-
-
-        e3 = np.array(
-                      [-1]*self.Axes.Nx * self.Axes.Ny)
-
-
-        e4 = np.array(
-                     [-1]*self.Axes.Nx * self.Axes.Ny)
-
+        e4 = np.array( [-1]*self.Axes.Nx * self.Axes.Ny )
 
         return e0, e1, e2, e3, e4
+
 
     def third_order_Dirichlet(self):
         """
@@ -248,42 +239,23 @@ class SuPyFinitdifference(object):
         calls:
             :call1: .third_order_laplacian_sparse()
         """
+        e0 = np.array( [5/2] * self.Axes.Nx * self.Axes.Ny )
 
-        e0 = np.array(
-                     [5/2] * self.Axes.Nx * self.Axes.Ny)
+        e1 = np.array( ([1/12]*(self.Axes.Nx-2) + 2*[0]) * (self.Axes.Ny) )
 
+        e2 = np.array( ([-4/3]*(self.Axes.Nx-1) + [0]) * (self.Axes.Ny) )
 
-        e1 = np.array(
-                     ([1/12]*(self.Axes.Nx-2) + 2*[0]) * (self.Axes.Ny))
+        e3 = np.array( ([0] + [-4/3]*(self.Axes.Nx-1)) * (self.Axes.Ny) )
 
+        e4 = np.array( (2*[0] + [1/12]*(self.Axes.Nx-2)) * (self.Axes.Ny) )
 
-        e2 = np.array(
-                     ([-4/3]*(self.Axes.Nx-1) + [0]) * (self.Axes.Ny))
+        e5 = np.array( [1/12]*self.Axes.Nx * self.Axes.Ny )
 
+        e6 = np.array( [-4/3]*self.Axes.Nx * self.Axes.Ny )
 
-        e3 = np.array(
-                      ([0] + [-4/3]*(self.Axes.Nx-1)) * (self.Axes.Ny))
+        e7 = np.array( [-4/3]*self.Axes.Nx * self.Axes.Ny )
 
-
-        e4 = np.array(
-                     (2*[0] + [1/12]*(self.Axes.Nx-2)) * (self.Axes.Ny))
-
-
-
-        e5 = np.array(
-                      [1/12]*self.Axes.Nx * self.Axes.Ny)
-
-
-        e6 = np.array(
-                     [-4/3]*self.Axes.Nx * self.Axes.Ny)
-
-
-        e7 = np.array(
-                      [-4/3]*self.Axes.Nx * self.Axes.Ny)
-
-
-        e8 = np.array(
-                     [1/12]*self.Axes.Nx * self.Axes.Ny)
+        e8 = np.array( [1/12]*self.Axes.Nx * self.Axes.Ny )
 
         return e0, e1, e2, e3, e4, e5, e6, e7, e8
 
@@ -323,29 +295,29 @@ class SuPyFinitdifference(object):
             :call1: .laplacian_sparse()
         """
 
-        e0, e1 , e2, e3, e4 = self.second_order_Dirichlet()
+        element = self.second_order_Dirichlet()
 
         if y_symmetry == 1:
-            e0, e1, e2, e3, e4 = self.second_order_y_symmetry(e0, e1, e2, e3, e4)
+            element = self.second_order_y_symmetry(*element)
 
         if y_symmetry == -1:
-            e0, e1, e2, e3, e4 = self.second_order_y_Anti_symmetry(e0, e1, e2, e3, e4)
+            element = self.second_order_y_Anti_symmetry(*element)
 
         if x_symmetry == 1:
-            e0, e1, e2, e3, e4 = self.second_order_x_symmetry(e0, e1, e2, e3, e4)
+            element = self.second_order_x_symmetry(*element)
 
         if x_symmetry == -1:
-            e0, e1, e2, e3, e4 = self.second_order_x_Anti_symmetry(e0, e1, e2, e3, e4)
+            element = self.second_order_x_Anti_symmetry(*element)
 
         self.Axes.Direct.dy, self.Axes.Direct.dx = self.Axes.Direct.dx, self.Axes.Direct.dy
 
-        E0 = e0*(1./self.Axes.Direct.dy**2 + 1./self.Axes.Direct.dx**2) - nk
+        E0 = element[0]*(1./self.Axes.Direct.dy**2 + 1./self.Axes.Direct.dx**2) - nk
 
-        E1 = e1/self.Axes.Direct.dx**2
-        E2 = e2/self.Axes.Direct.dx**2
+        E1 = element[1]/self.Axes.Direct.dx**2
+        E2 = element[2]/self.Axes.Direct.dx**2
 
-        E3 = e3/self.Axes.Direct.dy**2
-        E4 = e4/self.Axes.Direct.dy**2
+        E3 = element[3]/self.Axes.Direct.dy**2
+        E4 = element[4]/self.Axes.Direct.dy**2
 
         self.Matrix = spdiags([E1, E2, E0, E3, E4],
                               [-1, 1, 0, -self.Axes.Nx, self.Axes.Nx],
@@ -367,34 +339,36 @@ class SuPyFinitdifference(object):
         """
 
 
-        e0, e1, e2, e3, e4, e5, e6, e7, e8 = self.third_order_Dirichlet()
+        element = self.third_order_Dirichlet()
 
         self.Axes.update_deltas()
 
         if y_symmetry == 1:
-            e0, e1, e2, e3, e4, e5, e6, e7, e8 = self.third_order_y_symmetry(e0, e1, e2, e3, e4, e5, e6, e7, e8)
+            element = self.third_order_y_symmetry(*element)
 
         if y_symmetry == -1:
-            e0, e1, e2, e3, e4, e5, e6, e7, e8 = self.third_order_y_Anti_symmetry(e0, e1, e2, e3, e4, e5, e6, e7, e8)
+            element = self.third_order_y_Anti_symmetry(*element)
 
         if x_symmetry == 1:
-            e0, e1, e2, e3, e4, e5, e6, e7, e8 = self.third_order_x_symmetry(e0, e1, e2, e3, e4, e5, e6, e7, e8)
+            element = self.third_order_x_symmetry(*element)
 
         if x_symmetry == -1:
-            e0, e1, e2, e3, e4, e5, e6, e7, e8 = self.third_order_x_Anti_symmetry(e0, e1, e2, e3, e4, e5, e6, e7, e8)
+            element = self.third_order_x_Anti_symmetry(*element)
 
+        self.Axes.Direct.dy, self.Axes.Direct.dx = self.Axes.Direct.dx, self.Axes.Direct.dy
 
-        E0 = e0*(1./self.Axes.Direct.dy**2 + 1./self.Axes.Direct.dx**2) - nk
+        E0 = element[0]*(1./self.Axes.Direct.dy**2 + 1./self.Axes.Direct.dx**2) - nk
 
-        E1 = e1/self.Axes.Direct.dx**2
-        E2 = e2/self.Axes.Direct.dx**2
-        E3 = e3/self.Axes.Direct.dx**2
-        E4 = e4/self.Axes.Direct.dx**2
+        E1 = element[1]/self.Axes.Direct.dx**2
+        E2 = element[2]/self.Axes.Direct.dx**2
+        E3 = element[3]/self.Axes.Direct.dx**2
+        E4 = element[4]/self.Axes.Direct.dx**2
 
-        E5 = e5/self.Axes.Direct.dy**2
-        E6 = e6/self.Axes.Direct.dy**2
-        E7 = e7/self.Axes.Direct.dy**2
-        E8 = e8/self.Axes.Direct.dy**2
+        E5 = element[5]/self.Axes.Direct.dy**2
+        E6 = element[6]/self.Axes.Direct.dy**2
+        E7 = element[7]/self.Axes.Direct.dy**2
+        E8 = element[8]/self.Axes.Direct.dy**2
+
 
         self.Matrix = spdiags([E1, E2, E3, E4, E0, E5, E6, E7, E8],
                               [-2, -1, 1, 2, 0, -2*self.Axes.Nx, -self.Axes.Nx, self.Axes.Nx, 2*self.Axes.Nx],
