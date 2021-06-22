@@ -72,6 +72,7 @@ class SetPlots(object):
 
     def GenFigures(self, Input, iter, nMax, PlotKwarg):
         iter = ToList(iter)
+
         Input = set(Input)
 
         if not nMax: nMax = len(self.SuperModes)
@@ -116,33 +117,33 @@ class SetPlots(object):
 
 
 class SetProperties(object):
+
+
+    @property
+    def ITR(self):
+        return self.Geometry.ITRList
+
+
     @property
     def Index(self):
-        logging.info('Computing effective indices...')
-        I = []
-        for i, Supermode in enumerate( self.SuperModes ):
-            for j, iter in enumerate( Supermode.Slice ):
-                I.append(iter.Index)
-
-        return np.reshape(I, [i+1, j+1])
-
+        if self._Index is None:
+            return self.GetIndex()
+        else:
+            return self._Index
 
 
     @property
     def Beta(self):
-        logging.info(r'Computing mode propagation constant ($\beta$)...')
-        B = []
-        for i, Supermode in enumerate( self.SuperModes ):
-            for j, iter in enumerate( Supermode.Slice ):
-                B.append(iter.Beta)
+        if self._Beta is None:
+            return self.GetBeta()
+        else:
+            return self._Beta
 
-        return np.reshape(B, [i+1, j+1])
 
     @property
     def Coupling(self):
         if not isinstance(self._Coupling, np.ndarray):
-            self.GetCoupling()
-            return self._Coupling
+            return self.GetCoupling()
         else:
             return self._Coupling
 
@@ -150,10 +151,48 @@ class SetProperties(object):
     @property
     def Adiabatic(self):
         if not isinstance(self._Adiabatic, np.ndarray):
-            self.GetAdiabatic()
-            return self._Adiabatic
+            return self.GetAdiabatic()
         else:
             return self._Adiabatic
+
+
+    @property
+    def M(self):
+        if self._M is None:
+            self._M = self.Coupling[:,:]
+            for i in range(self._M.shape[2]):
+                self._M[:,:,i] += np.diag(self.Beta[:, i] )
+
+            return self._M
+
+        else:
+            return self._M
+
+
+    def GetIndex(self):
+        logging.info('Computing effective indices...')
+        Index = []
+
+        for i, Supermode in enumerate( self.SuperModes ):
+            for j, iter in enumerate( Supermode.Slice ):
+                Index.append(iter.Index)
+
+        Index = np.asarray( Index ).reshape([i+1, j+1])
+
+        return Index
+
+
+    def GetBeta(self):
+        logging.info('Computing propagation constant...')
+        Beta = []
+
+        for i, Supermode in enumerate( self.SuperModes ):
+            for j, iter in enumerate( Supermode.Slice ):
+                Beta.append(iter.Beta)
+
+        Beta = np.asarray( Beta ).reshape([i+1, j+1])
+
+        return Beta
 
 
     def GetCoupling(self):
@@ -170,7 +209,7 @@ class SetProperties(object):
 
         self._Coupling = tri
 
-        return tri
+        return self._Coupling
 
 
     def GetAdiabatic(self):
@@ -185,7 +224,7 @@ class SetProperties(object):
 
         self._Adiabatic = tri
 
-        return tri
+        return self._Adiabatic
 
 
 

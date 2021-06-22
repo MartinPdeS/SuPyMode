@@ -1,30 +1,40 @@
-from SuPyModes.Geometry          import Geometry, Fused2, Circle
+from SuPyModes.Geometry          import Geometry, Circle, Fused3
 from SuPyModes.Solver            import SuPySolver
 from SuPyModes.sellmeier         import Fused_silica
-import matplotlib.pyplot         as plt
+from SuPyModes.utils             import *
+from SuPyModes.perso             import FiberA, FiberB
 
-Clad = Fused2(Radius =  62.5,
-              Fusion  = 1,
-              Index   = Fused_silica(1.55))
+A, B = FiberA(wavelength=1.3), FiberB(wavelength=1.3)
 
-Core0 = Circle( Position=Clad.C[0], Radi = 4.1, Index = Fused_silica(1.55)+0.005 )
+Capillary = Circle( Position = [0,0], Radi = 140, Index = 1.433,  )
 
-Core1 = Circle( Position=Clad.C[1], Radi = 4.1, Index = Fused_silica(1.55)+0.005 )
+Clad = Fused3(Radius =  62.5, Fusion  = 0.8, Index   = Fused_silica(1.55), debug='WARNING')
 
-Geo = Geometry(Objects = [Clad, Core0, Core1],
-               Xbound  = [-100, 100],
-               Ybound  = [-100, 100],
-               Nx      = 30,
-               Ny      = 30)
 
-#Geo.Plot()
+Clad0 = Circle( Position = Clad.C[0], Radi = A.rClad, Index = A.nClad )
+Clad1 = Circle( Position = Clad.C[1], Radi = A.rClad, Index = A.nClad )
+Clad2 = Circle( Position = Clad.C[2], Radi = B.rClad, Index = B.nClad )
+
+
+Core0 = Circle( Position = Clad.C[0], Radi = A.rCore, Index = A.nCore )
+Core1 = Circle( Position = Clad.C[1], Radi = A.rCore, Index = A.nCore )
+Core2 = Circle( Position = Clad.C[2], Radi = B.rCore, Index = B.nCore )
+
+
+Geo = Geometry(Objects = [Capillary, Clad, Clad0, Clad1, Clad2, Core0, Core1, Core2],
+               Xbound  = [-150, 150],
+               Ybound  = [-150, 150],
+               Nx      = 150,
+               Ny      = 150,
+               debug   = 'INFO',
+               Length  = None)
+
 
 Sol = SuPySolver(Coupler=Geo)
 
-SuperModes = Sol.GetModes(wavelength = 1.55,
-                          Nstep      = 10,
-                          Nsol       = 7,
-                          debug      = False,
+SuperModes = Sol.GetModes(wavelength = 1.3,
+                          Nstep      = 1,
+                          Nsol       = 10,
                           ITRi       = 1,
                           ITRf       = 0.05,
                           tolerance  = 1e-20,
@@ -32,6 +42,5 @@ SuperModes = Sol.GetModes(wavelength = 1.55,
                           Xsym       = 0,
                           Ysym       = 0 )
 
-SuperModes.Plot(Input=['Index'])
 
-plt.show()
+SuperModes.Plot(Input=['Index','Fields'], iter=[0], nMax=4)

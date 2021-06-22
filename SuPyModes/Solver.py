@@ -8,7 +8,7 @@ import matplotlib.pyplot             as plt
 import matplotlib.gridspec           as gridspec
 import numpy                         as np
 from progressbar                     import ProgressBar
-from scipy.sparse.linalg             import eigs as LA
+from scipy.sparse.linalg             import eigsh as LA
 
 """ package imports """
 from SuPyModes.toolbox.SuPyAxes      import SuPyAxes
@@ -131,7 +131,7 @@ class SuPySolver(object):
 
             self.iter += 1
 
-        self.Set = self.Set.Sort()
+        #self.Set = self.Set.Sort()
 
 
     def GetEigenVectors(self, Nsol=1, MaxIter=None):
@@ -143,7 +143,7 @@ class SuPySolver(object):
                              k                   = Nsol,
                              M                   = None,
                              sigma               = beta_square,
-                             which               = 'LR',
+                             which               = 'LM',
                              v0                  = v0,
                              ncv                 = None,
                              maxiter             = MaxIter,
@@ -151,7 +151,8 @@ class SuPySolver(object):
                              return_eigenvectors = True,
                              Minv                = None,
                              OPinv               = None,
-                             OPpart              = 'r' )
+                             #OPpart              = 'r'
+                             )
 
 
         betas = np.real(np.sqrt(-values) / self.Geometry.Axes.ITR)

@@ -208,9 +208,34 @@ def SwapProperties(SuperMode0, SuperMode1, N):
         getattr(S0, p)[N] = getattr(S1, p)[N]
 
 
+def SortSuperSet(SuperSet, parameter):
+    if parameter == 'Fields':
+        return SortSuperSetFields(SuperSet)
+    elif parameter == 'Index':
+        return SortSuperSetIndex(SuperSet)
 
-def SortSuperSet(SuperSet):
+
+def SortSuperSetIndex(SuperSet):
     SuperSet1 = cp.deepcopy( SuperSet )
+
+    for n, itr in Enumerate( SuperSet.Geometry.ITRList, msg = 'Sorting modes...' ):
+
+        IndexSort = np.argsort(SuperSet.Index[:,n])[::-1]
+
+        for i, mode0 in enumerate( SuperSet.SuperModes ):
+            k = IndexSort[i]
+
+            if i != k:
+
+                SuperSet[i].Slice[n] = SuperSet1[0].Slice[n]
+
+
+    return SuperSet
+
+
+def SortSuperSetFields(SuperSet):
+    SuperSet1 = cp.deepcopy( SuperSet )
+
 
     Overlap = np.zeros(len( SuperSet.Combinations ) )
 
@@ -226,7 +251,7 @@ def SortSuperSet(SuperSet):
 
             k = np.argmax(Overlap)
 
-            if i != k :
+            if i != k:
                 SuperSet[i].Slice[n+1] = SuperSet1[k].Slice[n+1]
 
     return SuperSet

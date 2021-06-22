@@ -1,61 +1,61 @@
+import logging
 import numpy               as np
+import copy                as cp
 import matplotlib.pyplot   as plt
-from itertools             import combinations
+from progressbar           import ProgressBar
+from itertools             import combinations, combinations_with_replacement as Combinations
 from mayavi                import mlab
 
 from SuPyModes.Config      import *
-from SuPyModes.utils       import RecomposeSymmetries
+from SuPyModes.utils       import RecomposeSymmetries, GetWidgetBar, SortSuperSet, Enumerate
 from SuPyModes.BaseClass   import SetPlots, SetProperties
-from SuPyModes.Special     import Overlap, GeoGradient, ModeCoupling, ModeAdiabatic
+from SuPyModes.Special     import ModeCoupling, ModeAdiabatic
 
 
 
-
-
-
+Mlogger = logging.getLogger(__name__)
 
 class SuperMode(object):
 
-    def __init__(self, Name, Profile):
+    def __init__(self, Name, Geometry):
         self.Name       = Name
-        self.ITR        = []
-        self.Index      = []
-        self.Field      = []
-        self.Beta       = []
-        self.xSym       = []
-        self.ySym       = []
-        self.GeoID      = None
-        self.Axes       = []
-        self.Profile    = Profile
+        self.Slice      = []
         self._Adiabatic = None
         self._Coupling  = None
+        self.Geometry   = Geometry
+
 
 
     def Append(self, **kwargs):
-        for property in PROPERTIES:
-            getattr(self, property).append( kwargs[property] )
+        self.Slice.append(kwargs['Field'])
+
+
+    def __getitem__(self, N):
+        return self.Slice[N]
+
+
+    def __setitem__(self, N, val):
+        self.Slice[N] = val
 
 
     @property
     def DegenerateFactor(self):
         Factor = 1
 
-        if self.xSym[0] in [1,-1]: Factor *= 2
+        if self.Geometry.Axes.Symmetries[0] in [1,-1]: Factor *= 2
 
-        if self.ySym[0] in [1,-1]: Factor *= 2
+        if self.Geometry.Axes.Symmetries[1] in [1,-1]: Factor *= 2
 
         return Factor
 
 
-
     def GetCoupling(self, SuperMode):
         C = []
-        for n, itr in enumerate(self.ITR[:-1]):
-
+        for n, itr in enumerate(self.Geometry.ITRList[:-1]):
             C.append( ModeCoupling(SuperMode0 = self,
                                    SuperMode1 = SuperMode,
-                                   k          = self.Axes[n].Direct.k,
-                                   Profile    = self.Profile,
+                                   k          = self.Geometry.Axes.Direct.k,
+                                   Profile    = self.Geometry.mesh,
                                    iter       = n) )
 
         return C
@@ -63,23 +63,20 @@ class SuperMode(object):
 
     def GetAdiabatic(self, SuperMode):
         A = []
-        for n, itr in enumerate(self.ITR[:-1]):
+        for n, itr in enumerate(self.Geometry.ITRList[:-1]):
             A.append( ModeAdiabatic(SuperMode0 = self,
                                     SuperMode1 = SuperMode,
-                                    k          = self.Axes[n].Direct.k,
-                                    Profile    = self.Profile,
+                                    k          = self.Geometry.Axes.Direct.k,
+                                    Profile    = self.Geometry.mesh,
                                     iter       = n) )
 
         return A
 
 
     def PlotPropagation(self):
-
         image, _, _ = self.FullField(0)
 
         image = np.abs(image)
-
-
 
         mlab.surf(image, warp_scale="auto")
 
@@ -92,37 +89,77 @@ class SuperMode(object):
 
         anim_loc()
         mlab.show()
+        """
+        import os
+        fps = 20
+        prefix = 'ani'
+        ext = '.png'
+
+        import subprocess
+        animate_plots(base_directory='yolo', fname_prefix='dasda')"""
 
 
     def FullField(self, iter):
-        Field      = self.Field[iter]
-        Symmetries = [self.xSym[iter], self.ySym[iter]]
+        Field      = self.Slice[iter]
 
-        Field, xAxis, yAxis = RecomposeSymmetries(Input      = Field,
-                                                  Symmetries = Symmetries,
-                                                  Xaxis      = self.Axes[iter].Direct.X,
-                                                  Yaxis      = self.Axes[iter].Direct.Y)
+        Field, xAxes, yAxes = RecomposeSymmetries(Input = Field, Axes = self.Geometry.Axes)
 
-        return Field, xAxis, yAxis
+        return Field, xAxes, yAxes
+
+
+    def __copy__(self):
+        to_be_copied = ['Slice']
+
+        copy_ = SuperSet( self.Name, self.Geometry)
+
+        for attr in self.__dict__:
+            if attr in to_be_copied:
+
+                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
+            else:
+
+                copy_.__dict__[attr] = self.__dict__[attr]
+
+        return copy_
+
+
+    def __deepcopy__(self, memo):
+        to_be_copied = ['Slice']
+
+        copy_ = SuperMode( self.Name, self.Geometry)
+
+        for attr in self.__dict__:
+
+            if attr in to_be_copied:
+
+                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
+            else:
+
+                copy_.__dict__[attr] = self.__dict__[attr]
+
+        return copy_
 
 
 
 class SuperSet(SetProperties, SetPlots):
-    def __init__(self, IndexProfile, NSolutions, ITR):
-        self.IndexProfile = IndexProfile
-        self.NSolutions   = NSolutions
-        self.SuperModes   = []
-        self.ITR          = ITR
-        self.Symmetries   = None
+    def __init__(self, NSolutions, Geometry, debug='INFO'):
+        Mlogger.setLevel(getattr(logging, debug))
+
+        self.NSolutions    = NSolutions
+        self.SuperModes    = []
+        self._Coupling     = None
+        self._Adiabatic    = None
+        self.Geometry      = Geometry
         self.Init()
 
         self.combinations = tuple(combinations( np.arange(NSolutions), 2 ) )
+        self.Combinations = tuple(Combinations( np.arange(NSolutions), 2 ) )
 
 
     def Init(self):
         for solution in range(self.NSolutions):
-            supermode = SuperMode(Profile = self.IndexProfile,
-                                  Name = f"Mode {solution}")
+            supermode = SuperMode(Name     = f"Mode {solution}",
+                                  Geometry = self.Geometry)
 
             self.SuperModes.append(supermode)
 
@@ -131,19 +168,129 @@ class SuperSet(SetProperties, SetPlots):
         return self.SuperModes[N]
 
 
+    def __setitem__(self, N, val):
+        self.SuperModes[N] = val
+
+
     def SwapProperties(self, SuperMode0, SuperMode1, N):
-        S0 = SuperMode0
-        S1 = SuperMode1
+        S0, S1 = SuperMode0, SuperMode1
+
         for p in PROPERTIES:
-            getattr(S0, p)[N], getattr(S1, p)[N] = getattr(S1, p)[N], getattr(S0, p)[N]
+            getattr(S0, p)[N] = getattr(S1, p)[N]
 
 
-    def OrderingModes(self):
-        for (i,j) in self.combinations:
-            for n, ITR in enumerate(self.ITR):
-                if i < j  and self[i].Index[n] < self[j].Index[n]:
-                    self.SwapProperties(self[i], self[j], n)
+    def Ordering(self):
 
+        for iter, _ in Enumerate( self.Geometry.ITRList, msg='Sorting super modes... '):
+            self.OrderingModes(iter)
+
+
+    def Debug(self):
+        for n, itr in enumerate( self.Geometry.ITR ):
+            self.Plot('Fields', iter=n)
+
+
+    def __copy__(self):
+        to_be_copied = ['SuperModes']
+
+        copy_ = SuperSet(self.NSolutions, self.Geometry)
+
+        for attr in self.__dict__:
+
+            if attr in to_be_copied:
+                copy_.__dict__[attr] =  cp.deepcopy( self.__dict__[attr] )
+            else:
+                copy_.__dict__[attr] = self.__dict__[attr]
+
+        return copy_
+
+
+    def Sort(self):
+        return SortSuperSet(self)
+
+
+
+
+class ModeSlice(np.ndarray):
+
+    def __new__(cls, Field, Axes, Index, Beta):
+        self      = Field.view(ModeSlice)
+
+        return self
+
+
+    def __init__(self, Field, Axes, Index, Beta):
+        self.Field = Field
+        self.Axes   = Axes
+        self.Index  = Index
+        self.Beta   = Beta
+
+
+    def __array_finalize__(self, viewed):
+        pass
+
+
+    def __pow__(self, other):
+        assert isinstance(other, ModeSlice), f'Cannot multiply supermodes with {other.__class__}'
+
+        overlap = np.abs( np.sum( np.multiply( self, other ) ) )
+
+        return float( overlap )
+
+
+    def Overlap(self, other):
+        assert isinstance(other, ModeSlice), f'Cannot multiply supermodes with {other.__class__}'
+
+        overlap = np.abs( np.sum( np.multiply( self, other ) ) )
+
+        return float( overlap )
+
+
+    def __plot__(self, ax, title=None):
+        Field, xaxis, yaxis = RecomposeSymmetries(self, self.Axes)
+
+        ax.pcolormesh(yaxis, xaxis, Field, shading='auto')
+
+        ax.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
+
+        ax.set_xlabel(r'X-distance [$\mu$m]', fontsize=6)
+
+        ax.set_aspect('equal')
+        if title:
+            ax.set_title(title, fontsize=8)
+
+
+    def __copy__(self):
+        to_be_copied = ['Field', 'Index', 'Axes', 'Beta']
+
+        copy_ = ModeSlice(self, self.Axes, self.Index, self.Beta)
+
+        for attr in self.__dict__:
+            if attr in to_be_copied:
+
+                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
+            else:
+
+                copy_.__dict__[attr] = self.__dict__[attr]
+
+        return copy_
+
+
+
+    def __deepcopy__(self, memo):
+        to_be_copied = ['Index', 'Axes', 'Beta']
+
+        copy_ = ModeSlice(self, self.Axes, self.Index, self.Beta)
+
+        for attr in self.__dict__:
+            if attr in to_be_copied:
+
+                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
+            else:
+
+                copy_.__dict__[attr] = self.__dict__[attr]
+
+        return copy_
 
 
 

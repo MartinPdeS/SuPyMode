@@ -3,7 +3,6 @@ import numpy as np
 
 
 def BK7_glass(wavelength):
-
     B1 = 1.03961212
     B2 = 0.231792344
     B3 = 1.01046945
@@ -21,8 +20,8 @@ def BK7_glass(wavelength):
 
     return n
 
-def Fused_silica(wavelength):
 
+def Fused_silica(wavelength):
     B1 = 0.696166300
     B2 = 0.407942600
     B3 = 0.897479400
@@ -40,8 +39,8 @@ def Fused_silica(wavelength):
 
     return n
 
-def Ambiant_air(wavelength):
 
+def Ambiant_air(wavelength):
     B1 = 4.915889e-4
     B2 = 5.368273e-5
     B3 = -1.949567e-4

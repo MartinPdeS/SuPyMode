@@ -1,79 +1,104 @@
-#-------------------------Importations------------------------------------------
+
 """ standard imports """
 import sys
 import numpy as np
+import logging
+from numpy           import pi, cos, sin, sqrt, abs, exp, array, ndarray
 from matplotlib.path import Path
-from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
+import matplotlib        as mpl
 import matplotlib.colors as colors
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from itertools        import combinations
 from scipy.optimize   import minimize_scalar
 from shapely.geometry import Point, LineString, MultiPolygon, Polygon
 from shapely.geometry.collection import GeometryCollection
-pi, cos, sin, sqrt = np.pi, np.cos, np.sin, np.sqrt
-
-from shapely.geometry import Polygon
-from shapely.geometry.point import Point
 from shapely.ops import cascaded_union
-from descartes import PolygonPatch
 
 
-""" package imports"""
+""" package imports """
 from SuPyModes.Directories import RootPath
-from SuPyModes.Special     import Overlap, Intersection
-from SuPyModes.utils       import ( NearestPoints,
-                                    Deg2Rad,
-                                    ObjectIntersection,
-                                    Rotate,
-                                    GetBoundaries,
-                                    MakeCircles,
-                                    ObjectUnion,
-                                    PlotObject,
-                                    ToList        )
+from SuPyModes.Special     import Intersection
+from SuPyModes.utils       import *
 
-
-
-import logging
-from numpy            import pi, cos, sin, sqrt, abs, exp, array, ndarray
-
-#-------------------------Importations------------------------------------------
-
-
-
+Mlogger = logging.getLogger(__name__)
 
 class Geometry(object):
-    def __init__(self, Objects, Xbound, Ybound, Nx, Ny, Xsym, Ysym):
+    """ Class represent the refractive index (RI) geometrique profile which
+    can be used to retrieve the supermodes.
 
+    Parameters
+    ----------
+    Objects : type
+        Geometrique object representing the element of the RI profile.
+    Xbound : :class:`list`
+        X-dimension boundary for the rasterized profile.
+    Ybound : :class:`list`
+        Y-dimension boundary for the rasterized profile.
+    Nx : :class:`int`
+        Number of point for X dimensions discretization.
+    Ny : :class:`int`
+        Number of point for Y dimensions discretization.
+    """
 
-        #Xsym, Ysym      = Ysym, Xsym  # <-------- something is fucked somewhere else!
+    def __init__(self, Objects, Xbound, Ybound, Nx, Ny, Length=None, debug='INFO'):
 
-        self.Xsym       = Xsym
-
-        self.Ysym       = Ysym
-
-        self.Symmetries = [ Xsym, Ysym ]
+        Mlogger.setLevel(getattr(logging, debug))
 
         self.Objects    = ToList(Objects)
 
+        self.Indices    = sorted( list( set( [1] + [obj.Index for obj in Objects] ) ) )
+
         self.Boundaries = [Xbound, Ybound]
 
-        self.Shape = [Nx, Ny]
+        self.Shape      = [Nx, Ny]
+
+        self.Length     = Length
 
         self.CreateMesh()
 
 
-    def rasterize_polygone(self, polygone, points, Nx, Ny):
+    def rasterize_polygone(self, polygone):
+        """ The method rasterize individual polygone object.
 
-        poly = cascaded_union(polygone)
+        Parameters
+        ----------
+        polygone : :class:`geo`
+            The polygone to be rasterize.
 
-        obj_ext = Path(list( polygone.exterior.coords))
+        Returns
+        -------
+        :class:`np.ndarray`
+            The rasterized object.
 
-        obj_ext = obj_ext.contains_points(points).reshape(self.Shape)
+        """
+
+        obj_ext = Path(list( polygone.Object.exterior.coords))
+
+        obj_ext = obj_ext.contains_points(self.coords).reshape(self.Shape)
+
+        if polygone.hole is not None:
+            obj_int = Path(list( polygone.hole.exterior.coords))
+
+            obj_int = np.logical_not( obj_int.contains_points(self.coords).reshape(self.Shape) )
+
+            obj_ext = np.logical_and( obj_ext, obj_int )
 
         return obj_ext
 
 
     def add_object_to_mesh(self, obj, index):
+        """ Method add a rasterized object to the pre-existing profile mesh
+        with its provided refractive index.
+
+        Parameters
+        ----------
+        obj : :class:`np.ndarray`
+            Rasterized object to be added to the mesh.
+        index : :class:`float`
+            Refractive index of the object to be added.
+
+        """
 
         self.mesh *= (-1 * obj + 1)
 
@@ -81,6 +106,9 @@ class Geometry(object):
 
 
     def CreateMesh(self):
+        """ The method create the RI profile mesh according to the user input.
+
+        """
 
         self.mesh = np.ones(self.Shape)
 
@@ -91,10 +119,10 @@ class Geometry(object):
 
         x, y = x.flatten(), y.flatten()
 
-        points = np.vstack((x,y)).T
+        self.coords = np.vstack((x,y)).T
 
         for object in self.Objects:
-            obj = self.rasterize_polygone(object.Object, points, *self.Shape)
+            obj = self.rasterize_polygone(object)
             self.add_object_to_mesh(obj, object.Index)
 
 
@@ -104,78 +132,95 @@ class Geometry(object):
                       'Size':   np.size(self.mesh) }
 
 
+    def __plot__(self, ax):
+        if not hasattr(self, 'Axes'):
+            Field = self.mesh
+            xaxis = np.arange(self.mesh.shape[0])
+            yaxis = np.arange(self.mesh.shape[1])
+
+        else:
+            Field, xaxis, yaxis = RecomposeSymmetries(self.mesh, self.Axes)
+
+        vmin = sorted(self.Indices)[1]/1.1
+
+        vmax = sorted(self.Indices)[-1]
+
+        pcm = ax.pcolormesh(  xaxis,
+                              yaxis,
+                              Field.T,
+                              cmap    = plt.cm.coolwarm,
+                              norm=colors.LogNorm(vmin=vmin, vmax=vmax),
+                              shading='auto'
+                              )
+
+        ax.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
+
+        ax.set_xlabel(r'X-distance [$\mu$m]', fontsize=6)
+
+        divider = make_axes_locatable(ax)
+
+        cax = divider.append_axes("right", size="5%", pad=0.05)
+
+        sm = plt.cm.ScalarMappable(cmap=plt.cm.coolwarm, norm=colors.LogNorm(vmin=vmin, vmax=vmax))
+
+        sm._A = []
+
+        cbar = plt.colorbar(sm, ax=ax, cax=cax)
+
+        ax.contour(xaxis, yaxis, Field.T, levels=self.Indices, colors='k')
+
+        ax.set_title('Rasterized RI profil', fontsize=10)
+
+        ax.set_aspect('equal')
+
+
     def Plot(self):
+        """ The methode plot the rasterized RI profile.
+
+        """
 
         fig = plt.figure(figsize=(5,5))
 
         ax = fig.add_subplot(111)
 
-        ax.set_title('Rasterized RI profil', fontsize=10)
-        ax.set_ylabel(r'Y-distance [$\mu$m]')
-        ax.set_xlabel(r'X-distance [$\mu$m]')
+        self.__plot__(ax)
 
-        pcm = ax.pcolormesh(
-                            np.linspace(*self.Boundaries[0], np.shape(self.mesh)[0]),
-                            np.linspace(*self.Boundaries[1], np.shape(self.mesh)[1]),
-                            self.mesh,
-                            cmap    = 'PuBu_r',
-                            shading = 'auto',
-                            norm    = colors.LogNorm(vmin = 1.42, vmax=self.mesh.max()))
+        plt.tight_layout()
 
-        ax.set_aspect('equal')
         plt.show()
-
-
 
 
 
 class Circle(object):
-    def __init__(self, Position, Radi, Index):
+    def __init__(self, Position, Radi, Index, debug='INFO'):
+
+        Mlogger.setLevel(getattr(logging, debug))
+
         self.Points   = Position
         self.Radi     = Radi
         self.Index    = Index
+        self.hole     = None
         self.Init()
-
 
     def Init(self):
         self.Object = MakeCircles([self.Points], [self.Radi])[0]
+        self.C      = [Point(0,0)]
 
 
     def Plot(self):
-
-        fig = plt.figure(figsize=(5,5))
-
-        ax = fig.add_subplot(111)
-
-        ax.grid()
-
-        ax.set_ylabel(r'Distance Y-axis [$\mu m$]')
-        ax.set_xlabel(r'Distance X-axis [$\mu m$]')
-        ax.set_title(r'Geometrical configuration', fontsize=10)
-
-
-        for object in self.Object:
-            ax.add_patch(PolygonPatch(object, alpha=0.5))
-
-
-        for n, point in enumerate( self.Points ):
-            ax.scatter(point.x, point.y)
-            ax.text(point.x, point.y, f'P{n+1}')
-
-        minx, miny, maxx, maxy = cascaded_union(self.Object).bounds
-
-        ax.set_xlim( [ minx, maxx ] )
-        ax.set_ylim( [ miny, maxy ] )
-
-        plt.show()
+        PlotObject(Full = [self.Object] + self.C)
 
 
 class BaseFused():
-    def __init__(self, Radius, Fusion, Angle, Theta, Index):
+    def __init__(self, Radius, Fusion, Angle, Theta, Index, debug):
+
+        Mlogger.setLevel(getattr(logging, debug))
+
         self.Index   = Index
         self.Radius  = Radius
         self.Fusion  = Fusion
         self.Angle   = Angle
+        self.hole    = None
         self.N       = len(self.Angle)
         self.Theta   = Deg2Rad(Theta)
         self.GetFibers()
@@ -185,7 +230,7 @@ class BaseFused():
 
     def OptimizeGeometry(self):
         res = minimize_scalar(self.ComputeCost, bounds=self.Bound, method='bounded')
-        print('Result Rv =',res.x)
+        Mlogger.info(f'Result Rv = {res.x}')
         return self.BuildCoupler(Rv=res.x)
 
 
@@ -252,8 +297,8 @@ class BaseFused():
         Removed = self.GetRemoved()
 
         Coupler = ObjectUnion(self.Fibers + [Added])
-
-        Coupler = MultiPolygon([P for P in Coupler if not isinstance(P, Point)])
+        if isinstance(Coupler, GeometryCollection):
+            Coupler = MultiPolygon([P for P in Coupler if not isinstance(P, Point)])
 
         eps = 0.2
         Coupler = Coupler.buffer(eps).buffer(-eps)
@@ -270,7 +315,7 @@ class BaseFused():
 
         Cost = self.ComputeDifference(Added, Removed)
 
-        logging.info(f'Topology: {self.Topology} \t Rv: {Rv:.0f} \t Cost: {Cost}')
+        Mlogger.info(f'Topology: {self.Topology} \t Rv: {Rv:.0f} \t Cost: {Cost}')
 
         return Cost
 
@@ -338,12 +383,14 @@ class BaseFused():
 
 
 class Fused4(BaseFused):
-    def __init__(self, Radius, Fusion, Index):
+    def __init__(self, Radius, Fusion, Index, debug='INFO'):
         super().__init__(Radius  = Radius,
                          Fusion  = Fusion,
                          Angle   = [0, 90, 180, 270],
                          Theta   = 45,
-                         Index   = Index)
+                         Index   = Index,
+                         debug   = debug)
+
 
         if self.Topology == 'concave':
             self.Bound = (Radius*1.5, 4000)
@@ -360,6 +407,8 @@ class Fused4(BaseFused):
         Coupler  = ObjectUnion(self.Fibers)
 
         hole     = CenterTriangle.difference(Coupler)
+
+        self.hole = hole
 
         Convex   = Coupler.convex_hull.difference(hole)
 
@@ -428,12 +477,13 @@ class Fused4(BaseFused):
 
 
 class Fused3(BaseFused):
-    def __init__(self, Radius, Fusion, Index):
+    def __init__(self, Radius, Fusion, Index, debug='INFO'):
         super().__init__(Radius  = Radius,
                          Fusion  = Fusion,
                          Angle   = [0, 120, 240],
                          Theta   = 30,
-                         Index   = Index)
+                         Index   = Index,
+                         debug   = debug )
 
         if self.Topology == 'concave':
             self.Bound = (Radius*1.5, 4000)
@@ -511,12 +561,13 @@ class Fused3(BaseFused):
 
 
 class Fused2(BaseFused):
-    def __init__(self, Radius, Fusion, Index):
+    def __init__(self, Radius, Fusion, Index, debug='INFO'):
         super().__init__(Radius  = Radius,
                          Fusion  = Fusion,
                          Angle   = [0, 180],
                          Theta   = 90,
-                         Index   = Index)
+                         Index   = Index,
+                         debug   = debug)
 
         if self.Topology == 'concave':
             self.Bound = (Radius*1.5, 4000)

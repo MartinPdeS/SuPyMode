@@ -1,28 +1,31 @@
-import numpy as np
+import numpy               as np
+from numpy                 import zeros, ones, array, sqrt, argsort, absolute, dot
+from numpy.linalg          import eig
+from scipy.sparse.linalg   import eigs as LA
+from scipy.sparse          import diags
 
 from SuPyModes.utils import CheckSymmetries, ToList
 
 def FieldOverlap(SuperMode0, SuperMode1, iter):
-    return SuperMode0.Field[iter-1] * SuperMode1.Field[iter]
+    return SuperMode0.Slice[iter-1] * SuperMode1.Slice[iter]
 
 
 def GeoGradient(Profile, Axes, iter):
     Ygrad, Xgrad = gradientO4(Profile.T**2,
-                              Axes[iter].Direct.dx,
-                              Axes[iter].Direct.dy )
+                              Axes.Direct.dx,
+                              Axes.Direct.dy )
 
-    return Xgrad * Axes[iter].Direct.XX.T + Ygrad * Axes[iter].Direct.YY.T
+    return Xgrad * Axes.Direct.XX.T + Ygrad * Axes.Direct.YY.T
 
 
 def ModeCoupling(SuperMode0, SuperMode1, k, Profile, iter):
-
         assert SuperMode0.DegenerateFactor == SuperMode1.DegenerateFactor
 
         if not CheckSymmetries(SuperMode0, SuperMode1): return 0
 
-        beta0 = SuperMode0.Beta[iter-1]
+        beta0 = SuperMode0.Slice[iter-1].Beta
 
-        beta1 = SuperMode1.Beta[iter]
+        beta1 = SuperMode1.Slice[iter].Beta
 
         Delta = beta0 * beta1
 
@@ -30,9 +33,9 @@ def ModeCoupling(SuperMode0, SuperMode1, k, Profile, iter):
 
         Coupling *= np.abs(1/(beta0 - beta1))
 
-        O = FieldOverlap(SuperMode0, SuperMode1, iter)
+        O = np.multiply( SuperMode0.Slice[iter-1], SuperMode1.Slice[iter] )
 
-        G = GeoGradient(Profile, SuperMode0.Axes, iter)
+        G = GeoGradient(Profile, SuperMode0.Geometry.Axes, iter)
 
         I = np.trapz( [np.trapz(Ix, dx=1) for Ix in O*G], dx=1)
 
@@ -42,10 +45,9 @@ def ModeCoupling(SuperMode0, SuperMode1, k, Profile, iter):
 
 
 def ModeAdiabatic(SuperMode0, SuperMode1, k, Profile, iter):
+    beta0 = SuperMode0.Slice[iter].Beta
 
-    beta0 = SuperMode0.Beta[iter]
-
-    beta1 = SuperMode1.Beta[iter+1]
+    beta1 = SuperMode1.Slice[iter+1].Beta
 
     Coupling = ModeCoupling(SuperMode0 = SuperMode0,
                             SuperMode1 = SuperMode1,
@@ -149,3 +151,105 @@ def gradientO4(f, *varargs):
         return outvals[0]
     else:
         return outvals
+
+
+def Norm(v):
+    return sqrt( dot(v,v) )
+
+
+def Coefficient(v1, v2):
+    return dot(v2, v1) / dot(v1, v1)
+
+
+def Projection(v1, v2):
+    return Coefficient(v1, v2) * v1
+
+
+def Gram_Schmidt(M):
+    Y = copy.copy(M)
+    for i in range(1, M.shape[1]):
+        for j in range(0,i) :
+            temp_vec = M[i] - Projection(Y[j], M[i])
+
+        Y[i] = temp_vec
+    return Y
+
+
+def Normalize(v):
+    return v / Norm(v)
+
+
+def _Gram_Schmidt(A):
+    A = normalize(A)
+
+    for i in range(1, A.shape[1]):
+        Ai = A[:, i]
+        for j in range(0, i):
+            Aj = A[:, j]
+            t = Ai.dot(Aj)
+            Ai = Ai - t * Aj
+        A[:, i] = normalize(Ai)
+
+    return A
+
+
+def Product(v0, v1):
+    return dot(v0.conj(), v1)
+
+
+def Lanczos(A, m):
+
+    m     += 10
+    if m > A.shape[1]:
+        m = A.shape[1]
+
+    n     = A.shape[1]
+
+    beta  = zeros(m+1);
+    alpha = zeros(m)
+
+    V = zeros((n, m))
+    v = [zeros(n), Normalize(ones(n))]
+
+    for i in range(0, m):
+        w = dot(A, v[1]).squeeze()
+
+        alpha[i] = dot(w, v[1])
+        w -= alpha[i] * v[1] - beta[i] * v[0]
+
+        w = OrthogonalizeVector(w, V[:, :i])
+
+        beta[i+1] = Norm(w)
+
+        v[0] = v[1]
+        v[1] = Normalize(w)
+
+        V[:, i] = v[0]
+
+    T = diags([beta[1:-1], alpha, beta[1:-1]], [-1, 0, 1]).toarray();
+
+    return V, T
+
+
+def OrthogonalizeVector(w, V):
+    for t in range(V.shape[1]):
+      tmpa = dot(w, V[:, t])
+      if tmpa == 0.0:
+        continue
+      w -= tmpa * V[:, t]
+
+    return w
+
+
+def EigenSolve(A, m):
+
+    V, T = Lanczos(A, m)
+    d, v = eig(T)
+
+    sortedIndex = argsort(absolute(d))[::-1]
+    d           = d[sortedIndex]
+    v           = v[:, sortedIndex]
+
+    s = dot(V, v)
+
+    return d[0:m], s[:, 0:m]

@@ -149,7 +149,10 @@ class SuperSet(SetProperties, SetPlots):
         self.SuperModes    = []
         self._Coupling     = None
         self._Adiabatic    = None
+        self._Index        = None
+        self._Beta         = None
         self.Geometry      = Geometry
+        self._M            = None
         self.Init()
 
         self.combinations = tuple(combinations( np.arange(NSolutions), 2 ) )
@@ -180,7 +183,6 @@ class SuperSet(SetProperties, SetPlots):
 
 
     def Ordering(self):
-
         for iter, _ in Enumerate( self.Geometry.ITRList, msg='Sorting super modes... '):
             self.OrderingModes(iter)
 
@@ -205,8 +207,8 @@ class SuperSet(SetProperties, SetPlots):
         return copy_
 
 
-    def Sort(self):
-        return SortSuperSet(self)
+    def Sort(self, parameter='Fields'):
+        return SortSuperSet(self, parameter=parameter)
 
 
 
@@ -220,7 +222,7 @@ class ModeSlice(np.ndarray):
 
 
     def __init__(self, Field, Axes, Index, Beta):
-        self.Field = Field
+        self.Field  = Field
         self.Axes   = Axes
         self.Index  = Index
         self.Beta   = Beta
@@ -278,7 +280,7 @@ class ModeSlice(np.ndarray):
 
 
     def __deepcopy__(self, memo):
-        to_be_copied = ['Index', 'Axes', 'Beta']
+        to_be_copied = ['Field', 'Index', 'Axes', 'Beta']
 
         copy_ = ModeSlice(self, self.Axes, self.Index, self.Beta)
 

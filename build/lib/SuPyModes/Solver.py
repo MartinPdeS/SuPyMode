@@ -1,22 +1,26 @@
-#-------------------------Importations------------------------------------------
+
 """ standard imports """
 import sys, copy, pickle
-from progressbar import Bar, Percentage, ETA, ProgressBar
-import matplotlib.pyplot as plt
-import matplotlib.colors as colors
-import copy
-import pandas as pd
-import numpy as np
-from scipy.sparse.linalg import eigs as LA
+import logging
+import timeit
+import copy  as cp
+import matplotlib.pyplot             as plt
+import matplotlib.gridspec           as gridspec
+import numpy                         as np
+from progressbar                     import ProgressBar
+from scipy.sparse.linalg             import eigs as LA
 
 """ package imports """
-from SuPyModes.toolbox.SuPyAxes import SuPyAxes
-from SuPyModes.toolbox.LPModes import LP_names
+from SuPyModes.toolbox.SuPyAxes      import SuPyAxes
+from SuPyModes.Special               import EigenSolve
+from SuPyModes.toolbox.LPModes       import LP_names
 from SuPyModes.toolbox.SuPyFinitDiff import SuPyFinitdifference
-from SuPyModes.SuperMode import SuperMode, SuperSet
-from SuPyModes.utils            import RecomposeSymmetries
-#-------------------------Importations------------------------------------------
+from SuPyModes.SuperMode             import SuperSet, ModeSlice
+from SuPyModes.utils                 import SortSuperSet, RecomposeSymmetries, GetWidgetBar, Enumerate
 
+logging.basicConfig(level=logging.INFO)
+
+Mlogger = logging.getLogger(__name__)
 
 
 class SuPySolver(object):
@@ -24,68 +28,50 @@ class SuPySolver(object):
     It solves the eigenvalues problems for a given geometry.
 
     """
+    def __init__(self, Coupler,  debug='INFO'):
+        Mlogger.setLevel(getattr(logging, debug))
 
-    def __init__(self, Coupler):
+        self.Geometry     = Coupler
 
-        self.Geometry  = Coupler
+        self.info         = Coupler.info
 
-        self.profile = Coupler.mesh
-
-        self.info = Coupler.info
-
-        self.vectors = []
+        self.vectors      = []
 
         self.pre_solution = {}
 
+        self._nk          = None
+
+        self._Laplacian   = None
 
 
-    def compute_nk(self):
-        """
-        This method compute the value n**2*k**2 which is one of the termes of
-        the eigen value probleme.
+    @property
+    def nk(self):
+        temp = self.Geometry.mesh**2 * self.Geometry.Axes.Dual.k**2
 
-        calls:
-            :call1: .initiate_finit_difference_matrix()
-        """
+        self._nk = np.reshape(temp, self.info['Size'], order = 'F')
 
-        self.nk = self.profile**2 * self.Axes.Dual.k**2
-
-        self.nk = np.reshape(self.nk, self.info['Size'], order = 'F')
+        return self._nk
 
 
-    def laplacian_sparse(self):
-        """
-        Function that constructs a sparse matrix that applies the 5-point laplacian discretization.
+    @property
+    def Laplacian(self):
+        self._Laplacian = SuPyFinitdifference(self.Geometry.Axes)
 
-        calls:
-            :call1: .initiate_finit_difference_matrix()
-        """
-
-        self.Finit_diff = SuPyFinitdifference(self.Axes)
-
-        self.Finit_diff.laplacian_sparse(self.nk,
-                                         self.Geometry.Ysym,
-                                         self.Geometry.Xsym)
-
-
-    def initiate_finit_difference_matrix(self):
-        """
-        Generate the finit difference matrix for eigenvalues optimisation
-        protocol.
-
-        """
-
-        self.compute_nk()
-
-        self.laplacian_sparse()
+        self._Laplacian.laplacian_sparse(self.nk,
+                                         self.Geometry.Axes.Symmetries[1],
+                                         self.Geometry.Axes.Symmetries[0])
+        return self._Laplacian
 
 
     def GetModes(self,
                   wavelength: float,
                   Nstep:      int   = 2,
                   Nsol:       int   = 5,
+                  ITRi:       float = 1.0,
                   ITRf:       float = 0.1,
-                  tolerance:  float = 0.0004,
+                  Ysym:       int   = 0,
+                  Xsym:       int   = 0,
+                  tolerance:  float = 1e-16,
                   error:      int   = 2,
                   naming:     bool  = False,
                   debug:      bool  = False):
@@ -97,23 +83,21 @@ class SuPySolver(object):
                     'Ny'        : self.info['Shape'][1]}
 
 
-        self.Shape = self.info['Shape']
+        self.debug = debug
 
-        self.Nstep, self.ITRf, self.Nsol = Nstep, ITRf, Nsol
+        self.Nstep, self.Nsol = Nstep, Nsol
 
-        ITRList = np.linspace(1, ITRf, Nstep)
+        self.Geometry.Axes = SuPyAxes(Meta=metadata)
 
-        self.Set = SuperSet(IndexProfile = self.profile,
-                            NSolutions   = self.Nsol,
-                            ITR          = ITRList)
+        self.Geometry.ITRList =  np.linspace(ITRi, ITRf, Nstep)
+
+        self.Geometry.Axes.Symmetries = [Xsym, Ysym]
+
+        self.Set = SuperSet(NSolutions = self.Nsol, Geometry = self.Geometry)
 
         self.tolerance, self.error = tolerance, error
 
-        self.Axes = SuPyAxes(Meta=metadata)
-
-        self.Solve(ITRList, Nsol)
-
-        self.Set.Symmetries = [self.Geometry.Xsym, self.Geometry.Ysym]
+        self.Solve(self.Geometry.ITRList, Nsol)
 
         return self.Set
 
@@ -121,111 +105,66 @@ class SuPySolver(object):
     def PreSolution(self):
 
         if self.iter == 0:
-            v0 =  self.profile/np.sum(self.profile)
+            v0 =  self.Geometry.mesh/np.sum(self.Geometry.mesh)
 
-            max_n = np.max(self.profile)
+            max_n = np.max(self.Geometry.mesh)
 
-            beta_square = copy.copy(-(self.Axes.Dual.k*max_n)**2)
+            beta_square = copy.copy(-(self.Geometry.Axes.Dual.k*max_n)**2)
 
         else:
 
-            beta_square = -(self.Set[0].Beta[0]*self.Axes.ITR)**2
+            beta_square = -(self.Set[0][0].Beta*self.Geometry.Axes.ITR)**2
 
-            v0 = self.Set[0].Field[-1].ravel()
+            v0 = self.Set[0][-1].ravel()
 
         return beta_square, v0
 
 
 
     def Solve(self, iteration_list: list, Nsol=1):
-
         self.iter = 0
 
-        widgets=[Bar('=', '[',  ']'), ' ', Percentage(),  ' ', ETA()]
-
-        bar = ProgressBar(maxval=self.Nstep, widgets=widgets)
-
-        bar.start()
-
-        for n, value in enumerate(iteration_list):
-            print(f"{n}/{len(iteration_list)}")
-
-            self.Axes.Scale(value)
-
-            self.initiate_finit_difference_matrix()
+        for n, value in Enumerate(iteration_list, msg='Computing super modes: '):
+            self.Geometry.Axes.Scale(value)
 
             self.GetEigenVectors(Nsol)
 
             self.iter += 1
 
-            bar.update(self.iter)
+        self.Set = self.Set.Sort()
 
 
-    def GetEigenVectors(self, Nsol=1, Tolerance=1e-8, MaxIter=None):
-
+    def GetEigenVectors(self, Nsol=1, MaxIter=None):
         beta_square, v0 = self.PreSolution()
 
-        values, vectors = LA(self.Finit_diff.Matrix,
+        starttime = timeit.default_timer()
+
+        values, vectors = LA(self.Laplacian.Matrix,
                              k                   = Nsol,
                              M                   = None,
                              sigma               = beta_square,
-                             which               = 'LM',
+                             which               = 'LR',
                              v0                  = v0,
                              ncv                 = None,
                              maxiter             = MaxIter,
-                             tol                 = Tolerance,
+                             tol                 = 1e-30,
                              return_eigenvectors = True,
                              Minv                = None,
                              OPinv               = None,
                              OPpart              = 'r' )
 
-        betas = np.real(np.sqrt(-values) / self.Axes.ITR)
+
+        betas = np.real(np.sqrt(-values) / self.Geometry.Axes.ITR)
 
         vectors = np.real(vectors)
 
         for solution in range(Nsol):
+            index = betas[solution] / self.Geometry.Axes.Direct.k
 
-            index = betas[solution] / self.Axes.Direct.k
+            Field = vectors[:,solution].reshape(self.Geometry.Shape)
 
-            self.Set[solution].Append(Index  = index,
-                                      Beta   = betas[solution],
-                                      ITR    = self.Axes.ITR,
-                                      Field  = vectors[:,solution].reshape(self.Shape),
-                                      xSym   = self.Geometry.Xsym,
-                                      ySym   = self.Geometry.Ysym,
-                                      Axes   = self.Axes)
+            self.Set[solution].Slice.append(ModeSlice( Field, self.Geometry.Axes, Index=index, Beta=betas[solution] ),)
 
-
-    def load_file(self, dir: str):
-        """
-        This method load data in pickle (json style) form (.p) and convert
-        to dict.
-
-        arguments:
-            :param dir: Directory of the .p file to load.
-            :type dir: str.
-
-        calls:
-        :call1:
-        """
-
-        with open(dir, 'rb') as handle:
-            self.profile = pickle.load(handle)
-
-
-
-    def save_file(self, dir: str):
-        """
-        arguments:
-
-            :param dir: Directory to save solver file
-            :type dir: str.
-
-        calls:
-            :call1: XXX
-        """
-
-        self.Fields.to_pickle(dir)
 
 
 

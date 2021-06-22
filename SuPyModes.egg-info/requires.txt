@@ -1,0 +1,10 @@
+coverage
+cython
+matplotlib
+mayavi
+numpy
+pandas
+pybind11
+scipy
+vtk
+vtk
