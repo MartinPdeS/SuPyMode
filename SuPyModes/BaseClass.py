@@ -170,10 +170,9 @@ class SetProperties(object):
 
 
     def GetIndex(self):
-        logging.info('Computing effective indices...')
         Index = []
 
-        for i, Supermode in enumerate( self.SuperModes ):
+        for i, Supermode in Enumerate( self.SuperModes, msg='Computing effective indices... ' ):
             for j, iter in enumerate( Supermode.Slice ):
                 Index.append(iter.Index)
 
@@ -183,10 +182,9 @@ class SetProperties(object):
 
 
     def GetBeta(self):
-        logging.info('Computing propagation constant...')
         Beta = []
 
-        for i, Supermode in enumerate( self.SuperModes ):
+        for i, Supermode in Enumerate( self.SuperModes, msg='Computing propagation constant... ' ):
             for j, iter in enumerate( Supermode.Slice ):
                 Beta.append(iter.Beta)
 

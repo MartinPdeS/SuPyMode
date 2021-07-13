@@ -324,6 +324,7 @@ class SuPyFinitdifference(object):
                               self.Axes.Nx*self.Axes.Ny, self.Axes.Nx*self.Axes.Ny)
 
 
+
     def third_order_laplacian_sparse(self, nk, x_symmetry, y_symmetry):
         """
         Construct a sparse matrix that applies the 5-point laplacian discretization.

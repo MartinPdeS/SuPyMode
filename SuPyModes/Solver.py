@@ -12,12 +12,12 @@ from scipy.sparse.linalg             import eigsh as LA
 
 """ package imports """
 from SuPyModes.toolbox.SuPyAxes      import SuPyAxes
-from SuPyModes.Special               import EigenSolve
-from SuPyModes.toolbox.LPModes       import LP_names
+#from SuPyModes.Special               import EigenSolve
 from SuPyModes.toolbox.SuPyFinitDiff import SuPyFinitdifference
 from SuPyModes.SuperMode             import SuperSet, ModeSlice
+from SuPyModes.includes.EigenSolver  import EigenSolving
 from SuPyModes.utils                 import SortSuperSet, RecomposeSymmetries, GetWidgetBar, Enumerate
-
+np.set_printoptions(precision=1, linewidth=350)
 logging.basicConfig(level=logging.INFO)
 
 Mlogger = logging.getLogger(__name__)
@@ -71,7 +71,7 @@ class SuPySolver(object):
                   ITRf:       float = 0.1,
                   Ysym:       int   = 0,
                   Xsym:       int   = 0,
-                  tolerance:  float = 1e-16,
+                  tolerance:  float = 1e-30,
                   error:      int   = 2,
                   naming:     bool  = False,
                   debug:      bool  = False):
@@ -121,39 +121,95 @@ class SuPySolver(object):
 
 
 
-    def Solve(self, iteration_list: list, Nsol=1):
+    def _Solve(self, iteration_list: list, Nsol=1):
         self.iter = 0
 
+
+        self.a = EigenSolving(self.Geometry.mesh, 5, 1000, 1e-15)
+        self.a.dx = self.Geometry.Axes.Direct.dx
+        self.a.dy = self.Geometry.Axes.Direct.dy
+        self.a.Lambda = self.Geometry.Axes.Dual.wavelength
+
+
+
         for n, value in Enumerate(iteration_list, msg='Computing super modes: '):
+
             self.Geometry.Axes.Scale(value)
 
             self.GetEigenVectors(Nsol)
 
             self.iter += 1
 
-        #self.Set = self.Set.Sort()
+        self.Set = self.Set.Sort('Fields')
+
+
+
+    def Solve(self, iteration_list: list, Nsol=1):
+        self.iter = 0
+
+        a = EigenSolving(self.Geometry.mesh, self.Nsol, 100, self.tolerance)
+
+        beta_square, _ = self.PreSolution()
+
+        for n, value in Enumerate(iteration_list, msg='Computing super modes: '):
+
+            self.Geometry.Axes.Scale(value)
+
+            a.dx = self.Geometry.Axes.Direct.dx
+
+            a.dy = self.Geometry.Axes.Direct.dy
+
+            a.Lambda = self.Geometry.Axes.Dual.wavelength
+
+            EigenVectors, EigenValues = a.ComputeEigen(beta_square)
+
+            beta_square, _ = self.PreSolution()
+
+            betas = np.real(np.sqrt(-EigenValues) / self.Geometry.Axes.ITR)
+
+            vectors = np.real(EigenVectors).reshape([Nsol] + self.Geometry.Shape)
+
+            self.AppendSlice(betas, vectors)
+
+            self.iter += 1
+
+        self.Set = self.Set.Sort('Fields')
+
+
+
+    def AppendSlice(self, betas, vectors):
+
+        for solution in range(len(betas)):
+
+            index = betas[solution] / self.Geometry.Axes.Direct.k
+
+            Field = vectors[solution,:,:]
+
+            self.Set[solution].Slice.append(ModeSlice( Field, self.Geometry.Axes, Index=index, Beta=betas[solution] ),)
+
 
 
     def GetEigenVectors(self, Nsol=1, MaxIter=None):
         beta_square, v0 = self.PreSolution()
 
-        starttime = timeit.default_timer()
-
-        values, vectors = LA(self.Laplacian.Matrix,
+        values, vectors = LA(self.a.GetMatrix(),
                              k                   = Nsol,
                              M                   = None,
                              sigma               = beta_square,
                              which               = 'LM',
-                             v0                  = v0,
-                             ncv                 = None,
-                             maxiter             = MaxIter,
-                             tol                 = 1e-30,
+                             #v0                  = v0,
+                             ncv                 = Nsol*2,
+                             maxiter             = None,
+                             tol                 = 1e-15,
                              return_eigenvectors = True,
                              Minv                = None,
                              OPinv               = None,
                              #OPpart              = 'r'
                              )
 
+        print(self.a.GetMatrix(),)
+        print('sigma',beta_square)
+        print('dx',self.Geometry.Axes.Direct.dx)
 
         betas = np.real(np.sqrt(-values) / self.Geometry.Axes.ITR)
 

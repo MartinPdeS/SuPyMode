@@ -1,0 +1,16 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/martth/Desktop/git_project/SuPyModes/extern/eigen/test/vectorization_logic.cpp"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"BuildOfficial"
+		],
+		"name" : "vectorization_logic_2"
+	}
+}
