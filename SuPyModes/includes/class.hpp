@@ -3,6 +3,7 @@
 class EigenSolving{
   public:
     size_t           nMode, MaxIter, Nx, Ny, size;
+    uint             DegenerateFactor;
     float            Tolerance, dx, dy, k, lambda, lambdaInit;
     float*           MeshPtr;
     ndarray          Mesh;

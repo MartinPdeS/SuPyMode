@@ -179,24 +179,38 @@ EigenSolving::ComputingCoupling(){
 
   uint length = FullEigenValues.size()-1;
 
-  VectorXf * Overlap = new VectorXf(length * nMode * nMode);
+  //VectorXf * Overlap = new VectorXf(length * nMode * nMode);
 
   VectorXf vec0, vec1;
 
   uint k = 0;
 
+  float delta, Overlap, C, beta0, beta1;
+
   for (size_t l=0; l<length; ++l)
       for (size_t i=0; i<nMode; ++i)
           for (size_t j=0; j<nMode; ++j){
-              vec0 = FullEigenVectors[l].col(i);
-              vec1 = FullEigenVectors[l+1].col(j);
-              (*Overlap)[k] = vec0.transpose() * vec1;
+              vec0    = FullEigenVectors[l].col(i);
+              vec1    = FullEigenVectors[l+1].col(j);
+
+              Overlap = vec0.transpose() * vec1;
+
+              beta0   = FullEigenValues[l][i];
+              beta1   = FullEigenValues[l][j]
+              delta   = beta0 * beta1;
+
+              C       = -0.5 * k**2 / sqrt(delta) * abs( 1.0 / (beta0 - beta1) );
+
               ++k; }
 
+  //
+  // return Eigen2ndarray( Overlap,
+  //                       { length, nMode, nMode },
+  //                       { nMode * nMode * sizeof(float), nMode * sizeof(float), sizeof(float) } ) ;
 
-  return Eigen2ndarray( Overlap,
-                        { length, nMode, nMode },
-                        { nMode * nMode * sizeof(float), nMode * sizeof(float), sizeof(float) } ) ;
+
+  ndarray test;
+  return test;
 
 }
 
