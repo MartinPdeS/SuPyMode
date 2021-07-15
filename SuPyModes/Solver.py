@@ -87,7 +87,9 @@ class SuPySolver(object):
 
         self.Nstep, self.Nsol = Nstep, Nsol
 
-        self.Geometry.Axes = SuPyAxes(Meta=metadata)
+        #self.Geometry.Axes = SuPyAxes(Meta=metadata)
+
+        self.Geometry.Axes.Direct.wavelength = wavelength
 
         self.Geometry.ITRList =  np.linspace(ITRi, ITRf, Nstep)
 

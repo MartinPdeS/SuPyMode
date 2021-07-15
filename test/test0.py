@@ -24,8 +24,8 @@ Core2 = Circle( Position = Clad.C[2], Radi = B.rCore, Index = B.nCore )
 Geo = Geometry(Objects = [Capillary, Clad, Clad0, Clad1, Clad2, Core0, Core1, Core2],
                Xbound  = [-150, 150],
                Ybound  = [-150, 150],
-               Nx      = 150,
-               Ny      = 150,
+               Nx      = 80,
+               Ny      = 80,
                debug   = 'INFO',
                Length  = None)
 
@@ -33,8 +33,8 @@ Geo = Geometry(Objects = [Capillary, Clad, Clad0, Clad1, Clad2, Core0, Core1, Co
 Sol = SuPySolver(Coupler=Geo)
 
 SuperModes = Sol.GetModes(wavelength = 1.3,
-                          Nstep      = 1,
-                          Nsol       = 10,
+                          Nstep      = 100,
+                          Nsol       = 5,
                           ITRi       = 1,
                           ITRf       = 0.05,
                           tolerance  = 1e-20,

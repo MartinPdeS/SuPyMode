@@ -2,20 +2,22 @@
 
 class EigenSolving{
   public:
-    size_t           nMode, MaxIter, Nx, Ny, size;
+    size_t           nMode, MaxIter, Nx, Ny, size, sMode;
     uint             DegenerateFactor;
-    float            Tolerance, dx, dy, k, lambda, lambdaInit;
+    float            Tolerance, dx, dy, k, kInit, lambda, lambdaInit;
     float*           MeshPtr;
-    ndarray          Mesh;
+    ndarray          Mesh, MeshGradient, ITRList, PyOverlap, PyIndices, PyFullEigenVectors, PyFullEigenValues, PyCoupling;
     MSparse          Laplacian, EigenMatrix;
-    vector<MatrixXf> FullEigenVectors;
-    vector<VectorXf> FullEigenValues;
+    vector<MatrixXf> FullEigenVectors, SortedEigenVectors;
+    vector<VectorXf> FullEigenValues, SortedEigenValues;
 
   EigenSolving(ndarray& Mesh,
+               //ndarray& MeshGradient,
                size_t   nMode,
                size_t   MaxIter,
                float    Tolerance){
                  this->nMode             = nMode;
+                 this->sMode             = nMode;
                  this->MaxIter           = MaxIter;
                  this->Tolerance         = Tolerance;
                  this->Mesh              = Mesh;
@@ -25,6 +27,7 @@ class EigenSolving{
                  this->dx                = 100./this->Nx;
                  this->dy                = 100./this->Ny;
                  this->MeshPtr           = (float*) Mesh.request().ptr;
+                 this->DegenerateFactor  = 1.0;
                }
 
    void Setdx(float value){ dx = value;}
@@ -45,8 +48,6 @@ class EigenSolving{
 
    MSparse ComputeMatrix();
 
-   tuple<ndarray, ndarray> PyComputeEigen(float alpha);
-
    tuple<MatrixXf, VectorXf> ComputeEigen(float alpha);
 
    void LoopOverITR(ndarray ITRList, float alpha);
@@ -55,5 +56,11 @@ class EigenSolving{
 
    ndarray ComputingOverlap();
 
-   ndarray ComputingCoupling();
+   Cndarray ComputingCoupling();
+
+   ndarray ComputingIndices();
+
+   void SortModesFields(size_t Mode);
+
+   void SortModesIndex();
 };

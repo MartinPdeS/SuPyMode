@@ -15,12 +15,14 @@ using namespace std;
 using namespace Spectra;
 namespace py = pybind11;
 
-typedef py::array_t<float>              ndarray;
-typedef py::buffer_info                 info;
-typedef unsigned int                    uint;
-typedef SparseMatrix<float, ColMajor>   MSparse;
-typedef vector<float>                   Vecf1D;
-typedef vector<vector<float>>           Vecf2D;
+typedef std::complex<float>              fComplex;
+typedef py::array_t<float>               ndarray;
+typedef py::array_t<fComplex>            Cndarray;
+typedef py::buffer_info                  info;
+typedef unsigned int                     uint;
+typedef SparseMatrix<float, ColMajor>    MSparse;
+typedef vector<float>                    Vecf1D;
+typedef vector<vector<float>>            Vecf2D;
 #include "utils.cpp"
 #include "class.cpp"
 
@@ -36,8 +38,6 @@ PYBIND11_MODULE(EigenSolver, module) {
          py::arg("MaxIter"),
          py::arg("Tolerance") )
 
-     .def("ComputeEigen", &EigenSolving::PyComputeEigen, py::arg("alpha")  = 0)
-
      .def("GetMatrix", &EigenSolving::GetMatrix)
 
      .def("LoopOverITR", &EigenSolving::LoopOverITR)
@@ -45,6 +45,12 @@ PYBIND11_MODULE(EigenSolver, module) {
      .def("ComputingOverlap", &EigenSolving::ComputingOverlap)
 
      .def("ComputingCoupling", &EigenSolving::ComputingCoupling)
+
+     .def("SortModesFields", &EigenSolving::SortModesFields)
+
+     .def("SortModesIndex", &EigenSolving::SortModesIndex)
+
+     .def("ComputingIndices", &EigenSolving::ComputingIndices)
 
      .def("GetSlice", &EigenSolving::GetSlice, py::arg("slice")  = 0)
 

@@ -17,9 +17,10 @@ from shapely.ops import cascaded_union
 
 
 """ package imports """
-from SuPyModes.Directories import RootPath
-from SuPyModes.Special     import Intersection
-from SuPyModes.utils       import *
+from SuPyModes.Directories           import RootPath
+from SuPyModes.Special               import Intersection, gradientO4
+from SuPyModes.utils                 import *
+from SuPyModes.toolbox.SuPyAxes      import SuPyAxes
 
 Mlogger = logging.getLogger(__name__)
 
@@ -54,6 +55,12 @@ class Geometry(object):
         self.Shape      = [Nx, Ny]
 
         self.Length     = Length
+
+        self.Axes  = SuPyAxes( {'wavelength': 1.0,
+                                'Xbound'    : Xbound,
+                                'Ybound'    : Ybound,
+                                'Nx'        : Nx,
+                                'Ny'        : Ny } )
 
         self.CreateMesh()
 
@@ -133,13 +140,8 @@ class Geometry(object):
 
 
     def __plot__(self, ax):
-        if not hasattr(self, 'Axes'):
-            Field = self.mesh
-            xaxis = np.arange(self.mesh.shape[0])
-            yaxis = np.arange(self.mesh.shape[1])
 
-        else:
-            Field, xaxis, yaxis = RecomposeSymmetries(self.mesh, self.Axes)
+        Field, xaxis, yaxis = RecomposeSymmetries(self.mesh, self.Axes)
 
         vmin = sorted(self.Indices)[1]/1.1
 
@@ -188,6 +190,14 @@ class Geometry(object):
         plt.tight_layout()
 
         plt.show()
+
+
+    def Gradient(self):
+        Ygrad, Xgrad = gradientO4( self.Profile.T**2,
+                                   self.Axes.Direct.dx,
+                                   self.Axes.Direct.dy )
+
+        return Xgrad * Axes.Direct.XX.T + Ygrad * Axes.Direct.YY.T
 
 
 

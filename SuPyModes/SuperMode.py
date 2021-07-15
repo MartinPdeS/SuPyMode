@@ -56,6 +56,7 @@ class SuperMode(object):
                                    SuperMode1 = SuperMode,
                                    k          = self.Geometry.Axes.Direct.k,
                                    Profile    = self.Geometry.mesh,
+                                   Gradient   = self.Geometry.Gradient(),
                                    iter       = n) )
 
         return C
@@ -68,6 +69,7 @@ class SuperMode(object):
                                     SuperMode1 = SuperMode,
                                     k          = self.Geometry.Axes.Direct.k,
                                     Profile    = self.Geometry.mesh,
+                                    Gradient   = self.Geometry.Gradient(),
                                     iter       = n) )
 
         return A

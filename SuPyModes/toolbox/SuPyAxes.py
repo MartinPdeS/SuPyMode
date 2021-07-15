@@ -17,8 +17,8 @@ class SuPyAxes(object):
         y_vector = np.linspace(*Meta['Ybound'], Meta['Ny'])
 
         self.Dual = DirectSpace(xvector      = x_vector,
-                                  yvector    = y_vector,
-                                  wavelength = Meta['wavelength'])
+                                yvector    = y_vector,
+                                 wavelength = Meta['wavelength'])
 
         self.Direct = DirectSpace(xvector    = x_vector,
                                   yvector    = y_vector,
