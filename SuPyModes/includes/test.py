@@ -6,8 +6,8 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
-Nx = 120
-Ny = 120
+Nx = 80
+Ny = 80
 nMode = 2
 
 Clad = Circle(Radi =  62.5, Position = (0,0), Index = Fused_silica(1.0))
@@ -20,13 +20,13 @@ Geo = Geometry(Objects = [Clad, Core0],
                Nx      = Nx,
                Ny      = Ny)
 
-ITRList = np.linspace(1.0,0.1, 20)
+ITRList = np.linspace(1.0,0.3, 200)
 
 A = EigenSolving(Geo.mesh, nMode+3, 1500, 1e-8)
 A.dx = A.dy = 140/(Nx-1)
 A.Lambda = 1.0
 
-A.LoopOverITR(ITRList, -83.44)
+A.LoopOverITR(ITRList, -83.44, 1)
 
 A.SortModesFields(nMode)
 #A.SortModesIndex()
@@ -34,29 +34,29 @@ A.SortModesFields(nMode)
 index = A.ComputingIndices()
 print(index.shape)
 
-# for i in range(nMode):
-#     plt.plot(ITRList, index.reshape(len(ITRList),nMode)[:,i],'*-', label=f'Mode: {i}')
-# plt.grid()
-# plt.legend()
-# plt.show()
+for i in range(nMode):
+    plt.plot(ITRList, index.reshape(len(ITRList),nMode)[:,i],'*-', label=f'Mode: {i}')
+plt.grid()
+plt.legend()
+plt.show()
+
+
+
+
+# for i in range(len(ITRList)):
+#     EigenVectors, EigenValues = A.GetSlice(i)
+#     print(EigenValues)
 #
-
-
-
-for i in range(len(ITRList)):
-    EigenVectors, EigenValues = A.GetSlice(i)
-    print(EigenValues)
-
-    fig, ax = plt.subplots(1,nMode)
-    for j in range(nMode):
-        ax[j].imshow(EigenVectors[j,...])
-
-        print(EigenValues)
-        ax[j].set_title(f"beta: { EigenValues[j]:.5f}", fontsize=8)
-
-    plt.tight_layout()
-    plt.show()
-
+#     fig, ax = plt.subplots(1,nMode)
+#     for j in range(nMode):
+#         ax[j].imshow(EigenVectors[j,...])
+#
+#         print(EigenValues)
+#         ax[j].set_title(f"beta: { EigenValues[j]:.5f}", fontsize=8)
+#
+#     plt.tight_layout()
+#     plt.show()
+#
 
 
 

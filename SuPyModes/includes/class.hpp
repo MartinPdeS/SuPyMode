@@ -50,7 +50,7 @@ class EigenSolving{
 
    tuple<MatrixXf, VectorXf> ComputeEigen(float alpha);
 
-   void LoopOverITR(ndarray ITRList, float alpha);
+   void LoopOverITR(ndarray ITRList, float alpha, size_t order);
 
    tuple<ndarray, ndarray> GetSlice(uint slice);
 
