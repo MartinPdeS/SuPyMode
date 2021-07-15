@@ -139,7 +139,7 @@ EigenSolving::LoopOverITR(ndarray ITRList, float alpha, size_t order = 1){
 
     FullEigenValues[i] = EigenValues;
 
-    if (i>1)
+    if (i>order)
         alpha = ExtrapolateNext(order, FullEigenValues, ITRList, i+1);
 
   }
@@ -244,7 +244,9 @@ EigenSolving::SortModesFields(size_t Mode){
 
 
 void
-EigenSolving::SortModesIndex(){
+EigenSolving::SortModesIndex(size_t Mode){
+
+  sMode = Mode;
 
   uint length = FullEigenValues.size();
 

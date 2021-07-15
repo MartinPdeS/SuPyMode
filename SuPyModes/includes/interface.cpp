@@ -26,8 +26,6 @@ typedef vector<vector<float>>            Vecf2D;
 #include "utils.cpp"
 #include "class.cpp"
 
-
-
 PYBIND11_MODULE(EigenSolver, module) {
     module.doc() = "A c++ solver for EigenPairs";
 
@@ -40,15 +38,15 @@ PYBIND11_MODULE(EigenSolver, module) {
 
      .def("GetMatrix", &EigenSolving::GetMatrix)
 
-     .def("LoopOverITR", &EigenSolving::LoopOverITR)
+     .def("LoopOverITR", &EigenSolving::LoopOverITR, py::arg("ITR"), py::arg("alpha"), py::arg("ExtrapolationOrder"))
 
      .def("ComputingOverlap", &EigenSolving::ComputingOverlap)
 
      .def("ComputingCoupling", &EigenSolving::ComputingCoupling)
 
-     .def("SortModesFields", &EigenSolving::SortModesFields)
+     .def("SortModesFields", &EigenSolving::SortModesFields, py::arg("nMode"))
 
-     .def("SortModesIndex", &EigenSolving::SortModesIndex)
+     .def("SortModesIndex", &EigenSolving::SortModesIndex, py::arg("nMode"))
 
      .def("ComputingIndices", &EigenSolving::ComputingIndices)
 

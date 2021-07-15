@@ -62,5 +62,5 @@ class EigenSolving{
 
    void SortModesFields(size_t Mode);
 
-   void SortModesIndex();
+   void SortModesIndex(size_t Mode);
 };

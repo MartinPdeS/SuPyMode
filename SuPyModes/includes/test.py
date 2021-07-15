@@ -6,8 +6,8 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
-Nx = 80
-Ny = 80
+Nx = 120
+Ny = 120
 nMode = 2
 
 Clad = Circle(Radi =  62.5, Position = (0,0), Index = Fused_silica(1.0))
@@ -26,19 +26,19 @@ A = EigenSolving(Geo.mesh, nMode+3, 1500, 1e-8)
 A.dx = A.dy = 140/(Nx-1)
 A.Lambda = 1.0
 
-A.LoopOverITR(ITRList, -83.44, 1)
+A.LoopOverITR(ITR = ITRList, alpha = -83.44, ExtrapolationOrder = 2)
 
-A.SortModesFields(nMode)
+A.SortModesFields(nMode = nMode)
 #A.SortModesIndex()
 
 index = A.ComputingIndices()
 print(index.shape)
-
-for i in range(nMode):
-    plt.plot(ITRList, index.reshape(len(ITRList),nMode)[:,i],'*-', label=f'Mode: {i}')
-plt.grid()
-plt.legend()
-plt.show()
+#
+# for i in range(nMode):
+#     plt.plot(ITRList, index.reshape(len(ITRList),nMode)[:,i],'*-', label=f'Mode: {i}')
+# plt.grid()
+# plt.legend()
+# plt.show()
 
 
 
