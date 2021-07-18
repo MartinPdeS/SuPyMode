@@ -141,7 +141,9 @@ class Geometry(object):
 
     def __plot__(self, ax):
 
-        Field, xaxis, yaxis = RecomposeSymmetries(self.mesh, self.Axes)
+        return
+
+        Field, xaxis, yaxis = RecomposeSymmetries(self.mesh.T, self.Axes)
 
         vmin = sorted(self.Indices)[1]/1.1
 
@@ -149,7 +151,7 @@ class Geometry(object):
 
         pcm = ax.pcolormesh(  xaxis,
                               yaxis,
-                              Field.T,
+                              Field,
                               cmap    = plt.cm.coolwarm,
                               norm=colors.LogNorm(vmin=vmin, vmax=vmax),
                               shading='auto'
@@ -169,7 +171,7 @@ class Geometry(object):
 
         cbar = plt.colorbar(sm, ax=ax, cax=cax)
 
-        ax.contour(xaxis, yaxis, Field.T, levels=self.Indices, colors='k')
+        ax.contour(xaxis, yaxis, Field, levels=self.Indices, colors='k')
 
         ax.set_title('Rasterized RI profil', fontsize=10)
 
@@ -193,11 +195,11 @@ class Geometry(object):
 
 
     def Gradient(self):
-        Ygrad, Xgrad = gradientO4( self.Profile.T**2,
+        Ygrad, Xgrad = gradientO4( self.mesh.T**2,
                                    self.Axes.Direct.dx,
                                    self.Axes.Direct.dy )
 
-        return Xgrad * Axes.Direct.XX.T + Ygrad * Axes.Direct.YY.T
+        return Xgrad * self.Axes.Direct.XX.T + Ygrad * self.Axes.Direct.YY.T
 
 
 

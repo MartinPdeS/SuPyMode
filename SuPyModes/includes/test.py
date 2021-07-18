@@ -2,82 +2,130 @@ from SuPyModes.Geometry          import Geometry, Circle
 from SuPyModes.Solver            import SuPySolver
 from SuPyModes.sellmeier         import Fused_silica
 from SuPyModes.includes.EigenSolver  import EigenSolving
+from SuPyModes.Geometry          import Geometry, Fused2, Circle
+from SuPyModes.Solver            import SuPySolver
+from SuPyModes.sellmeier         import Fused_silica
+
 import time
 import numpy as np
 import matplotlib.pyplot as plt
+from itertools import combinations
 
-Nx = 120
-Ny = 120
-nMode = 2
 
-Clad = Circle(Radi =  62.5, Position = (0,0), Index = Fused_silica(1.0))
+def PlotModes():
+    for i in range(len(ITRList)):
+        EigenVectors, EigenValues = A.GetSlice(i)
 
-Core0 = Circle( Position=Clad.C[0], Radi = 4.2, Index = Fused_silica(1.0)+0.005 )
+        fig, ax = plt.subplots(1,nMode)
+        for j in range(nMode):
+            array = EigenVectors[j,...]
+            print(array.shape)
+            temp = np.concatenate((array[:,::-1], array), axis=1)
+            array = array.reshape([Nx,Ny])
+            ax[j].pcolormesh(array)
+            ax[j].set_aspect('equal')
 
-Geo = Geometry(Objects = [Clad, Core0],
-               Xbound  = [-80, 80],
-               Ybound  = [-80, 80],
+
+            ax[j].set_title(f"beta: { EigenValues[j]:.5f}", fontsize=8)
+
+        plt.tight_layout()
+        plt.show()
+
+def PlotCoupling():
+
+    Coupling = A.ComputingCoupling()
+
+    print(Coupling.shape)
+
+    a = list(combinations(range(nMode), 2))
+
+    fig, ax = plt.subplots(1,1)
+    for i,j in a:
+        ax.plot(ITRList[1:], np.abs(Coupling[:,j,i]), label=f'{i}/{j}')
+
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+
+def PlotAdiabatic():
+
+    Adiabatic = A.ComputingAdiabatic()
+
+    print(Adiabatic)
+
+    a = list(combinations(range(nMode), 2))
+
+    fig, ax = plt.subplots(1,1)
+    for i,j in a:
+        ax.semilogy(ITRList[1:], np.abs(Adiabatic[:,j,i]), label=f'{i}/{j}')
+
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+
+nMode = 4
+
+Nx = 50
+Ny = 50
+
+Clad = Fused2(Radius =  620.5, Fusion  = 1, Index   = 1)
+
+Core0 = Circle( Position=(0,0), Radi = 15.2, Index = Fused_silica(1.55)+0.005 )
+Xbound  = [-100, 100]
+Ybound  = [-100, 100]
+DeltaX = abs(Xbound[0]-Xbound[1])
+DeltaY = abs(Ybound[0]-Ybound[1])
+
+Geo = Geometry(Objects = [Clad],
+               Xbound  = Xbound,
+               Ybound  = Ybound,
                Nx      = Nx,
                Ny      = Ny)
 
-ITRList = np.linspace(1.0,0.3, 200)
 
-A = EigenSolving(Geo.mesh, nMode+3, 1500, 1e-8)
-A.dx = A.dy = 140/(Nx-1)
-A.Lambda = 1.0
+ITRList = [1.0]
 
-A.LoopOverITR(ITR = ITRList, alpha = -83.44, ExtrapolationOrder = 2)
+A = EigenSolving(Geo.mesh, Geo.mesh, nMode, 1550000, 1e-18, True)
+A.dx = DeltaX/(Nx-1)
 
-A.SortModesFields(nMode = nMode)
-#A.SortModesIndex()
+A.dy =  DeltaY/(Ny-1)
+print(A.dx, A.dy)
 
-index = A.ComputingIndices()
-print(index.shape)
-#
-# for i in range(nMode):
-#     plt.plot(ITRList, index.reshape(len(ITRList),nMode)[:,i],'*-', label=f'Mode: {i}')
-# plt.grid()
-# plt.legend()
-# plt.show()
+A.Lambda          = 1.0
 
+A.ComputeLaplacian()
+A.TopSymmetry    = 0
+A.BottomSymmetry = 0
+A.LeftSymmetry   = 0
+A.RightSymmetry  = 0
 
+#A.PringLaplacian()
 
+A.LoopOverITR(ITR = ITRList, alpha = -39.478, ExtrapolationOrder = 2)#-83.44
 
-# for i in range(len(ITRList)):
-#     EigenVectors, EigenValues = A.GetSlice(i)
-#     print(EigenValues)
-#
-#     fig, ax = plt.subplots(1,nMode)
-#     for j in range(nMode):
-#         ax[j].imshow(EigenVectors[j,...])
-#
-#         print(EigenValues)
-#         ax[j].set_title(f"beta: { EigenValues[j]:.5f}", fontsize=8)
-#
-#     plt.tight_layout()
-#     plt.show()
-#
+#A.SortModesFields()
 
+def PlotIndex():
+    index = A.ComputingIndices()
 
-
-
-# print(ITRList[1])
-#
-# EigenVectors, EigenValues =  A.ComputeEigen(-71)
-#
-# print(EigenValues.shape)
-# fig, ax = plt.subplots(1,5)
-# for j in range(5):
-#
-#     ax[j].imshow(EigenVectors[j,...])
-#     ax[j].set_title(f"beta: { EigenValues[j]:.2f}", fontsize=8)
-#
-# plt.tight_layout()
-# plt.show()
+    for i in range(nMode):
+        plt.plot(ITRList, index.reshape(len(ITRList),nMode)[:,i],'-', label=f'Mode: {i}')
+    plt.grid()
+    plt.legend()
+    plt.show()
 
 
 
 
 
+#PlotAdiabatic()
+#PlotCoupling()
+#PlotIndex()
+PlotModes()
 
-        #
+
+
+
+# -

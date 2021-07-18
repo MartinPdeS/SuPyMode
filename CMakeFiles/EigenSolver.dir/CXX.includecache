@@ -8,6 +8,8 @@
 
 /home/martth/Desktop/git_project/SuPyModes/SuPyModes/includes/Extrapolate.hpp
 
+/home/martth/Desktop/git_project/SuPyModes/SuPyModes/includes/FinitCoefficient.hpp
+
 /home/martth/Desktop/git_project/SuPyModes/SuPyModes/includes/class.cpp
 class.hpp
 /home/martth/Desktop/git_project/SuPyModes/SuPyModes/includes/class.hpp
@@ -29,9 +31,11 @@ eigen3/Eigen/Sparse
 -
 /home/martth/temporary/gnuplot-iostream/gnuplot-iostream.h
 -
-Spectra/SymEigsShiftSolver.h
+Spectra/GenEigsRealShiftSolver.h
 -
 Spectra/MatOp/SparseSymShiftSolve.h
+-
+Spectra/MatOp/SparseGenRealShiftSolve.h
 -
 cstdio
 -
@@ -49,6 +53,8 @@ numeric
 -
 algorithm
 -
+FinitCoefficient.hpp
+/home/martth/Desktop/git_project/SuPyModes/SuPyModes/includes/FinitCoefficient.hpp
 
 /home/martth/temporary/gnuplot-iostream/gnuplot-iostream.h
 cstdio

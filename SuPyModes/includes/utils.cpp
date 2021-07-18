@@ -1,15 +1,66 @@
 #include <numeric>      // std::iota
 #include <algorithm>    // std::sort, std::stable_sort
+#include "FinitCoefficient.hpp"
 
 using namespace std;
 
-vector<size_t> sort_indexes(const VectorXf &v) {
+
+vector<float>
+ComputecOverlaps_(MatrixXf EigenVectors0, MatrixXf EigenVectors1, size_t iter){
+
+  size_t nMode = EigenVectors0.cols();
+
+  vector<float> Overlap(nMode);
+
+  for (size_t j=0; j<nMode; ++j){
+      Overlap[j] = abs( EigenVectors0.col(iter).transpose() * EigenVectors1.col(j) );
+      cout<<"  "<< Overlap[j];}
+
+  return Overlap;
+
+}
+
+
+vector<size_t>
+ComputecOverlaps(MatrixXf Matrix0, MatrixXf Matrix1){
+
+  size_t nMode = Matrix0.cols();
+
+  float BestOverlap, Overlap;
+  vector<size_t> Indices(nMode);
+
+  for (size_t i=0; i<nMode; ++i){
+      BestOverlap = 0;
+      for (size_t j=0; j<nMode; ++j){
+          Overlap = abs( Matrix0.col(i).transpose() * Matrix1.col(j) );
+          if (Overlap > BestOverlap) {Indices[i] = j; BestOverlap = Overlap;}
+          }
+      }
+
+  return Indices;
+
+}
+
+vector<size_t>
+sort_indexes(const VectorXf &v) {
 
   vector<size_t> idx(v.size());
   iota(idx.begin(), idx.end(), 0);
 
   stable_sort(idx.begin(), idx.end(),
        [&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
+
+  return idx;
+}
+
+
+vector<size_t>
+sort_indexes(const vector<float> &v) {
+
+  vector<size_t> idx(v.size());
+  iota(idx.begin(), idx.end(), 0);
+
+  stable_sort(idx.begin(), idx.end(), [&v](size_t i1, size_t i2) {return v[i1] > v[i2];});
 
   return idx;
 }
@@ -47,7 +98,7 @@ Eigen2ndarray(VectorXf *Eigen3Vector, vector<size_t> dimension, vector<size_t> s
 
 
 Cndarray
-Eigen2ndarray(VectorXcf *Eigen3Vector, vector<size_t> dimension, vector<size_t> stride){
+Eigen2Cndarray(VectorXcf *Eigen3Vector, vector<size_t> dimension, vector<size_t> stride){
 
   Cndarray PyVector;
 
@@ -63,10 +114,17 @@ Eigen2ndarray(VectorXcf *Eigen3Vector, vector<size_t> dimension, vector<size_t> 
 
 
 float
-Trapz(VectorXf& Vector, float dx){
-  float sum  = Vector.sum();
-  size_t end = Vector.size()-1;
-  sum       -= (Vector[0] + Vector[end])/2.0;
+Trapz(VectorXf& Vector, float dx, size_t Nx, size_t Ny){
+  float sum  = 0;
+  float val;
+
+  for (size_t i=0; i<Nx; ++i){
+      val = Vector[i];
+      if ( i % Nx == 0 || i % Nx == Nx-1 ) { val /= 2.0; };
+      if ( i < Ny || i > Ny*(Nx-1) )       { val /= 2.0; };
+      sum += val;
+      }
+
   return sum * dx;
 }
 

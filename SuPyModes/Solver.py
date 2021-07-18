@@ -123,15 +123,8 @@ class SuPySolver(object):
 
 
 
-    def _Solve(self, iteration_list: list, Nsol=1):
+    def Solve(self, iteration_list: list, Nsol=1):
         self.iter = 0
-
-
-        self.a = EigenSolving(self.Geometry.mesh, 5, 1000, 1e-15)
-        self.a.dx = self.Geometry.Axes.Direct.dx
-        self.a.dy = self.Geometry.Axes.Direct.dy
-        self.a.Lambda = self.Geometry.Axes.Dual.wavelength
-
 
 
         for n, value in Enumerate(iteration_list, msg='Computing super modes: '):
@@ -146,7 +139,7 @@ class SuPySolver(object):
 
 
 
-    def Solve(self, iteration_list: list, Nsol=1):
+    def Solve_(self, iteration_list: list, Nsol=1):
         self.iter = 0
 
         a = EigenSolving(self.Geometry.mesh, self.Nsol, 100, self.tolerance)
@@ -194,7 +187,7 @@ class SuPySolver(object):
     def GetEigenVectors(self, Nsol=1, MaxIter=None):
         beta_square, v0 = self.PreSolution()
 
-        values, vectors = LA(self.a.GetMatrix(),
+        values, vectors = LA(self.Laplacian.Matrix.T,
                              k                   = Nsol,
                              M                   = None,
                              sigma               = beta_square,
@@ -209,10 +202,7 @@ class SuPySolver(object):
                              #OPpart              = 'r'
                              )
 
-        print(self.a.GetMatrix(),)
-        print('sigma',beta_square)
-        print('dx',self.Geometry.Axes.Direct.dx)
-
+        print(values)
         betas = np.real(np.sqrt(-values) / self.Geometry.Axes.ITR)
 
         vectors = np.real(vectors)
@@ -223,6 +213,9 @@ class SuPySolver(object):
             Field = vectors[:,solution].reshape(self.Geometry.Shape)
 
             self.Set[solution].Slice.append(ModeSlice( Field, self.Geometry.Axes, Index=index, Beta=betas[solution] ),)
+
+
+
 
 
 

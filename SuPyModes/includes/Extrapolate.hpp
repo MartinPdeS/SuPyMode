@@ -60,11 +60,21 @@ ExtrapolateNext(size_t order, vector<VectorXf>& y, ndarray& X, size_t NextIter){
 
     case 1: return ExtrapolateNext1(y, X, NextIter);
 
-    case 2: return ExtrapolateNext2(y, X, NextIter);
+    case 2:
+         if ( NextIter < 2 )      { return ExtrapolateNext1(y, X, NextIter); }
+         else                     { return ExtrapolateNext2(y, X, NextIter); }
 
-    case 3: return ExtrapolateNext3(y, X, NextIter);
+    case 3:
+         if      ( NextIter < 2 ) { return ExtrapolateNext1(y, X, NextIter); }
+         else if ( NextIter < 3 ) { return ExtrapolateNext2(y, X, NextIter); }
+         else                     { return ExtrapolateNext3(y, X, NextIter); }
 
-    case 4: return ExtrapolateNext4(y, X, NextIter);
+    case 4:
+         if      ( NextIter < 2 ) { return ExtrapolateNext1(y, X, NextIter); }
+         else if ( NextIter < 3 ) { return ExtrapolateNext2(y, X, NextIter); }
+         else if ( NextIter < 4 ) { return ExtrapolateNext3(y, X, NextIter); }
+         else                     { return ExtrapolateNext4(y, X, NextIter); }
+
   };
   return 1;
 }

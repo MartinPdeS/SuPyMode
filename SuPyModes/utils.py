@@ -15,25 +15,27 @@ from SuPyModes.Config    import *
 
 def RecomposeSymmetries(Input, Axes):
 
-    if Axes.Symmetries[1] == 1:
-        Input = np.concatenate((Input[::-1,:],Input),axis=0)
-
-    if Axes.Symmetries[1] == -1:
-        Input = np.concatenate((-Input[::-1,:],Input),axis=0)
+    return Input, Axes.Direct.X, Axes.Direct.Y
 
     if Axes.Symmetries[0] == 1:
-        Input = np.concatenate((Input[:,::-1],Input),axis=1)
+        Input = np.concatenate((Input[::-1,:],Input),axis=0)
 
     if Axes.Symmetries[0] == -1:
+        Input = np.concatenate((-Input[::-1,:],Input),axis=0)
+
+    if Axes.Symmetries[1] == 1:
+        Input = np.concatenate((Input[:,::-1],Input),axis=1)
+
+    if Axes.Symmetries[1] == -1:
         Input = np.concatenate((-Input[:,::-1],Input),axis=1)
 
     if Axes.Direct.X is not None and Axes.Symmetries[0] != 0:
-        Xaxis = np.concatenate( (-Axes.Direct.X[::-1], Axes.Direct.X) )
+        Xaxis = sorted( np.concatenate( (-Axes.Direct.X[::-1], Axes.Direct.X) ) )
     else:
         Xaxis = Axes.Direct.X
 
     if Axes.Direct.Y is not None and Axes.Symmetries[1] != 0:
-        Yaxis = np.concatenate( (-Axes.Direct.Y[::-1], Axes.Direct.Y) )
+        Yaxis = sorted( np.concatenate( (-Axes.Direct.Y[::-1], Axes.Direct.Y) ) )
     else:
         Yaxis = Axes.Direct.Y
 

@@ -25,8 +25,6 @@ class SuPyFinitdifference(object):
             : param e0/e1/e2/e3/e4 : e0/e1/e2/e3 are unchanged and e4 have been modified
             : type e0/e1/e2/e3/e4 : array.
 
-        calls:
-            :call1: .second_order_laplacian_sparse
         """
 
         e4[1:2*self.Axes.Nx] *= 2
@@ -69,8 +67,6 @@ class SuPyFinitdifference(object):
             unchanged and e7/e8 have been modified
             : type e0/e1/e2/e3/e4/e5/e6/e7/e8 : array.
 
-        calls:
-            :call1: .third_order_laplacian_sparse()
         """
 
         e7[1:2*self.Axes.Nx] *= 2
@@ -117,8 +113,6 @@ class SuPyFinitdifference(object):
             : param e0/e1/e2/e3/e4 : e0/e1/e3/e4 are unchanged and e2 have been modified
             : type e0/e1/e2/e3/e4 : array.
 
-        calls:
-            :call1: .second_order_laplacian_sparse
         """
         for j in range(self.Axes.Ny):
 
@@ -163,8 +157,6 @@ class SuPyFinitdifference(object):
                 unchanged and e3/e4 have been modified
                 : type e0/e1/e2/e3/e4/e5/e6/e7/e8 : array.
 
-            calls:
-                :call1: .third_order_laplacian_sparse()
         """
         for j in range(self.Axes.Ny):
             e3[ j * self.Axes.Nx + 1 ] *= 2
@@ -210,8 +202,6 @@ class SuPyFinitdifference(object):
             : param e0/e1/e2/e3/e4 : tables from the finite difference coefficients
             : type e0/e1/e2/e3/e4 : array.
 
-        calls:
-            :call1: .second_order_laplacian_sparse()
         """
         e0 = np.array( [2] * self.Axes.Nx * self.Axes.Ny )
 
@@ -236,8 +226,6 @@ class SuPyFinitdifference(object):
             : param e0/e1/e2/e3/e4/e5/e6/e7/e8 : tables from the finite difference coefficients
             : type e0/e1/e2/e3/e4/e5/e6/e7/e8 : array.
 
-        calls:
-            :call1: .third_order_laplacian_sparse()
         """
         e0 = np.array( [5/2] * self.Axes.Nx * self.Axes.Ny )
 
@@ -270,15 +258,13 @@ class SuPyFinitdifference(object):
             :param order: Order for finite difference resolution
             :type order: int.
 
-        calls:
-            :call1: solver.laplacian_sparse()
         """
 
         if error == 2:
-            self.second_order_laplacian_sparse(nk, x_symmetry, y_symmetry)  #<------------something fishy here
+            self.second_order_laplacian_sparse(nk, y_symmetry, x_symmetry)  #<------------something fishy here
 
         if error == 3:
-            self.third_order_laplacian_sparse(nk, x_symmetry, y_symmetry)
+            self.third_order_laplacian_sparse(nk, y_symmetry, x_symmetry)
 
 
     def second_order_laplacian_sparse(self, nk, x_symmetry, y_symmetry):
@@ -291,8 +277,6 @@ class SuPyFinitdifference(object):
             Helmoltz equation
             : type nk: array.
 
-        calls:
-            :call1: .laplacian_sparse()
         """
 
         element = self.second_order_Dirichlet()
@@ -309,7 +293,7 @@ class SuPyFinitdifference(object):
         if x_symmetry == -1:
             element = self.second_order_x_Anti_symmetry(*element)
 
-        self.Axes.Direct.dy, self.Axes.Direct.dx = self.Axes.Direct.dx, self.Axes.Direct.dy
+        self.Axes.Direct.dy, self.Axes.Direct.dx = self.Axes.Direct.dx, self.Axes.Direct.dy #<----------------------------PPPBBB
 
         E0 = element[0]*(1./self.Axes.Direct.dy**2 + 1./self.Axes.Direct.dx**2) - nk
 
@@ -324,6 +308,9 @@ class SuPyFinitdifference(object):
                               self.Axes.Nx*self.Axes.Ny, self.Axes.Nx*self.Axes.Ny)
 
 
+        print(self.Matrix.todense())
+
+
 
     def third_order_laplacian_sparse(self, nk, x_symmetry, y_symmetry):
         """
@@ -335,8 +322,6 @@ class SuPyFinitdifference(object):
             Helmoltz equation
             : type nk: array.
 
-        calls:
-            :call1: .laplacian_sparse()
         """
 
 

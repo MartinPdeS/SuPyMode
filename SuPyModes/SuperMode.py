@@ -253,7 +253,7 @@ class ModeSlice(np.ndarray):
     def __plot__(self, ax, title=None):
         Field, xaxis, yaxis = RecomposeSymmetries(self, self.Axes)
 
-        ax.pcolormesh(yaxis, xaxis, Field, shading='auto')
+        ax.pcolormesh(xaxis, yaxis, Field.T, shading='auto')
 
         ax.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
 
