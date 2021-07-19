@@ -122,7 +122,8 @@ class Geometry(object):
         xv = np.linspace(*self.Boundaries[0], self.Shape[0])
         yv = np.linspace(*self.Boundaries[1], self.Shape[1])
 
-        x, y = np.meshgrid(xv,yv)
+
+        x, y = np.meshgrid(yv,xv)
 
         x, y = x.flatten(), y.flatten()
 
@@ -140,8 +141,6 @@ class Geometry(object):
 
 
     def __plot__(self, ax):
-
-        return
 
         Field, xaxis, yaxis = RecomposeSymmetries(self.mesh.T, self.Axes)
 
@@ -194,8 +193,16 @@ class Geometry(object):
         plt.show()
 
 
-    def Gradient(self):
+    def _Gradient(self):
         Ygrad, Xgrad = gradientO4( self.mesh.T**2,
+                                   self.Axes.Direct.dx,
+                                   self.Axes.Direct.dy )
+
+        return Xgrad * self.Axes.Direct.XX.T + Ygrad * self.Axes.Direct.YY.T
+
+
+    def Gradient(self):
+        Ygrad, Xgrad = gradientO4( self.mesh**2,
                                    self.Axes.Direct.dx,
                                    self.Axes.Direct.dy )
 

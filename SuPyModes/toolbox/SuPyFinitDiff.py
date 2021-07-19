@@ -308,8 +308,6 @@ class SuPyFinitdifference(object):
                               self.Axes.Nx*self.Axes.Ny, self.Axes.Nx*self.Axes.Ny)
 
 
-        print(self.Matrix.todense())
-
 
 
     def third_order_laplacian_sparse(self, nk, x_symmetry, y_symmetry):

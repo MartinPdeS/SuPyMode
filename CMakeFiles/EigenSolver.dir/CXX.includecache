@@ -29,6 +29,8 @@ eigen3/Eigen/Eigenvalues
 -
 eigen3/Eigen/Sparse
 -
+eigen3/Eigen/Dense
+-
 /home/martth/temporary/gnuplot-iostream/gnuplot-iostream.h
 -
 Spectra/GenEigsRealShiftSolver.h

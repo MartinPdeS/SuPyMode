@@ -19,10 +19,10 @@ def PlotModes():
         fig, ax = plt.subplots(1,nMode)
         for j in range(nMode):
             array = EigenVectors[j,...]
-            print(array.shape)
-            temp = np.concatenate((array[:,::-1], array), axis=1)
-            array = array.reshape([Nx,Ny])
-            ax[j].pcolormesh(array)
+            #print(array.shape)
+            #temp = np.concatenate((array[:,::-1], array), axis=1)
+            #array = array.reshape([Nx,Ny])
+            ax[j].pcolormesh(array, cmap='seismic')
             ax[j].set_aspect('equal')
 
 
@@ -65,14 +65,25 @@ def PlotAdiabatic():
     plt.show()
 
 
+def PlotIndex():
+    index = A.ComputingIndices()
+
+    for i in range(nMode):
+        plt.plot(ITRList, index.reshape(len(ITRList),nMode)[:,i],'-', label=f'Mode: {i}')
+    plt.grid()
+    plt.legend()
+    plt.show()
+
+
+
 nMode = 4
 
-Nx = 50
-Ny = 50
+Nx = 12
+Ny = 12
 
-Clad = Fused2(Radius =  620.5, Fusion  = 1, Index   = 1)
+Clad = Fused2(Radius =  62.5, Fusion  = 1, Index   = Fused_silica(1.55))
 
-Core0 = Circle( Position=(0,0), Radi = 15.2, Index = Fused_silica(1.55)+0.005 )
+#Core0 = Circle( Position=(0,0), Radi = 4.2, Index = Fused_silica(1.55)+0.005 )
 Xbound  = [-100, 100]
 Ybound  = [-100, 100]
 DeltaX = abs(Xbound[0]-Xbound[1])
@@ -84,10 +95,9 @@ Geo = Geometry(Objects = [Clad],
                Nx      = Nx,
                Ny      = Ny)
 
+ITRList = np.linspace(1,0.1,1)
 
-ITRList = [1.0]
-
-A = EigenSolving(Geo.mesh, Geo.mesh, nMode, 1550000, 1e-18, True)
+A = EigenSolving(Geo.mesh, Geo.mesh, nMode, 10000, 1e-18, True)
 A.dx = DeltaX/(Nx-1)
 
 A.dy =  DeltaY/(Ny-1)
@@ -103,18 +113,11 @@ A.RightSymmetry  = 0
 
 #A.PringLaplacian()
 
-A.LoopOverITR(ITR = ITRList, alpha = -39.478, ExtrapolationOrder = 2)#-83.44
+A.LoopOverITR(ITR = ITRList, alpha = -83.44, ExtrapolationOrder = 2)#-83.44
 
 #A.SortModesFields()
 
-def PlotIndex():
-    index = A.ComputingIndices()
 
-    for i in range(nMode):
-        plt.plot(ITRList, index.reshape(len(ITRList),nMode)[:,i],'-', label=f'Mode: {i}')
-    plt.grid()
-    plt.legend()
-    plt.show()
 
 
 

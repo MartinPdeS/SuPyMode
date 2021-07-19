@@ -4,7 +4,6 @@ class BaseLaplacian{
     ndarray  Mesh;
     size_t   Nx, Ny, size;
     float    dx, dy;
-    bool     debug;
     MSparse  Laplacian;
 
     BaseLaplacian(ndarray&  Mesh){
@@ -15,7 +14,6 @@ class BaseLaplacian{
       this->BottomSymmetry   = 0;
       this->LeftSymmetry     = 0;
       this->RightSymmetry    = 0;
-      this->debug             = false;
     }
 
     void SetLeftSymmetry(int value);
@@ -48,11 +46,10 @@ class BaseLaplacian{
 
 class EigenSolving : public BaseLaplacian{
   public:
-    bool             debug;
     size_t           nMode, MaxIter, Nx, Ny, size, sMode;
     uint             DegenerateFactor;
-    float            Tolerance, dx, dy, k, kInit, kDual, lambda, lambdaInit;
-    float*           MeshPtr;
+    float            Tolerance, dx, dy, k, kInit, kDual, lambda, lambdaInit, MaxIndex;
+    float           *MeshPtr, *ITRPtr;
     ndarray          Mesh, ITRList, PyOverlap, PyIndices, PyFullEigenVectors, PyFullEigenValues, PyAdiabatic;
     Cndarray         PyCoupling;
     MSparse          Laplacian, EigenMatrix, Identity;
@@ -64,8 +61,7 @@ class EigenSolving : public BaseLaplacian{
                ndarray& PyMeshGradient,
                size_t   nMode,
                size_t   MaxIter,
-               float    Tolerance,
-               bool     debug=false): BaseLaplacian(Mesh){
+               float    Tolerance): BaseLaplacian(Mesh){
                  this->nMode             = nMode;
                  this->sMode             = nMode;
                  this->MaxIter           = MaxIter;
@@ -79,12 +75,18 @@ class EigenSolving : public BaseLaplacian{
                  this->MeshPtr           = (float*) Mesh.request().ptr;
                  this->DegenerateFactor  = 1.0;
 
-                 this->debug             = debug;
-
                  float *adress           = (float*) PyMeshGradient.request().ptr;
 
                  Map<VectorXf> MeshGradient( adress, Nx * Ny );
                  this->MeshGradient = MeshGradient;
+
+                 MaxIndex = 0.0;
+                 for (size_t i; i<size; ++i)
+                    if (MeshPtr[i] > MaxIndex)
+                        MaxIndex = MeshPtr[i];
+
+                this->MaxIndex = MaxIndex;
+
                }
 
 
@@ -102,13 +104,15 @@ class EigenSolving : public BaseLaplacian{
 
    tuple<MatrixXf, VectorXf> ComputeEigen(float alpha);
 
-   void LoopOverITR(ndarray ITRList, float alpha, size_t order);
+   void LoopOverITR(ndarray ITRList, size_t order);
 
    tuple<ndarray, ndarray> GetSlice(uint slice);
 
    ndarray ComputingOverlap();
 
    Cndarray ComputingCoupling();
+
+   ndarray GetFields();
 
    Cndarray ComputingAdiabatic();
 

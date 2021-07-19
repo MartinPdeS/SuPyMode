@@ -3,6 +3,7 @@
 #include <pybind11/numpy.h>
 #include <eigen3/Eigen/Eigenvalues>
 #include <eigen3/Eigen/Sparse>
+#include <eigen3/Eigen/Dense>
 #include "/home/martth/temporary/gnuplot-iostream/gnuplot-iostream.h"
 #include <Spectra/GenEigsRealShiftSolver.h>
 
@@ -37,15 +38,14 @@ PYBIND11_MODULE(EigenSolver, module) {
     module.doc() = "A c++ solver for EigenPairs";
 
     py::class_<EigenSolving>(module, "EigenSolving")
-    .def(py::init<ndarray&, ndarray&, uint, uint, float, bool>(),
+    .def(py::init<ndarray&, ndarray&, uint, uint, float>(),
          py::arg("Mesh"),
          py::arg("Gradient"),
          py::arg("nMode"),
          py::arg("MaxIter"),
-         py::arg("Tolerance"),
-         py::arg("debug") )
+         py::arg("Tolerance"))
 
-     .def("LoopOverITR", &EigenSolving::LoopOverITR, py::arg("ITR"), py::arg("alpha"), py::arg("ExtrapolationOrder"))
+     .def("LoopOverITR", &EigenSolving::LoopOverITR, py::arg("ITR"), py::arg("ExtrapolationOrder"))
 
      .def("ComputingOverlap", &EigenSolving::ComputingOverlap)
 
@@ -64,6 +64,7 @@ PYBIND11_MODULE(EigenSolver, module) {
      .def("PringLaplacian", &EigenSolving::PringLaplacian)
 
      .def("GetSlice", &EigenSolving::GetSlice, py::arg("slice")  = 0)
+     .def("GetFields", &EigenSolving::GetFields)
 
      .def_property("LeftSymmetry", &EigenSolving::GetLeftSymmetry, &EigenSolving::SetLeftSymmetry)
      .def_property("RightSymmetry", &EigenSolving::GetRightSymmetry, &EigenSolving::SetRightSymmetry)

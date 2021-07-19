@@ -40,9 +40,9 @@ EigenSolving::ComputeEigen(float alpha){
 
     VectorXf Values = eigs.eigenvalues().real();
 
-    Vectors.rowwise().reverseInPlace();
+    //Vectors.rowwise().reverseInPlace();
 
-    Values.reverseInPlace();
+    //Values.reverseInPlace();
 
     return std::make_tuple(Vectors, Values);
     }
@@ -66,11 +66,11 @@ EigenSolving::ComputeLaplacian(){
 
 
 void
-EigenSolving::LoopOverITR(ndarray ITRList, float alpha, size_t order = 1){
+EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
 
   uint length = ITRList.request().size;
-  float* ITRPtr = (float*) ITRList.request().ptr;
+  ITRPtr = (float*) ITRList.request().ptr;
 
   this->ITRList    = ITRList;
   this->lambdaInit = lambda;
@@ -80,12 +80,13 @@ EigenSolving::LoopOverITR(ndarray ITRList, float alpha, size_t order = 1){
 
   float deltaITR = 0.0;
 
-
   FullEigenVectors = vector<MatrixXf>(length);
 
   FullEigenValues = vector<VectorXf>(length);
 
   pBar bar;
+
+  float alpha = -pow( k * MaxIndex, 2 );
 
   for (uint i=0; i<length; ++i){
 
@@ -97,14 +98,15 @@ EigenSolving::LoopOverITR(ndarray ITRList, float alpha, size_t order = 1){
 
     tie(EigenVectors, EigenValues) = ComputeEigen(alpha);
 
+    //cout<<"alpha:  "<<alpha<<" Eigenvalues:  "<<EigenValues<<endl;
+
     cout<<"Iteration: "<<i<<endl;
 
     FullEigenVectors[i] = EigenVectors;
 
     FullEigenValues[i]  = EigenValues;
 
-    if (i>order)
-        alpha = ExtrapolateNext(order, FullEigenValues, ITRList, i+1);
+    alpha = ExtrapolateNext(order, FullEigenValues, ITRList, i+1);
 
   }
 }
@@ -319,11 +321,11 @@ EigenSolving::GetSlice(uint slice){
   MatrixXf * Values  = new MatrixXf;
 
   (*Vectors) = FullEigenVectors[slice];
-  (*Values)  = FullEigenValues[slice];
+  (*Values)  = (-1.0 * FullEigenValues[slice] ).cwiseSqrt() / ITRPtr[slice];
 
   PyFullEigenVectors = Eigen2ndarray( Vectors,
-                                      { nMode, Ny, Nx },
-                                      { size * sizeof(float), Nx * sizeof(float), sizeof(float) } ) ;
+                                      { nMode, Nx, Ny },
+                                      { size * sizeof(float), Ny * sizeof(float), sizeof(float) } ) ;
 
   PyFullEigenValues = Eigen2ndarray( Values,
                                     { nMode },
@@ -336,7 +338,23 @@ EigenSolving::GetSlice(uint slice){
 
 
 
+ndarray
+EigenSolving::GetFields(){
+  size_t slice = 0;
+  MatrixXf * Vectors = new MatrixXf;
+  MatrixXf * Values  = new MatrixXf;
 
+  (*Vectors) = FullEigenVectors[slice];
+  (*Values)  = FullEigenValues[slice];
+
+  PyFullEigenVectors = Eigen2ndarray( Vectors,
+                                      { nMode, Ny, Nx },
+                                      { size * sizeof(float), Nx * sizeof(float), sizeof(float) } ) ;
+
+
+  return PyFullEigenVectors;
+
+}
 
 
 

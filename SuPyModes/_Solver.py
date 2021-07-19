@@ -46,9 +46,6 @@ class SuPySolver(object):
 
     @property
     def nk(self):
-
-        #self.Geometry.Axes.Dual.k = 2 * np.pi / self.Geometry.Axes.Dual.wavelength
-
         temp = self.Geometry.mesh**2 * self.Geometry.Axes.Dual.k**2
 
         self._nk = np.reshape(temp, self.info['Size'], order = 'F')
@@ -90,10 +87,9 @@ class SuPySolver(object):
 
         self.Nstep, self.Nsol = Nstep, Nsol
 
-        self.Geometry.Axes = SuPyAxes(Meta=metadata)
+        #self.Geometry.Axes = SuPyAxes(Meta=metadata)
 
-        # self.Geometry.Axes.Direct.wavelength = wavelength
-        # self.Geometry.Axes.Dual.wavelength = wavelength
+        self.Geometry.Axes.Direct.wavelength = wavelength
 
         self.Geometry.ITRList =  np.linspace(ITRi, ITRf, Nstep)
 
@@ -106,54 +102,6 @@ class SuPySolver(object):
         self.Solve(self.Geometry.ITRList, Nsol)
 
         return self.Set
-
-
-
-    def _Solve(self, iteration_list: list, Nsol=1):
-
-        a = EigenSolving(Mesh      = self.Geometry.mesh,
-                         Gradient  = self.Geometry.Gradient(),
-                         nMode     = self.Nsol+3,
-                         MaxIter   = 10000,
-                         Tolerance = self.tolerance)
-
-        a.dx = self.Geometry.Axes.Direct.dx
-
-        a.dy = self.Geometry.Axes.Direct.dy
-
-        a.Lambda = self.Geometry.Axes.Dual.wavelength
-
-        a.ComputeLaplacian()
-
-        a.LoopOverITR(ITR = iteration_list, ExtrapolationOrder = 3)
-
-        a.SortModesFields()
-
-        for n, _ in enumerate(iteration_list):
-            EigenVectors, EigenValues = a.GetSlice(n)
-
-            self.AppendSlice(EigenValues[:self.Nsol], EigenVectors[:self.Nsol,...].swapaxes(1,2))
-
-        #self.Set = self.Set.Sort('Fields')
-
-
-
-    def AppendSlice(self, betas, vectors):
-
-        for solution in range(len(betas)):
-
-            index = betas[solution] / self.Geometry.Axes.Direct.k
-
-            Field = vectors[solution,:,:]
-
-            self.Set[solution].Slice.append(ModeSlice( Field, self.Geometry.Axes, Index=index, Beta=betas[solution] ),)
-
-
-
-
-
-
-
 
 
     def PreSolution(self):
@@ -178,9 +126,8 @@ class SuPySolver(object):
     def Solve(self, iteration_list: list, Nsol=1):
         self.iter = 0
 
-        for n, value in Enumerate(iteration_list, msg='Computing super modes: '):
 
-            print(n)
+        for n, value in Enumerate(iteration_list, msg='Computing super modes: '):
 
             self.Geometry.Axes.Scale(value)
 
@@ -190,6 +137,41 @@ class SuPySolver(object):
 
         self.Set = self.Set.Sort('Fields')
 
+
+
+    def Solve_(self, iteration_list: list, Nsol=1):
+        self.iter = 0
+
+        a = EigenSolving(self.Geometry.mesh, self.Geometry.Gradient(), self.Nsol, 10000, self.tolerance)
+
+        a.dx = self.Geometry.Axes.Direct.dx
+
+        a.dy = self.Geometry.Axes.Direct.dy
+
+        a.Lambda = self.Geometry.Axes.Dual.wavelength
+
+        a.ComputeLaplacian()
+
+        a.LoopOverITR(ITR = iteration_list, ExtrapolationOrder = 2)
+
+        for n, value in Enumerate(iteration_list, msg='Computing super modes: '):
+            EigenVectors, EigenValues = a.GetSlice(n)
+
+            self.AppendSlice(EigenValues, EigenVectors)
+
+        self.Set = self.Set.Sort('Fields')
+
+
+
+    def AppendSlice(self, betas, vectors):
+
+        for solution in range(len(betas)):
+
+            index = betas[solution] / self.Geometry.Axes.Direct.k
+
+            Field = vectors[solution,:,:]
+
+            self.Set[solution].Slice.append(ModeSlice( Field, self.Geometry.Axes, Index=index, Beta=betas[solution] ),)
 
 
 
@@ -222,6 +204,9 @@ class SuPySolver(object):
             Field = vectors[:,solution].reshape(self.Geometry.Shape)
 
             self.Set[solution].Slice.append(ModeSlice( Field, self.Geometry.Axes, Index=index, Beta=betas[solution] ),)
+
+
+
 
 
 
