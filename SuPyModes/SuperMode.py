@@ -1,13 +1,11 @@
 import logging
 import numpy               as np
 import copy                as cp
-import matplotlib.pyplot   as plt
-from progressbar           import ProgressBar
 from itertools             import combinations, combinations_with_replacement as Combinations
 from mayavi                import mlab
 
 from SuPyModes.Config      import *
-from SuPyModes.utils       import RecomposeSymmetries, GetWidgetBar, SortSuperSet, Enumerate
+from SuPyModes.utils       import RecomposeSymmetries, SortSuperSet, Enumerate
 from SuPyModes.BaseClass   import SetPlots, SetProperties
 from SuPyModes.Special     import ModeCoupling, ModeAdiabatic
 
@@ -54,7 +52,7 @@ class SuperMode(object):
         for n, itr in enumerate(self.Geometry.ITRList[:-1]):
             C.append( ModeCoupling(SuperMode0 = self,
                                    SuperMode1 = SuperMode,
-                                   k          = self.Geometry.Axes.Direct.k,
+                                   k          = self.Geometry.Axes.k,
                                    Profile    = self.Geometry.mesh,
                                    Gradient   = self.Geometry.Gradient(),
                                    iter       = n) )
@@ -67,7 +65,7 @@ class SuperMode(object):
         for n, itr in enumerate(self.Geometry.ITRList[:-1]):
             A.append( ModeAdiabatic(SuperMode0 = self,
                                     SuperMode1 = SuperMode,
-                                    k          = self.Geometry.Axes.Direct.k,
+                                    k          = self.Geometry.Axes.k,
                                     Profile    = self.Geometry.mesh,
                                     Gradient   = self.Geometry.Gradient(),
                                     iter       = n) )
@@ -253,7 +251,8 @@ class ModeSlice(np.ndarray):
     def __plot__(self, ax, title=None):
         Field, xaxis, yaxis = RecomposeSymmetries(self, self.Axes)
 
-        ax.pcolormesh(xaxis, yaxis, Field.T, shading='auto')
+        #ax.pcolormesh(xaxis, yaxis, Field, shading='auto')
+        ax.pcolormesh(Field, shading='auto')
 
         ax.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
 

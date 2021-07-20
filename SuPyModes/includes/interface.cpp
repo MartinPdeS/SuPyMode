@@ -3,15 +3,9 @@
 #include <pybind11/numpy.h>
 #include <eigen3/Eigen/Eigenvalues>
 #include <eigen3/Eigen/Sparse>
-#include <eigen3/Eigen/Dense>
 #include "/home/martth/temporary/gnuplot-iostream/gnuplot-iostream.h"
 #include <Spectra/GenEigsRealShiftSolver.h>
-
-#include <Spectra/MatOp/SparseSymShiftSolve.h>
-
 #include <Spectra/MatOp/SparseGenRealShiftSolve.h>
-#include <cstdio>
-#include <ctime>
 #include <vector>
 
 using namespace Eigen;
@@ -21,14 +15,19 @@ namespace py = pybind11;
 
 #define PI 3.1415926535897932384626f
 
-typedef std::complex<float>              fComplex;
-typedef py::array_t<float>               ndarray;
-typedef py::array_t<fComplex>            Cndarray;
-typedef py::buffer_info                  info;
-typedef unsigned int                     uint;
-typedef SparseMatrix<float, ColMajor>    MSparse;
-typedef vector<float>                    Vecf1D;
-typedef vector<vector<float>>            Vecf2D;
+typedef double                                 ScalarType;
+typedef std::complex<ScalarType>               ComplexScalarType;
+typedef Matrix<ScalarType, Dynamic, 1>         VectorType;
+typedef Matrix<ComplexScalarType, Dynamic, 1>  ComplexVectorType;
+typedef Matrix<ScalarType, Dynamic, Dynamic>   MatrixType;
+typedef py::array_t<ScalarType>                ndarray;
+typedef py::array_t<ComplexScalarType>         Cndarray;
+typedef py::buffer_info                        info;
+typedef SparseMatrix<ScalarType, ColMajor>     MSparse;
+typedef vector<ScalarType>                     Vecf1D;
+typedef vector<vector<ScalarType>>             Vecf2D;
+
+
 #include "utils.cpp"
 #include "class.cpp"
 
@@ -38,7 +37,7 @@ PYBIND11_MODULE(EigenSolver, module) {
     module.doc() = "A c++ solver for EigenPairs";
 
     py::class_<EigenSolving>(module, "EigenSolving")
-    .def(py::init<ndarray&, ndarray&, uint, uint, float>(),
+    .def(py::init<ndarray&, ndarray&, size_t, size_t, ScalarType>(),
          py::arg("Mesh"),
          py::arg("Gradient"),
          py::arg("nMode"),
@@ -57,7 +56,7 @@ PYBIND11_MODULE(EigenSolver, module) {
 
      .def("SortModesIndex", &EigenSolving::SortModesIndex)
 
-     .def("ComputingIndices", &EigenSolving::ComputingIndices)
+
 
      .def("ComputeLaplacian", &EigenSolving::ComputeLaplacian)
 
@@ -65,6 +64,7 @@ PYBIND11_MODULE(EigenSolver, module) {
 
      .def("GetSlice", &EigenSolving::GetSlice, py::arg("slice")  = 0)
      .def("GetFields", &EigenSolving::GetFields)
+     .def("GetIndices", &EigenSolving::GetIndices)
 
      .def_property("LeftSymmetry", &EigenSolving::GetLeftSymmetry, &EigenSolving::SetLeftSymmetry)
      .def_property("RightSymmetry", &EigenSolving::GetRightSymmetry, &EigenSolving::SetRightSymmetry)

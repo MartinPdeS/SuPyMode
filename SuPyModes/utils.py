@@ -12,10 +12,37 @@ from shapely.affinity    import rotate
 from progressbar         import Bar, Percentage, ETA, ProgressBar
 
 from SuPyModes.Config    import *
+import numpy as np
+
+
+
+
+class Axes(object):
+    def __init__(self, Meta):
+
+        self.ITR = 1
+
+        self.Nx = Meta['Nx']
+        self.Ny = Meta['Ny']
+
+        self.X = np.linspace(*Meta['Xbound'], Meta['Nx'])
+        self.Y = np.linspace(*Meta['Ybound'], Meta['Ny'])
+
+        self.YY, self.XX = np.meshgrid(self.X, self.Y)
+
+        self.dx  = np.abs( self.X[0] - self.X[1] )
+        self.dy  = np.abs( self.Y[0] - self.Y[1] )
+
+        self.wavelength = Meta['wavelength']
+        self.k          = 2 * np.pi / self.wavelength
+
+        self.dA  = self.dx * self.dy
+
+
 
 def RecomposeSymmetries(Input, Axes):
 
-    return Input, Axes.Direct.X, Axes.Direct.Y
+    return Input, Axes.X, Axes.Y
 
     if Axes.Symmetries[0] == 1:
         Input = np.concatenate((Input[::-1,:],Input),axis=0)
@@ -29,15 +56,15 @@ def RecomposeSymmetries(Input, Axes):
     if Axes.Symmetries[1] == -1:
         Input = np.concatenate((-Input[:,::-1],Input),axis=1)
 
-    if Axes.Direct.X is not None and Axes.Symmetries[0] != 0:
-        Xaxis = sorted( np.concatenate( (-Axes.Direct.X[::-1], Axes.Direct.X) ) )
+    if Axes.X is not None and Axes.Symmetries[0] != 0:
+        Xaxis = sorted( np.concatenate( (-Axes.X[::-1], Axes.X) ) )
     else:
-        Xaxis = Axes.Direct.X
+        Xaxis = Axes.X
 
-    if Axes.Direct.Y is not None and Axes.Symmetries[1] != 0:
-        Yaxis = sorted( np.concatenate( (-Axes.Direct.Y[::-1], Axes.Direct.Y) ) )
+    if Axes.Y is not None and Axes.Symmetries[1] != 0:
+        Yaxis = sorted( np.concatenate( (-Axes.Y[::-1], Axes.Y) ) )
     else:
-        Yaxis = Axes.Direct.Y
+        Yaxis = Axes.Y
 
     return Input, Xaxis, Yaxis
 
@@ -332,6 +359,7 @@ def NA2nCore(NA, nClad):
     return np.sqrt(NA**2+nClad**2)
 
 
+
 def GetWidgetBar(msg):
     return [msg, Bar('=', '[',  ']'), ' ', Percentage(),  ' ', ETA()]
 
@@ -348,8 +376,6 @@ def Enumerate(iterator, msg=''):
         if n == len(iterator)-1:
             bar.finish()
         yield n, iteration
-
-
 
 
 

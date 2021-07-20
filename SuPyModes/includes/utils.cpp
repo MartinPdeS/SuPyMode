@@ -5,16 +5,16 @@
 using namespace std;
 
 
-vector<float>
-ComputecOverlaps_(MatrixXf EigenVectors0, MatrixXf EigenVectors1, size_t iter){
+vector<ScalarType>
+ComputecOverlaps_(MatrixType EigenVectors0, MatrixType EigenVectors1, size_t iter){
 
   size_t nMode = EigenVectors0.cols();
 
-  vector<float> Overlap(nMode);
+  vector<ScalarType> Overlap(nMode);
 
-  for (size_t j=0; j<nMode; ++j){
+  for (size_t j=0; j<nMode; ++j)
       Overlap[j] = abs( EigenVectors0.col(iter).transpose() * EigenVectors1.col(j) );
-      cout<<"  "<< Overlap[j];}
+
 
   return Overlap;
 
@@ -22,11 +22,11 @@ ComputecOverlaps_(MatrixXf EigenVectors0, MatrixXf EigenVectors1, size_t iter){
 
 
 vector<size_t>
-ComputecOverlaps(MatrixXf Matrix0, MatrixXf Matrix1){
+ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1){
 
   size_t nMode = Matrix0.cols();
 
-  float BestOverlap, Overlap;
+  ScalarType BestOverlap, Overlap;
   vector<size_t> Indices(nMode);
 
   for (size_t i=0; i<nMode; ++i){
@@ -42,7 +42,7 @@ ComputecOverlaps(MatrixXf Matrix0, MatrixXf Matrix1){
 }
 
 vector<size_t>
-sort_indexes(const VectorXf &v) {
+sort_indexes(const VectorType &v) {
 
   vector<size_t> idx(v.size());
   iota(idx.begin(), idx.end(), 0);
@@ -55,7 +55,7 @@ sort_indexes(const VectorXf &v) {
 
 
 vector<size_t>
-sort_indexes(const vector<float> &v) {
+sort_indexes(const vector<ScalarType> &v) {
 
   vector<size_t> idx(v.size());
   iota(idx.begin(), idx.end(), 0);
@@ -68,12 +68,12 @@ sort_indexes(const vector<float> &v) {
 
 
 ndarray
-Eigen2ndarray(MatrixXf *Eigen3Vector, vector<size_t> dimension, vector<size_t> stride){
+Eigen2ndarray(MatrixType *Eigen3Vector, vector<size_t> dimension, vector<size_t> stride){
 
   ndarray PyVector;
 
   py::capsule free_when_done(Eigen3Vector->data(), [](void *f) {
-     float *foo = reinterpret_cast<float *>(f);
+     ScalarType *foo = reinterpret_cast<ScalarType *>(f);
      delete []foo; } );
 
   PyVector = ndarray( dimension, stride, Eigen3Vector->data(), free_when_done );
@@ -82,12 +82,12 @@ Eigen2ndarray(MatrixXf *Eigen3Vector, vector<size_t> dimension, vector<size_t> s
 }
 
 ndarray
-Eigen2ndarray(VectorXf *Eigen3Vector, vector<size_t> dimension, vector<size_t> stride){
+Eigen2ndarray(VectorType *Eigen3Vector, vector<size_t> dimension, vector<size_t> stride){
 
   ndarray PyVector;
 
   py::capsule free_when_done(Eigen3Vector->data(), [](void *f) {
-     float *foo = reinterpret_cast<float *>(f);
+     ScalarType *foo = reinterpret_cast<ScalarType *>(f);
      delete []foo; } );
 
   PyVector = ndarray( dimension, stride, Eigen3Vector->data(), free_when_done );
@@ -98,12 +98,12 @@ Eigen2ndarray(VectorXf *Eigen3Vector, vector<size_t> dimension, vector<size_t> s
 
 
 Cndarray
-Eigen2Cndarray(VectorXcf *Eigen3Vector, vector<size_t> dimension, vector<size_t> stride){
+Eigen2Cndarray(ComplexVectorType *Eigen3Vector, vector<size_t> dimension, vector<size_t> stride){
 
   Cndarray PyVector;
 
   py::capsule free_when_done(Eigen3Vector->data(), [](void *f) {
-     fComplex *foo = reinterpret_cast<fComplex *>(f);
+     ComplexScalarType *foo = reinterpret_cast<ComplexScalarType *>(f);
      delete []foo;
    } );
 
@@ -113,10 +113,10 @@ Eigen2Cndarray(VectorXcf *Eigen3Vector, vector<size_t> dimension, vector<size_t>
 }
 
 
-float
-Trapz(VectorXf& Vector, float dx, size_t Nx, size_t Ny){
-  float sum  = 0;
-  float val;
+ScalarType
+Trapz(VectorType& Vector, ScalarType dx, size_t Nx, size_t Ny){
+  ScalarType sum  = 0;
+  ScalarType val;
 
   for (size_t i=0; i<Nx; ++i){
       val = Vector[i];
@@ -132,9 +132,9 @@ Trapz(VectorXf& Vector, float dx, size_t Nx, size_t Ny){
 
 class pBar {
 public:
-    void update(double newProgress) {
+    void update(ScalarType newProgress) {
         currentProgress += newProgress;
-        amountOfFiller = (int)((currentProgress / neededProgress)*(double)pBarLength);
+        amountOfFiller = (int)((currentProgress / neededProgress)*(ScalarType)pBarLength);
     }
     void print() {
         currUpdateVal %= pBarUpdater.length();
@@ -160,6 +160,6 @@ private:
     int amountOfFiller,
         pBarLength = 50, //I would recommend NOT changing this
         currUpdateVal = 0; //Do not change
-    double currentProgress = 0, //Do not change
+    ScalarType currentProgress = 0, //Do not change
         neededProgress = 100; //I would recommend NOT changing this
 };

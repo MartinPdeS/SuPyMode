@@ -3,7 +3,7 @@ class BaseLaplacian{
     int      TopSymmetry, BottomSymmetry, LeftSymmetry, RightSymmetry;
     ndarray  Mesh;
     size_t   Nx, Ny, size;
-    float    dx, dy;
+    ScalarType    dx, dy;
     MSparse  Laplacian;
 
     BaseLaplacian(ndarray&  Mesh){
@@ -38,30 +38,29 @@ class BaseLaplacian{
 
     MSparse Points5Laplacian();
 
-    void Setdx(float value){ dx = value; }
+    void Setdx(ScalarType value){ dx = value; }
 
-    void Setdy(float value){ dy = value; }
+    void Setdy(ScalarType value){ dy = value; }
 };
 
 
 class EigenSolving : public BaseLaplacian{
   public:
-    size_t           nMode, MaxIter, Nx, Ny, size, sMode;
-    uint             DegenerateFactor;
-    float            Tolerance, dx, dy, k, kInit, kDual, lambda, lambdaInit, MaxIndex;
-    float           *MeshPtr, *ITRPtr;
-    ndarray          Mesh, ITRList, PyOverlap, PyIndices, PyFullEigenVectors, PyFullEigenValues, PyAdiabatic;
-    Cndarray         PyCoupling;
-    MSparse          Laplacian, EigenMatrix, Identity;
-    vector<MatrixXf> FullEigenVectors, SortedEigenVectors;
-    vector<VectorXf> FullEigenValues, SortedEigenValues;
-    VectorXf         MeshGradient;
+    size_t             nMode, MaxIter, Nx, Ny, size, sMode, DegenerateFactor, ITRLength;
+    ScalarType         Tolerance, dx, dy, k, kInit, kDual, lambda, lambdaInit, MaxIndex;
+    ScalarType        *MeshPtr, *ITRPtr;
+    ndarray            Mesh, ITRList, PyOverlap, PyIndices, PyFullEigenVectors, PyFullEigenValues, PyAdiabatic;
+    Cndarray           PyCoupling;
+    MSparse            Laplacian, EigenMatrix, Identity;
+    vector<MatrixType> FullEigenVectors, SortedEigenVectors;
+    vector<VectorType> FullEigenValues, SortedEigenValues;
+    VectorType         MeshGradient;
 
   EigenSolving(ndarray& Mesh,
                ndarray& PyMeshGradient,
                size_t   nMode,
                size_t   MaxIter,
-               float    Tolerance): BaseLaplacian(Mesh){
+               ScalarType    Tolerance): BaseLaplacian(Mesh){
                  this->nMode             = nMode;
                  this->sMode             = nMode;
                  this->MaxIter           = MaxIter;
@@ -72,41 +71,39 @@ class EigenSolving : public BaseLaplacian{
                  this->size              = Mesh.request().size;
                  this->dx                = 100./this->Nx;
                  this->dy                = 100./this->Ny;
-                 this->MeshPtr           = (float*) Mesh.request().ptr;
+                 this->MeshPtr           = (ScalarType*) Mesh.request().ptr;
                  this->DegenerateFactor  = 1.0;
 
-                 float *adress           = (float*) PyMeshGradient.request().ptr;
+                 ScalarType *adress           = (ScalarType*) PyMeshGradient.request().ptr;
 
-                 Map<VectorXf> MeshGradient( adress, Nx * Ny );
+                 Map<VectorType> MeshGradient( adress, size );
                  this->MeshGradient = MeshGradient;
 
-                 MaxIndex = 0.0;
-                 for (size_t i; i<size; ++i)
-                    if (MeshPtr[i] > MaxIndex)
-                        MaxIndex = MeshPtr[i];
+                 ComputeMaxIndex();
 
-                this->MaxIndex = MaxIndex;
 
                }
 
 
+   ScalarType ComputeMaxIndex();
 
+   void ComputeDegenerateFactor();
 
-   void Setlambda(float value){ this->lambda = value; this->k = 2.0 * PI / lambda; }
+   void Setlambda(ScalarType value){ this->lambda = value; this->k = 2.0 * PI / lambda; }
 
-   float Getdx(){ return dx; }
+   ScalarType Getdx(){ return dx; }
 
-   float Getdy(){ return dy; }
+   ScalarType Getdy(){ return dy; }
 
-   float Getlambda(){ return lambda;}
+   ScalarType Getlambda(){ return lambda;}
 
    MSparse ComputeMatrix();
 
-   tuple<MatrixXf, VectorXf> ComputeEigen(float alpha);
+   tuple<MatrixType, VectorType> ComputeEigen(ScalarType alpha);
 
    void LoopOverITR(ndarray ITRList, size_t order);
 
-   tuple<ndarray, ndarray> GetSlice(uint slice);
+   tuple<ndarray, ndarray> GetSlice(size_t slice);
 
    ndarray ComputingOverlap();
 
@@ -114,9 +111,9 @@ class EigenSolving : public BaseLaplacian{
 
    ndarray GetFields();
 
-   Cndarray ComputingAdiabatic();
+   ndarray GetIndices();
 
-   ndarray ComputingIndices();
+   Cndarray ComputingAdiabatic();
 
    void SortModesFields();
 

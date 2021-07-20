@@ -1,15 +1,15 @@
 #include "class.hpp"
 #include "Extrapolate.hpp"
 #define PI 3.1415926535897932384626f
-std::complex<float> J(0.0, 1.0);
-typedef std::complex<float>               fComplex;
+std::complex<ScalarType> J(0.0, 1.0);
+typedef std::complex<ScalarType>               ComplexScalarType;
 
 
 MSparse
 EigenSolving::ComputeMatrix(){
 
     EigenMatrix = BaseLaplacian::Laplacian;
-    uint iter = 0;
+    size_t iter = 0;
 
     for(size_t i=0; i<Nx; ++i)
        for(size_t j=0; j<Ny; ++j){
@@ -23,22 +23,22 @@ EigenSolving::ComputeMatrix(){
     }
 
 
-tuple<MatrixXf, VectorXf>
-EigenSolving::ComputeEigen(float alpha){
+tuple<MatrixType, VectorType>
+EigenSolving::ComputeEigen(ScalarType alpha){
 
     MSparse EigenMatrix = ComputeMatrix();
 
-    SparseGenRealShiftSolve<float> op(EigenMatrix);
+    SparseGenRealShiftSolve<ScalarType> op(EigenMatrix);
 
-    Spectra::GenEigsRealShiftSolver<SparseGenRealShiftSolve<float>> eigs(op, nMode, 2*nMode, alpha);
+    Spectra::GenEigsRealShiftSolver<SparseGenRealShiftSolve<ScalarType>> eigs(op, nMode, 2*nMode, alpha);
 
     eigs.init();
 
     int nconv = eigs.compute(SortRule::LargestMagn, MaxIter, Tolerance);
 
-    MatrixXf Vectors = eigs.eigenvectors().real();
+    MatrixType Vectors = eigs.eigenvectors().real();
 
-    VectorXf Values = eigs.eigenvalues().real();
+    VectorType Values = eigs.eigenvalues().real();
 
     //Vectors.rowwise().reverseInPlace();
 
@@ -69,36 +69,34 @@ void
 EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
 
-  uint length = ITRList.request().size;
-  ITRPtr = (float*) ITRList.request().ptr;
+  ITRLength = ITRList.request().size;
+  ITRPtr    = (ScalarType*) ITRList.request().ptr;
 
   this->ITRList    = ITRList;
   this->lambdaInit = lambda;
   this->kInit      = 2.0 * PI / lambda;
 
-  MatrixXf EigenVectors, EigenValues;
+  MatrixType EigenVectors, EigenValues;
 
-  float deltaITR = 0.0;
+  ScalarType deltaITR = 0.0;
 
-  FullEigenVectors = vector<MatrixXf>(length);
+  FullEigenVectors = vector<MatrixType>(ITRLength);
 
-  FullEigenValues = vector<VectorXf>(length);
+  FullEigenValues = vector<VectorType>(ITRLength);
 
   pBar bar;
 
-  float alpha = -pow( k * MaxIndex, 2 );
+  ScalarType alpha = -pow( k * ComputeMaxIndex(), 2 );
 
-  for (uint i=0; i<length; ++i){
+  for (size_t i=0; i<ITRLength; ++i){
 
     //bar.update(1/length); bar.print();
 
-    float lambdaDual = lambdaInit / ITRPtr[i];
+    ScalarType lambdaDual = lambdaInit / ITRPtr[i];
 
     kDual = 2.0 * PI / lambdaDual;
 
     tie(EigenVectors, EigenValues) = ComputeEigen(alpha);
-
-    //cout<<"alpha:  "<<alpha<<" Eigenvalues:  "<<EigenValues<<endl;
 
     cout<<"Iteration: "<<i<<endl;
 
@@ -111,33 +109,16 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
   }
 }
 
-ndarray
-EigenSolving::ComputingIndices(){
 
-  uint    length       = SortedEigenValues.size(),
-          width        = nMode;
-
-  ndarray PyIndices({length, width});
-
-  float  *PyIndicesPtr = (float*) PyIndices.request().ptr,
-         *ITRPtr       = (float*) ITRList.request().ptr;
-
-  for (size_t l=0; l<length; ++l)
-      for (size_t i=0; i<width; ++i)
-          PyIndicesPtr[l*width + i] = sqrt(-SortedEigenValues[l][i]) / (ITRPtr[l] * kInit);
-
-  return PyIndices;
-
-}
 
 
 ndarray
 EigenSolving::ComputingOverlap(){
 
-  uint length = FullEigenValues.size()-1,
+  size_t length = FullEigenValues.size()-1,
        iter   = 0;
 
-  VectorXf * Overlap = new VectorXf(length * nMode * nMode),
+  VectorType * Overlap = new VectorType(length * nMode * nMode),
              vec0,
              vec1;
 
@@ -152,7 +133,7 @@ EigenSolving::ComputingOverlap(){
 
   ndarray PyOverlap = Eigen2ndarray( Overlap,
                                      { length, nMode, nMode },
-                                     { nMode * nMode * sizeof(float), nMode * sizeof(float), sizeof(float) } );
+                                     { nMode * nMode * sizeof(ScalarType), nMode * sizeof(ScalarType), sizeof(ScalarType) } );
 
   return PyOverlap;
 }
@@ -161,7 +142,7 @@ EigenSolving::ComputingOverlap(){
 void
 EigenSolving::SortModesFields(){
 
-  uint length = FullEigenValues.size()-1,
+  size_t length = FullEigenValues.size()-1,
        BestFit,
        iter = 0;
 
@@ -190,11 +171,11 @@ EigenSolving::SortModesFields(){
 void
 EigenSolving::SortModesIndex(){
 
-  uint length = FullEigenValues.size();
+  size_t length = FullEigenValues.size();
 
-  vector<MatrixXf> TemporaryVec = FullEigenVectors;
+  vector<MatrixType> TemporaryVec = FullEigenVectors;
 
-  vector<VectorXf> TemporaryVal = FullEigenValues;
+  vector<VectorType> TemporaryVal = FullEigenValues;
 
   for (size_t l=0; l<length; ++l){
       vector<size_t> sorted = sort_indexes( FullEigenValues[l] );
@@ -208,21 +189,39 @@ EigenSolving::SortModesIndex(){
 }
 
 
+void
+EigenSolving::ComputeDegenerateFactor(){
+  if (abs(TopSymmetry) == 1)
+      DegenerateFactor = 2;
+  else
+      DegenerateFactor = 1;
+
+  if (abs(BottomSymmetry) == 1)
+      DegenerateFactor *= 2;
+
+  if (abs(LeftSymmetry) == 1)
+      DegenerateFactor *= 2;
+
+  if (abs(RightSymmetry) == 1)
+      DegenerateFactor *= 2;
+}
 
 Cndarray
 EigenSolving::ComputingCoupling(){
 
-  uint length = FullEigenValues.size()-1, iter = 0;
+  ComputeDegenerateFactor();
 
-  VectorXcf * Coupling = new VectorXcf(length * nMode * nMode);
+  size_t length = FullEigenValues.size()-1, iter = 0;
+
+  ComplexVectorType * Coupling = new ComplexVectorType(length * nMode * nMode);
 
   (*Coupling).setZero();
 
-  VectorXf vec0, vec1, overlap, temp;
+  VectorType vec0, vec1, overlap, temp;
 
-  float delta, beta0, beta1;
+  ScalarType delta, beta0, beta1;
 
-  fComplex C, I=0.0;
+  ComplexScalarType C, I=0.0;
 
   for (size_t l=0; l<length; ++l)
       for (size_t i=0; i<nMode; ++i)
@@ -240,11 +239,11 @@ EigenSolving::ComputingCoupling(){
 
               temp    = overlap.cwiseProduct( MeshGradient );
 
-              C       = -0.5f * J * k*k / sqrt(delta) * abs( 1.0f / (beta0 - beta1) );
+              C       = - (ScalarType) 0.5 * J * k*k / sqrt(delta) * abs( 1.0f / (beta0 - beta1) );
 
               I       = temp.sum();//Trapz(temp, 1.0, Nx, Ny);
 
-              C      *= (float) DegenerateFactor * I;
+              C      *= (ScalarType) DegenerateFactor * I;
 
               (*Coupling)[iter] = C ;
 
@@ -254,29 +253,41 @@ EigenSolving::ComputingCoupling(){
 
   PyCoupling = Eigen2Cndarray( Coupling,
                               { length, nMode, nMode },
-                              { nMode * nMode * sizeof(fComplex), nMode * sizeof(fComplex), sizeof(fComplex) } ) ;
+                              { nMode * nMode * sizeof(ComplexScalarType), nMode * sizeof(ComplexScalarType), sizeof(ComplexScalarType) } ) ;
 
   return PyCoupling;
 
 }
 
 
+ScalarType
+EigenSolving::ComputeMaxIndex(){
+  MaxIndex = 0.0;
+  for (size_t i; i<size; ++i)
+     if (MeshPtr[i] > MaxIndex)
+         MaxIndex = MeshPtr[i];
+
+ return MaxIndex;
+}
+
 Cndarray
 EigenSolving::ComputingAdiabatic(){
 
-  uint iter = 0, length = FullEigenValues.size()-1;
+  ComputeDegenerateFactor();
 
-  VectorXcf temp;
+  size_t iter = 0, length = FullEigenValues.size()-1;
 
-  VectorXf * Adiabatic = new VectorXf(length * nMode * nMode);
+  ComplexVectorType temp;
+
+  VectorType * Adiabatic = new VectorType(length * nMode * nMode);
 
   (*Adiabatic).setZero();
 
-  VectorXf vec0, vec1, overlap;
+  VectorType vec0, vec1, overlap;
 
-  float delta, beta0, beta1;
+  ScalarType delta, beta0, beta1;
 
-  fComplex C, I = 0.0;
+  ComplexScalarType C, I = 0.0;
 
   for (size_t l=0; l<length; ++l)
       for (size_t i=0; i<nMode; ++i)
@@ -294,11 +305,11 @@ EigenSolving::ComputingAdiabatic(){
 
               temp    = overlap.cwiseProduct( MeshGradient );
 
-              C       = -0.5f * J * k*k / sqrt(delta) * abs( 1.0f / (beta0 - beta1) );
+              C       = - (ScalarType) 0.5 * J * k*k / sqrt(delta) * abs( 1.0f / (beta0 - beta1) );
 
               I       = temp.sum();//Trapz(temp, 1.0, Nx, Ny);
 
-              C      *= (float) DegenerateFactor * I;
+              C      *= (ScalarType) DegenerateFactor * I;
 
               (*Adiabatic)[iter] = abs( delta/C ) ;
 
@@ -307,7 +318,7 @@ EigenSolving::ComputingAdiabatic(){
 
   PyAdiabatic = Eigen2ndarray( Adiabatic,
                               { length, nMode, nMode },
-                              { nMode * nMode * sizeof(float), nMode * sizeof(float), sizeof(float) } ) ;
+                              { nMode * nMode * sizeof(ScalarType), nMode * sizeof(ScalarType), sizeof(ScalarType) } ) ;
 
   return PyAdiabatic;
 
@@ -315,21 +326,21 @@ EigenSolving::ComputingAdiabatic(){
 
 
 tuple<ndarray, ndarray>
-EigenSolving::GetSlice(uint slice){
+EigenSolving::GetSlice(size_t slice){
 
-  MatrixXf * Vectors = new MatrixXf;
-  MatrixXf * Values  = new MatrixXf;
+  MatrixType * Vectors = new MatrixType;
+  MatrixType * Values  = new MatrixType;
 
   (*Vectors) = FullEigenVectors[slice];
   (*Values)  = (-1.0 * FullEigenValues[slice] ).cwiseSqrt() / ITRPtr[slice];
 
   PyFullEigenVectors = Eigen2ndarray( Vectors,
                                       { nMode, Nx, Ny },
-                                      { size * sizeof(float), Ny * sizeof(float), sizeof(float) } ) ;
+                                      { size * sizeof(ScalarType), Ny * sizeof(ScalarType), sizeof(ScalarType) } ) ;
 
   PyFullEigenValues = Eigen2ndarray( Values,
                                     { nMode },
-                                    { sizeof(float) } ) ;
+                                    { sizeof(ScalarType) } ) ;
 
 
   return std::make_tuple( PyFullEigenVectors, PyFullEigenValues );
@@ -341,24 +352,39 @@ EigenSolving::GetSlice(uint slice){
 ndarray
 EigenSolving::GetFields(){
   size_t slice = 0;
-  MatrixXf * Vectors = new MatrixXf;
-  MatrixXf * Values  = new MatrixXf;
+  MatrixType * Vectors = new MatrixType;
+  MatrixType * Values  = new MatrixType;
 
   (*Vectors) = FullEigenVectors[slice];
   (*Values)  = FullEigenValues[slice];
 
   PyFullEigenVectors = Eigen2ndarray( Vectors,
                                       { nMode, Ny, Nx },
-                                      { size * sizeof(float), Nx * sizeof(float), sizeof(float) } ) ;
+                                      { size * sizeof(ScalarType), Nx * sizeof(ScalarType), sizeof(ScalarType) } ) ;
 
 
   return PyFullEigenVectors;
 
 }
 
+ndarray
+EigenSolving::GetIndices(){
 
+  ndarray PyIndices(ITRLength * nMode);
 
+  ScalarType  *PyIndicesPtr = (ScalarType*) PyIndices.request().ptr,
+              *ITRPtr       = (ScalarType*) ITRList.request().ptr;
 
+  size_t iter = 0;
+  cout<<"DDDDDDDDDDDDd"<<kInit<<endl;
+  for (size_t l=0; l<ITRLength; ++l)
+      for (size_t i=0; i<nMode; ++i){
+          PyIndicesPtr[iter] = sqrt(-SortedEigenValues[l][i]) / (ITRPtr[l] * kInit);
+          ++iter;}
+
+  PyIndices.resize({ITRLength,nMode});
+  return PyIndices;
+}
 
 
 
@@ -368,7 +394,7 @@ EigenSolving::GetFields(){
 void
 BaseLaplacian::LaplacianBoundary(){
 
-  for (uint j=1; j<size-1; ++j){
+  for (size_t j=1; j<size-1; ++j){
       if (j%Ny == 0)
           Laplacian.coeffRef(j-1,j) = 0.0;
 
@@ -381,26 +407,26 @@ void
 BaseLaplacian::LaplacianXBoundary(){
 
   int temp = Ny;
-  float dtemp = dy;
+  ScalarType dtemp = dy;
 
   if (LeftSymmetry == 1)
-      for (uint j=0; j<size-1; ++j)
+      for (size_t j=0; j<size-1; ++j)
           if (j%temp == 0)
               Laplacian.coeffRef(j,j+1) = 2.0 * SD2A2[0]/pow(dtemp,2);
 
   if (LeftSymmetry == -1)
-      for (uint j=0; j<size-1; ++j)
+      for (size_t j=0; j<size-1; ++j)
           if (j%temp == 0)
               Laplacian.coeffRef(j,j+1) = 0.0;
 
   if (RightSymmetry == 1)
-      for (uint j=1; j<size; ++j)
+      for (size_t j=1; j<size; ++j)
           if (j%temp == temp-1)
               Laplacian.coeffRef(j,j-1) = 2.0 * SD2A2[0]/pow(dtemp,2);
 
 
   if (RightSymmetry == -1)
-      for (uint j=1; j<size; ++j)
+      for (size_t j=1; j<size; ++j)
           if (j%temp == temp-1)
               Laplacian.coeffRef(j,j-1) = 0.0;
 
@@ -410,19 +436,19 @@ void
 BaseLaplacian::LaplacianYBoundary(){
 
     if (BottomSymmetry == 1)
-        for(uint j=0; j<Ny; ++j)
+        for(size_t j=0; j<Ny; ++j)
           Laplacian.coeffRef(j,j+Ny) = 2.0 * SD2A2[0]/pow(dx,2);
 
     if (BottomSymmetry == -1)
-        for(uint j=0; j<Ny-1; ++j)
+        for(size_t j=0; j<Ny-1; ++j)
             Laplacian.coeffRef(j,j+Ny) = 0.0;
 
     if (TopSymmetry == 1)
-        for(uint j=size-2*Ny; j<size-Ny; ++j)
+        for(size_t j=size-2*Ny; j<size-Ny; ++j)
             Laplacian.coeffRef(j+Ny,j) = 2.0 * SD2A2[0]/pow(dx,2);
 
     if (TopSymmetry == -1)
-        for(uint j=size-2*Ny; j<size-Ny; ++j)
+        for(size_t j=size-2*Ny; j<size-Ny; ++j)
             Laplacian.coeffRef(j+Ny,j) = 0.0;
   }
 
@@ -432,15 +458,15 @@ BaseLaplacian::Points3Laplacian(){
 
     Laplacian = MSparse(size,size);
 
-    for(uint j=0; j<size; ++j)
+    for(size_t j=0; j<size; ++j)
         Laplacian.insert(j,j) = SD2A2[1]*( 1./pow(dx,2) + 1./pow(dy,2) );
 
-    for(uint j=0; j<size-1; ++j){
+    for(size_t j=0; j<size-1; ++j){
         Laplacian.insert(j+1,j) = SD2A2[0]/pow(dy,2);
         Laplacian.insert(j,j+1) = SD2A2[2]/pow(dy,2);
         }
 
-    for(uint j=0; j<size-Ny; ++j){
+    for(size_t j=0; j<size-Ny; ++j){
           Laplacian.insert(j+Ny,j) = SD2A2[0]/pow(dx,2);
           Laplacian.insert(j,j+Ny) = SD2A2[2]/pow(dx,2);
           }
@@ -487,32 +513,32 @@ BaseLaplacian::Points5Laplacian(){
 
   MSparse Laplacian = MSparse(size,size);
 
-  for(uint j=0; j<size; ++j)
+  for(size_t j=0; j<size; ++j)
       Laplacian.insert(j,j) = SD2A4[2]*( 1./pow(dx,2) + 1./pow(dx,2) );
 
-  for(uint j=0; j<size-1; ++j){
+  for(size_t j=0; j<size-1; ++j){
       Laplacian.insert(j+1,j) = SD2A4[1]/pow(dx,2);
       Laplacian.insert(j,j+1) = SD2A4[3]/pow(dx,2);
       }
 
 
-  for(uint j=0; j<size-2; ++j){
+  for(size_t j=0; j<size-2; ++j){
       Laplacian.insert(j+2,j) = SD2A4[0]/pow(dx,2);
       Laplacian.insert(j,j+2) = SD2A4[4]/pow(dx,2);
       }
 
 
-  for(uint j=0; j<size-Nx; ++j){
+  for(size_t j=0; j<size-Nx; ++j){
       Laplacian.insert(j+Nx,j) = SD2A4[1]/pow(dy,2);
       Laplacian.insert(j,j+Nx) = SD2A4[3]/pow(dy,2);
       }
 
-  for(uint j=0; j<size-2*Nx; ++j){
+  for(size_t j=0; j<size-2*Nx; ++j){
       Laplacian.insert(j+2*Nx,j) = SD2A4[0]/pow(dy,2);
       Laplacian.insert(j,j+2*Nx) = SD2A4[4]/pow(dy,2);
       }
 
-  for(uint j=2; j<size-2; ++j){
+  for(size_t j=2; j<size-2; ++j){
       if (j%Nx == 0)   {Laplacian.coeffRef(j-1,j) = 0.0; Laplacian.coeffRef(j-2,j) = 0.0;}
       if (j%Nx == 1)   {Laplacian.coeffRef(j-2,j) = 0.0;}
       if (j%Nx == Nx-1){Laplacian.coeffRef(j+1,j) = 0.0; Laplacian.coeffRef(j+2,j) = 0.0;}

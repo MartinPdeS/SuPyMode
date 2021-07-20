@@ -8,7 +8,7 @@ np.set_printoptions(precision=3, linewidth=500)
 Nx = 80
 Ny = 80
 
-Clad = Fused2(Radius =  62.5, Fusion  = 1, Index   = Fused_silica(1.55))
+Clad = Fused2(Radius =  62.5, Fusion  = 0.3, Index   = Fused_silica(1.55))
 
 Core0 = Circle( Position=Clad.C[0], Radi = 4.2, Index = Fused_silica(1.55)+0.005 )
 
@@ -24,18 +24,18 @@ Geo = Geometry(Objects = [Clad, Core0, Core1],
 Sol = SuPySolver(Coupler=Geo)
 
 SuperModes = Sol.GetModes(wavelength = 1.55,
-                          Nstep      = 300,
-                          Nsol       = 5,
+                          Nstep      = 10,
+                          Nsol       = 4,
                           debug      = False,
                           ITRi       = 1,
-                          ITRf       = 0.1,
+                          ITRf       = 0.9,
                           tolerance  = 1e-20,
                           error      = 2,
                           Xsym       = 0,
                           Ysym       = 0 )
 
 SuperModes.Plot(Input=['Adiabatic', 'Index'])
-# SuperModes.Plot(Input=['Fields'], iter=[50])
+#SuperModes.Plot(Input=['Fields'], iter=[0])
 # SuperModes.Plot(Input=['Fields'], iter=[100])
 # SuperModes.Plot(Input=['Fields'], iter=[150])
 # SuperModes.Plot(Input=['Fields'], iter=[200])

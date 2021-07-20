@@ -20,7 +20,6 @@ from shapely.ops import cascaded_union
 from SuPyModes.Directories           import RootPath
 from SuPyModes.Special               import Intersection, gradientO4
 from SuPyModes.utils                 import *
-from SuPyModes.toolbox.SuPyAxes      import SuPyAxes
 
 Mlogger = logging.getLogger(__name__)
 
@@ -56,7 +55,7 @@ class Geometry(object):
 
         self.Length     = Length
 
-        self.Axes  = SuPyAxes( {'wavelength': 1.0,
+        self.Axes  = Axes( {'wavelength': 1.0,
                                 'Xbound'    : Xbound,
                                 'Ybound'    : Ybound,
                                 'Nx'        : Nx,
@@ -80,6 +79,8 @@ class Geometry(object):
 
         """
 
+
+
         obj_ext = Path(list( polygone.Object.exterior.coords))
 
         obj_ext = obj_ext.contains_points(self.coords).reshape(self.Shape)
@@ -91,10 +92,13 @@ class Geometry(object):
 
             obj_ext = np.logical_and( obj_ext, obj_int )
 
-        return obj_ext
+        obj_ext = obj_ext.astype(float)
+
+        polygone.raster = obj_ext
 
 
-    def add_object_to_mesh(self, obj, index):
+
+    def add_object_to_mesh(self, polygone):
         """ Method add a rasterized object to the pre-existing profile mesh
         with its provided refractive index.
 
@@ -107,9 +111,18 @@ class Geometry(object):
 
         """
 
-        self.mesh *= (-1 * obj + 1)
+        if polygone.Gradient:
+            grad = polygone.Gradient(center=(0,0))
+            Grad = grad.evaluate(self.X, self.Y)
+            print(polygone.Index)
+            polygone.Index *= Grad * 30*2
+            print(polygone.Index)
 
-        self.mesh += obj * index
+
+
+        self.mesh *= (-1 * polygone.raster + 1)
+
+        self.mesh += polygone.raster * polygone.Index
 
 
     def CreateMesh(self):
@@ -123,21 +136,15 @@ class Geometry(object):
         yv = np.linspace(*self.Boundaries[1], self.Shape[1])
 
 
-        x, y = np.meshgrid(yv,xv)
+        self.X, self.Y = np.meshgrid(yv,xv)
 
-        x, y = x.flatten(), y.flatten()
+        x, y = self.X.flatten(), self.Y.flatten()
 
         self.coords = np.vstack((x,y)).T
 
         for object in self.Objects:
-            obj = self.rasterize_polygone(object)
-            self.add_object_to_mesh(obj, object.Index)
-
-
-        self.info = { 'Xbound': self.Boundaries[0],
-                      'Ybound': self.Boundaries[1],
-                      'Shape':  self.Shape,
-                      'Size':   np.size(self.mesh) }
+            self.rasterize_polygone(object)
+            self.add_object_to_mesh(object)
 
 
     def __plot__(self, ax):
@@ -195,23 +202,23 @@ class Geometry(object):
 
     def _Gradient(self):
         Ygrad, Xgrad = gradientO4( self.mesh.T**2,
-                                   self.Axes.Direct.dx,
-                                   self.Axes.Direct.dy )
+                                   self.Axes.dx,
+                                   self.Axes.dy )
 
-        return Xgrad * self.Axes.Direct.XX.T + Ygrad * self.Axes.Direct.YY.T
+        return Xgrad * self.Axes.XX.T + Ygrad * self.Axes.YY.T
 
 
     def Gradient(self):
         Ygrad, Xgrad = gradientO4( self.mesh**2,
-                                   self.Axes.Direct.dx,
-                                   self.Axes.Direct.dy )
+                                   self.Axes.dx,
+                                   self.Axes.dy )
 
-        return Xgrad * self.Axes.Direct.XX.T + Ygrad * self.Axes.Direct.YY.T
+        return Xgrad * self.Axes.XX.T + Ygrad * self.Axes.YY.T
 
 
 
 class Circle(object):
-    def __init__(self, Position, Radi, Index, debug='INFO'):
+    def __init__(self, Position, Radi, Index, debug='INFO', Gradient=None):
 
         Mlogger.setLevel(getattr(logging, debug))
 
@@ -219,6 +226,7 @@ class Circle(object):
         self.Radi     = Radi
         self.Index    = Index
         self.hole     = None
+        self.Gradient = Gradient
         self.Init()
 
     def Init(self):
@@ -231,7 +239,7 @@ class Circle(object):
 
 
 class BaseFused():
-    def __init__(self, Radius, Fusion, Angle, Theta, Index, debug):
+    def __init__(self, Radius, Fusion, Angle, Theta, Index, debug, Gradient=None):
 
         Mlogger.setLevel(getattr(logging, debug))
 
@@ -242,6 +250,7 @@ class BaseFused():
         self.hole    = None
         self.N       = len(self.Angle)
         self.Theta   = Deg2Rad(Theta)
+        self.Gradient = Gradient
         self.GetFibers()
         self.GetTopology()
 
@@ -402,7 +411,7 @@ class BaseFused():
 
 
 class Fused4(BaseFused):
-    def __init__(self, Radius, Fusion, Index, debug='INFO'):
+    def __init__(self, Radius, Fusion, Index, debug='INFO', Gradient=None):
         super().__init__(Radius  = Radius,
                          Fusion  = Fusion,
                          Angle   = [0, 90, 180, 270],
@@ -418,6 +427,7 @@ class Fused4(BaseFused):
             self.Bound = (0, 4000)
 
         self.Object = self.OptimizeGeometry()
+        self.Gradient = Gradient
 
 
     def GetTopology(self):
@@ -496,7 +506,7 @@ class Fused4(BaseFused):
 
 
 class Fused3(BaseFused):
-    def __init__(self, Radius, Fusion, Index, debug='INFO'):
+    def __init__(self, Radius, Fusion, Index, debug='INFO', Gradient=None):
         super().__init__(Radius  = Radius,
                          Fusion  = Fusion,
                          Angle   = [0, 120, 240],
@@ -511,6 +521,7 @@ class Fused3(BaseFused):
             self.Bound = (0, 4000)
 
         self.Object = self.OptimizeGeometry()
+        self.Gradient = Gradient
 
 
 
@@ -580,7 +591,7 @@ class Fused3(BaseFused):
 
 
 class Fused2(BaseFused):
-    def __init__(self, Radius, Fusion, Index, debug='INFO'):
+    def __init__(self, Radius, Fusion, Index, debug='INFO', Gradient=None):
         super().__init__(Radius  = Radius,
                          Fusion  = Fusion,
                          Angle   = [0, 180],
@@ -595,6 +606,7 @@ class Fused2(BaseFused):
             self.Bound = (0, 4000)
 
         self.Object = self.OptimizeGeometry()
+        self.Gradient = Gradient
 
 
     def GetTopology(self):

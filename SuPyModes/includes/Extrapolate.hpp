@@ -1,60 +1,60 @@
 
-float
-ExtrapolateNext1(vector<VectorXf>& y, ndarray& ITRList, size_t NextIter){
+double
+ExtrapolateNext1(vector<VectorType>& y, ndarray& ITRList, size_t NextIter){
 
   return y[NextIter-1][0];
 }
 
 
-float
-ExtrapolateNext2(vector<VectorXf>& y, ndarray& X, size_t NextIter){
+double
+ExtrapolateNext2(vector<VectorType>& y, ndarray& X, size_t NextIter){
 
 
-  float * x = (float*) X.request().ptr;
+  double * x = (double*) X.request().ptr;
 
-  float y0 = y[NextIter-1][0];
+  double y0 = y[NextIter-1][0];
 
-  float d1y = +1.0 * y[NextIter-1][0] - 1.0 * y[NextIter-2][0];
-  float dx  = +1.0 * x[NextIter-1]    - 1.0 * x[NextIter-2];
+  double d1y = +1.0 * y[NextIter-1][0] - 1.0 * y[NextIter-2][0];
+  double dx  = +1.0 * x[NextIter-1]    - 1.0 * x[NextIter-2];
 
   return y0 + d1y;
 
 }
 
 
-float
-ExtrapolateNext3(vector<VectorXf>& y, ndarray& X, size_t NextIter){
+double
+ExtrapolateNext3(vector<VectorType>& y, ndarray& X, size_t NextIter){
 
-  float * x = (float*) X.request().ptr;
+  double * x = (double*) X.request().ptr;
 
-  float y0 = y[NextIter-1][0];
+  double y0 = y[NextIter-1][0];
 
-  float d1y = +1.0 * y[NextIter-1][0] - 1.0 * y[NextIter-2][0];
-  float d2y = -1.0 * y[NextIter-1][0] + 2.0 * y[NextIter-2][0] - 1.0 * y[NextIter-3][0];
-  float dx  = +1.0 * x[NextIter-1]    - 1.0 * x[NextIter-2];
+  double d1y = +1.0 * y[NextIter-1][0] - 1.0 * y[NextIter-2][0];
+  double d2y = -1.0 * y[NextIter-1][0] + 2.0 * y[NextIter-2][0] - 1.0 * y[NextIter-3][0];
+  double dx  = +1.0 * x[NextIter-1]    - 1.0 * x[NextIter-2];
 
   return y0 + d1y + d2y / 2.0;
 }
 
 
-float
-ExtrapolateNext4(vector<VectorXf>& y, ndarray& X, size_t NextIter){
+double
+ExtrapolateNext4(vector<VectorType>& y, ndarray& X, size_t NextIter){
 
-  float * x = (float*) X.request().ptr;
+  double * x = (double*) X.request().ptr;
 
-  float y0 = y[NextIter-1][0];
+  double y0 = y[NextIter-1][0];
 
-  float d1y = +1.0 * y[NextIter-1][0] - 1.0 * y[NextIter-2][0];
-  float d2y = -1.0 * y[NextIter-1][0] + 2.0 * y[NextIter-2][0] - 1.0 * y[NextIter-3][0];
-  float d3y = +1.0 * y[NextIter-1][0] - 3.0 * y[NextIter-2][0] + 3.0 * y[NextIter-3][0] - 1.0 * y[NextIter-4][0];
-  float dx  = +1.0 * x[NextIter-1]    - 1.0 * x[NextIter-2];
+  double d1y = +1.0 * y[NextIter-1][0] - 1.0 * y[NextIter-2][0];
+  double d2y = -1.0 * y[NextIter-1][0] + 2.0 * y[NextIter-2][0] - 1.0 * y[NextIter-3][0];
+  double d3y = +1.0 * y[NextIter-1][0] - 3.0 * y[NextIter-2][0] + 3.0 * y[NextIter-3][0] - 1.0 * y[NextIter-4][0];
+  double dx  = +1.0 * x[NextIter-1]    - 1.0 * x[NextIter-2];
 
   return y0 + d1y + d2y / 2.0 + d3y / 6.0;
 }
 
 
-float
-ExtrapolateNext(size_t order, vector<VectorXf>& y, ndarray& X, size_t NextIter){
+double
+ExtrapolateNext(size_t order, vector<VectorType>& y, ndarray& X, size_t NextIter){
 
   switch(order){
 
@@ -86,21 +86,21 @@ ExtrapolateNext(size_t order, vector<VectorXf>& y, ndarray& X, size_t NextIter){
 
 
 
-float
-_ExtrapolateNext2(vector<VectorXf>& FullEigenValues, ndarray& ITRList, size_t NextIter){
+double
+_ExtrapolateNext2(vector<VectorType>& FullEigenValues, ndarray& ITRList, size_t NextIter){
 
 
-  float * ITRPtr = (float*) ITRList.request().ptr;
+  double * ITRPtr = (double*) ITRList.request().ptr;
 
-  float NextValue;
+  double NextValue;
 
-  float y;
-  float y2 = FullEigenValues[NextIter-1][0];
-  float y1 = FullEigenValues[NextIter-2][0];
+  double y;
+  double y2 = FullEigenValues[NextIter-1][0];
+  double y1 = FullEigenValues[NextIter-2][0];
 
-  float x = ITRPtr[NextIter];
-  float x2 = ITRPtr[NextIter-1];
-  float x1 = ITRPtr[NextIter-2];
+  double x = ITRPtr[NextIter];
+  double x2 = ITRPtr[NextIter-1];
+  double x1 = ITRPtr[NextIter-2];
 
   y = (y2 - y1) / (x2 - x1) * (x-x2) + y2;
 
