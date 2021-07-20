@@ -36,12 +36,15 @@ class SuPySolver(object):
 
 
         self.CppSolver = EigenSolving(Mesh      = self.Geometry.mesh,
-                                      Gradient  = self.Geometry.Gradient(),
+                                      Gradient  = self.Geometry.Gradient().T.ravel(),
                                       nMode     = Nsol+3,
+                                      sMode     = Nsol,
                                       MaxIter   = 10000,
                                       Tolerance = tolerance)
 
         self.CppSolver.Lambda = wavelength
+
+        self.Geometry.Axes.wavelength = wavelength
 
         self.CppSolver.dx     = self.Geometry.Axes.dx
 
@@ -54,6 +57,8 @@ class SuPySolver(object):
         self.Set = SuperSet(NSolutions = Nsol, Geometry = self.Geometry)
 
         self.Solve(self.Geometry.ITRList, Nsol)
+
+        self.Set.CppSolver = self.CppSolver
 
         return self.Set
 
@@ -86,8 +91,8 @@ class SuPySolver(object):
             self.Set[solution].Slice.append(ModeSlice( Field, self.Geometry.Axes, Index=index, Beta=betas[solution] ),)
 
 
-
-
+    def GetCoupling(self):
+        Coupling = self.CppSolver.ComputingCoupling()
 
 
 # ---

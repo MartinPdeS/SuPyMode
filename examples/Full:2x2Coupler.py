@@ -5,10 +5,15 @@ import numpy as np
 import sys
 np.set_printoptions(threshold=sys.maxsize)
 np.set_printoptions(precision=3, linewidth=500)
-Nx = 80
-Ny = 80
 
-Clad = Fused2(Radius =  62.5, Fusion  = 0.3, Index   = Fused_silica(1.55))
+
+nMode   = 6
+Xbound  = [-100, 100]
+Ybound  = [-100, 100]
+Nx      = 90
+Ny      = 90
+
+Clad = Fused2(Radius =  62.5, Fusion  = 0.95, Index   = Fused_silica(1.55))
 
 Core0 = Circle( Position=Clad.C[0], Radi = 4.2, Index = Fused_silica(1.55)+0.005 )
 
@@ -16,16 +21,16 @@ Core1 = Circle( Position=Clad.C[1], Radi = 4.2, Index = Fused_silica(1.55)+0.005
 
 
 Geo = Geometry(Objects = [Clad, Core0, Core1],
-               Xbound  = [-100, 100],
-               Ybound  = [-100, 100],
+               Xbound  = Xbound,
+               Ybound  = Ybound,
                Nx      = Nx,
                Ny      = Ny)
 
 Sol = SuPySolver(Coupler=Geo)
 
-SuperModes = Sol.GetModes(wavelength = 1.55,
+SuperModes = Sol.GetModes(wavelength = 1.55*1.5,
                           Nstep      = 10,
-                          Nsol       = 4,
+                          Nsol       = 5,
                           debug      = False,
                           ITRi       = 1,
                           ITRf       = 0.9,
@@ -34,7 +39,7 @@ SuperModes = Sol.GetModes(wavelength = 1.55,
                           Xsym       = 0,
                           Ysym       = 0 )
 
-SuperModes.Plot(Input=['Adiabatic', 'Index'])
+SuperModes.Plot(Input=['Adiabatic'], iter=[0])
 #SuperModes.Plot(Input=['Fields'], iter=[0])
 # SuperModes.Plot(Input=['Fields'], iter=[100])
 # SuperModes.Plot(Input=['Fields'], iter=[150])

@@ -23,6 +23,14 @@ from SuPyModes.utils                 import *
 
 Mlogger = logging.getLogger(__name__)
 
+class Gradient1:
+    def __init__(self, center):
+        self.center = center
+
+    def evaluate(self, Xmesh, Ymesh):
+        rho = np.sqrt( (Xmesh-self.center[0])**2 + (Ymesh-self.center[1])**2 )+10
+        return 1/rho
+
 class Geometry(object):
     """ Class represent the refractive index (RI) geometrique profile which
     can be used to retrieve the supermodes.

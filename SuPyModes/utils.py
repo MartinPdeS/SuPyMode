@@ -19,6 +19,7 @@ import numpy as np
 
 class Axes(object):
     def __init__(self, Meta):
+        self._k = None
 
         self.ITR = 1
 
@@ -33,11 +34,28 @@ class Axes(object):
         self.dx  = np.abs( self.X[0] - self.X[1] )
         self.dy  = np.abs( self.Y[0] - self.Y[1] )
 
-        self.wavelength = Meta['wavelength']
-        self.k          = 2 * np.pi / self.wavelength
+        self._wavelength  = Meta['wavelength']
+        self._k          = 2 * np.pi / self._wavelength
 
         self.dA  = self.dx * self.dy
 
+    @property
+    def wavelength(self):
+        return self._wavelength
+
+    @wavelength.setter
+    def wavelength(self, value):
+        self._wavelength = value
+        self._k          = 2*np.pi / value
+
+    @property
+    def k(self):
+        return self._k
+
+    @k.setter
+    def k(self, value):
+        self._k          = value
+        self._wavelength = 2*np.pi / value
 
 
 def RecomposeSymmetries(Input, Axes):

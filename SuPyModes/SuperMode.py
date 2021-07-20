@@ -15,12 +15,13 @@ Mlogger = logging.getLogger(__name__)
 
 class SuperMode(object):
 
-    def __init__(self, Name, Geometry):
+    def __init__(self, Name, Geometry, ParentSet):
         self.Name       = Name
         self.Slice      = []
         self._Adiabatic = None
         self._Coupling  = None
         self.Geometry   = Geometry
+        self.Parent     = ParentSet
 
 
 
@@ -48,30 +49,39 @@ class SuperMode(object):
 
 
     def GetCoupling(self, SuperMode):
-        C = []
-        for n, itr in enumerate(self.Geometry.ITRList[:-1]):
-            C.append( ModeCoupling(SuperMode0 = self,
-                                   SuperMode1 = SuperMode,
-                                   k          = self.Geometry.Axes.k,
-                                   Profile    = self.Geometry.mesh,
-                                   Gradient   = self.Geometry.Gradient(),
-                                   iter       = n) )
+        return self.Parent.CCoupling[:, self.number, SuperMode.number]
 
-        return C
 
 
     def GetAdiabatic(self, SuperMode):
-        A = []
-        for n, itr in enumerate(self.Geometry.ITRList[:-1]):
-            A.append( ModeAdiabatic(SuperMode0 = self,
-                                    SuperMode1 = SuperMode,
-                                    k          = self.Geometry.Axes.k,
-                                    Profile    = self.Geometry.mesh,
-                                    Gradient   = self.Geometry.Gradient(),
-                                    iter       = n) )
+        return self.Parent.AAdiabatic[:, self.number, SuperMode.number]
 
-        return A
 
+
+    # def _GetCoupling(self, SuperMode):
+    #     C = []
+    #     for n, itr in enumerate(self.Geometry.ITRList[:-1]):
+    #         C.append( ModeCoupling(SuperMode0 = self,
+    #                                SuperMode1 = SuperMode,
+    #                                k          = self.Geometry.Axes.k,
+    #                                Profile    = self.Geometry.mesh,
+    #                                Gradient   = self.Geometry.Gradient(),
+    #                                iter       = n) )
+    #
+    #     return C
+    #
+    #
+    # def _GetAdiabatic(self, SuperMode):
+    #     A = []
+    #     for n, itr in enumerate(self.Geometry.ITRList[:-1]):
+    #         A.append( ModeAdiabatic(SuperMode0 = self,
+    #                                 SuperMode1 = SuperMode,
+    #                                 k          = self.Geometry.Axes.k,
+    #                                 Profile    = self.Geometry.mesh,
+    #                                 Gradient   = self.Geometry.Gradient(),
+    #                                 iter       = n) )
+    #
+    #     return A
 
     def PlotPropagation(self):
         image, _, _ = self.FullField(0)
@@ -153,17 +163,42 @@ class SuperSet(SetProperties, SetPlots):
         self._Beta         = None
         self.Geometry      = Geometry
         self._M            = None
+        self._CCoupling    = None
+        self._AAdiabatic    = None
         self.Init()
 
         self.combinations = tuple(combinations( np.arange(NSolutions), 2 ) )
         self.Combinations = tuple(Combinations( np.arange(NSolutions), 2 ) )
 
 
+    def ComputeCoupling(self):
+        return self.CppSolver.ComputingCoupling()
+
+
+    @property
+    def CCoupling(self):
+        if self._CCoupling is None:
+            self._CCoupling = self.CppSolver.ComputingCoupling()
+            return self._CCoupling
+
+        else:
+            return self._CCoupling
+
+
+    @property
+    def AAdiabatic(self):
+        if self._AAdiabatic is None:
+            self._AAdiabatic = self.CppSolver.ComputingAdiabatic()
+            return self._AAdiabatic
+
+        else:
+            return self._AAdiabatic
+
+
     def Init(self):
         for solution in range(self.NSolutions):
-            supermode = SuperMode(Name     = f"Mode {solution}",
-                                  Geometry = self.Geometry)
-
+            supermode = SuperMode(Name     = f"Mode {solution}", Geometry = self.Geometry, ParentSet=self)
+            supermode.number = solution
             self.SuperModes.append(supermode)
 
 
@@ -209,6 +244,7 @@ class SuperSet(SetProperties, SetPlots):
 
     def Sort(self, parameter='Fields'):
         return SortSuperSet(self, parameter=parameter)
+
 
 
 

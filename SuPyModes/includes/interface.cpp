@@ -15,7 +15,7 @@ namespace py = pybind11;
 
 #define PI 3.1415926535897932384626f
 
-typedef double                                 ScalarType;
+typedef float                                  ScalarType;
 typedef std::complex<ScalarType>               ComplexScalarType;
 typedef Matrix<ScalarType, Dynamic, 1>         VectorType;
 typedef Matrix<ComplexScalarType, Dynamic, 1>  ComplexVectorType;
@@ -37,10 +37,11 @@ PYBIND11_MODULE(EigenSolver, module) {
     module.doc() = "A c++ solver for EigenPairs";
 
     py::class_<EigenSolving>(module, "EigenSolving")
-    .def(py::init<ndarray&, ndarray&, size_t, size_t, ScalarType>(),
+    .def(py::init<ndarray&, ndarray&, size_t, size_t, size_t, ScalarType>(),
          py::arg("Mesh"),
          py::arg("Gradient"),
          py::arg("nMode"),
+         py::arg("sMode"),
          py::arg("MaxIter"),
          py::arg("Tolerance"))
 

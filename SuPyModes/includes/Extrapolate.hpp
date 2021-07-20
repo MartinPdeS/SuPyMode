@@ -23,7 +23,7 @@ ExtrapolateNext2(vector<VectorType>& y, ndarray& X, size_t NextIter){
 
 
 double
-ExtrapolateNext3(vector<VectorType>& y, ndarray& X, size_t NextIter){
+ExtrapolateNext3(vector<VectorType>& y, ndarray& X, size_t& NextIter){
 
   double * x = (double*) X.request().ptr;
 
@@ -38,7 +38,7 @@ ExtrapolateNext3(vector<VectorType>& y, ndarray& X, size_t NextIter){
 
 
 double
-ExtrapolateNext4(vector<VectorType>& y, ndarray& X, size_t NextIter){
+ExtrapolateNext4(vector<VectorType>& y, ndarray& X, size_t& NextIter){
 
   double * x = (double*) X.request().ptr;
 

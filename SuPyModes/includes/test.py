@@ -13,30 +13,26 @@ import matplotlib.pyplot as plt
 from itertools import combinations
 np.set_printoptions(threshold=sys.maxsize)
 
-def PlotModes():
-    for i in range(len(ITRList)):
+def PlotModes(iter):
+    for i in iter:
         EigenVectors, EigenValues = A.GetSlice(i)
 
         fig, ax = plt.subplots(1,nMode)
         for j in range(nMode):
             array = EigenVectors[j,...]
-            #print(array.shape)
-            #temp = np.concatenate((array[:,::-1], array), axis=1)
-            #array = array.reshape([Nx,Ny])
-            ax[j].pcolormesh(array, cmap='seismic')
+
+            ax[j].pcolormesh(array.T, cmap='seismic')
             ax[j].set_aspect('equal')
 
 
-            ax[j].set_title(f"beta: { EigenValues[j]:.5f}", fontsize=8)
+            ax[j].set_title(f"beta: { EigenValues[j]:.5f} \n norm: {np.sum(np.abs(array)**2)}", fontsize=8)
 
         plt.tight_layout()
-        plt.show()
+        plt.draw()
 
 def PlotCoupling():
 
     Coupling = A.ComputingCoupling()
-
-    print(Coupling.shape)
 
     a = list(combinations(range(nMode), 2))
 
@@ -46,7 +42,7 @@ def PlotCoupling():
 
     plt.legend()
     plt.grid()
-    plt.show()
+    plt.draw()
 
 
 def PlotAdiabatic():
@@ -59,11 +55,11 @@ def PlotAdiabatic():
 
     fig, ax = plt.subplots(1,1)
     for i,j in a:
-        ax.semilogy(ITRList[1:], np.abs(Adiabatic[:,j,i]), label=f'{i}/{j}')
+        ax.semilogy(ITRList[1:], Adiabatic[:,j,i], label=f'{i}/{j}')
 
     plt.legend()
     plt.grid()
-    plt.show()
+    plt.draw()
 
 
 def PlotIndex():
@@ -73,64 +69,40 @@ def PlotIndex():
         plt.plot(ITRList, index.reshape(len(ITRList),nMode)[:,i],'-', label=f'Mode: {i}')
     plt.grid()
     plt.legend()
-    plt.show()
+    plt.draw()
 
 
 
-nMode = 6
-
-Nx = 200
-Ny = 200
+nMode   = 5
 Xbound  = [-100, 100]
 Ybound  = [-100, 100]
-
-class Gradient1:
-    def __init__(self, center):
-        self.center = center
-
-    def evaluate(self, Xmesh, Ymesh):
-        rho = np.sqrt( (Xmesh-self.center[0])**2 + (Ymesh-self.center[1])**2 )+10
-        return 1/rho
+Nx      = 90
+Ny      = 90
 
 
-Clad = Fused2(Radius =  62.5, Fusion  = 0.3, Index   = Fused_silica(1.55))
-
-Clad.Gradient = Gradient1
+Clad = Fused2(Radius =  62.5, Fusion  = 0.95, Index   = Fused_silica(1.55))
 
 Core0 = Circle( Position=Clad.C[0], Radi = 4.2, Index = Fused_silica(1.55)+0.005 )
 
 Core1 = Circle( Position=Clad.C[1], Radi = 4.2, Index = Fused_silica(1.55)+0.005 )
 
 
-Geo = Geometry(Objects = [Clad],
+Geo = Geometry(Objects = [Clad, Core0, Core1],
                Xbound  = Xbound,
                Ybound  = Ybound,
                Nx      = Nx,
                Ny      = Ny)
 
-Geo.Plot()
 
+ITRList = np.linspace(1,0.9,10)
 
-"""
-def Gradient(Index, Xmesh, Ymesh, center, order=1)
-    rho = sqrt( (Xmesh-center[0])**2 + (Ymesh-center[1])**2 )
-    mesh = Index * rho
+A = EigenSolving(Geo.mesh, Geo.Gradient().T.ravel(), nMode+3, nMode, 10000, 1e-18)
 
+A.dx = Geo.Axes.dx
 
+A.dy =  Geo.Axes.dy
 
-
-DeltaX = abs(Xbound[0]-Xbound[1])
-DeltaY = abs(Ybound[0]-Ybound[1])
-
-ITRList = np.linspace(1,0.3,300)
-
-A = EigenSolving(Geo.mesh, Geo.Gradient().T, nMode, 10000, 1e-18)
-A.dx = DeltaX/(Nx-1)
-
-A.dy =  DeltaY/(Ny-1)
-print(A.dx, A.dy)
-
-A.Lambda          = 1.55
+A.Lambda          = 1.55*1.5
 
 A.ComputeLaplacian()
 A.TopSymmetry    = 0
@@ -138,17 +110,20 @@ A.BottomSymmetry = 0
 A.LeftSymmetry   = 0
 A.RightSymmetry  = 0
 
-A.LoopOverITR(ITR = ITRList, ExtrapolationOrder = 2)
+A.LoopOverITR(ITR = ITRList, ExtrapolationOrder = 3)
 
 A.SortModesFields()
 
 
 #PlotIndex()
-#PlotAdiabatic()
-#PlotCoupling()
-#PlotModes()
-"""
+PlotModes(iter=[0])
+PlotCoupling()
+PlotAdiabatic()
 
+
+
+
+plt.show()
 
 
 # -

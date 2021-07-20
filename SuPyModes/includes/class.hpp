@@ -46,7 +46,7 @@ class BaseLaplacian{
 
 class EigenSolving : public BaseLaplacian{
   public:
-    size_t             nMode, MaxIter, Nx, Ny, size, sMode, DegenerateFactor, ITRLength;
+    size_t             nMode, sMode, MaxIter, Nx, Ny, size, DegenerateFactor, ITRLength;
     ScalarType         Tolerance, dx, dy, k, kInit, kDual, lambda, lambdaInit, MaxIndex;
     ScalarType        *MeshPtr, *ITRPtr;
     ndarray            Mesh, ITRList, PyOverlap, PyIndices, PyFullEigenVectors, PyFullEigenValues, PyAdiabatic;
@@ -59,10 +59,11 @@ class EigenSolving : public BaseLaplacian{
   EigenSolving(ndarray& Mesh,
                ndarray& PyMeshGradient,
                size_t   nMode,
+               size_t   sMode,
                size_t   MaxIter,
                ScalarType    Tolerance): BaseLaplacian(Mesh){
                  this->nMode             = nMode;
-                 this->sMode             = nMode;
+                 this->sMode             = sMode;
                  this->MaxIter           = MaxIter;
                  this->Tolerance         = Tolerance;
                  this->Mesh              = Mesh;
@@ -122,4 +123,6 @@ class EigenSolving : public BaseLaplacian{
    void ComputeLaplacian();
 
    void PringLaplacian();
+
+   vector<VectorType> ComputeBetas();
 };

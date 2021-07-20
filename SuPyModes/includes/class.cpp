@@ -1,8 +1,7 @@
 #include "class.hpp"
 #include "Extrapolate.hpp"
-#define PI 3.1415926535897932384626f
+
 std::complex<ScalarType> J(0.0, 1.0);
-typedef std::complex<ScalarType>               ComplexScalarType;
 
 
 MSparse
@@ -39,10 +38,6 @@ EigenSolving::ComputeEigen(ScalarType alpha){
     MatrixType Vectors = eigs.eigenvectors().real();
 
     VectorType Values = eigs.eigenvalues().real();
-
-    //Vectors.rowwise().reverseInPlace();
-
-    //Values.reverseInPlace();
 
     return std::make_tuple(Vectors, Values);
     }
@@ -90,7 +85,7 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
   for (size_t i=0; i<ITRLength; ++i){
 
-    //bar.update(1/length); bar.print();
+    //bar.update(1/ITRLength); bar.print();
 
     ScalarType lambdaDual = lambdaInit / ITRPtr[i];
 
@@ -110,21 +105,29 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 }
 
 
+vector<VectorType>
+EigenSolving::ComputeBetas(){
+  vector<VectorType> Betas(ITRLength);
 
+  for (size_t i=0; i<ITRLength; ++i)
+      Betas[i] = (-FullEigenValues[i]).cwiseSqrt() / ITRPtr[i];
+
+  return Betas;
+
+}
 
 ndarray
 EigenSolving::ComputingOverlap(){
 
-  size_t length = FullEigenValues.size()-1,
-       iter   = 0;
+  size_t iter   = 0;
 
-  VectorType * Overlap = new VectorType(length * nMode * nMode),
+  VectorType * Overlap = new VectorType((ITRLength-1) * nMode * nMode),
              vec0,
              vec1;
 
   (*Overlap).setZero();
 
-  for (size_t l=0; l<length; ++l)
+  for (size_t l=0; l<ITRLength-1; ++l)
       for (size_t i=0; i<nMode; ++i)
           for (size_t j=0; j<nMode; ++j){
               if (j > i){(*Overlap)[iter] = 0.0; ++iter; continue;}
@@ -132,7 +135,7 @@ EigenSolving::ComputingOverlap(){
               ++iter; }
 
   ndarray PyOverlap = Eigen2ndarray( Overlap,
-                                     { length, nMode, nMode },
+                                     { ITRLength-1, nMode, nMode },
                                      { nMode * nMode * sizeof(ScalarType), nMode * sizeof(ScalarType), sizeof(ScalarType) } );
 
   return PyOverlap;
@@ -142,20 +145,18 @@ EigenSolving::ComputingOverlap(){
 void
 EigenSolving::SortModesFields(){
 
-  size_t length = FullEigenValues.size()-1,
-       BestFit,
-       iter = 0;
+  size_t BestFit, iter = 0;
 
   vector<size_t> Overlap;
 
   SortedEigenVectors = FullEigenVectors;
   SortedEigenValues = FullEigenValues;
 
-  for (size_t l=0; l<length; ++l){
+  for (size_t l=0; l<ITRLength-1; ++l){
 
       Overlap = ComputecOverlaps(SortedEigenVectors[l], FullEigenVectors[l+1]);
 
-        for (size_t j=0; j<nMode; ++j){
+        for (size_t j=0; j<sMode; ++j){
             SortedEigenVectors[l+1].col(j) = FullEigenVectors[l+1].col(Overlap[j]);
             SortedEigenValues[l+1][j]        = FullEigenValues[l+1][Overlap[j]];
         }
@@ -171,13 +172,11 @@ EigenSolving::SortModesFields(){
 void
 EigenSolving::SortModesIndex(){
 
-  size_t length = FullEigenValues.size();
-
   vector<MatrixType> TemporaryVec = FullEigenVectors;
 
   vector<VectorType> TemporaryVal = FullEigenValues;
 
-  for (size_t l=0; l<length; ++l){
+  for (size_t l=0; l<ITRLength; ++l){
       vector<size_t> sorted = sort_indexes( FullEigenValues[l] );
           for (size_t i=0; i<nMode; ++i)
               TemporaryVec[l].col(i) = FullEigenVectors[l].col(sorted[i]);
@@ -209,11 +208,13 @@ EigenSolving::ComputeDegenerateFactor(){
 Cndarray
 EigenSolving::ComputingCoupling(){
 
+  vector<VectorType> Betas = ComputeBetas();
+
   ComputeDegenerateFactor();
 
-  size_t length = FullEigenValues.size()-1, iter = 0;
+  size_t iter = 0;
 
-  ComplexVectorType * Coupling = new ComplexVectorType(length * nMode * nMode);
+  VectorType * Coupling = new VectorType((ITRLength-1) * sMode * sMode);
 
   (*Coupling).setZero();
 
@@ -223,37 +224,36 @@ EigenSolving::ComputingCoupling(){
 
   ComplexScalarType C, I=0.0;
 
-  for (size_t l=0; l<length; ++l)
-      for (size_t i=0; i<nMode; ++i)
-          for (size_t j=0; j<nMode; ++j){
-              if (j >= i){ (*Coupling)[iter] = 0.0; ++iter; continue; }
+  for (size_t l=1; l<ITRLength; ++l)
+      for (size_t i=0; i<sMode; ++i)
+          for (size_t j=0; j<sMode; ++j){
+              if (j == i){ (*Coupling)[iter] = 0.0; ++iter; continue; }
 
-              vec0    = FullEigenVectors[l].col(i);
-              vec1    = FullEigenVectors[l+1].col(j);
+              vec0    = FullEigenVectors[l-1].col(i);
+              vec1    = FullEigenVectors[l].col(j);
+              beta0   = Betas[l-1][i];
+              beta1   = Betas[l][j];
 
               overlap = vec0.cwiseProduct( vec1 );
 
-              beta0   = FullEigenValues[l][i];
-              beta1   = FullEigenValues[l][j];
-              delta   = beta0 * beta1;
+              delta   = beta0 - beta1;
 
               temp    = overlap.cwiseProduct( MeshGradient );
 
-              C       = - (ScalarType) 0.5 * J * k*k / sqrt(delta) * abs( 1.0f / (beta0 - beta1) );
+              C       = - (ScalarType) 0.5 * J * kInit*kInit / sqrt(beta0 * beta1) * abs( 1.0f / delta );
 
               I       = temp.sum();//Trapz(temp, 1.0, Nx, Ny);
 
               C      *= (ScalarType) DegenerateFactor * I;
 
-              (*Coupling)[iter] = C ;
+              (*Coupling)[iter] = abs(C);
 
               ++iter;
-
             }
 
-  PyCoupling = Eigen2Cndarray( Coupling,
-                              { length, nMode, nMode },
-                              { nMode * nMode * sizeof(ComplexScalarType), nMode * sizeof(ComplexScalarType), sizeof(ComplexScalarType) } ) ;
+  PyCoupling = Eigen2ndarray( Coupling,
+                              { ITRLength-1, sMode, sMode },
+                              { sMode * sMode * sizeof(ScalarType), sMode * sizeof(ScalarType), sizeof(ScalarType) } ) ;
 
   return PyCoupling;
 
@@ -270,16 +270,20 @@ EigenSolving::ComputeMaxIndex(){
  return MaxIndex;
 }
 
+
+
 Cndarray
 EigenSolving::ComputingAdiabatic(){
 
+  vector<VectorType> Betas = ComputeBetas();
+
   ComputeDegenerateFactor();
 
-  size_t iter = 0, length = FullEigenValues.size()-1;
+  size_t iter = 0;
 
   ComplexVectorType temp;
 
-  VectorType * Adiabatic = new VectorType(length * nMode * nMode);
+  VectorType * Adiabatic = new VectorType((ITRLength-1) * sMode * sMode);
 
   (*Adiabatic).setZero();
 
@@ -289,23 +293,23 @@ EigenSolving::ComputingAdiabatic(){
 
   ComplexScalarType C, I = 0.0;
 
-  for (size_t l=0; l<length; ++l)
-      for (size_t i=0; i<nMode; ++i)
-          for (size_t j=0; j<nMode; ++j){
-              if (j >= i){(*Adiabatic)[iter] = 0.0; ++iter; continue;}
+  for (size_t l=1; l<ITRLength; ++l)
+      for (size_t i=0; i<sMode; ++i)
+          for (size_t j=0; j<sMode; ++j){
+              if (j == i){(*Adiabatic)[iter] = 0.0; ++iter; continue;}
 
-              vec0    = FullEigenVectors[l].col(i);
-              vec1    = FullEigenVectors[l+1].col(j);
+
+              vec0    = FullEigenVectors[l-1].col(i);
+              vec1    = FullEigenVectors[l].col(j);
+              beta0   = Betas[l-1][i];
+              beta1   = Betas[l][j];
+              delta   = beta0 - beta1;
 
               overlap = vec0.cwiseProduct( vec1 );
 
-              beta0   = FullEigenValues[l][i];
-              beta1   = FullEigenValues[l][j];
-              delta   = beta0 * beta1;
-
               temp    = overlap.cwiseProduct( MeshGradient );
 
-              C       = - (ScalarType) 0.5 * J * k*k / sqrt(delta) * abs( 1.0f / (beta0 - beta1) );
+              C       = - (ScalarType) 0.5 * J * kInit*kInit / sqrt(beta0 * beta1) * abs( 1.0f / delta );
 
               I       = temp.sum();//Trapz(temp, 1.0, Nx, Ny);
 
@@ -317,8 +321,8 @@ EigenSolving::ComputingAdiabatic(){
             }
 
   PyAdiabatic = Eigen2ndarray( Adiabatic,
-                              { length, nMode, nMode },
-                              { nMode * nMode * sizeof(ScalarType), nMode * sizeof(ScalarType), sizeof(ScalarType) } ) ;
+                              { ITRLength-1, sMode, sMode },
+                              { sMode * sMode * sizeof(ScalarType), sMode * sizeof(ScalarType), sizeof(ScalarType) } ) ;
 
   return PyAdiabatic;
 
@@ -335,11 +339,11 @@ EigenSolving::GetSlice(size_t slice){
   (*Values)  = (-1.0 * FullEigenValues[slice] ).cwiseSqrt() / ITRPtr[slice];
 
   PyFullEigenVectors = Eigen2ndarray( Vectors,
-                                      { nMode, Nx, Ny },
+                                      { sMode, Nx, Ny },
                                       { size * sizeof(ScalarType), Ny * sizeof(ScalarType), sizeof(ScalarType) } ) ;
 
   PyFullEigenValues = Eigen2ndarray( Values,
-                                    { nMode },
+                                    { sMode },
                                     { sizeof(ScalarType) } ) ;
 
 
@@ -359,7 +363,7 @@ EigenSolving::GetFields(){
   (*Values)  = FullEigenValues[slice];
 
   PyFullEigenVectors = Eigen2ndarray( Vectors,
-                                      { nMode, Ny, Nx },
+                                      { sMode, Ny, Nx },
                                       { size * sizeof(ScalarType), Nx * sizeof(ScalarType), sizeof(ScalarType) } ) ;
 
 
@@ -370,19 +374,19 @@ EigenSolving::GetFields(){
 ndarray
 EigenSolving::GetIndices(){
 
-  ndarray PyIndices(ITRLength * nMode);
+  ndarray PyIndices(ITRLength * sMode);
 
   ScalarType  *PyIndicesPtr = (ScalarType*) PyIndices.request().ptr,
               *ITRPtr       = (ScalarType*) ITRList.request().ptr;
 
   size_t iter = 0;
-  cout<<"DDDDDDDDDDDDd"<<kInit<<endl;
+
   for (size_t l=0; l<ITRLength; ++l)
-      for (size_t i=0; i<nMode; ++i){
+      for (size_t i=0; i<sMode; ++i){
           PyIndicesPtr[iter] = sqrt(-SortedEigenValues[l][i]) / (ITRPtr[l] * kInit);
           ++iter;}
 
-  PyIndices.resize({ITRLength,nMode});
+  PyIndices.resize({ITRLength, sMode});
   return PyIndices;
 }
 
