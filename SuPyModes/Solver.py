@@ -4,7 +4,7 @@ import numpy as np
 from SuPyModes.SuperMode             import SuperSet, ModeSlice
 from SuPyModes.includes.EigenSolver  import EigenSolving
 from SuPyModes.utils                 import Axes
-np.set_printoptions(precision=1, linewidth=350)
+
 logging.basicConfig(level=logging.INFO)
 
 Mlogger = logging.getLogger(__name__)
@@ -15,60 +15,52 @@ class SuPySolver(object):
     It solves the eigenvalues problems for a given geometry.
 
     """
-    def __init__(self, Coupler,  debug='INFO'):
+    def __init__(self, Coupler, Tolerance, MaxIter, nMode, sMode,  debug='INFO'):
         Mlogger.setLevel(getattr(logging, debug))
         self.Geometry     = Coupler
-
-
-
-    def GetModes(self,
-                  wavelength: float,
-                  Nstep:      int   = 2,
-                  Nsol:       int   = 5,
-                  ITRi:       float = 1.0,
-                  ITRf:       float = 0.1,
-                  Ysym:       int   = 0,
-                  Xsym:       int   = 0,
-                  tolerance:  float = 1e-30,
-                  error:      int   = 2,
-                  naming:     bool  = False,
-                  debug:      bool  = False):
-
+        self.Tolerance    = Tolerance
+        self.MaxIter      = MaxIter
+        self.nMode        = nMode
+        self.sMode        = sMode
 
         self.CppSolver = EigenSolving(Mesh      = self.Geometry.mesh,
                                       Gradient  = self.Geometry.Gradient().T.ravel(),
-                                      nMode     = Nsol+3,
-                                      sMode     = Nsol,
-                                      MaxIter   = 10000,
-                                      Tolerance = tolerance)
+                                      nMode     = self.nMode,
+                                      sMode     = self.sMode,
+                                      MaxIter   = self.MaxIter,
+                                      Tolerance = self.Tolerance)
+
+        self.CppSolver.dx     = self.Geometry.Axes.dx
+        self.CppSolver.dy     = self.Geometry.Axes.dy
+        self.CppSolver.ComputeLaplacian()
+
+
+    def GetModes(self,
+                 wavelength: float,
+                 Nstep:      int   = 2,
+                 ITRi:       float = 1.0,
+                 ITRf:       float = 0.1):
 
         self.CppSolver.Lambda = wavelength
 
         self.Geometry.Axes.wavelength = wavelength
 
-        self.CppSolver.dx     = self.Geometry.Axes.dx
-
-        self.CppSolver.dy     = self.Geometry.Axes.dy
-
-        self.Geometry.Axes.Symmetries = [Xsym, Ysym]
+        self.Geometry.Axes.Symmetries = [0, 0]
 
         self.Geometry.ITRList = np.linspace(ITRi, ITRf, Nstep)
 
-        self.Set = SuperSet(NSolutions = Nsol, Geometry = self.Geometry)
+        self.Set = SuperSet(NSolutions = self.sMode, Geometry = self.Geometry)
 
-        self.Solve(self.Geometry.ITRList, Nsol)
+        self.Solve(self.Geometry.ITRList, self.sMode)
 
         self.Set.CppSolver = self.CppSolver
 
         return self.Set
 
 
-
     def Solve(self, iteration_list: list, Nsol=1):
 
-        self.CppSolver.ComputeLaplacian()
-
-        self.CppSolver.LoopOverITR(ITR = iteration_list, ExtrapolationOrder = 3)
+        self.CppSolver.LoopOverITR(ITR = iteration_list, ExtrapolationOrder = 1)
 
         self.CppSolver.SortModesFields()
 
@@ -94,5 +86,40 @@ class SuPySolver(object):
     def GetCoupling(self):
         Coupling = self.CppSolver.ComputingCoupling()
 
+
+    @property
+    def TopSymmetry(self):
+        return self.CppSolver.TopSymmetry
+
+    @TopSymmetry.setter
+    def TopSymmetry(self, value):
+        self.CppSolver.TopSymmetry = value
+
+
+    @property
+    def BottomSymmetry(self):
+        return self.CppSolver.BottomSymmetry
+
+    @BottomSymmetry.setter
+    def BottomSymmetry(self, value):
+        self.CppSolver.BottomSymmetry = value
+
+
+    @property
+    def LeftSymmetry(self):
+        return self.CppSolver.LeftSymmetry
+
+    @LeftSymmetry.setter
+    def LeftSymmetry(self, value):
+        self.CppSolver.LeftSymmetry = value
+
+
+    @property
+    def RightSymmetry(self):
+        return self.CppSolver.RightSymmetry
+
+    @RightSymmetry.setter
+    def RightSymmetry(self, value):
+        self.CppSolver.RightSymmetry = value
 
 # ---

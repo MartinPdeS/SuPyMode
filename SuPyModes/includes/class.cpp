@@ -195,15 +195,16 @@ EigenSolving::ComputeDegenerateFactor(){
   else
       DegenerateFactor = 1;
 
-  if (abs(BottomSymmetry) == 1)
+  if (abs(LeftSymmetry) == 1)
       DegenerateFactor *= 2;
 
   if (abs(LeftSymmetry) == 1)
       DegenerateFactor *= 2;
 
-  if (abs(RightSymmetry) == 1)
+  if (abs(TopSymmetry) == 1)
       DegenerateFactor *= 2;
 }
+
 
 Cndarray
 EigenSolving::ComputingCoupling(){
@@ -391,6 +392,24 @@ EigenSolving::GetIndices(){
 }
 
 
+ndarray
+EigenSolving::GetBetas(){
+
+  ndarray PyIndices(ITRLength * sMode);
+
+  ScalarType  *PyIndicesPtr = (ScalarType*) PyIndices.request().ptr,
+              *ITRPtr       = (ScalarType*) ITRList.request().ptr;
+
+  size_t iter = 0;
+
+  for (size_t l=0; l<ITRLength; ++l)
+      for (size_t i=0; i<sMode; ++i){
+          PyIndicesPtr[iter] = sqrt(-SortedEigenValues[l][i]) / ITRPtr[l];
+          ++iter;}
+
+  PyIndices.resize({ITRLength, sMode});
+  return PyIndices;
+}
 
 
 
@@ -406,55 +425,6 @@ BaseLaplacian::LaplacianBoundary(){
           Laplacian.coeffRef(j+1,j) = 0.0;
   }
 }
-
-void
-BaseLaplacian::LaplacianXBoundary(){
-
-  int temp = Ny;
-  ScalarType dtemp = dy;
-
-  if (LeftSymmetry == 1)
-      for (size_t j=0; j<size-1; ++j)
-          if (j%temp == 0)
-              Laplacian.coeffRef(j,j+1) = 2.0 * SD2A2[0]/pow(dtemp,2);
-
-  if (LeftSymmetry == -1)
-      for (size_t j=0; j<size-1; ++j)
-          if (j%temp == 0)
-              Laplacian.coeffRef(j,j+1) = 0.0;
-
-  if (RightSymmetry == 1)
-      for (size_t j=1; j<size; ++j)
-          if (j%temp == temp-1)
-              Laplacian.coeffRef(j,j-1) = 2.0 * SD2A2[0]/pow(dtemp,2);
-
-
-  if (RightSymmetry == -1)
-      for (size_t j=1; j<size; ++j)
-          if (j%temp == temp-1)
-              Laplacian.coeffRef(j,j-1) = 0.0;
-
-}
-
-void
-BaseLaplacian::LaplacianYBoundary(){
-
-    if (BottomSymmetry == 1)
-        for(size_t j=0; j<Ny; ++j)
-          Laplacian.coeffRef(j,j+Ny) = 2.0 * SD2A2[0]/pow(dx,2);
-
-    if (BottomSymmetry == -1)
-        for(size_t j=0; j<Ny-1; ++j)
-            Laplacian.coeffRef(j,j+Ny) = 0.0;
-
-    if (TopSymmetry == 1)
-        for(size_t j=size-2*Ny; j<size-Ny; ++j)
-            Laplacian.coeffRef(j+Ny,j) = 2.0 * SD2A2[0]/pow(dx,2);
-
-    if (TopSymmetry == -1)
-        for(size_t j=size-2*Ny; j<size-Ny; ++j)
-            Laplacian.coeffRef(j+Ny,j) = 0.0;
-  }
 
 
 void
@@ -477,34 +447,67 @@ BaseLaplacian::Points3Laplacian(){
 
     LaplacianBoundary();
 
-    LaplacianXBoundary();
-
-    LaplacianYBoundary();
-
 }
 
 
 
 
-
-void BaseLaplacian::SetTopSymmetry(int value){
-  TopSymmetry = value;
-  LaplacianYBoundary();
-}
 
 void BaseLaplacian::SetBottomSymmetry(int value){
   BottomSymmetry = value;
-  LaplacianYBoundary();
-}
+  int temp = Ny;
+  ScalarType dtemp = dy;
 
-void BaseLaplacian::SetLeftSymmetry(int value){
-  LeftSymmetry = value;
-  LaplacianXBoundary();
+  if (value == 1)
+      for (size_t j=0; j<size-1; ++j)
+          if (j%temp == 0)
+              Laplacian.coeffRef(j,j+1) = 2.0 * SD2A2[0]/pow(dtemp,2);
+
+  if (value == -1)
+      for (size_t j=0; j<size-1; ++j)
+          if (j%temp == 0)
+              Laplacian.coeffRef(j,j+1) = 0.0;
 }
 
 void BaseLaplacian::SetRightSymmetry(int value){
   RightSymmetry = value;
-  LaplacianXBoundary();
+
+  if (value == 1)
+      for(size_t j=size-2*Ny; j<size-Ny; ++j)
+          Laplacian.coeffRef(j+Ny,j) = 2.0 * SD2A2[0]/pow(dx,2);
+
+  if (value == -1)
+      for(size_t j=size-2*Ny; j<size-Ny; ++j)
+          Laplacian.coeffRef(j+Ny,j) = 0.0;
+
+}
+
+void BaseLaplacian::SetLeftSymmetry(int value){
+  LeftSymmetry = value;
+  if (value == 1)
+      for(size_t j=0; j<Ny; ++j)
+        Laplacian.coeffRef(j,j+Ny) = 2.0 * SD2A2[0]/pow(dx,2);
+
+  if (value == -1)
+      for(size_t j=0; j<Ny-1; ++j)
+          Laplacian.coeffRef(j,j+Ny) = 0.0;
+}
+
+
+void BaseLaplacian::SetTopSymmetry(int value){
+  int temp = Ny;
+  ScalarType dtemp = dy;
+  TopSymmetry = value;
+  if (value == 1)
+      for (size_t j=1; j<size; ++j)
+          if (j%temp == temp-1)
+              Laplacian.coeffRef(j,j-1) = 2.0 * SD2A2[0]/pow(dtemp,2);
+
+
+  if (value == -1)
+      for (size_t j=1; j<size; ++j)
+          if (j%temp == temp-1)
+              Laplacian.coeffRef(j,j-1) = 0.0;
 }
 
 

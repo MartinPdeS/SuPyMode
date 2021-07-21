@@ -3,23 +3,23 @@
 import sys
 import numpy as np
 import logging
-from numpy           import pi, cos, sin, sqrt, abs, exp, array, ndarray
-from matplotlib.path import Path
-import matplotlib.pyplot as plt
-import matplotlib        as mpl
-import matplotlib.colors as colors
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-from itertools        import combinations
-from scipy.optimize   import minimize_scalar
-from shapely.geometry import Point, LineString, MultiPolygon, Polygon
+from numpy                       import pi, cos, sin, sqrt, abs, exp, array, ndarray
+from matplotlib.path             import Path
+import matplotlib.pyplot         as plt
+import matplotlib                as mpl
+import matplotlib.colors         as colors
+from mpl_toolkits.axes_grid1     import make_axes_locatable
+from itertools                   import combinations
+from scipy.optimize              import minimize_scalar
+from shapely.geometry            import Point, LineString, MultiPolygon, Polygon
 from shapely.geometry.collection import GeometryCollection
-from shapely.ops import cascaded_union
+from shapely.ops                 import cascaded_union
 
 
 """ package imports """
-from SuPyModes.Directories           import RootPath
-from SuPyModes.Special               import Intersection, gradientO4
-from SuPyModes.utils                 import *
+from SuPyModes.Directories       import RootPath
+from SuPyModes.Special           import Intersection, gradientO4
+from SuPyModes.utils             import *
 
 Mlogger = logging.getLogger(__name__)
 
@@ -30,6 +30,7 @@ class Gradient1:
     def evaluate(self, Xmesh, Ymesh):
         rho = np.sqrt( (Xmesh-self.center[0])**2 + (Ymesh-self.center[1])**2 )+10
         return 1/rho
+
 
 class Geometry(object):
     """ Class represent the refractive index (RI) geometrique profile which

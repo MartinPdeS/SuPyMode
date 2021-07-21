@@ -7,7 +7,6 @@ from mayavi                import mlab
 from SuPyModes.Config      import *
 from SuPyModes.utils       import RecomposeSymmetries, SortSuperSet, Enumerate
 from SuPyModes.BaseClass   import SetPlots, SetProperties
-from SuPyModes.Special     import ModeCoupling, ModeAdiabatic
 
 
 
@@ -56,32 +55,6 @@ class SuperMode(object):
     def GetAdiabatic(self, SuperMode):
         return self.Parent.AAdiabatic[:, self.number, SuperMode.number]
 
-
-
-    # def _GetCoupling(self, SuperMode):
-    #     C = []
-    #     for n, itr in enumerate(self.Geometry.ITRList[:-1]):
-    #         C.append( ModeCoupling(SuperMode0 = self,
-    #                                SuperMode1 = SuperMode,
-    #                                k          = self.Geometry.Axes.k,
-    #                                Profile    = self.Geometry.mesh,
-    #                                Gradient   = self.Geometry.Gradient(),
-    #                                iter       = n) )
-    #
-    #     return C
-    #
-    #
-    # def _GetAdiabatic(self, SuperMode):
-    #     A = []
-    #     for n, itr in enumerate(self.Geometry.ITRList[:-1]):
-    #         A.append( ModeAdiabatic(SuperMode0 = self,
-    #                                 SuperMode1 = SuperMode,
-    #                                 k          = self.Geometry.Axes.k,
-    #                                 Profile    = self.Geometry.mesh,
-    #                                 Gradient   = self.Geometry.Gradient(),
-    #                                 iter       = n) )
-    #
-    #     return A
 
     def PlotPropagation(self):
         image, _, _ = self.FullField(0)
@@ -163,8 +136,7 @@ class SuperSet(SetProperties, SetPlots):
         self._Beta         = None
         self.Geometry      = Geometry
         self._M            = None
-        self._CCoupling    = None
-        self._AAdiabatic    = None
+
         self.Init()
 
         self.combinations = tuple(combinations( np.arange(NSolutions), 2 ) )
@@ -175,24 +147,8 @@ class SuperSet(SetProperties, SetPlots):
         return self.CppSolver.ComputingCoupling()
 
 
-    @property
-    def CCoupling(self):
-        if self._CCoupling is None:
-            self._CCoupling = self.CppSolver.ComputingCoupling()
-            return self._CCoupling
-
-        else:
-            return self._CCoupling
 
 
-    @property
-    def AAdiabatic(self):
-        if self._AAdiabatic is None:
-            self._AAdiabatic = self.CppSolver.ComputingAdiabatic()
-            return self._AAdiabatic
-
-        else:
-            return self._AAdiabatic
 
 
     def Init(self):
@@ -220,11 +176,6 @@ class SuperSet(SetProperties, SetPlots):
     def Ordering(self):
         for iter, _ in Enumerate( self.Geometry.ITRList, msg='Sorting super modes... '):
             self.OrderingModes(iter)
-
-
-    def Debug(self):
-        for n, itr in enumerate( self.Geometry.ITR ):
-            self.Plot('Fields', iter=n)
 
 
     def __copy__(self):

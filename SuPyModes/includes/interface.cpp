@@ -57,8 +57,6 @@ PYBIND11_MODULE(EigenSolver, module) {
 
      .def("SortModesIndex", &EigenSolving::SortModesIndex)
 
-
-
      .def("ComputeLaplacian", &EigenSolving::ComputeLaplacian)
 
      .def("PringLaplacian", &EigenSolving::PringLaplacian)
@@ -66,6 +64,7 @@ PYBIND11_MODULE(EigenSolver, module) {
      .def("GetSlice", &EigenSolving::GetSlice, py::arg("slice")  = 0)
      .def("GetFields", &EigenSolving::GetFields)
      .def("GetIndices", &EigenSolving::GetIndices)
+     .def("GetIndices", &EigenSolving::GetBetas)
 
      .def_property("LeftSymmetry", &EigenSolving::GetLeftSymmetry, &EigenSolving::SetLeftSymmetry)
      .def_property("RightSymmetry", &EigenSolving::GetRightSymmetry, &EigenSolving::SetRightSymmetry)

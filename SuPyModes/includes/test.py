@@ -93,7 +93,6 @@ Geo = Geometry(Objects = [Clad, Core0, Core1],
                Nx      = Nx,
                Ny      = Ny)
 
-
 ITRList = np.linspace(1,0.9,10)
 
 A = EigenSolving(Geo.mesh, Geo.Gradient().T.ravel(), nMode+3, nMode, 10000, 1e-18)
@@ -107,7 +106,7 @@ A.Lambda          = 1.55*1.5
 A.ComputeLaplacian()
 A.TopSymmetry    = 0
 A.BottomSymmetry = 0
-A.LeftSymmetry   = 0
+A.LeftSymmetry   = 1
 A.RightSymmetry  = 0
 
 A.LoopOverITR(ITR = ITRList, ExtrapolationOrder = 3)

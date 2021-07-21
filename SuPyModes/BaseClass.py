@@ -1,13 +1,10 @@
 import os
-import logging
 import numpy                 as np
 import matplotlib.pyplot     as plt
 import matplotlib.gridspec   as gridspec
-import matplotlib.colors     as colors
 from numpy                   import min, max
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 from itertools               import combinations
-from progressbar             import ProgressBar
+
 
 from SuPyModes.Config        import *
 from SuPyModes.Directories   import *
@@ -19,9 +16,8 @@ class SetPlots(object):
     @prePlot
     def PlotIndex(self, nMax, fig):
         I = self.Index
-
         for i in range(nMax):
-            plt.plot(self.Geometry.ITRList, I[i], label=f'{i}')
+            plt.plot(self.Geometry.ITRList, I[:,i], label=f'{i}')
 
         return self.PlotKwarg['Index'], [min(I), max(I)]
 
@@ -32,7 +28,7 @@ class SetPlots(object):
         comb = tuple(combinations( np.arange(nMax), 2 ) )
 
         for n, (i,j) in enumerate( comb ):
-            plt.plot(self.Geometry.ITRList[1:-1], C[i,j,1:], label=f'{i} - {j}')
+            plt.plot(self.Geometry.ITRList[1:], C[:,i,j], label=f'{i} - {j}')
 
         return self.PlotKwarg['Coupling'], [min(C), max(C)]
 
@@ -43,7 +39,7 @@ class SetPlots(object):
         comb = tuple(combinations( np.arange(nMax), 2 ) )
 
         for n, (i,j) in enumerate( comb ):
-            plt.plot(self.Geometry.ITRList[1:-1], A[i,j,1:], label=f'{i} - {j}')
+            plt.plot(self.Geometry.ITRList[1:], A[:,i,j], label=f'{i} - {j}')
 
         return self.PlotKwarg['Adiabatic'], [min(A), max(A)]
 
@@ -118,112 +114,62 @@ class SetPlots(object):
 
 class SetProperties(object):
 
-
     @property
     def ITR(self):
         return self.Geometry.ITRList
 
 
     @property
-    def Index(self):
-        if self._Index is None:
-            return self.GetIndex()
-        else:
-            return self._Index
-
-
-    @property
-    def Beta(self):
-        if self._Beta is None:
-            return self.GetBeta()
-        else:
-            return self._Beta
-
-
-    @property
     def Coupling(self):
-        if not isinstance(self._Coupling, np.ndarray):
-            return self.GetCoupling()
+        if self._Coupling is None:
+            self._Coupling = self.CppSolver.ComputingCoupling()
+            return self._Coupling
+
         else:
             return self._Coupling
 
 
     @property
     def Adiabatic(self):
-        if not isinstance(self._Adiabatic, np.ndarray):
-            return self.GetAdiabatic()
+        if self._Adiabatic is None:
+            self._Adiabatic = self.CppSolver.ComputingAdiabatic()
+            return self._Adiabatic
+
         else:
             return self._Adiabatic
 
 
     @property
+    def Betas(self):
+        if self._Betas is None:
+            self._Betas = self.CppSolver.GetBetas()
+            return self._Betas
+
+        else:
+            return self._Betas
+
+
+    @property
+    def Index(self):
+        if self._Index is None:
+            self._Index = self.CppSolver.GetIndices()
+            return self._Index
+
+        else:
+            return self._Index
+
+
+    @property
     def M(self):
         if self._M is None:
-            self._M = self.Coupling[:,:]
+            self._M = self.Coupling
             for i in range(self._M.shape[2]):
-                self._M[:,:,i] += np.diag(self.Beta[:, i] )
+                self._M[i,:,:] += np.diag(self.Beta[i, :] )
 
             return self._M
 
         else:
             return self._M
-
-
-    def GetIndex(self):
-        Index = []
-
-        for i, Supermode in Enumerate( self.SuperModes, msg='Computing effective indices... ' ):
-            for j, iter in enumerate( Supermode.Slice ):
-                Index.append(iter.Index)
-
-        Index = np.asarray( Index ).reshape([i+1, j+1])
-
-        return Index
-
-
-    def GetBeta(self):
-        Beta = []
-
-        for i, Supermode in Enumerate( self.SuperModes, msg='Computing propagation constant... ' ):
-            for j, iter in enumerate( Supermode.Slice ):
-                Beta.append(iter.Beta)
-
-        Beta = np.asarray( Beta ).reshape([i+1, j+1])
-
-        return Beta
-
-
-    def GetCoupling(self):
-        C = []
-        for n, (i,j) in Enumerate( self.combinations, msg='Computing mode coupling... ' ):
-
-            C.append( self[i].GetCoupling(self[j]) )
-
-
-        tri = np.zeros( ( self.NSolutions, self.NSolutions, len(self.Geometry.ITRList)-1 ) )
-        tri[np.triu_indices(self.NSolutions, 1)] = C
-        tri[np.tril_indices(self.NSolutions, -1)] = C
-
-
-        self._Coupling = tri
-
-        return self._Coupling
-
-
-    def GetAdiabatic(self):
-        A = []
-        for n, (i,j) in Enumerate( self.combinations, msg='Computing adiabatic criterion... '):
-
-            A.append( self[i].GetAdiabatic(self[j]) )
-
-        tri = np.zeros( ( self.NSolutions, self.NSolutions, len(self.Geometry.ITRList)-1 ) )
-        tri[np.triu_indices(self.NSolutions, 1)]  = A
-        tri[np.tril_indices(self.NSolutions, -1)] = A
-
-        self._Adiabatic = tri
-
-        return self._Adiabatic
-
 
 
 

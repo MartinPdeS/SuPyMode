@@ -32,10 +32,6 @@ class BaseLaplacian{
 
     void LaplacianBoundary();
 
-    void LaplacianXBoundary();
-
-    void LaplacianYBoundary();
-
     MSparse Points5Laplacian();
 
     void Setdx(ScalarType value){ dx = value; }
@@ -113,6 +109,8 @@ class EigenSolving : public BaseLaplacian{
    ndarray GetFields();
 
    ndarray GetIndices();
+
+   ndarray GetBetas();
 
    Cndarray ComputingAdiabatic();
 
