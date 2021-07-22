@@ -36,10 +36,27 @@ class SuPySolver(object):
 
 
     def GetModes(self,
-                 wavelength: float,
-                 Nstep:      int   = 2,
-                 ITRi:       float = 1.0,
-                 ITRf:       float = 0.1):
+                 wavelength:     float,
+                 Nstep:          int   = 2,
+                 ITRi:           float = 1.0,
+                 ITRf:           float = 0.1,
+                 LeftSymmetry:   int   = 0,
+                 RightSymmetry:  int   = 0,
+                 TopSymmetry:    int   = 0,
+                 BottomSymmetry: int   = 0,
+                 Sorting:        str   = 'Fields'):
+
+        assert LeftSymmetry in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
+        assert RightSymmetry in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
+        assert TopSymmetry in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
+        assert BottomSymmetry in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
+
+        assert Sorting in ['Fields', 'Index'], "Sorting can only be done taking account of 'Fields' or 'Index'"
+
+        self.CppSolver.LeftSymmetry   = self.Geometry.Axes.LeftSymmetry    = LeftSymmetry
+        self.CppSolver.RightSymmetry  = self.Geometry.Axes.RightSymmetry   = RightSymmetry
+        self.CppSolver.TopSymmetry    = self.Geometry.Axes.TopSymmetry     = TopSymmetry
+        self.CppSolver.BottomSymmetry = self.Geometry.Axes.BottomSymmetry  = BottomSymmetry
 
         self.CppSolver.Lambda = wavelength
 
@@ -55,6 +72,12 @@ class SuPySolver(object):
 
         self.Set.CppSolver = self.CppSolver
 
+        if Sorting == 'Fields':
+            self.CppSolver.SortModesIndex()
+
+        elif Sorting == 'Index':
+            self.CppSolver.SortModesIndex()
+
         return self.Set
 
 
@@ -62,7 +85,7 @@ class SuPySolver(object):
 
         self.CppSolver.LoopOverITR(ITR = iteration_list, ExtrapolationOrder = 1)
 
-        self.CppSolver.SortModesFields()
+        self.CppSolver.SortModesIndex()
 
         for n, _ in enumerate(iteration_list):
             Fields, Betas = self.CppSolver.GetSlice(n)
@@ -85,6 +108,9 @@ class SuPySolver(object):
 
     def GetCoupling(self):
         Coupling = self.CppSolver.ComputingCoupling()
+
+
+
 
 
     @property

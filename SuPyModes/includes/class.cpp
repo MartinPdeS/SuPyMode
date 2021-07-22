@@ -172,19 +172,21 @@ EigenSolving::SortModesFields(){
 void
 EigenSolving::SortModesIndex(){
 
-  vector<MatrixType> TemporaryVec = FullEigenVectors;
+  SortedEigenVectors = FullEigenVectors;
 
-  vector<VectorType> TemporaryVal = FullEigenValues;
+  SortedEigenValues = FullEigenValues;
 
   for (size_t l=0; l<ITRLength; ++l){
       vector<size_t> sorted = sort_indexes( FullEigenValues[l] );
-          for (size_t i=0; i<nMode; ++i)
-              TemporaryVec[l].col(i) = FullEigenVectors[l].col(sorted[i]);
-      }
+          for (size_t i=0; i<nMode; ++i){
+              SortedEigenVectors[l].col(i) = FullEigenVectors[l].col(sorted[i]);
+              SortedEigenValues[l][i]        = FullEigenValues[l][ sorted[i] ];
+        }
+    }
 
-  FullEigenVectors = TemporaryVec;
+  FullEigenVectors = SortedEigenVectors;
 
-  FullEigenValues  = TemporaryVal;
+  FullEigenValues  = SortedEigenValues;
 }
 
 

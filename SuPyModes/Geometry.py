@@ -166,7 +166,7 @@ class Geometry(object):
 
         pcm = ax.pcolormesh(  xaxis,
                               yaxis,
-                              Field,
+                              np.abs(Field),
                               cmap    = plt.cm.coolwarm,
                               norm=colors.LogNorm(vmin=vmin, vmax=vmax),
                               shading='auto'
@@ -182,11 +182,9 @@ class Geometry(object):
 
         sm = plt.cm.ScalarMappable(cmap=plt.cm.coolwarm, norm=colors.LogNorm(vmin=vmin, vmax=vmax))
 
-        sm._A = []
-
         cbar = plt.colorbar(sm, ax=ax, cax=cax)
 
-        ax.contour(xaxis, yaxis, Field, levels=self.Indices, colors='k')
+        ax.contour(xaxis, yaxis, np.abs(Field), levels=self.Indices, colors='k')
 
         ax.set_title('Rasterized RI profil', fontsize=10)
 

@@ -5,7 +5,7 @@ from itertools             import combinations, combinations_with_replacement as
 from mayavi                import mlab
 
 from SuPyModes.Config      import *
-from SuPyModes.utils       import RecomposeSymmetries, SortSuperSet, Enumerate
+from SuPyModes.utils       import RecomposeSymmetries, Enumerate
 from SuPyModes.BaseClass   import SetPlots, SetProperties
 
 
@@ -36,24 +36,12 @@ class SuperMode(object):
         self.Slice[N] = val
 
 
-    @property
-    def DegenerateFactor(self):
-        Factor = 1
-
-        if self.Geometry.Axes.Symmetries[0] in [1,-1]: Factor *= 2
-
-        if self.Geometry.Axes.Symmetries[1] in [1,-1]: Factor *= 2
-
-        return Factor
-
-
     def GetCoupling(self, SuperMode):
-        return self.Parent.CCoupling[:, self.number, SuperMode.number]
-
+        return self.Parent.Coupling[:, self.number, SuperMode.number]
 
 
     def GetAdiabatic(self, SuperMode):
-        return self.Parent.AAdiabatic[:, self.number, SuperMode.number]
+        return self.Parent.Adiabatic[:, self.number, SuperMode.number]
 
 
     def PlotPropagation(self):
@@ -114,10 +102,9 @@ class SuperMode(object):
         for attr in self.__dict__:
 
             if attr in to_be_copied:
-
                 copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
+                
             else:
-
                 copy_.__dict__[attr] = self.__dict__[attr]
 
         return copy_
@@ -147,13 +134,9 @@ class SuperSet(SetProperties, SetPlots):
         return self.CppSolver.ComputingCoupling()
 
 
-
-
-
-
     def Init(self):
         for solution in range(self.NSolutions):
-            supermode = SuperMode(Name     = f"Mode {solution}", Geometry = self.Geometry, ParentSet=self)
+            supermode = SuperMode(Name = f"Mode {solution}", Geometry = self.Geometry, ParentSet=self)
             supermode.number = solution
             self.SuperModes.append(supermode)
 
@@ -164,18 +147,6 @@ class SuperSet(SetProperties, SetPlots):
 
     def __setitem__(self, N, val):
         self.SuperModes[N] = val
-
-
-    def SwapProperties(self, SuperMode0, SuperMode1, N):
-        S0, S1 = SuperMode0, SuperMode1
-
-        for p in PROPERTIES:
-            getattr(S0, p)[N] = getattr(S1, p)[N]
-
-
-    def Ordering(self):
-        for iter, _ in Enumerate( self.Geometry.ITRList, msg='Sorting super modes... '):
-            self.OrderingModes(iter)
 
 
     def __copy__(self):
@@ -191,10 +162,6 @@ class SuperSet(SetProperties, SetPlots):
                 copy_.__dict__[attr] = self.__dict__[attr]
 
         return copy_
-
-
-    def Sort(self, parameter='Fields'):
-        return SortSuperSet(self, parameter=parameter)
 
 
 
@@ -238,8 +205,7 @@ class ModeSlice(np.ndarray):
     def __plot__(self, ax, title=None):
         Field, xaxis, yaxis = RecomposeSymmetries(self, self.Axes)
 
-        #ax.pcolormesh(xaxis, yaxis, Field, shading='auto')
-        ax.pcolormesh(Field, shading='auto')
+        ax.pcolormesh(xaxis, yaxis, Field, shading='auto')
 
         ax.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
 

@@ -4,7 +4,7 @@ from numpy.linalg          import eig
 from scipy.sparse.linalg   import eigs as LA
 from scipy.sparse          import diags
 
-from SuPyModes.utils import CheckSymmetries, ToList
+from SuPyModes.utils import ToList
 
 def FieldOverlap(SuperMode0, SuperMode1, iter):
     return SuperMode0.Slice[iter-1] * SuperMode1.Slice[iter]

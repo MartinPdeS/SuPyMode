@@ -35,9 +35,14 @@ class Axes(object):
         self.dy  = np.abs( self.Y[0] - self.Y[1] )
 
         self._wavelength  = Meta['wavelength']
-        self._k          = 2 * np.pi / self._wavelength
+        self._k           = 2 * np.pi / self._wavelength
 
         self.dA  = self.dx * self.dy
+
+        self.LeftSymmetry   = None
+        self.RightSymmetry  = None
+        self.TopSymmetry    = None
+        self.BottomSymmetry = None
 
     @property
     def wavelength(self):
@@ -60,46 +65,45 @@ class Axes(object):
 
 def RecomposeSymmetries(Input, Axes):
 
-    return Input, Axes.X, Axes.Y
+    Xaxis = Axes.X
+    Yaxis = Axes.Y
 
-    if Axes.Symmetries[0] == 1:
-        Input = np.concatenate((Input[::-1,:],Input),axis=0)
+    if Axes.LeftSymmetry == 1:
+        Input = np.concatenate((Input[:,::-1], Input), axis=1)
+        Xaxis = np.concatenate( [Xaxis + Xaxis[0] - Xaxis[-1], Xaxis] )
 
-    if Axes.Symmetries[0] == -1:
-        Input = np.concatenate((-Input[::-1,:],Input),axis=0)
 
-    if Axes.Symmetries[1] == 1:
-        Input = np.concatenate((Input[:,::-1],Input),axis=1)
+    elif Axes.LeftSymmetry == -1:
+        Input = np.concatenate((-Input[:,::-1], Input), axis=1)
+        Xaxis = np.concatenate( [Xaxis + Xaxis[0] - Xaxis[-1], Xaxis] )
 
-    if Axes.Symmetries[1] == -1:
-        Input = np.concatenate((-Input[:,::-1],Input),axis=1)
 
-    if Axes.X is not None and Axes.Symmetries[0] != 0:
-        Xaxis = sorted( np.concatenate( (-Axes.X[::-1], Axes.X) ) )
-    else:
-        Xaxis = Axes.X
+    if Axes.RightSymmetry == 1:
+        Input = np.concatenate((Input, Input[:,::-1]), axis=1)
+        Xaxis = np.concatenate( [Xaxis, Xaxis - Xaxis[0] + Xaxis[-1]] )
 
-    if Axes.Y is not None and Axes.Symmetries[1] != 0:
-        Yaxis = sorted( np.concatenate( (-Axes.Y[::-1], Axes.Y) ) )
-    else:
-        Yaxis = Axes.Y
+    elif Axes.RightSymmetry == -1:
+        Input = np.concatenate((Input, -Input[:,::-1]), axis=1)
+        Xaxis = np.concatenate( [Xaxis, Xaxis - Xaxis[0] + Xaxis[-1]] )
+
+
+    if Axes.TopSymmetry == 1:
+        Input = np.concatenate((Input, Input[::-1,:]), axis=0)
+        Yaxis = np.concatenate( [Yaxis, Yaxis - Yaxis[0] + Yaxis[-1]] )
+
+    elif Axes.TopSymmetry == -1:
+        Input = np.concatenate((Input, -Input[::-1,:]), axis=0)
+        Yaxis = np.concatenate( [Yaxis, Yaxis - Yaxis[0] + Yaxis[-1]] )
+
+    if Axes.BottomSymmetry == 1:
+        Input = np.concatenate((Input[::-1,:], Input), axis=0)
+        Yaxis = np.concatenate( [Yaxis + Yaxis[0] - Yaxis[-1], Yaxis] )
+
+    elif Axes.BottomSymmetry == -1:
+        Input = np.concatenate((-Input[::-1,:], Input), axis=0)
+        Yaxis = np.concatenate( [Yaxis + Yaxis[0] - Yaxis[-1], Yaxis] )
 
     return Input, Xaxis, Yaxis
-
-
-def CheckSymmetries(SuperMode0, SuperMode1):
-    Sym0 = SuperMode0.Geometry.Axes.Symmetries
-    Sym1 = SuperMode1.Geometry.Axes.Symmetries
-
-    if Sym0[0] == 0 or Sym1[0] == 0: return True
-
-    if Sym0[1] == 0 or Sym1[1] == 0: return True
-
-    if Sym0[0] == - Sym1[0]: return False
-
-    if Sym0[1] == - Sym1[1]: return False
-
-    return True
 
 
 def GetBoundaries(Objects):
@@ -236,72 +240,6 @@ def MakeCircles(Points, Radi):
         C.append( Point(point).buffer(radius) )
 
     return C
-
-
-def VerifySorting(SuperSet, Plot=False):
-    for nm, mode in enumerate( SuperSet.SuperModes ):
-        for n, itr in enumerate( SuperSet.ITR[:-2] ):
-            O = mode.Field[n+1] ** mode.Field[n]
-            if O < 0.6:
-                logging.debug(f'Overlap mismatch at {n} \t Mode:{nm} \t ITR:{itr} \t Overlap:{O}')
-                SuperSet.Plot('Fields', iter=n)
-                SuperSet.Plot('Fields', iter=n+1)
-
-
-def SwapProperties(SuperMode0, SuperMode1, N):
-    S0, S1 = SuperMode0, SuperMode1
-
-    for p in PROPERTIES:
-        getattr(S0, p)[N] = getattr(S1, p)[N]
-
-
-def SortSuperSet(SuperSet, parameter):
-    if parameter == 'Fields':
-        return SortSuperSetFields(SuperSet)
-    elif parameter == 'Index':
-        return SortSuperSetIndex(SuperSet)
-
-
-def SortSuperSetIndex(SuperSet):
-    SuperSet1 = cp.deepcopy( SuperSet )
-
-    for n, itr in Enumerate( SuperSet.Geometry.ITRList, msg = 'Sorting modes...' ):
-
-        IndexSort = np.argsort(SuperSet.Index[:,n])[::-1]
-
-        for i, mode0 in enumerate( SuperSet.SuperModes ):
-            k = IndexSort[i]
-
-            if i != k:
-
-                SuperSet[i].Slice[n] = SuperSet1[0].Slice[n]
-
-
-    return SuperSet
-
-
-def SortSuperSetFields(SuperSet):
-    SuperSet1 = cp.deepcopy( SuperSet )
-
-
-    Overlap = np.zeros(len( SuperSet.Combinations ) )
-
-    for n, itr in Enumerate( SuperSet.Geometry.ITRList[:-1], msg = 'Sorting modes...' ):
-
-        for i, mode0 in enumerate( SuperSet.SuperModes ):
-
-            for j, mode1 in enumerate( SuperSet1.SuperModes ):
-                Overlap[j] = mode0.Slice[n].Overlap( mode1.Slice[n+1] )
-
-            if np.max(Overlap) < 0.5:
-                logging.debug(n, i,'New mode swapping is occuring...\n', Overlap, '\n\n\n')
-
-            k = np.argmax(Overlap)
-
-            if i != k:
-                SuperSet[i].Slice[n+1] = SuperSet1[k].Slice[n+1]
-
-    return SuperSet
 
 
 def prePlot(func):
