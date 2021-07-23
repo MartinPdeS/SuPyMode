@@ -3,6 +3,7 @@
 #include <pybind11/numpy.h>
 #include <eigen3/Eigen/Eigenvalues>
 #include <eigen3/Eigen/Sparse>
+#include <eigen3/Eigen/Core>
 #include "/home/martth/temporary/gnuplot-iostream/gnuplot-iostream.h"
 #include <Spectra/GenEigsRealShiftSolver.h>
 #include <Spectra/MatOp/SparseGenRealShiftSolve.h>
@@ -26,7 +27,7 @@ typedef py::buffer_info                        info;
 typedef SparseMatrix<ScalarType, ColMajor>     MSparse;
 typedef vector<ScalarType>                     Vecf1D;
 typedef vector<vector<ScalarType>>             Vecf2D;
-
+typedef Eigen::Triplet<ScalarType> T;
 
 #include "utils.cpp"
 #include "class.cpp"
@@ -58,8 +59,6 @@ PYBIND11_MODULE(EigenSolver, module) {
      .def("SortModesIndex", &EigenSolving::SortModesIndex)
 
      .def("ComputeLaplacian", &EigenSolving::ComputeLaplacian)
-
-     .def("PringLaplacian", &EigenSolving::PringLaplacian)
 
      .def("GetSlice", &EigenSolving::GetSlice, py::arg("slice")  = 0)
      .def("GetFields", &EigenSolving::GetFields)

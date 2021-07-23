@@ -3,31 +3,31 @@ from SuPyModes.Solver            import SuPySolver
 from SuPyModes.sellmeier         import Fused_silica
 import time
 
-Clad = Circle(Radi =  62.5, Position = (0,0), Index = Fused_silica(1.0))
+Clad = Circle(Radi =  62.5, Position = (0,0), Index = Fused_silica(1.55))
 
-Core0 = Circle( Position=Clad.C[0], Radi = 4.2, Index = Fused_silica(1.0)+0.005 )
+Core0 = Circle( Position=Clad.C[0], Radi = 4.2, Index = Fused_silica(1.55)+0.005 )
 
 Geo = Geometry(Objects = [Clad, Core0],
                Xbound  = [-70, 70],
                Ybound  = [-70, 70],
-               Nx      = 80,
-               Ny      = 80)
+               Nx      = 150,
+               Ny      = 150)
 
 #Geo.Plot()
 
-Sol = SuPySolver(Coupler=Geo)
+Sol = SuPySolver(Coupler     = Geo,
+                 Tolerance   = 1e-8,
+                 MaxIter     = 10000,
+                 nMode       = 8,
+                 sMode       = 6)
 
 
 start = time.time()
 
 
-SuperModes = Sol.GetModes(wavelength = 1.0,
-                          Nstep      = 10,
-                          Nsol       = 10,
-                          debug      = False,
-                          ITRf       = 0.9,
-                          Xsym       = 0,
-                          Ysym       = 0 )
+SuperModes = Sol.GetModes(wavelength = 1.55,
+                          Nstep      = 2,
+                          ITRf       = 0.9)
 
 end = time.time()
 print('compute time:', end - start)

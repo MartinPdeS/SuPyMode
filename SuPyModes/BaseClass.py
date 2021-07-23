@@ -4,7 +4,12 @@ import matplotlib.pyplot     as plt
 import matplotlib.gridspec   as gridspec
 from numpy                   import min, max
 from itertools               import combinations
-
+from cycler                  import cycler
+plt.rc('lines', linewidth=2)
+plt.rc('axes', prop_cycle=(
+                           cycler('linestyle', ['-', '--', ':', '-.']) *
+                           cycler('color', ['r', 'g', 'b', 'y', 'k'])
+                           ))
 
 from SuPyModes.Config        import *
 from SuPyModes.Directories   import *
@@ -37,7 +42,6 @@ class SetPlots(object):
     def PlotAdiabatic(self, nMax, fig):
         A = self.Adiabatic
         comb = tuple(combinations( np.arange(nMax), 2 ) )
-
         for n, (i,j) in enumerate( comb ):
             plt.plot(self.Geometry.ITRList[1:], A[:,i,j], label=f'{i} - {j}')
 
@@ -103,7 +107,7 @@ class SetPlots(object):
         self.PlotKwarg = BasePlotKwarg
 
 
-    def SaveFig(self, Input, Directory, iter=0, nMax=None, dpi=200, PlotKwarg=None):
+    def SaveFig(self, Input, Directory, iter=0, nMax=None, dpi=100, PlotKwarg=None):
         figures = self.GenFigures(Input, iter, nMax, PlotKwarg)
 
         dir = os.path.join(ZeroPath, Directory) + '.pdf'

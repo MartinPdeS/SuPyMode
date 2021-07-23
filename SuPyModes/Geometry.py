@@ -14,7 +14,7 @@ from scipy.optimize              import minimize_scalar
 from shapely.geometry            import Point, LineString, MultiPolygon, Polygon
 from shapely.geometry.collection import GeometryCollection
 from shapely.ops                 import cascaded_union
-
+from shapely                     import affinity
 
 """ package imports """
 from SuPyModes.Directories       import RootPath
@@ -70,7 +70,11 @@ class Geometry(object):
                                 'Nx'        : Nx,
                                 'Ny'        : Ny } )
 
-        self.CreateMesh()
+
+    def Rotate(self, angle):
+
+        for object in self.Objects:
+            object.Object = affinity.rotate(object.Object, 28, (0,0))
 
 
     def rasterize_polygone(self, polygone):
@@ -87,8 +91,6 @@ class Geometry(object):
             The rasterized object.
 
         """
-
-
 
         obj_ext = Path(list( polygone.Object.exterior.coords))
 
@@ -123,10 +125,6 @@ class Geometry(object):
         if polygone.Gradient:
             grad = polygone.Gradient(center=(0,0))
             Grad = grad.evaluate(self.X, self.Y)
-            print(polygone.Index)
-            polygone.Index *= Grad * 30*2
-            print(polygone.Index)
-
 
 
         self.mesh *= (-1 * polygone.raster + 1)
@@ -157,6 +155,8 @@ class Geometry(object):
 
 
     def __plot__(self, ax):
+
+        self.CreateMesh()
 
         Field, xaxis, yaxis = RecomposeSymmetries(self.mesh.T, self.Axes)
 

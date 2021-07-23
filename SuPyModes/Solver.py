@@ -18,6 +18,7 @@ class SuPySolver(object):
     def __init__(self, Coupler, Tolerance, MaxIter, nMode, sMode,  debug='INFO'):
         Mlogger.setLevel(getattr(logging, debug))
         self.Geometry     = Coupler
+        self.Geometry.CreateMesh()
         self.Tolerance    = Tolerance
         self.MaxIter      = MaxIter
         self.nMode        = nMode
@@ -73,7 +74,7 @@ class SuPySolver(object):
         self.Set.CppSolver = self.CppSolver
 
         if Sorting == 'Fields':
-            self.CppSolver.SortModesIndex()
+            self.CppSolver.SortModesFields()
 
         elif Sorting == 'Index':
             self.CppSolver.SortModesIndex()

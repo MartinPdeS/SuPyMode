@@ -45,8 +45,7 @@ class EigenSolving : public BaseLaplacian{
     size_t             nMode, sMode, MaxIter, Nx, Ny, size, DegenerateFactor, ITRLength;
     ScalarType         Tolerance, dx, dy, k, kInit, kDual, lambda, lambdaInit, MaxIndex;
     ScalarType        *MeshPtr, *ITRPtr;
-    ndarray            Mesh, ITRList, PyOverlap, PyIndices, PyFullEigenVectors, PyFullEigenValues, PyAdiabatic;
-    Cndarray           PyCoupling;
+    ndarray            Mesh, ITRList, PyOverlap, PyIndices, PyFullEigenVectors, PyFullEigenValues;
     MSparse            Laplacian, EigenMatrix, Identity;
     vector<MatrixType> FullEigenVectors, SortedEigenVectors;
     vector<VectorType> FullEigenValues, SortedEigenValues;
@@ -86,7 +85,7 @@ class EigenSolving : public BaseLaplacian{
 
    void ComputeDegenerateFactor();
 
-   void Setlambda(ScalarType value){ this->lambda = value; this->k = 2.0 * PI / lambda; }
+   void Setlambda(ScalarType value){ this->lambda = value; this->k = 2.0 * PI / lambda;}
 
    ScalarType Getdx(){ return dx; }
 
@@ -104,7 +103,7 @@ class EigenSolving : public BaseLaplacian{
 
    ndarray ComputingOverlap();
 
-   Cndarray ComputingCoupling();
+   ndarray ComputingCoupling();
 
    ndarray GetFields();
 
@@ -112,15 +111,13 @@ class EigenSolving : public BaseLaplacian{
 
    ndarray GetBetas();
 
-   Cndarray ComputingAdiabatic();
+   ndarray ComputingAdiabatic();
 
    void SortModesFields();
 
    void SortModesIndex();
 
    void ComputeLaplacian();
-
-   void PringLaplacian();
 
    vector<VectorType> ComputeBetas();
 };

@@ -2,7 +2,7 @@
 #include "Extrapolate.hpp"
 
 std::complex<ScalarType> J(0.0, 1.0);
-
+using Eigen::internal::BandMatrix;
 
 MSparse
 EigenSolving::ComputeMatrix(){
@@ -43,14 +43,6 @@ EigenSolving::ComputeEigen(ScalarType alpha){
     }
 
 
-void EigenSolving::PringLaplacian(){
-
-  ComputeLaplacian();
-
-  cout<<BaseLaplacian::Laplacian<<endl;
-}
-
-
 void
 EigenSolving::ComputeLaplacian(){
 
@@ -85,15 +77,15 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
   for (size_t i=0; i<ITRLength; ++i){
 
-    //bar.update(1/ITRLength); bar.print();
-
     ScalarType lambdaDual = lambdaInit / ITRPtr[i];
 
     kDual = 2.0 * PI / lambdaDual;
 
+    //bar.update(1/ITRLength); bar.print();
+
     tie(EigenVectors, EigenValues) = ComputeEigen(alpha);
 
-    cout<<"Iteration: "<<i<<endl;
+    cout<<"Iteration: "<<i<<"   ITR:  "<<ITRPtr[i]<<endl;
 
     FullEigenVectors[i] = EigenVectors;
 
@@ -208,7 +200,7 @@ EigenSolving::ComputeDegenerateFactor(){
 }
 
 
-Cndarray
+ndarray
 EigenSolving::ComputingCoupling(){
 
   vector<VectorType> Betas = ComputeBetas();
@@ -225,7 +217,7 @@ EigenSolving::ComputingCoupling(){
 
   ScalarType delta, beta0, beta1;
 
-  ComplexScalarType C, I=0.0;
+  ComplexScalarType C, I;
 
   for (size_t l=1; l<ITRLength; ++l)
       for (size_t i=0; i<sMode; ++i)
@@ -247,18 +239,16 @@ EigenSolving::ComputingCoupling(){
 
               I       = temp.sum();//Trapz(temp, 1.0, Nx, Ny);
 
-              C      *= (ScalarType) DegenerateFactor * I;
+              C      *= (ComplexScalarType) DegenerateFactor * I;
 
               (*Coupling)[iter] = abs(C);
 
-              ++iter;
+             ++iter;
             }
 
-  PyCoupling = Eigen2ndarray( Coupling,
-                              { ITRLength-1, sMode, sMode },
-                              { sMode * sMode * sizeof(ScalarType), sMode * sizeof(ScalarType), sizeof(ScalarType) } ) ;
-
-  return PyCoupling;
+  return Eigen2ndarray( Coupling,
+                        { ITRLength-1, sMode, sMode },
+                        { sMode * sMode * sizeof(ScalarType), sMode * sizeof(ScalarType), sizeof(ScalarType) } ) ;
 
 }
 
@@ -275,7 +265,7 @@ EigenSolving::ComputeMaxIndex(){
 
 
 
-Cndarray
+ndarray
 EigenSolving::ComputingAdiabatic(){
 
   vector<VectorType> Betas = ComputeBetas();
@@ -316,18 +306,16 @@ EigenSolving::ComputingAdiabatic(){
 
               I       = temp.sum();//Trapz(temp, 1.0, Nx, Ny);
 
-              C      *= (ScalarType) DegenerateFactor * I;
+              C      *= (ComplexScalarType) DegenerateFactor * I;
 
               (*Adiabatic)[iter] = abs( delta/C ) ;
 
               ++iter;
             }
 
-  PyAdiabatic = Eigen2ndarray( Adiabatic,
-                              { ITRLength-1, sMode, sMode },
-                              { sMode * sMode * sizeof(ScalarType), sMode * sizeof(ScalarType), sizeof(ScalarType) } ) ;
-
-  return PyAdiabatic;
+  return Eigen2ndarray( Adiabatic,
+                        { ITRLength-1, sMode, sMode },
+                        { sMode * sMode * sizeof(ScalarType), sMode * sizeof(ScalarType), sizeof(ScalarType) } ) ;
 
 }
 
@@ -432,22 +420,31 @@ BaseLaplacian::LaplacianBoundary(){
 void
 BaseLaplacian::Points3Laplacian(){
 
+    ScalarType D0  = SD2A2[1]*( 1./pow(dx,2) + 1./pow(dy,2) );
+    ScalarType D1  = SD2A2[0]/pow(dy,2);
+    ScalarType D2  = SD2A2[0]/pow(dx,2);
+
+    MSparse Identity(size,size); Identity.setIdentity();
     Laplacian = MSparse(size,size);
 
-    for(size_t j=0; j<size; ++j)
-        Laplacian.insert(j,j) = SD2A2[1]*( 1./pow(dx,2) + 1./pow(dy,2) );
-
-    for(size_t j=0; j<size-1; ++j){
-        Laplacian.insert(j+1,j) = SD2A2[0]/pow(dy,2);
-        Laplacian.insert(j,j+1) = SD2A2[2]/pow(dy,2);
+    vector<T> Tri(size);
+    for (size_t i=0; i<size-1; ++i){
+        Tri.push_back(T(i+1, i, D1));
+        Tri.push_back(T(i, i+1, D1));
         }
 
-    for(size_t j=0; j<size-Ny; ++j){
-          Laplacian.insert(j+Ny,j) = SD2A2[0]/pow(dx,2);
-          Laplacian.insert(j,j+Ny) = SD2A2[2]/pow(dx,2);
-          }
+    for (size_t i=0; i<size-Ny; ++i){
+        Tri.push_back(T(i+Ny, i, D2));
+        Tri.push_back(T(i, i+Ny, D2));
+        }
+
+    Laplacian.setFromTriplets(Tri.begin(), Tri.end());
+
+    Laplacian += Identity * D0;
 
     LaplacianBoundary();
+
+
 
 }
 
@@ -457,17 +454,15 @@ BaseLaplacian::Points3Laplacian(){
 
 void BaseLaplacian::SetBottomSymmetry(int value){
   BottomSymmetry = value;
-  int temp = Ny;
-  ScalarType dtemp = dy;
 
   if (value == 1)
       for (size_t j=0; j<size-1; ++j)
-          if (j%temp == 0)
-              Laplacian.coeffRef(j,j+1) = 2.0 * SD2A2[0]/pow(dtemp,2);
+          if (j%Ny == 0)
+              Laplacian.coeffRef(j,j+1) = 2.0 * SD2A2[0]/pow(dy,2);
 
   if (value == -1)
       for (size_t j=0; j<size-1; ++j)
-          if (j%temp == 0)
+          if (j%Ny == 0)
               Laplacian.coeffRef(j,j+1) = 0.0;
 }
 
@@ -497,18 +492,16 @@ void BaseLaplacian::SetLeftSymmetry(int value){
 
 
 void BaseLaplacian::SetTopSymmetry(int value){
-  int temp = Ny;
-  ScalarType dtemp = dy;
   TopSymmetry = value;
   if (value == 1)
       for (size_t j=1; j<size; ++j)
-          if (j%temp == temp-1)
-              Laplacian.coeffRef(j,j-1) = 2.0 * SD2A2[0]/pow(dtemp,2);
+          if (j%Ny == Ny-1)
+              Laplacian.coeffRef(j,j-1) = 2.0 * SD2A2[0]/pow(dy,2);
 
 
   if (value == -1)
       for (size_t j=1; j<size; ++j)
-          if (j%temp == temp-1)
+          if (j%Ny == Ny-1)
               Laplacian.coeffRef(j,j-1) = 0.0;
 }
 
