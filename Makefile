@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named Install
+
+# Build rule for target.
+Install: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 Install
+.PHONY : Install
+
+# fast build rule for target.
+Install/fast:
+	$(MAKE) -f CMakeFiles/Install.dir/build.make CMakeFiles/Install.dir/build
+.PHONY : Install/fast
+
+#=============================================================================
 # Target rules for targets named EigenSolver
 
 # Build rule for target.
@@ -148,6 +161,19 @@ installDependence: cmake_check_build_system
 installDependence/fast:
 	$(MAKE) -f CMakeFiles/installDependence.dir/build.make CMakeFiles/installDependence.dir/build
 .PHONY : installDependence/fast
+
+#=============================================================================
+# Target rules for targets named Clean
+
+# Build rule for target.
+Clean: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 Clean
+.PHONY : Clean
+
+# fast build rule for target.
+Clean/fast:
+	$(MAKE) -f CMakeFiles/Clean.dir/build.make CMakeFiles/Clean.dir/build
+.PHONY : Clean/fast
 
 #=============================================================================
 # Target rules for targets named installSpectra
@@ -209,10 +235,12 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... Install"
 	@echo "... EigenSolver"
 	@echo "... rebuild_cache"
 	@echo "... Upload"
 	@echo "... installDependence"
+	@echo "... Clean"
 	@echo "... installSpectra"
 	@echo "... installEigen"
 	@echo "... SuPyModes/includes/interface.o"

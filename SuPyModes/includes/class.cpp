@@ -224,9 +224,9 @@ EigenSolving::ComputingCoupling(){
           for (size_t j=0; j<sMode; ++j){
               if (j == i){ (*Coupling)[iter] = 0.0; ++iter; continue; }
 
-              vec0    = FullEigenVectors[l-1].col(i);
+              vec0    = FullEigenVectors[l].col(i);
               vec1    = FullEigenVectors[l].col(j);
-              beta0   = Betas[l-1][i];
+              beta0   = Betas[l][i];
               beta1   = Betas[l][j];
 
               overlap = vec0.cwiseProduct( vec1 );
@@ -292,9 +292,9 @@ EigenSolving::ComputingAdiabatic(){
               if (j == i){(*Adiabatic)[iter] = 0.0; ++iter; continue;}
 
 
-              vec0    = FullEigenVectors[l-1].col(i);
+              vec0    = FullEigenVectors[l].col(i);
               vec1    = FullEigenVectors[l].col(j);
-              beta0   = Betas[l-1][i];
+              beta0   = Betas[l][i];
               beta1   = Betas[l][j];
               delta   = beta0 - beta1;
 

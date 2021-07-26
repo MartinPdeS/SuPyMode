@@ -86,8 +86,6 @@ class SuPySolver(object):
 
         self.CppSolver.LoopOverITR(ITR = iteration_list, ExtrapolationOrder = 1)
 
-        self.CppSolver.SortModesIndex()
-
         for n, _ in enumerate(iteration_list):
             Fields, Betas = self.CppSolver.GetSlice(n)
 

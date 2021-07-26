@@ -57,3 +57,18 @@ pybind11_add_module(EigenSolver MODULE SuPyModes/includes/interface.cpp )
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(EigenSolver PRIVATE Eigen3::Eigen ${Boost_LIBRARIES})
 target_compile_options (EigenSolver PRIVATE -std=c++17 -Ofast)
+
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/Clean.txt
+  COMMAND rm -rf CMakeCache.txt cmake_install.cmake CMakeFiles
+  COMMENT "Cleaning cmake output files")
+
+add_custom_target(Clean ALL DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Clean.txt)
+
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/Install.txt
+  COMMAND make installDependence && make EigenSolver && make Clean
+  COMMENT "Installing package")
+
+add_custom_target(Install ALL DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Install.txt)
