@@ -70,8 +70,6 @@ def RecomposeSymmetries(Input, Symmetries, Axes):
     Xaxis = Axes.Y
     Yaxis = Axes.X
 
-    #return Input, Xaxis, Yaxis
-
     if Symmetries['BottomSymmetry'] == 1:
         Input = np.concatenate((Input[:,::-1], Input), axis=1)
         Xaxis = np.concatenate( [Xaxis + Xaxis[0] - Xaxis[-1], Xaxis] )

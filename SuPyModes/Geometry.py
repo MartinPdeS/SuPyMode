@@ -169,15 +169,10 @@ class Geometry(object):
 
         Field, xaxis, yaxis = RecomposeSymmetries(self.mesh, self.Symmetries, self.Axes)
 
-        #vmin = sorted(self.Indices)[1]/1.1
-
-        #vmax = sorted(self.Indices)[-1]
-
         pcm = ax.pcolormesh(  xaxis,
                               yaxis,
                               np.abs(Field),
                               cmap    = plt.cm.coolwarm,
-                              #norm=colors.LogNorm(vmin=vmin, vmax=vmax),
                               shading='auto'
                               )
 
@@ -188,16 +183,6 @@ class Geometry(object):
         divider = make_axes_locatable(ax)
 
         cax = divider.append_axes("right", size="5%", pad=0.05)
-
-        #sm = plt.cm.ScalarMappable(cmap=plt.cm.coolwarm, norm=colors.LogNorm(vmin=vmin, vmax=vmax))
-
-        #cbar = plt.colorbar(sm, ax=ax, cax=cax)
-
-        # ax.contour(#xaxis,
-        #            #yaxis,
-        #            np.abs(Field),
-        #            levels=self.Indices,
-        #            colors='k')
 
         ax.set_title('Rasterized RI profil', fontsize=10)
 

@@ -1,1 +1,0 @@
-/usr/bin/gfortran   -O3 -DNDEBUG -O3 CMakeFiles/sblat2.dir/sblat2.f.o  -o sblat2  -Wl,-rpath,/home/martth/Desktop/git_project/SuPyModes/temp/extern/eigen/blas ../libeigen_blas.so 

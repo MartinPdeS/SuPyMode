@@ -117,7 +117,7 @@ class SuperSet(SetProperties, SetPlots):
     def __init__(self, NSolutions, Geometry, debug='INFO'):
         Mlogger.setLevel(getattr(logging, debug))
 
-        self.NSolutions    = NSolutions
+        self.sMode    = NSolutions
         self.SuperModes    = []
         self._Coupling     = None
         self._Adiabatic    = None
@@ -137,7 +137,7 @@ class SuperSet(SetProperties, SetPlots):
 
 
     def Init(self):
-        for solution in range(self.NSolutions):
+        for solution in range(self.sMode):
             supermode = SuperMode(Name = f"Mode {solution}", Geometry = self.Geometry, ParentSet=self)
             supermode.number = solution
             self.SuperModes.append(supermode)
@@ -154,7 +154,7 @@ class SuperSet(SetProperties, SetPlots):
     def __copy__(self):
         to_be_copied = ['SuperModes']
 
-        copy_ = SuperSet(self.NSolutions, self.Geometry)
+        copy_ = SuperSet(self.sMode, self.Geometry)
 
         for attr in self.__dict__:
 
@@ -220,7 +220,7 @@ class SetSlice(np.ndarray):
 
 
         ax.pcolormesh(yaxis, xaxis, Field.T, shading='auto', cmap='bwr')
-        #ax.pcolormesh(Field.T, shading='auto', cmap='bwr')
+
         ax.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
 
         ax.set_xlabel(r'X-distance [$\mu$m]', fontsize=6)
