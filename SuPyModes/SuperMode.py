@@ -73,7 +73,9 @@ class SuperMode(object):
     def FullField(self, iter):
         Field      = self.Slice[iter]
 
-        Field, xAxes, yAxes = RecomposeSymmetries(Input = Field, Axes = self.Geometry.Axes)
+        Field, xAxes, yAxes = RecomposeSymmetries(Input      = Field,
+                                                  Symmetries = ParentSet.Symmetries,
+                                                  Axes       = ParentSet.Geometry.Axes)
 
         return Field, xAxes, yAxes
 
@@ -103,7 +105,7 @@ class SuperMode(object):
 
             if attr in to_be_copied:
                 copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
-                
+
             else:
                 copy_.__dict__[attr] = self.__dict__[attr]
 
@@ -167,19 +169,20 @@ class SuperSet(SetProperties, SetPlots):
 
 
 
-class ModeSlice(np.ndarray):
+class SetSlice(np.ndarray):
 
-    def __new__(cls, Field, Axes, Index, Beta):
-        self      = Field.view(ModeSlice)
+    def __new__(cls, Field, Index, Beta, ParentSet):
+        self      = Field.view(SetSlice)
 
         return self
 
 
-    def __init__(self, Field, Axes, Index, Beta):
+    def __init__(self, Field, Index, Beta, ParentSet):
+
         self.Field  = Field
-        self.Axes   = Axes
         self.Index  = Index
         self.Beta   = Beta
+        self.ParentSet = ParentSet
 
 
     def __array_finalize__(self, viewed):
@@ -187,7 +190,7 @@ class ModeSlice(np.ndarray):
 
 
     def __pow__(self, other):
-        assert isinstance(other, ModeSlice), f'Cannot multiply supermodes with {other.__class__}'
+        assert isinstance(other, SetSlice), f'Cannot multiply supermodes with {other.__class__}'
 
         overlap = np.abs( np.sum( np.multiply( self, other ) ) )
 
@@ -195,18 +198,29 @@ class ModeSlice(np.ndarray):
 
 
     def Overlap(self, other):
-        assert isinstance(other, ModeSlice), f'Cannot multiply supermodes with {other.__class__}'
+        assert isinstance(other, SetSlice), f'Cannot multiply supermodes with {other.__class__}'
 
         overlap = np.abs( np.sum( np.multiply( self, other ) ) )
 
         return float( overlap )
 
 
+    @property
+    def Norm(self):
+        return (self.Field**2).sum()
+
+    def Normalize(self):
+        norm = self.Norm
+        self.Field *= 1 / norm
+        self.Index *= 1 / norm
+
     def __plot__(self, ax, title=None):
-        Field, xaxis, yaxis = RecomposeSymmetries(self, self.Axes)
 
-        ax.pcolormesh(xaxis, yaxis, Field, shading='auto')
+        Field, xaxis, yaxis = RecomposeSymmetries(self.Field, self.ParentSet.Symmetries, self.ParentSet.Geometry.Axes)
 
+
+        ax.pcolormesh(yaxis, xaxis, Field.T, shading='auto', cmap='bwr')
+        #ax.pcolormesh(Field.T, shading='auto', cmap='bwr')
         ax.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
 
         ax.set_xlabel(r'X-distance [$\mu$m]', fontsize=6)
@@ -219,7 +233,7 @@ class ModeSlice(np.ndarray):
     def __copy__(self):
         to_be_copied = ['Field', 'Index', 'Axes', 'Beta']
 
-        copy_ = ModeSlice(self, self.Axes, self.Index, self.Beta)
+        copy_ = SetSlice(self, self.Axes, self.Index, self.Beta)
 
         for attr in self.__dict__:
             if attr in to_be_copied:
@@ -236,7 +250,7 @@ class ModeSlice(np.ndarray):
     def __deepcopy__(self, memo):
         to_be_copied = ['Field', 'Index', 'Axes', 'Beta']
 
-        copy_ = ModeSlice(self, self.Axes, self.Index, self.Beta)
+        copy_ = SetSlice(self, self.Axes, self.Index, self.Beta)
 
         for attr in self.__dict__:
             if attr in to_be_copied:

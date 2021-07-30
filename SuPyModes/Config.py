@@ -7,6 +7,13 @@ BasePlotKwarg = {'Index'    : { 'name' : r'Effective Index',
                                 'xscale' : 'lin',
                                 'yscale' : 'lin'},
 
+                 'Beta'    : { 'name' : r'Beta',
+                                         'unit' : r' [1]',
+                                         'xlim'  : None,
+                                         'ylim'  : None,
+                                         'xscale' : 'lin',
+                                         'yscale' : 'lin'},
+
                  'Coupling' : { 'name' : r'Coupling',
                                 'unit' : r' ',
                                 'xlim'  : None,

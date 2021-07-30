@@ -29,7 +29,9 @@ class Axes(object):
         self.X = np.linspace(*Meta['Xbound'], Meta['Nx'])
         self.Y = np.linspace(*Meta['Ybound'], Meta['Ny'])
 
-        self.YY, self.XX = np.meshgrid(self.X, self.Y)
+        self.XX, self.YY = np.meshgrid(self.X, self.Y)
+
+        self.rho = np.sqrt(self.XX**2 + self.YY**2)
 
         self.dx  = np.abs( self.X[0] - self.X[1] )
         self.dy  = np.abs( self.Y[0] - self.Y[1] )
@@ -63,43 +65,46 @@ class Axes(object):
         self._wavelength = 2*np.pi / value
 
 
-def RecomposeSymmetries(Input, Axes):
+def RecomposeSymmetries(Input, Symmetries, Axes):
 
-    Xaxis = Axes.X
-    Yaxis = Axes.Y
+    Xaxis = Axes.Y
+    Yaxis = Axes.X
 
-    if Axes.LeftSymmetry == 1:
+    #return Input, Xaxis, Yaxis
+
+    if Symmetries['BottomSymmetry'] == 1:
         Input = np.concatenate((Input[:,::-1], Input), axis=1)
         Xaxis = np.concatenate( [Xaxis + Xaxis[0] - Xaxis[-1], Xaxis] )
 
 
-    elif Axes.LeftSymmetry == -1:
+    elif Symmetries['BottomSymmetry'] == -1:
         Input = np.concatenate((-Input[:,::-1], Input), axis=1)
         Xaxis = np.concatenate( [Xaxis + Xaxis[0] - Xaxis[-1], Xaxis] )
 
 
-    if Axes.RightSymmetry == 1:
+    if Symmetries['TopSymmetry'] == 1:
         Input = np.concatenate((Input, Input[:,::-1]), axis=1)
         Xaxis = np.concatenate( [Xaxis, Xaxis - Xaxis[0] + Xaxis[-1]] )
 
-    elif Axes.RightSymmetry == -1:
+    elif Symmetries['TopSymmetry'] == -1:
         Input = np.concatenate((Input, -Input[:,::-1]), axis=1)
         Xaxis = np.concatenate( [Xaxis, Xaxis - Xaxis[0] + Xaxis[-1]] )
 
 
-    if Axes.TopSymmetry == 1:
+    if Symmetries['RightSymmetry'] == 1:
         Input = np.concatenate((Input, Input[::-1,:]), axis=0)
         Yaxis = np.concatenate( [Yaxis, Yaxis - Yaxis[0] + Yaxis[-1]] )
 
-    elif Axes.TopSymmetry == -1:
+    elif Symmetries['RightSymmetry'] == -1:
         Input = np.concatenate((Input, -Input[::-1,:]), axis=0)
         Yaxis = np.concatenate( [Yaxis, Yaxis - Yaxis[0] + Yaxis[-1]] )
 
-    if Axes.BottomSymmetry == 1:
+
+    if Symmetries['LeftSymmetry'] == 1:
         Input = np.concatenate((Input[::-1,:], Input), axis=0)
         Yaxis = np.concatenate( [Yaxis + Yaxis[0] - Yaxis[-1], Yaxis] )
 
-    elif Axes.BottomSymmetry == -1:
+    elif Symmetries['LeftSymmetry'] == -1:
         Input = np.concatenate((-Input[::-1,:], Input), axis=0)
         Yaxis = np.concatenate( [Yaxis + Yaxis[0] - Yaxis[-1], Yaxis] )
 

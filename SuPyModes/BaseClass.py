@@ -26,6 +26,14 @@ class SetPlots(object):
 
         return self.PlotKwarg['Index'], [min(I), max(I)]
 
+    @prePlot
+    def PlotBeta(self, nMax, fig):
+        B = self.Beta
+        for i in range(nMax):
+            plt.plot(self.Geometry.ITRList, B[:,i], label=f'{i}')
+
+        return self.PlotKwarg['Beta'], [min(B), max(B)]
+
 
     @prePlot
     def PlotCoupling(self, nMax, fig):
@@ -82,6 +90,8 @@ class SetPlots(object):
         figures = []
 
         if Input & set( ['All', 'Index'] ):     figures.append( self.PlotIndex(nMax=nMax) )
+
+        if Input & set( ['All', 'Beta'] ):     figures.append( self.PlotBeta(nMax=nMax) )
 
         if Input & set( ['All', 'Coupling'] ):  figures.append( self.PlotCoupling(nMax=nMax) )
 
@@ -144,13 +154,13 @@ class SetProperties(object):
 
 
     @property
-    def Betas(self):
-        if self._Betas is None:
-            self._Betas = self.CppSolver.GetBetas()
-            return self._Betas
+    def Beta(self):
+        if self._Beta is None:
+            self._Beta = self.CppSolver.GetBetas()
+            return self._Beta
 
         else:
-            return self._Betas
+            return self._Beta
 
 
     @property

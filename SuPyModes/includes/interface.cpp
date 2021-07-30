@@ -16,7 +16,7 @@ namespace py = pybind11;
 
 #define PI 3.1415926535897932384626f
 
-typedef float                                  ScalarType;
+typedef double                                 ScalarType;
 typedef std::complex<ScalarType>               ComplexScalarType;
 typedef Matrix<ScalarType, Dynamic, 1>         VectorType;
 typedef Matrix<ComplexScalarType, Dynamic, 1>  ComplexVectorType;
@@ -29,6 +29,8 @@ typedef vector<ScalarType>                     Vecf1D;
 typedef vector<vector<ScalarType>>             Vecf2D;
 typedef Eigen::Triplet<ScalarType> T;
 
+ScalarType inf = numeric_limits<ScalarType>::infinity();
+
 #include "utils.cpp"
 #include "class.cpp"
 
@@ -38,13 +40,15 @@ PYBIND11_MODULE(EigenSolver, module) {
     module.doc() = "A c++ solver for EigenPairs";
 
     py::class_<EigenSolving>(module, "EigenSolving")
-    .def(py::init<ndarray&, ndarray&, size_t, size_t, size_t, ScalarType>(),
+    .def(py::init<ndarray&, ndarray&, size_t, size_t, size_t, ScalarType, bool>(),
          py::arg("Mesh"),
          py::arg("Gradient"),
          py::arg("nMode"),
          py::arg("sMode"),
          py::arg("MaxIter"),
-         py::arg("Tolerance"))
+         py::arg("Tolerance"),
+         py::arg("Debug")=false
+       )
 
      .def("LoopOverITR", &EigenSolving::LoopOverITR, py::arg("ITR"), py::arg("ExtrapolationOrder"))
 
@@ -58,12 +62,12 @@ PYBIND11_MODULE(EigenSolver, module) {
 
      .def("SortModesIndex", &EigenSolving::SortModesIndex)
 
-     .def("ComputeLaplacian", &EigenSolving::ComputeLaplacian)
+     .def("ComputeLaplacian", &EigenSolving::ComputeLaplacian, py::arg("Order"))
 
-     .def("GetSlice", &EigenSolving::GetSlice, py::arg("slice")  = 0)
-     .def("GetFields", &EigenSolving::GetFields)
+     .def("GetSlice", &EigenSolving::GetSlice, py::arg("slice"))
+     .def("GetFields", &EigenSolving::GetFields, py::arg("slice"))
      .def("GetIndices", &EigenSolving::GetIndices)
-     .def("GetIndices", &EigenSolving::GetBetas)
+     .def("GetBetas", &EigenSolving::GetBetas)
 
      .def_property("LeftSymmetry", &EigenSolving::GetLeftSymmetry, &EigenSolving::SetLeftSymmetry)
      .def_property("RightSymmetry", &EigenSolving::GetRightSymmetry, &EigenSolving::SetRightSymmetry)

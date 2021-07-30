@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 
-from SuPyModes.SuperMode             import SuperSet, ModeSlice
+from SuPyModes.SuperMode             import SuperSet, SetSlice
 from SuPyModes.includes.EigenSolver  import EigenSolving
 from SuPyModes.utils                 import Axes
 
@@ -15,7 +15,7 @@ class SuPySolver(object):
     It solves the eigenvalues problems for a given geometry.
 
     """
-    def __init__(self, Coupler, Tolerance, MaxIter, nMode, sMode,  debug='INFO'):
+    def __init__(self, Coupler, Tolerance, MaxIter, nMode, sMode, Error=2,  debug='INFO', Debug=False):
         Mlogger.setLevel(getattr(logging, debug))
         self.Geometry     = Coupler
         self.Geometry.CreateMesh()
@@ -23,17 +23,20 @@ class SuPySolver(object):
         self.MaxIter      = MaxIter
         self.nMode        = nMode
         self.sMode        = sMode
+        self.Error        = Error
+        self.Debug        = Debug
 
         self.CppSolver = EigenSolving(Mesh      = self.Geometry.mesh,
-                                      Gradient  = self.Geometry.Gradient().T.ravel(),
+                                      Gradient  = self.Geometry.Gradient().ravel(),
                                       nMode     = self.nMode,
                                       sMode     = self.sMode,
                                       MaxIter   = self.MaxIter,
-                                      Tolerance = self.Tolerance)
+                                      Tolerance = self.Tolerance,
+                                      Debug     = self.Debug)
 
         self.CppSolver.dx     = self.Geometry.Axes.dx
         self.CppSolver.dy     = self.Geometry.Axes.dy
-        self.CppSolver.ComputeLaplacian()
+        self.CppSolver.ComputeLaplacian(self.Error)
 
 
     def GetModes(self,
@@ -45,64 +48,71 @@ class SuPySolver(object):
                  RightSymmetry:  int   = 0,
                  TopSymmetry:    int   = 0,
                  BottomSymmetry: int   = 0,
-                 Sorting:        str   = 'Fields'):
+                 Sorting:        str   = 'Field'):
 
-        assert LeftSymmetry in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
-        assert RightSymmetry in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
-        assert TopSymmetry in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
-        assert BottomSymmetry in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
+        Symmetries = [LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry]
+        for Sym in Symmetries:
+            assert Sym in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
 
-        assert Sorting in ['Fields', 'Index'], "Sorting can only be done taking account of 'Fields' or 'Index'"
+        assert Sorting in ['Field', 'Index'], "Sorting can only be done taking account of 'Fields' or 'Index'"
 
-        self.CppSolver.LeftSymmetry   = self.Geometry.Axes.LeftSymmetry    = LeftSymmetry
-        self.CppSolver.RightSymmetry  = self.Geometry.Axes.RightSymmetry   = RightSymmetry
-        self.CppSolver.TopSymmetry    = self.Geometry.Axes.TopSymmetry     = TopSymmetry
-        self.CppSolver.BottomSymmetry = self.Geometry.Axes.BottomSymmetry  = BottomSymmetry
+        Set = SuperSet(NSolutions = self.sMode, Geometry = self.Geometry)
+
+        self.CppSolver.LeftSymmetry   = LeftSymmetry
+        self.CppSolver.RightSymmetry  = RightSymmetry
+        self.CppSolver.TopSymmetry    = TopSymmetry
+        self.CppSolver.BottomSymmetry = BottomSymmetry
+
+        self.Geometry.Symmetries = {'LeftSymmetry'   : LeftSymmetry,
+                                    'RightSymmetry'  : RightSymmetry,
+                                    'TopSymmetry'    : TopSymmetry,
+                                    'BottomSymmetry' : BottomSymmetry}
 
         self.CppSolver.Lambda = wavelength
 
         self.Geometry.Axes.wavelength = wavelength
 
-        self.Geometry.Axes.Symmetries = [0, 0]
-
         self.Geometry.ITRList = np.linspace(ITRi, ITRf, Nstep)
 
-        self.Set = SuperSet(NSolutions = self.sMode, Geometry = self.Geometry)
+        self.CppSolver.LoopOverITR(ITR = self.Geometry.ITRList, ExtrapolationOrder = 3)
 
-        self.Solve(self.Geometry.ITRList, self.sMode)
+        return self.MakeSet(self.Geometry.ITRList, self.sMode, Sorting)
 
-        self.Set.CppSolver = self.CppSolver
 
-        if Sorting == 'Fields':
+
+    def SortModes(self, Sorting):
+        if Sorting == 'Field':
             self.CppSolver.SortModesFields()
 
         elif Sorting == 'Index':
             self.CppSolver.SortModesIndex()
 
-        return self.Set
 
+    def MakeSet(self, iteration_list: list, Nsol=1, Sorting='Field'):
 
-    def Solve(self, iteration_list: list, Nsol=1):
+        Set = SuperSet(NSolutions = self.sMode, Geometry = self.Geometry)
 
-        self.CppSolver.LoopOverITR(ITR = iteration_list, ExtrapolationOrder = 1)
+        Set.Symmetries =  self.Geometry.Symmetries
+
+        Set.CppSolver = self.CppSolver
+
+        self.SortModes(Sorting)
 
         for n, _ in enumerate(iteration_list):
+
             Fields, Betas = self.CppSolver.GetSlice(n)
 
-            self.AppendSlice(Betas[:Nsol], Fields[:Nsol,...].swapaxes(1,2))
+            Fields.swapaxes(1,2)
 
+            for solution in range(Nsol):
 
+                index = Betas[solution] / self.Geometry.Axes.k
 
+                Field = Fields[solution,...]
 
-    def AppendSlice(self, betas, vectors):
+                Set[solution].Slice.append(SetSlice( Field, Index=index, Beta=Betas[solution], ParentSet=Set ))
 
-        for solution in range(len(betas)):
-
-            index = betas[solution] / self.Geometry.Axes.k
-
-            Field = vectors[solution,...]
-
-            self.Set[solution].Slice.append(ModeSlice( Field, self.Geometry.Axes, Index=index, Beta=betas[solution] ),)
+        return Set
 
 
     def GetCoupling(self):

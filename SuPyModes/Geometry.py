@@ -15,6 +15,7 @@ from shapely.geometry            import Point, LineString, MultiPolygon, Polygon
 from shapely.geometry.collection import GeometryCollection
 from shapely.ops                 import cascaded_union
 from shapely                     import affinity
+from scipy.ndimage.filters import gaussian_filter
 
 """ package imports """
 from SuPyModes.Directories       import RootPath
@@ -65,10 +66,16 @@ class Geometry(object):
         self.Length     = Length
 
         self.Axes  = Axes( {'wavelength': 1.0,
-                                'Xbound'    : Xbound,
-                                'Ybound'    : Ybound,
-                                'Nx'        : Nx,
-                                'Ny'        : Ny } )
+                            'Xbound'    : Xbound,
+                            'Ybound'    : Ybound,
+                            'Nx'        : Nx,
+                            'Ny'        : Ny } )
+
+        self.Symmetries = {'LeftSymmetry'   : 0,
+                           'RightSymmetry'  : 0,
+                           'TopSymmetry'    : 0,
+                           'BottomSymmetry' : 0}
+
 
 
     def Rotate(self, angle):
@@ -153,22 +160,24 @@ class Geometry(object):
             self.rasterize_polygone(object)
             self.add_object_to_mesh(object)
 
+        self.mesh = gaussian_filter(self.mesh, sigma=0.8)
+
 
     def __plot__(self, ax):
 
         self.CreateMesh()
 
-        Field, xaxis, yaxis = RecomposeSymmetries(self.mesh.T, self.Axes)
+        Field, xaxis, yaxis = RecomposeSymmetries(self.mesh, self.Symmetries, self.Axes)
 
-        vmin = sorted(self.Indices)[1]/1.1
+        #vmin = sorted(self.Indices)[1]/1.1
 
-        vmax = sorted(self.Indices)[-1]
+        #vmax = sorted(self.Indices)[-1]
 
         pcm = ax.pcolormesh(  xaxis,
                               yaxis,
                               np.abs(Field),
                               cmap    = plt.cm.coolwarm,
-                              norm=colors.LogNorm(vmin=vmin, vmax=vmax),
+                              #norm=colors.LogNorm(vmin=vmin, vmax=vmax),
                               shading='auto'
                               )
 
@@ -180,11 +189,15 @@ class Geometry(object):
 
         cax = divider.append_axes("right", size="5%", pad=0.05)
 
-        sm = plt.cm.ScalarMappable(cmap=plt.cm.coolwarm, norm=colors.LogNorm(vmin=vmin, vmax=vmax))
+        #sm = plt.cm.ScalarMappable(cmap=plt.cm.coolwarm, norm=colors.LogNorm(vmin=vmin, vmax=vmax))
 
-        cbar = plt.colorbar(sm, ax=ax, cax=cax)
+        #cbar = plt.colorbar(sm, ax=ax, cax=cax)
 
-        ax.contour(xaxis, yaxis, np.abs(Field), levels=self.Indices, colors='k')
+        # ax.contour(#xaxis,
+        #            #yaxis,
+        #            np.abs(Field),
+        #            levels=self.Indices,
+        #            colors='k')
 
         ax.set_title('Rasterized RI profil', fontsize=10)
 
@@ -208,19 +221,29 @@ class Geometry(object):
 
 
     def _Gradient(self):
-        Ygrad, Xgrad = gradientO4( self.mesh.T**2,
-                                   self.Axes.dx,
-                                   self.Axes.dy )
 
-        return Xgrad * self.Axes.XX.T + Ygrad * self.Axes.YY.T
+        Ygrad, Xgrad = gradientO4( self.mesh.T**2, self.Axes.dx, self.Axes.dy )
+
+        return Ygrad, Xgrad
 
 
-    def Gradient(self):
-        Ygrad, Xgrad = gradientO4( self.mesh**2,
-                                   self.Axes.dx,
-                                   self.Axes.dy )
+    def Gradient(self, Plot=False):
 
-        return Xgrad * self.Axes.XX.T + Ygrad * self.Axes.YY.T
+        #blurred = gaussian_filter(self.mesh, sigma=0)
+
+        Ygrad, Xgrad = gradientO4( self.mesh.T**2, self.Axes.dx, self.Axes.dy )
+
+        gradient = (Xgrad * self.Axes.XX + Ygrad * self.Axes.YY)
+
+        if Plot:
+            plt.figure()
+            plt.pcolormesh(gradient)
+            plt.colorbar()
+            plt.show()
+
+        return gradient
+
+
 
 
 

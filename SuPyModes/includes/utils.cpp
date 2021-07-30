@@ -35,6 +35,8 @@ ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1){
           Overlap = abs( Matrix0.col(i).transpose() * Matrix1.col(j) );
           if (Overlap > BestOverlap) {Indices[i] = j; BestOverlap = Overlap;}
           }
+        if (BestOverlap<0.95)
+            cout<<"Bad mode correspondence: "<< BestOverlap << "   You should consider makes more ITR steps"<<endl;
       }
 
   return Indices;
@@ -115,6 +117,8 @@ Eigen2Cndarray(ComplexVectorType *Eigen3Vector, vector<size_t> dimension, vector
 
 ScalarType
 Trapz(VectorType& Vector, ScalarType dx, size_t Nx, size_t Ny){
+
+  return Vector.sum();
   ScalarType sum  = 0;
   ScalarType val;
 

@@ -1,12 +1,13 @@
 class BaseLaplacian{
   public:
-    int      TopSymmetry, BottomSymmetry, LeftSymmetry, RightSymmetry;
-    ndarray  Mesh;
-    size_t   Nx, Ny, size;
-    ScalarType    dx, dy;
-    MSparse  Laplacian;
+    int        TopSymmetry, BottomSymmetry, LeftSymmetry, RightSymmetry, Order;
+    ndarray    Mesh;
+    size_t     Nx, Ny, size;
+    ScalarType dx, dy, D0xy, D1y, D2y, D1x, D2x;
+    MSparse    Laplacian;
+    bool       Debug;
 
-    BaseLaplacian(ndarray&  Mesh){
+    BaseLaplacian(ndarray&  Mesh, bool Debug){
       this->Nx                = Mesh.request().shape[0];
       this->Ny                = Mesh.request().shape[1];
       this->size              = Mesh.request().size;
@@ -14,6 +15,7 @@ class BaseLaplacian{
       this->BottomSymmetry   = 0;
       this->LeftSymmetry     = 0;
       this->RightSymmetry    = 0;
+      this->Debug            = Debug;
     }
 
     void SetLeftSymmetry(int value);
@@ -28,9 +30,22 @@ class BaseLaplacian{
     void SetBottomSymmetry(int value);
     int GetBottomSymmetry(){ return BottomSymmetry; }
 
+
+    void SetLeftSymmetry3(int value);
+    void SetRightSymmetry3(int value);
+    void SetTopSymmetry3(int value);
+    void SetBottomSymmetry3(int value);
+
+    void SetLeftSymmetry5(int value);
+    void SetRightSymmetry5(int value);
+    void SetTopSymmetry5(int value);
+    void SetBottomSymmetry5(int value);
+
     void Points3Laplacian();
 
-    void LaplacianBoundary();
+    void Laplacian3Boundary();
+
+    void Laplacian5Boundary();
 
     MSparse Points5Laplacian();
 
@@ -42,21 +57,23 @@ class BaseLaplacian{
 
 class EigenSolving : public BaseLaplacian{
   public:
-    size_t             nMode, sMode, MaxIter, Nx, Ny, size, DegenerateFactor, ITRLength;
+    size_t             nMode, sMode, MaxIter, Nx, Ny, size, DegenerateFactor, ITRLength, Order;
     ScalarType         Tolerance, dx, dy, k, kInit, kDual, lambda, lambdaInit, MaxIndex;
     ScalarType        *MeshPtr, *ITRPtr;
-    ndarray            Mesh, ITRList, PyOverlap, PyIndices, PyFullEigenVectors, PyFullEigenValues;
+    ndarray            Mesh, ITRList, PyOverlap, PyIndices;
     MSparse            Laplacian, EigenMatrix, Identity;
     vector<MatrixType> FullEigenVectors, SortedEigenVectors;
     vector<VectorType> FullEigenValues, SortedEigenValues;
     VectorType         MeshGradient;
+    bool               Debug;
 
-  EigenSolving(ndarray& Mesh,
-               ndarray& PyMeshGradient,
-               size_t   nMode,
-               size_t   sMode,
-               size_t   MaxIter,
-               ScalarType    Tolerance): BaseLaplacian(Mesh){
+  EigenSolving(ndarray&   Mesh,
+               ndarray&   PyMeshGradient,
+               size_t     nMode,
+               size_t     sMode,
+               size_t     MaxIter,
+               ScalarType Tolerance,
+               bool       Debug): BaseLaplacian(Mesh, Debug){
                  this->nMode             = nMode;
                  this->sMode             = sMode;
                  this->MaxIter           = MaxIter;
@@ -69,7 +86,7 @@ class EigenSolving : public BaseLaplacian{
                  this->dy                = 100./this->Ny;
                  this->MeshPtr           = (ScalarType*) Mesh.request().ptr;
                  this->DegenerateFactor  = 1.0;
-
+                 this->Debug             = Debug;
                  ScalarType *adress           = (ScalarType*) PyMeshGradient.request().ptr;
 
                  Map<VectorType> MeshGradient( adress, size );
@@ -105,7 +122,7 @@ class EigenSolving : public BaseLaplacian{
 
    ndarray ComputingCoupling();
 
-   ndarray GetFields();
+   ndarray GetFields(size_t slice);
 
    ndarray GetIndices();
 
@@ -117,7 +134,9 @@ class EigenSolving : public BaseLaplacian{
 
    void SortModesIndex();
 
-   void ComputeLaplacian();
+   void ComputeLaplacian(size_t order);
 
    vector<VectorType> ComputeBetas();
+
+   vector<size_t> ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1, size_t idx);
 };

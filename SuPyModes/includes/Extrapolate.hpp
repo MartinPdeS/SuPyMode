@@ -58,22 +58,27 @@ ExtrapolateNext(size_t order, vector<VectorType>& y, ndarray& X, size_t NextIter
 
   switch(order){
 
-    case 1: return ExtrapolateNext1(y, X, NextIter);
+    case 1:
+         return ExtrapolateNext1(y, X, NextIter);
+         break;
 
     case 2:
          if ( NextIter < 2 )      { return ExtrapolateNext1(y, X, NextIter); }
          else                     { return ExtrapolateNext2(y, X, NextIter); }
+         break;
 
     case 3:
          if      ( NextIter < 2 ) { return ExtrapolateNext1(y, X, NextIter); }
          else if ( NextIter < 3 ) { return ExtrapolateNext2(y, X, NextIter); }
          else                     { return ExtrapolateNext3(y, X, NextIter); }
+         break;
 
     case 4:
          if      ( NextIter < 2 ) { return ExtrapolateNext1(y, X, NextIter); }
          else if ( NextIter < 3 ) { return ExtrapolateNext2(y, X, NextIter); }
          else if ( NextIter < 4 ) { return ExtrapolateNext3(y, X, NextIter); }
          else                     { return ExtrapolateNext4(y, X, NextIter); }
+         break;
 
   };
   return 1;

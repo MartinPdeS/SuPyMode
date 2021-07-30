@@ -9,13 +9,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Python 3 COMPONENTS Interpreter Development EXACT)
 
 add_subdirectory(extern/pybind11)
+#add_subdirectory(extern/eigen)
+#add_subdirectory(extern/spectra)
 
-find_package (Eigen3 REQUIRED NO_MODULE)
+find_package(Eigen3 REQUIRED NO_MODULE)
 include_directories(${EIGEN_INCLUDE_DIR})
 
-FIND_PACKAGE(PythonInterp 3 REQUIRED)
+find_package(PythonInterp 3 REQUIRED)
 
-INCLUDE_DIRECTORIES( ${PYTHON_INCLUDE_DIRS} ${PYBIND11_INCLUDE_DIRS} )
+include_directories( ${PYTHON_INCLUDE_DIRS} ${PYBIND11_INCLUDE_DIRS} )
 
 
 add_custom_command(

@@ -46,14 +46,7 @@ def gradientO4(f, *varargs):
     """
     N = len(f.shape)  # number of dimensions
     n = len(varargs)
-    if n == 0:
-        dx = [1.0]*N
-    elif n == 1:
-        dx = [varargs[0]]*N
-    elif n == N:
-        dx = list(varargs)
-    else:
-        raise SyntaxError("invalid number of arguments")
+    dx = list(varargs)
 
     # use central differences on interior and first differences on endpoints
 

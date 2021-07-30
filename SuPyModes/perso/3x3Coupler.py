@@ -1,86 +1,51 @@
-from SuPyModes.Geometry          import Geometry, Circle, Fused3
+from SuPyModes.Geometry          import Geometry, Circle, Fused2
 from SuPyModes.Solver            import SuPySolver
 from SuPyModes.sellmeier         import Fused_silica
 
-from SuPyModes.perso.fibers import Fiber_DCF1300S_33, Fiber_DCF1300S_20, Fiber_SMF28, AAB_fluoride, BBA_fluoride, AAB_silica, BBA_silica
+from SuPyModes.perso.fibers import *
+import numpy as np
+import matplotlib.pyplot as plt
 
-AAB_fluoride.Plot()
-BBA_fluoride.Plot()
 
-Sol = SuPySolver(Coupler    = AAB_fluoride,
+
+
+"""
+FIGURE 2.5 SBB_____________________________________________________
+
+"""
+wavelength = 1.55/10
+k          = 2*np.pi/wavelength
+Nstep      = 1
+sMode      = 4
+IndexSilica = 2.0#Fused_silica(wavelength)
+Clad = Circle( Position = (0,0), Radi = 62.5, Index =  IndexSilica)
+Core0 = Circle( Position = (0,0), Radi = 4.1, Index = IndexSilica)
+
+
+
+SMF_silica = Geometry(Objects = [Clad, Core0],
+                       Xbound  = [-90, 0],
+                       Ybound  = [-90, 90],
+                       Nx      = 90,
+                       Ny      = 90)
+
+SMF_silica.Plot()
+
+Sol = SuPySolver(Coupler    = SMF_silica,
                  Tolerance  = 1e-20,
                  MaxIter    = 1000,
-                 nMode      = 7,
-                 sMode      = 5)
+                 nMode      = sMode+2,
+                 sMode      = sMode,
+                 Error      = 4)
 
-SuperModes = Sol.GetModes(wavelength = 1.55,
-                          Nstep      = 300,
-                          ITRi       = 1,
-                          ITRf       = 0.05)
+SuperModes = Sol.GetModes(wavelength    = wavelength,
+                          Nstep         = Nstep,
+                          ITRi          = 1,
+                          ITRf          = 0.05,
+                          RightSymmetry = 1,
+                          TopSymmetry   = 0,
+                          LeftSymmetry  = 0,
+                          BottomSymmetry= 0,
+                          Sorting       = 'Field')
 
-
-SuperModes.SaveFig(Directory  = 'BBA_fluoride',
-                   Input      = ['All'],
-                   nMax       = 5)
-
-
-
-
-
-Sol = SuPySolver(Coupler    = BBA_fluoride,
-                 Tolerance  = 1e-20,
-                 MaxIter    = 1000,
-                 nMode      = 7,
-                 sMode      = 5)
-
-SuperModes = Sol.GetModes(wavelength = 1.55,
-                          Nstep      = 300,
-                          ITRi       = 1,
-                          ITRf       = 0.05)
-
-
-SuperModes.SaveFig(Directory  = 'AAB_fluoride',
-                   Input      = ['All'],
-                   nMax       = 5)
-
-
-
-
-
-
-
-Sol = SuPySolver(Coupler    = AAB_silica,
-                 Tolerance  = 1e-20,
-                 MaxIter    = 1000,
-                 nMode      = 7,
-                 sMode      = 5)
-
-SuperModes = Sol.GetModes(wavelength = 1.55,
-                          Nstep      = 300,
-                          ITRi       = 1,
-                          ITRf       = 0.05)
-
-
-SuperModes.SaveFig(Directory  = 'BBA_silica',
-                   Input      = ['All'],
-                   nMax       = 5)
-
-
-
-
-
-Sol = SuPySolver(Coupler    = BBA_silica,
-                 Tolerance  = 1e-20,
-                 MaxIter    = 1000,
-                 nMode      = 7,
-                 sMode      = 5)
-
-SuperModes = Sol.GetModes(wavelength = 1.55,
-                          Nstep      = 300,
-                          ITRi       = 1,
-                          ITRf       = 0.05)
-
-
-SuperModes.SaveFig(Directory  = 'AAB_silica',
-                   Input      = ['All'],
-                   nMax       = 5)
+SuperModes.Plot(['Fields'])
