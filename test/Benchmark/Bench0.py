@@ -21,7 +21,10 @@ SMF28 = Geometry(Objects = [Clad, Core0],
                  Xbound  = [-90, 90],
                  Ybound  = [-90, 90],
                  Nx      = 120,
-                 Ny      = 120)
+                 Ny      = 120,
+                 GConv   = 1.0)
+
+SMF28.Plot()
 
 Sol = SuPySolver(Coupler    = SMF28,
                  Tolerance  = 1e-30,

@@ -281,7 +281,10 @@ EigenSolving::ComputingCoupling(){
 
               I       = Trapz(temp, 1.0, Nx, Ny);
 
-              C      *= (ComplexScalarType) DegenerateFactor * I;
+              //C      *= (ComplexScalarType) DegenerateFactor * I;
+
+              C      *=  I;
+
 
               (*Coupling)[iter] = abs(C);
 
@@ -352,7 +355,9 @@ EigenSolving::ComputingAdiabatic(){
 
               I       = Trapz(temp, 1.0, Nx, Ny);
 
-              C      *= (ComplexScalarType) DegenerateFactor * I;
+              //C      *= (ComplexScalarType) DegenerateFactor * I;
+
+              C      *=  I;
 
               (*Adiabatic)[iter] = abs( delta/C ) ;
 

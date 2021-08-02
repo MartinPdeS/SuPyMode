@@ -51,7 +51,7 @@ class Geometry(object):
         Number of point for Y dimensions discretization.
     """
 
-    def __init__(self, Objects, Xbound, Ybound, Nx, Ny, Length=None, debug='INFO'):
+    def __init__(self, Objects, Xbound, Ybound, Nx, Ny, Length=None, GConv=0, debug='INFO'):
 
         Mlogger.setLevel(getattr(logging, debug))
 
@@ -64,6 +64,8 @@ class Geometry(object):
         self.Shape      = [Nx, Ny]
 
         self.Length     = Length
+
+        self.GConv      = GConv
 
         self.Axes  = Axes( {'wavelength': 1.0,
                             'Xbound'    : Xbound,
@@ -160,7 +162,7 @@ class Geometry(object):
             self.rasterize_polygone(object)
             self.add_object_to_mesh(object)
 
-        self.mesh = gaussian_filter(self.mesh, sigma=0.8)
+        self.mesh = gaussian_filter(self.mesh, sigma=self.GConv)
 
 
     def __plot__(self, ax):
@@ -169,9 +171,9 @@ class Geometry(object):
 
         Field, xaxis, yaxis = RecomposeSymmetries(self.mesh, self.Symmetries, self.Axes)
 
-        pcm = ax.pcolormesh(  xaxis,
-                              yaxis,
-                              np.abs(Field),
+        pcm = ax.pcolormesh(  yaxis,
+                              xaxis,
+                              np.abs(Field).T,
                               cmap    = plt.cm.coolwarm,
                               shading='auto'
                               )
@@ -180,9 +182,9 @@ class Geometry(object):
 
         ax.set_xlabel(r'X-distance [$\mu$m]', fontsize=6)
 
-        divider = make_axes_locatable(ax)
+        #divider = make_axes_locatable(ax)
 
-        cax = divider.append_axes("right", size="5%", pad=0.05)
+        #cax = divider.append_axes("right", size="5%", pad=0.05)
 
         ax.set_title('Rasterized RI profil', fontsize=10)
 
@@ -226,7 +228,7 @@ class Geometry(object):
             plt.colorbar()
             plt.show()
 
-        return gradient
+        return gradient.T
 
 
 
