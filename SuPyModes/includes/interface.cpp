@@ -9,6 +9,8 @@
 #include <Spectra/MatOp/SparseGenRealShiftSolve.h>
 #include <vector>
 
+
+
 using namespace Eigen;
 using namespace std;
 using namespace Spectra;
@@ -51,6 +53,8 @@ PYBIND11_MODULE(EigenSolver, module) {
        )
 
      .def("LoopOverITR", &EigenSolving::LoopOverITR, py::arg("ITR"), py::arg("ExtrapolationOrder"))
+
+     .def("LoopOverITR_", &EigenSolving::LoopOverITR_, py::arg("ITR"), py::arg("ExtrapolationOrder"), py::arg("lol")=0)
 
      .def("ComputingOverlap", &EigenSolving::ComputingOverlap)
 

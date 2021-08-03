@@ -83,8 +83,6 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
   FullEigenValues = vector<VectorType>(ITRLength);
 
-  //pBar bar;
-
   ScalarType alpha = -pow( k * ComputeMaxIndex(), 2 );
 
   for (size_t i=0; i<ITRLength; ++i){
@@ -92,8 +90,6 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
     ScalarType lambdaDual = lambdaInit / ITRPtr[i];
 
     kDual = 2.0 * PI / lambdaDual;
-
-    //bar.update(1/ITRLength); bar.print();
 
     tie(EigenVectors, EigenValues) = ComputeEigen(alpha);
 
@@ -105,7 +101,74 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
     alpha = ExtrapolateNext(order, FullEigenValues, ITRList, i+1);
   }
-  //SortModesFields();
+}
+
+
+
+
+tuple<VectorType, ScalarType>
+EigenSolving::PSM(ConjugateGradient<MSparse>& solver, VectorType& X0){
+
+  VectorType Y0(size);
+
+  ScalarType ck, c0;
+
+  for (size_t iter=0; iter<MaxIter; ++iter){
+
+    Y0 = solver.solve(X0);
+
+    ck = Y0.dot(X0)/X0.dot(X0);
+
+    Y0.normalize();
+
+    X0 = Y0;
+
+    if (abs(ck-c0) < Tolerance)
+        break;
+
+    c0 = ck;
+
+  }
+
+  return make_tuple(X0,ck) ;
+
+}
+
+ndarray
+EigenSolving::LoopOverITR_(ndarray ITRList, size_t order = 1, ScalarType lol=0.0){
+
+  ndarray output;
+
+  VectorType * temp = new VectorType(size);
+
+  kDual = 2.0 * PI / lambda;
+
+  MSparse EigenMatrix = ComputeMatrix();
+
+  VectorType EigenVector;
+
+  ScalarType alpha = pow( k * ComputeMaxIndex(), 2 ), EigenValue;
+
+  Identity.setIdentity();
+
+  MSparse M = -EigenMatrix - (alpha * Identity);
+
+  ConjugateGradient<MSparse> solver(M);
+
+  VectorType X0(size); X0.setOnes(); X0.normalize();
+
+  tie(EigenVector, EigenValue) = PSM(solver, X0);
+
+  EigenValue = 1.0 / EigenValue + alpha;
+
+  (*temp) = EigenVector;
+
+  ndarray PyOutput = Eigen2ndarray( temp,
+                                    { Nx, Ny },
+                                    { Nx * sizeof(ScalarType), sizeof(ScalarType) } );
+
+  cout<<EigenValue<<endl;
+  return PyOutput;
 }
 
 

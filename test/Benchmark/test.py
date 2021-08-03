@@ -1,7 +1,7 @@
-from SuPyModes.Geometry          import Geometry, Circle, Fused2
+from SuPyModes.Geometry          import Geometry, Circle, Fused4
 from SuPyModes.Solver            import SuPySolver
 from SuPyModes.sellmeier         import Fused_silica
-
+from SuPyModes.fibers            import *
 
 
 """
@@ -9,22 +9,31 @@ FIGURE 2.5 SBB_____________________________________________________
 
 """
 
-Clad = Circle( Position = (0,0),
-               Radi     = 62.5,
-               Index    =  Fused_silica(1.55))
+B = Fiber_DCF1300S_33(1.55)
+A = Fiber_DCF1300S_20(1.55)
 
-Core0 = Circle( Position = (0,0),
-                Radi     = 4.1,
-                Index    = Fused_silica(1.55)+0.005 )
+Clad = Fused4( Radius = 62.5, Fusion = 0.9, Index = Fused_silica(1.55))
 
-SMF28 = Geometry(Objects = [Clad, Core0],
-                 Xbound  = [-90, 90],
-                 Ybound  = [-90, 90],
-                 Nx      = 120,
-                 Ny      = 120,
-                 GConv   = 1.0)
+Clad0 = Circle( Position = Clad.C[0], Radi = A.rClad, Index = A.nClad )
+Core0 = Circle( Position = Clad.C[0], Radi = A.rCore, Index = A.nCore )
 
-SMF28.Plot()
+Clad1 = Circle( Position = Clad.C[1], Radi = B.rClad, Index = B.nClad )
+Core1 = Circle( Position = Clad.C[1], Radi = B.rCore, Index = B.nCore )
+
+Clad2 = Circle( Position = Clad.C[2], Radi = B.rClad, Index = B.nClad )
+Core2 = Circle( Position = Clad.C[2], Radi = B.rCore, Index = B.nCore )
+
+
+Core3 = Circle( Position = Clad.C[3], Radi = 4.1, Index = Fused_silica(1.55)+0.005 )
+
+SMF28 = Geometry(Objects = [Clad, Clad0, Core0, Clad1, Core1, Clad2, Core2, Core3],
+                 Xbound  = [-150, 150],
+                 Ybound  = [-150, 150],
+                 Nx      = 150,
+                 Ny      = 150,
+                 GConv   = 0)
+
+#SMF28.Plot()
 
 Sol = SuPySolver(Coupler    = SMF28,
                  Tolerance  = 1e-30,
@@ -34,14 +43,14 @@ Sol = SuPySolver(Coupler    = SMF28,
                  Error      = 2)
 
 SuperModes = Sol.GetModes(wavelength    = 1.55,
-                          Nstep         = 100,
-                          ITRi          = 0.55,
-                          ITRf          = 0.4,
+                          Nstep         = 300,
+                          ITRi          = 1,
+                          ITRf          = 0.05,
                           RightSymmetry = 0,
                           TopSymmetry   = 0,
                           Sorting       = 'Field')
 
-SuperModes.Plot( Input=['Fields', 'Adiabatic'], iter = [0,25,50,75,-1])
+SuperModes.Plot( Input=['Fields', 'Adiabatic'])
 
 
 

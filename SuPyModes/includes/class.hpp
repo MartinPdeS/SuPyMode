@@ -116,6 +116,8 @@ class EigenSolving : public BaseLaplacian{
 
    void LoopOverITR(ndarray ITRList, size_t order);
 
+   tuple<ndarray, ScalarType> LoopOverITR_(ndarray ITRList, size_t order, ScalarType lol);
+
    tuple<ndarray, ndarray> GetSlice(size_t slice);
 
    ndarray ComputingOverlap();
@@ -139,4 +141,6 @@ class EigenSolving : public BaseLaplacian{
    vector<VectorType> ComputeBetas();
 
    vector<size_t> ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1, size_t idx);
+
+   tuple<VectorType, ScalarType> PSM(ConjugateGradient<MSparse>& solver, VectorType& X0);
 };
