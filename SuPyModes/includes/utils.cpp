@@ -5,6 +5,20 @@
 using namespace std;
 
 
+VectorType
+GetRandomVector(size_t size){
+  VectorType Output = VectorType::Random(size);
+  Output.normalize();
+  return Output;
+}
+
+void
+GramSchmidt(MatrixType EigenVectors)
+{
+
+
+}
+
 vector<ScalarType>
 ComputecOverlaps_(MatrixType EigenVectors0, MatrixType EigenVectors1, size_t iter){
 
@@ -93,6 +107,26 @@ Eigen2ndarray(VectorType *Eigen3Vector, vector<size_t> dimension, vector<size_t>
      delete []foo; } );
 
   PyVector = ndarray( dimension, stride, Eigen3Vector->data(), free_when_done );
+
+   return PyVector;
+}
+
+
+ndarray
+Eigen2ndarray(VectorType &Eigen3Vector, size_t size, vector<size_t> dimension, vector<size_t> stride){
+
+
+  VectorType * temp = new VectorType(size);
+
+  (*temp) = Eigen3Vector;
+
+  ndarray PyVector;
+
+  py::capsule free_when_done(temp->data(), [](void *f) {
+     ScalarType *foo = reinterpret_cast<ScalarType *>(f);
+     delete []foo; } );
+
+  PyVector = ndarray( dimension, stride, temp->data(), free_when_done );
 
    return PyVector;
 }

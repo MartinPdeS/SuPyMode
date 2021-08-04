@@ -58,14 +58,15 @@ class BaseLaplacian{
 class EigenSolving : public BaseLaplacian{
   public:
     size_t             nMode, sMode, MaxIter, Nx, Ny, size, DegenerateFactor, ITRLength, Order;
-    ScalarType         Tolerance, dx, dy, k, kInit, kDual, lambda, lambdaInit, MaxIndex;
+    ScalarType         Tolerance, dx, dy, k, kInit, kDual, lambda, lambdaInit, MaxIndex, alpha;
     ScalarType        *MeshPtr, *ITRPtr;
     ndarray            Mesh, ITRList, PyOverlap, PyIndices;
-    MSparse            Laplacian, EigenMatrix, Identity;
+    MSparse            Laplacian, EigenMatrix, Identity, M;
     vector<MatrixType> FullEigenVectors, SortedEigenVectors;
     vector<VectorType> FullEigenValues, SortedEigenValues;
     VectorType         MeshGradient;
     bool               Debug;
+    ConjugateGradient<MSparse> Solver;
 
   EigenSolving(ndarray&   Mesh,
                ndarray&   PyMeshGradient,
@@ -116,7 +117,7 @@ class EigenSolving : public BaseLaplacian{
 
    void LoopOverITR(ndarray ITRList, size_t order);
 
-   tuple<ndarray, ScalarType> LoopOverITR_(ndarray ITRList, size_t order, ScalarType lol);
+   ndarray LoopOverITR_(ndarray ITRList, size_t order, ScalarType lol);
 
    tuple<ndarray, ndarray> GetSlice(size_t slice);
 
@@ -142,5 +143,7 @@ class EigenSolving : public BaseLaplacian{
 
    vector<size_t> ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1, size_t idx);
 
-   tuple<VectorType, ScalarType> PSM(ConjugateGradient<MSparse>& solver, VectorType& X0);
+   void PSM(MatrixType& EigenVectors, VectorType& EigenValues);
+
+   void ComputePSMMatrix();
 };

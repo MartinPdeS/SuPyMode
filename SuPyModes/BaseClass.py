@@ -120,7 +120,13 @@ class SetPlots(object):
         self.PlotKwarg = BasePlotKwarg
 
 
-    def SaveFig(self, Input, Directory, iter=0, dpi=100, PlotKwarg=None):
+    def SaveFig(self, Input, Directory, iter=0, dpi=100, PlotKwarg=None, Combination=None):
+
+        if Combination is None:
+            self.Combination = tuple(combinations( np.arange(self.sMode), 2 ) )
+        else:
+            self.Combination = Combination
+
         figures = self.GenFigures(Input, iter, PlotKwarg)
 
         dir = os.path.join(ZeroPath, Directory) + '.pdf'

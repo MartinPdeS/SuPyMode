@@ -27,14 +27,14 @@ SMF28 = Geometry(Objects = [Clad, Core0],
                  GConv   = 0)
 
 Sol = SuPySolver(Coupler    = SMF28,
-                 Tolerance  = 1e-30,
+                 Tolerance  = 1e-14,
                  MaxIter    = 1000,
                  nMode      = 6,
                  sMode      = 5,
                  Error      = 2)
 
-ITRList = np.linspace(1,0.1,10)
-
+ITRList = np.linspace(1,0.99,300)
+#ITRList = np.ones(300)
 Sol.CppSolver.Lambda = 1.55
 Sol.CppSolver.dx = SMF28.Axes.dx
 Sol.CppSolver.dy = SMF28.Axes.dy

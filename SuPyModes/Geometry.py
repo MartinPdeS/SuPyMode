@@ -24,13 +24,23 @@ from SuPyModes.utils             import *
 
 Mlogger = logging.getLogger(__name__)
 
-class Gradient1:
-    def __init__(self, center):
-        self.center = center
+class Gradient:
+    def __init__(self, Center, Nin, Nout, Rout):
+        if Nin == Nout:
+            Nin = Nout + 1e-9
+        self.Nin    = Nin
+        self.Nout   = Nout
+        self.Rout   = Rout
+        if isinstance(Center, Point):
+            Center = Center.xy
+        self.Center = Center
 
-    def evaluate(self, Xmesh, Ymesh):
-        rho = np.sqrt( (Xmesh-self.center[0])**2 + (Ymesh-self.center[1])**2 )+10
-        return 1/rho
+    def Evaluate(self, Xmesh, Ymesh):
+        A = -(self.Rout * self.Nout) / (self.Nin-self.Nout)
+        B = - A * self.Nin
+        print(A, B)
+        rho = np.hypot( Xmesh-self.Center[0], Ymesh-self.Center[1] )
+        return B/(rho-A)
 
 
 class Geometry(object):
@@ -56,8 +66,6 @@ class Geometry(object):
         Mlogger.setLevel(getattr(logging, debug))
 
         self.Objects    = ToList(Objects)
-
-        self.Indices    = sorted( list( set( [1] + [obj.Index for obj in Objects] ) ) )
 
         self.Boundaries = [Xbound, Ybound]
 
@@ -130,15 +138,15 @@ class Geometry(object):
             Refractive index of the object to be added.
 
         """
-
-        if polygone.Gradient:
-            grad = polygone.Gradient(center=(0,0))
-            Grad = grad.evaluate(self.X, self.Y)
-
-
         self.mesh *= (-1 * polygone.raster + 1)
 
-        self.mesh += polygone.raster * polygone.Index
+        if polygone.Gradient:
+            Grad = polygone.Gradient.Evaluate( self.X, self.Y )
+            print(Grad.max())
+            self.mesh += polygone.raster * Grad
+
+        else:
+            self.mesh += polygone.raster * polygone.Index
 
 
     def CreateMesh(self):
@@ -175,16 +183,18 @@ class Geometry(object):
                               xaxis,
                               np.abs(Field).T,
                               cmap    = plt.cm.coolwarm,
-                              shading='auto'
+                              shading = 'auto'
                               )
 
         ax.set_ylabel(r'Y-distance [$\mu$m]', fontsize=6)
 
         ax.set_xlabel(r'X-distance [$\mu$m]', fontsize=6)
 
-        #divider = make_axes_locatable(ax)
+        divider = make_axes_locatable(ax)
 
-        #cax = divider.append_axes("right", size="5%", pad=0.05)
+        cax = divider.append_axes("right", size="5%", pad=0.05)
+
+        plt.colorbar(pcm, cax=cax, orientation='vertical')
 
         ax.set_title('Rasterized RI profil', fontsize=10)
 
@@ -235,8 +245,11 @@ class Geometry(object):
 
 
 class Circle(object):
-    def __init__(self, Position, Radi, Index, debug='INFO', Gradient=None):
+    def __init__(self, Position, Radi, Index=None, debug='INFO', Gradient=None):
 
+
+        assert not all([Index, Gradient]), "Error, you must either define an Index or a Gradient but not both."
+        assert any([Index, Gradient]), "Error, you must at least define an Index or a Gradient."
         Mlogger.setLevel(getattr(logging, debug))
 
         self.Points   = Position
@@ -255,9 +268,14 @@ class Circle(object):
         PlotObject(Full = [self.Object] + self.C)
 
 
+
+
+
 class BaseFused():
     def __init__(self, Radius, Fusion, Angle, Theta, Index, debug, Gradient=None):
 
+        assert not all([Index, Gradient]), "Error, you must either define an Index or a Gradient but not both."
+        assert any([Index, Gradient]), "Error, you must at least define an Index or a Gradient."
         Mlogger.setLevel(getattr(logging, debug))
 
         self.Index   = Index

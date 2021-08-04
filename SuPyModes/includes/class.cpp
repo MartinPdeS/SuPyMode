@@ -22,6 +22,8 @@ EigenSolving::ComputeMatrix(){
     if (Debug)
         cout<<EigenMatrix<<endl;
 
+    Identity.setIdentity();
+
     return -1.0*EigenMatrix;
     }
 
@@ -70,12 +72,11 @@ void
 EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
 
-  ITRLength = ITRList.request().size;
-  ITRPtr    = (ScalarType*) ITRList.request().ptr;
+  ITRList          = ITRList;
+  ITRLength        = ITRList.request().size;
+  ITRPtr           = (ScalarType*) ITRList.request().ptr;
 
-  this->ITRList    = ITRList;
-  this->lambdaInit = lambda;
-  this->kInit      = 2.0 * PI / lambda;
+  kInit            = 2.0 * PI / lambda;
 
   MatrixType EigenVectors, EigenValues;
 
@@ -87,9 +88,7 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
   for (size_t i=0; i<ITRLength; ++i){
 
-    ScalarType lambdaDual = lambdaInit / ITRPtr[i];
-
-    kDual = 2.0 * PI / lambdaDual;
+    kDual = kInit * ITRPtr[i] ;
 
     tie(EigenVectors, EigenValues) = ComputeEigen(alpha);
 
@@ -106,69 +105,89 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
 
 
-tuple<VectorType, ScalarType>
-EigenSolving::PSM(ConjugateGradient<MSparse>& solver, VectorType& X0){
+void
+EigenSolving::PSM(MatrixType& EigenVectors, VectorType& EigenValues){
 
+  VectorType X0 = EigenVectors.col(0);
+  EigenVectors.col(0).normalize();
   VectorType Y0(size);
-
-  ScalarType ck, c0;
+  ScalarType ck;
 
   for (size_t iter=0; iter<MaxIter; ++iter){
 
-    Y0 = solver.solve(X0);
+    ck = Y0.dot(X0);
 
-    ck = Y0.dot(X0)/X0.dot(X0);
+    Y0 = Solver.solve(X0);
 
     Y0.normalize();
 
+    ck = Y0.dot(X0);
+
+    if ( abs( abs(ck)-1.0) < Tolerance ) break;
+
     X0 = Y0;
-
-    if (abs(ck-c0) < Tolerance)
-        break;
-
-    c0 = ck;
-
   }
+  EigenVectors.col(0) = X0;
+  EigenValues[0] = 1.0 / ck + alpha;
 
-  return make_tuple(X0,ck) ;
+}
+
+void EigenSolving::ComputePSMMatrix(){
+
+  alpha = pow( k * ComputeMaxIndex(), 2 );
+
+  EigenMatrix = ComputeMatrix();
+
+  M = -EigenMatrix - (alpha * Identity);
+
+  Solver.compute(M);
 
 }
 
 ndarray
 EigenSolving::LoopOverITR_(ndarray ITRList, size_t order = 1, ScalarType lol=0.0){
 
-  ndarray output;
+  this->ITRList    = ITRList;
+  ITRLength        = ITRList.request().size;
+  ITRPtr           = (ScalarType*) ITRList.request().ptr;
 
-  VectorType * temp = new VectorType(size);
 
-  kDual = 2.0 * PI / lambda;
+  FullEigenVectors = vector<MatrixType>(ITRLength);
+  FullEigenValues  = vector<VectorType>(ITRLength);
 
-  MSparse EigenMatrix = ComputeMatrix();
+  lambdaInit       = lambda;
+  kInit            = 2.0 * PI / lambda;
 
-  VectorType EigenVector;
+  MatrixType EigenVectors(size, sMode);
 
-  ScalarType alpha = pow( k * ComputeMaxIndex(), 2 ), EigenValue;
+  VectorType EigenValues(sMode);
 
-  Identity.setIdentity();
+  for (size_t iter=0; iter<ITRLength; ++iter){
 
-  MSparse M = -EigenMatrix - (alpha * Identity);
+      cout<<"Iteration: "<<iter<<"   ITR:  "<<ITRPtr[iter]<<endl;
 
-  ConjugateGradient<MSparse> solver(M);
+      kDual = kInit * ITRPtr[iter];
 
-  VectorType X0(size); X0.setOnes(); X0.normalize();
+      ComputePSMMatrix();
 
-  tie(EigenVector, EigenValue) = PSM(solver, X0);
+      PSM(EigenVectors, EigenValues);
 
-  EigenValue = 1.0 / EigenValue + alpha;
+      FullEigenVectors[iter] = EigenVectors;
 
-  (*temp) = EigenVector;
+      FullEigenValues[iter]  = EigenValues;
 
-  ndarray PyOutput = Eigen2ndarray( temp,
-                                    { Nx, Ny },
-                                    { Nx * sizeof(ScalarType), sizeof(ScalarType) } );
+      alpha = ExtrapolateNext(order, FullEigenValues, ITRList, iter+1);
+      cout<<alpha<<endl;
 
-  cout<<EigenValue<<endl;
-  return PyOutput;
+  }
+
+  VectorType temp = EigenVectors.col(0);
+
+  return Eigen2ndarray( temp,
+                        size,
+                        { Nx, Ny },
+                        { Nx * sizeof(ScalarType), sizeof(ScalarType) } );
+
 }
 
 
@@ -334,7 +353,7 @@ EigenSolving::ComputingCoupling(){
 
               overlap = vec0.cwiseProduct( vec1 );
 
-              //if (overlap.cwiseAbs().sum() > 0.9){ (*Coupling)[iter] = 0.0; ++iter; continue; }
+              if (overlap.cwiseAbs().sum() > 0.99){ (*Coupling)[iter] = 0.0; ++iter; continue; }
 
               delta   = beta0 - beta1;
 
@@ -344,10 +363,7 @@ EigenSolving::ComputingCoupling(){
 
               I       = Trapz(temp, 1.0, Nx, Ny);
 
-              //C      *= (ComplexScalarType) DegenerateFactor * I;
-
               C      *=  I;
-
 
               (*Coupling)[iter] = abs(C);
 
@@ -410,15 +426,13 @@ EigenSolving::ComputingAdiabatic(){
 
               overlap = vec0.cwiseProduct( vec1 );
 
-              //if (overlap.cwiseAbs().sum() > 0.9){ (*Adiabatic)[iter] = inf; ++iter; continue; }
+              if (overlap.cwiseAbs().sum() > 0.99){ (*Adiabatic)[iter] = inf; ++iter; continue; }
 
               temp    = overlap.cwiseProduct( MeshGradient );
 
               C       = - (ScalarType) 0.5 * J * (kInit*kInit) / sqrt(beta0 * beta1) * abs( 1.0f / delta );
 
               I       = Trapz(temp, 1.0, Nx, Ny);
-
-              //C      *= (ComplexScalarType) DegenerateFactor * I;
 
               C      *=  I;
 

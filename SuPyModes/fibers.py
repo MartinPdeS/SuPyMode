@@ -36,6 +36,14 @@ class Fiber_2028M21():
         self.rCore = 2.8/2
 
 
+class Fiber_2028M12():
+    def __init__(self, wavelength):
+        self.nClad = NA2nCore( 0.19, Fused_silica(wavelength)  )
+        self.nCore = NA2nCore( 0.11, self.nClad )
+        self.rClad = 25.8/2
+        self.rCore = 4.1/2
+
+
 class Fiber_SMF28():
     def __init__(self, wavelength):
         self.nClad = Fused_silica(wavelength)
