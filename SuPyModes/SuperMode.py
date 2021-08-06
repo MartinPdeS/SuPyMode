@@ -38,12 +38,119 @@ class SuperMode(object):
         self.Slice[N] = val
 
 
-    def GetCoupling(self, SuperMode):
-        return self.Parent.Coupling[:, self.number, SuperMode.number]
+    def PlotPropagation(self):
+        image, _, _ = self.FullField(0)
+
+        image = np.abs(image)
+
+        mlab.surf(image, warp_scale="auto")
+
+        @mlab.animate(delay=100)
+        def anim_loc():
+            for i in range(len(self.Field)):
+                image, _, _ = self.FullField(i)
+                mlab.surf( np.abs(image), warp_scale="auto")
+                yield
+
+        anim_loc()
+        mlab.show()
+        """
+        import os
+        fps = 20
+        prefix = 'ani'
+        ext = '.png'
+
+        import subprocess
+        animate_plots(base_directory='yolo', fname_prefix='dasda')"""
 
 
-    def GetAdiabatic(self, SuperMode):
-        return self.Parent.Adiabatic[:, self.number, SuperMode.number]
+    def FullField(self, iter):
+        Field      = self.Slice[iter]
+
+        Field, xAxes, yAxes = RecomposeSymmetries(Input      = Field,
+                                                  Symmetries = ParentSet.Symmetries,
+                                                  Axes       = ParentSet.Geometry.Axes)
+
+        return Field, xAxes, yAxes
+
+
+    def __copy__(self):
+        to_be_copied = ['Slice']
+
+        copy_ = SuperSet( self.Name, self.Geometry)
+
+        for attr in self.__dict__:
+            if attr in to_be_copied:
+
+                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
+            else:
+
+                copy_.__dict__[attr] = self.__dict__[attr]
+
+        return copy_
+
+
+    def __deepcopy__(self, memo):
+        to_be_copied = ['Slice']
+
+        copy_ = SuperMode( self.Name, self.Geometry)
+
+        for attr in self.__dict__:
+
+            if attr in to_be_copied:
+                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
+
+            else:
+                copy_.__dict__[attr] = self.__dict__[attr]
+
+        return copy_
+
+
+
+class _SuperMode(object):
+
+    def __init__(self, Amplitude, Name, ParentSet):
+        self.InitAmplitude = np.asarray(Amplitude).astype(complex)
+        self.Name          = Name
+        self.Parent        = ParentSet
+        self.Amplitudes    = None
+        self.Amplitude     = None
+
+
+    def ComputeCouplingFactor(self, Profile, Distance):
+        dx =  np.gradient(Distance, 1)
+
+        dITR = np.gradient(np.log(Profile), 1)
+
+        factor = dITR/dx
+
+        return factor
+
+
+    def Propagate(self, Profile, Distance, **kwargs):
+
+        Profile = np.asarray(Profile)
+
+        Factor = self.ComputeCouplingFactor(Profile, Distance)
+
+        M = self.Parent.ComputeM(CouplingFactor=Factor)
+
+        Minterp = interp1d(Distance, M, axis=0)
+
+        def foo(t, y):
+            return 1j * Minterp(t).dot(y)
+
+        Sol = solve_ivp(foo,
+                        y0       = self.InitAmplitude,
+                        t_span   = [Distance[0], Distance[-1]],
+                        method   = 'RK45',
+                        vectorized=True,
+                        **kwargs
+                        )
+
+        self.Z          = Sol.t
+        self.Amplitudes = Sol.y
+
 
 
     def PlotPropagation(self):
@@ -150,10 +257,13 @@ class SuperSet(SetProperties, SetPlots):
         M     = np.zeros( [shape[0], shape[1], shape[1]] )
         for iter in range(shape[0]):
             beta = self.Beta[iter]
-
             M[iter] = CouplingFactor[iter] * self.Coupling[iter] + beta * np.identity(shape[1])
 
         return M
+
+
+    def GetMode(self, Amplitude, Name = 1):
+        return _SuperMode(Amplitude=Amplitude, Name=Name, ParentSet=self)
 
 
     def ComputeCouplingFactor(self, Length):
