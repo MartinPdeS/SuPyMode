@@ -1,13 +1,9 @@
-import logging
 import numpy as np
 
 from SuPyModes.SuperMode             import SuperSet, SetSlice
 from SuPyModes.includes.EigenSolver  import EigenSolving
 from SuPyModes.utils                 import Axes
 
-logging.basicConfig(level=logging.INFO)
-
-Mlogger = logging.getLogger(__name__)
 
 
 class SuPySolver(object):
@@ -16,7 +12,7 @@ class SuPySolver(object):
 
     """
     def __init__(self, Coupler, Tolerance, MaxIter, nMode, sMode, Error=2,  debug='INFO', Debug=False):
-        Mlogger.setLevel(getattr(logging, debug))
+
         self.Geometry     = Coupler
         self.Geometry.CreateMesh()
         self.Tolerance    = Tolerance
@@ -117,9 +113,6 @@ class SuPySolver(object):
 
     def GetCoupling(self):
         Coupling = self.CppSolver.ComputingCoupling()
-
-
-
 
 
     @property

@@ -89,7 +89,6 @@ class Geometry(object):
 
 
     def Rotate(self, angle):
-
         for object in self.Objects:
             object.Object = affinity.rotate(object.Object, 28, (0,0))
 

@@ -1,6 +1,8 @@
 import logging
 import numpy               as np
 import copy                as cp
+from scipy.integrate       import solve_ivp
+from scipy.interpolate     import interp1d
 from itertools             import combinations, combinations_with_replacement as Combinations
 from mayavi                import mlab
 
@@ -141,6 +143,52 @@ class SuperSet(SetProperties, SetPlots):
             supermode = SuperMode(Name = f"Mode {solution}", Geometry = self.Geometry, ParentSet=self)
             supermode.number = solution
             self.SuperModes.append(supermode)
+
+
+    def ComputeM(self, CouplingFactor):
+        shape = self.Beta.shape
+        M     = np.zeros( [shape[0], shape[1], shape[1]] )
+        for iter in range(shape[0]):
+            beta = self.Beta[iter]
+
+            M[iter] = CouplingFactor[iter] * self.Coupling[iter] + beta * np.identity(shape[1])
+
+        return M
+
+
+    def ComputeCouplingFactor(self, Length):
+        dx =  Length/(self.Geometry.ITRList.size)
+
+        dITR = np.gradient(np.log(self.Geometry.ITRList), 1)
+
+        factor = dITR/dx
+
+        return factor/10
+
+
+    def Propagate(self, Amplitude, Length, **kwargs):
+        Amplitude = np.asarray(Amplitude)
+
+        Distance = np.linspace(0, Length, self.Geometry.ITRList.size)
+
+        Factor = self.ComputeCouplingFactor(Length)
+
+
+        M = self.ComputeM(CouplingFactor=Factor)
+
+        Minterp = interp1d(Distance, M, axis=0)
+
+        def foo(t, y):
+            return 1j * Minterp(t).dot(y)
+
+        sol = solve_ivp(foo,
+                        y0       = Amplitude.astype(complex),
+                        t_span   = [0, Length],
+                        method   = 'RK45',
+                        **kwargs
+                        )
+
+        return sol
 
 
     def __getitem__(self, N):

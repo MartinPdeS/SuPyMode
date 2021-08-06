@@ -331,7 +331,7 @@ EigenSolving::ComputingCoupling(){
 
   size_t iter = 0;
 
-  VectorType * Coupling = new VectorType((ITRLength-1) * sMode * sMode);
+  VectorType * Coupling = new VectorType(ITRLength * sMode * sMode);
 
   (*Coupling).setZero();
 
@@ -341,7 +341,7 @@ EigenSolving::ComputingCoupling(){
 
   ComplexScalarType C, I;
 
-  for (size_t l=1; l<ITRLength; ++l)
+  for (size_t l=0; l<ITRLength; ++l)
       for (size_t i=0; i<sMode; ++i)
           for (size_t j=0; j<sMode; ++j){
               if (j == i){ (*Coupling)[iter] = 0.0; ++iter; continue; }
@@ -352,8 +352,6 @@ EigenSolving::ComputingCoupling(){
               beta1   = Betas[l][j];
 
               overlap = vec0.cwiseProduct( vec1 );
-
-              if (overlap.cwiseAbs().sum() > 0.99){ (*Coupling)[iter] = 0.0; ++iter; continue; }
 
               delta   = beta0 - beta1;
 
@@ -371,7 +369,7 @@ EigenSolving::ComputingCoupling(){
             }
 
   return Eigen2ndarray( Coupling,
-                        { ITRLength-1, sMode, sMode },
+                        { ITRLength, sMode, sMode },
                         { sMode * sMode * sizeof(ScalarType), sMode * sizeof(ScalarType), sizeof(ScalarType) } ) ;
 
 }
@@ -402,7 +400,7 @@ EigenSolving::ComputingAdiabatic(){
 
   VectorType temp;
 
-  VectorType * Adiabatic = new VectorType((ITRLength-1) * sMode * sMode);
+  VectorType * Adiabatic = new VectorType(ITRLength * sMode * sMode);
 
   (*Adiabatic).setZero();
 
@@ -412,7 +410,7 @@ EigenSolving::ComputingAdiabatic(){
 
   ComplexScalarType C, I = 0.0;
 
-  for (size_t l=1; l<ITRLength; ++l)
+  for (size_t l=0; l<ITRLength; ++l)
       for (size_t i=0; i<sMode; ++i)
           for (size_t j=0; j<sMode; ++j){
               if (j == i){(*Adiabatic)[iter] = inf; ++iter; continue;}
@@ -425,8 +423,6 @@ EigenSolving::ComputingAdiabatic(){
               delta   = beta0 - beta1;
 
               overlap = vec0.cwiseProduct( vec1 );
-
-              if (overlap.cwiseAbs().sum() > 0.99){ (*Adiabatic)[iter] = inf; ++iter; continue; }
 
               temp    = overlap.cwiseProduct( MeshGradient );
 
@@ -442,7 +438,7 @@ EigenSolving::ComputingAdiabatic(){
             }
 
   return Eigen2ndarray( Adiabatic,
-                        { ITRLength-1, sMode, sMode },
+                        { ITRLength, sMode, sMode },
                         { sMode * sMode * sizeof(ScalarType), sMode * sizeof(ScalarType), sizeof(ScalarType) } ) ;
 
 }

@@ -2,7 +2,7 @@ from SuPyModes.Geometry          import Geometry, Circle, Fused4, Gradient
 from SuPyModes.Solver            import SuPySolver
 from SuPyModes.sellmeier         import Fused_silica
 from SuPyModes.fibers            import *
-
+import matplotlib.pyplot         as plt
 
 """
 FIGURE 2.5 SBB_____________________________________________________
@@ -40,17 +40,24 @@ SMF28 = Geometry(Objects = [Clad, Clad0, Clad1, Clad2, Core0, Core1, Core2],
 Sol = SuPySolver(Coupler    = SMF28,
                  Tolerance  = 1e-30,
                  MaxIter    = 1000,
-                 nMode      = 17,
-                 sMode      = 15,
+                 nMode      = 5,
+                 sMode      = 3,
                  Error      = 2)
 
 SuperModes = Sol.GetModes(wavelength    = 1.55,
                           Nstep         = 300,
                           ITRi          = 1,
-                          ITRf          = 0.05,
+                          ITRf          = 0.5,
                           RightSymmetry = 0,
                           TopSymmetry   = 0,
                           Sorting       = 'Field')
 
 
-SuperModes.ComputeM()
+Sol = SuperModes.Propagate(Amplitude = [1,0,0], Length=4000, max_step=100)
+
+plt.figure()
+for i in range(Sol.y.shape[0]):
+    plt.plot(Sol.t, np.real(Sol.y[i]), label=f"Mode {i}")
+plt.grid()
+plt.legend()
+plt.show()

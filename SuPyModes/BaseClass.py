@@ -182,21 +182,6 @@ class SetProperties(object):
             return self._Index
 
 
-    @property
-    def M(self):
-        if self._M is None:
-            self._M = self.Coupling
-            for i in range(self._M.shape[2]):
-                self._M[i,:,:] += np.diag(self.Beta[i, :] )
-
-            return self._M
-
-        else:
-            return self._M
-
-
-
-
 
 
 
