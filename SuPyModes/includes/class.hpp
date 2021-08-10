@@ -57,7 +57,7 @@ class BaseLaplacian{
 
 class EigenSolving : public BaseLaplacian{
   public:
-    size_t             nMode, sMode, MaxIter, Nx, Ny, size, DegenerateFactor, ITRLength, Order;
+    size_t             nMode, sMode, MaxIter, Nx, Ny, size, DegenerateFactor, ITRLength, Order, ExtrapolOrder;
     ScalarType         Tolerance, dx, dy, k, kInit, kDual, lambda, lambdaInit, MaxIndex, alpha;
     ScalarType        *MeshPtr, *ITRPtr;
     ndarray            Mesh, ITRList, PyOverlap, PyIndices;
@@ -66,7 +66,7 @@ class EigenSolving : public BaseLaplacian{
     vector<VectorType> FullEigenValues, SortedEigenValues;
     VectorType         MeshGradient;
     bool               Debug;
-    ConjugateGradient<MSparse> Solver;
+    BiCGSTAB<MSparse>  Solver;
 
   EigenSolving(ndarray&   Mesh,
                ndarray&   PyMeshGradient,
@@ -99,51 +99,58 @@ class EigenSolving : public BaseLaplacian{
                }
 
 
-   ScalarType ComputeMaxIndex();
 
-   void ComputeDegenerateFactor();
 
    void Setlambda(ScalarType value){ this->lambda = value; this->k = 2.0 * PI / lambda;}
 
-   ScalarType Getdx(){ return dx; }
 
-   ScalarType Getdy(){ return dy; }
+   void    LoopOverITR(ndarray ITRList, size_t order);
 
-   ScalarType Getlambda(){ return lambda;}
+   void    LoopOverITR_(ndarray ITRList, size_t order);
 
-   MSparse ComputeMatrix();
 
-   tuple<MatrixType, VectorType> ComputeEigen(ScalarType alpha);
+   ScalarType              Getdx(){ return dx; }
 
-   void LoopOverITR(ndarray ITRList, size_t order);
+   ScalarType              Getdy(){ return dy; }
 
-   ndarray LoopOverITR_(ndarray ITRList, size_t order, ScalarType lol);
+   ScalarType              Getlambda(){ return lambda;}
 
    tuple<ndarray, ndarray> GetSlice(size_t slice);
 
-   ndarray ComputingOverlap();
+   ndarray                 GetFields(size_t slice);
 
-   ndarray ComputingCoupling();
+   ndarray                 GetIndices();
 
-   ndarray GetFields(size_t slice);
+   ndarray                 GetBetas();
 
-   ndarray GetIndices();
 
-   ndarray GetBetas();
+   tuple<MatrixType, VectorType> ComputeEigen(ScalarType alpha);
 
-   ndarray ComputingAdiabatic();
+   ScalarType                    ComputeMaxIndex();
+
+   MSparse                       ComputeMatrix();
+
+   tuple<VectorType, ScalarType> ComputePreSolution(size_t& slice, size_t& mode);
+
+   ndarray                       ComputingOverlap();
+
+   ndarray                       ComputingCoupling();
+
+   ndarray                       ComputingAdiabatic();
+
+   vector<VectorType>            ComputeBetas();
+
+   vector<size_t>                ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1, size_t idx);
+
+   void                          ComputePSMMatrix();
+
+   void                          ComputeLaplacian(size_t order);
+
+
 
    void SortModesFields();
 
    void SortModesIndex();
 
-   void ComputeLaplacian(size_t order);
-
-   vector<VectorType> ComputeBetas();
-
-   vector<size_t> ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1, size_t idx);
-
-   void PSM(MatrixType& EigenVectors, VectorType& EigenValues);
-
-   void ComputePSMMatrix();
+   void PSM(size_t& slice, size_t& mode);
 };

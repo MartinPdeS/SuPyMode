@@ -35,7 +35,7 @@ EigenSolving::ComputeEigen(ScalarType alpha){
 
     SparseGenRealShiftSolve<ScalarType> op(EigenMatrix);
 
-    Spectra::GenEigsRealShiftSolver<SparseGenRealShiftSolve<ScalarType>> eigs(op, nMode, 2*nMode, alpha);
+    GenEigsRealShiftSolver<SparseGenRealShiftSolve<ScalarType>> eigs(op, nMode, 2*nMode, alpha);
 
     eigs.init();
 
@@ -98,95 +98,96 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
     FullEigenValues[i]  = EigenValues;
 
-    alpha = ExtrapolateNext(order, FullEigenValues, ITRList, i+1);
+    size_t next = i+1, mode=0;
+
+    alpha = ExtrapolateNext(order, FullEigenValues, ITRList, next, mode);
   }
 }
 
 
+tuple<VectorType, ScalarType>
+EigenSolving::ComputePreSolution(size_t& slice, size_t& mode){
 
+  VectorType X0(size);
+
+  if (slice != 0){
+      X0    = FullEigenVectors[slice-1].col(mode);
+      alpha = ExtrapolateNext(ExtrapolOrder, FullEigenValues, ITRList, slice, mode);
+      }
+  else{
+      X0    = VectorType::Ones(size); X0.normalize();
+      alpha = pow( k * ComputeMaxIndex(), 2 );
+      }
+
+  return make_tuple(X0, alpha);
+}
 
 void
-EigenSolving::PSM(MatrixType& EigenVectors, VectorType& EigenValues){
+EigenSolving::PSM(size_t& slice, size_t& mode){
 
-  VectorType X0 = EigenVectors.col(0);
-  EigenVectors.col(0).normalize();
-  VectorType Y0(size);
-  ScalarType ck;
+  ScalarType ck=0, c0=1;
 
-  for (size_t iter=0; iter<MaxIter; ++iter){
+  VectorType X0(size), Y0(size);
 
-    ck = Y0.dot(X0);
-
-    Y0 = Solver.solve(X0);
-
-    Y0.normalize();
-
-    ck = Y0.dot(X0);
-
-    if ( abs( abs(ck)-1.0) < Tolerance ) break;
-
-    X0 = Y0;
-  }
-  EigenVectors.col(0) = X0;
-  EigenValues[0] = 1.0 / ck + alpha;
-
-}
-
-void EigenSolving::ComputePSMMatrix(){
-
-  alpha = pow( k * ComputeMaxIndex(), 2 );
+  tie(X0, alpha) = ComputePreSolution(slice, mode);
 
   EigenMatrix = ComputeMatrix();
 
-  M = -EigenMatrix - (alpha * Identity);
+  M = - EigenMatrix - (alpha * Identity);
 
   Solver.compute(M);
 
+  for (size_t iter=0; iter<MaxIter; ++iter){
+
+    GramSchmidt(FullEigenVectors[slice], mode, X0);
+
+    Y0 = Solver.solve(X0);
+
+    ck = Y0.dot(X0);
+
+    if ( abs( (c0-ck)/ck) < Tolerance ) break;
+
+    c0 = ck;
+
+    Y0.normalize();
+
+    X0 = Y0;
+
+  }
+
+  FullEigenVectors[slice].col(mode) = X0;
+
+  FullEigenValues[slice](mode)  = 1.0 / ck + alpha;
+
+
 }
 
-ndarray
-EigenSolving::LoopOverITR_(ndarray ITRList, size_t order = 1, ScalarType lol=0.0){
+
+void
+EigenSolving::LoopOverITR_(ndarray ITRList, size_t order = 1){
 
   this->ITRList    = ITRList;
   ITRLength        = ITRList.request().size;
   ITRPtr           = (ScalarType*) ITRList.request().ptr;
+  ExtrapolOrder    = order;
 
-
-  FullEigenVectors = vector<MatrixType>(ITRLength);
-  FullEigenValues  = vector<VectorType>(ITRLength);
+  FullEigenVectors = vector<MatrixType>(ITRLength, MatrixType(size, sMode));
+  FullEigenValues  = vector<VectorType>(ITRLength, VectorType(sMode));
 
   lambdaInit       = lambda;
   kInit            = 2.0 * PI / lambda;
 
-  MatrixType EigenVectors(size, sMode);
 
-  VectorType EigenValues(sMode);
 
-  for (size_t iter=0; iter<ITRLength; ++iter){
+  for (size_t mode=0; mode<sMode; ++mode)
+      for (size_t slice=0; slice<ITRLength; ++slice){
 
-      cout<<"Iteration: "<<iter<<"   ITR:  "<<ITRPtr[iter]<<endl;
+          cout<<"Iteration: "<<slice<<"   ITR:  "<<ITRPtr[slice]<< "   mode:   "<<mode<<endl;
 
-      kDual = kInit * ITRPtr[iter];
+          kDual = kInit * ITRPtr[slice];
 
-      ComputePSMMatrix();
-
-      PSM(EigenVectors, EigenValues);
-
-      FullEigenVectors[iter] = EigenVectors;
-
-      FullEigenValues[iter]  = EigenValues;
-
-      alpha = ExtrapolateNext(order, FullEigenValues, ITRList, iter+1);
-      cout<<alpha<<endl;
-
-  }
-
-  VectorType temp = EigenVectors.col(0);
-
-  return Eigen2ndarray( temp,
-                        size,
-                        { Nx, Ny },
-                        { Nx * sizeof(ScalarType), sizeof(ScalarType) } );
+          PSM(slice, mode);
+      }
 
 }
 
@@ -302,32 +303,10 @@ EigenSolving::SortModesIndex(){
 }
 
 
-void
-EigenSolving::ComputeDegenerateFactor(){
-
-  DegenerateFactor = 1;
-
-  if (abs(TopSymmetry) == 1)
-      DegenerateFactor = 2;
-
-  if (abs(LeftSymmetry) == 1)
-      DegenerateFactor *= 2;
-
-  if (abs(RightSymmetry) == 1)
-      DegenerateFactor *= 2;
-
-  if (abs(BottomSymmetry) == 1)
-      DegenerateFactor *= 2;
-
-}
-
-
 ndarray
 EigenSolving::ComputingCoupling(){
 
   vector<VectorType> Betas = ComputeBetas();
-
-  ComputeDegenerateFactor();
 
   size_t iter = 0;
 
@@ -394,8 +373,6 @@ EigenSolving::ComputingAdiabatic(){
 
   vector<VectorType> Betas = ComputeBetas();
 
-  ComputeDegenerateFactor();
-
   size_t iter = 0;
 
   VectorType temp;
@@ -450,8 +427,8 @@ EigenSolving::GetSlice(size_t slice){
   MatrixType * Vectors = new MatrixType;
   MatrixType * Values  = new MatrixType;
 
-  (*Vectors) = this->FullEigenVectors[slice];
-  (*Values)  = (-1.0 * this->FullEigenValues[slice] ).cwiseSqrt() / ITRPtr[slice];
+  (*Vectors) = FullEigenVectors[slice];
+  (*Values)  = (-1.0 * FullEigenValues[slice] ).cwiseSqrt() / ITRPtr[slice];
 
   ndarray PyFullEigenVectors = Eigen2ndarray( Vectors,
                                       { sMode, Nx, Ny },

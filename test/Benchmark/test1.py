@@ -11,12 +11,12 @@ FIGURE 2.5 SBB_____________________________________________________
 
 Clad = Circle( Position = (0,0),
                Radi     = 62.5,
-               Index    = Fused_silica(1.55)
+               Index    = Fused_silica(1.31)
                )
 
 Core0 = Circle( Position = (0,0),
                 Radi     = 4.1,
-                Index    = Fused_silica(1.55)+0.005
+                Index    = Fused_silica(1.31)+0.005
                 )
 
 SMF28 = Geometry(Objects = [Clad, Core0],
@@ -26,25 +26,35 @@ SMF28 = Geometry(Objects = [Clad, Core0],
                  Ny      = 80,
                  GConv   = 0)
 
+
+sMode=8
+
 Sol = SuPySolver(Coupler    = SMF28,
-                 Tolerance  = 1e-14,
+                 Tolerance  = 1e-8,
                  MaxIter    = 1000,
-                 nMode      = 6,
-                 sMode      = 5,
+                 nMode      = sMode,
+                 sMode      = sMode,
                  Error      = 2)
 
-ITRList = np.linspace(1,0.99,300)
-#ITRList = np.ones(300)
+ITRList = np.linspace(1,0.99,1)
+
 Sol.CppSolver.Lambda = 1.55
 Sol.CppSolver.dx = SMF28.Axes.dx
 Sol.CppSolver.dy = SMF28.Axes.dy
 Sol.CppSolver.ComputeLaplacian(2)
 
 
-res = Sol.CppSolver.LoopOverITR_(ITRList, 1, 34.5022)
+Sol.CppSolver.LoopOverITR_(ITRList, 1)
 
-plt.pcolormesh(res)
-plt.colorbar()
+Field0, beta0 = Sol.CppSolver.GetSlice(0)
+
+print(Field0.shape)
+
+
+fig, axes = plt.subplots(1,sMode)
+for i in range(sMode):
+    axes[i].pcolormesh(Field0[i])
+
 plt.show()
 
 

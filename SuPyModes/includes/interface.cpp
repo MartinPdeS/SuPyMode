@@ -54,7 +54,7 @@ PYBIND11_MODULE(EigenSolver, module) {
 
      .def("LoopOverITR", &EigenSolving::LoopOverITR, py::arg("ITR"), py::arg("ExtrapolationOrder"))
 
-     .def("LoopOverITR_", &EigenSolving::LoopOverITR_, py::arg("ITR"), py::arg("ExtrapolationOrder"), py::arg("lol")=0)
+     .def("LoopOverITR_", &EigenSolving::LoopOverITR_, py::arg("ITR"), py::arg("ExtrapolationOrder"))
 
      .def("ComputingOverlap", &EigenSolving::ComputingOverlap)
 

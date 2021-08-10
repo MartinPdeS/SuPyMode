@@ -13,10 +13,32 @@ GetRandomVector(size_t size){
 }
 
 void
-GramSchmidt(MatrixType EigenVectors)
+GramSchmidt(MatrixType& EigenVectors, size_t& mode)
 {
 
+    ScalarType projection;
 
+    for (size_t iter=0; iter<mode; ++iter){
+
+            projection = EigenVectors.col(mode).dot(EigenVectors.col(iter)) / EigenVectors.col(iter).dot(EigenVectors.col(iter));
+            EigenVectors.col(mode) = (EigenVectors.col(mode) - projection * EigenVectors.col(iter));
+            cout<<"iter: "<<iter<<"   projection:   "<<projection<<endl;
+    }
+}
+
+
+void
+GramSchmidt(MatrixType& EigenVectors, size_t& mode, VectorType& X0)
+{
+    if (mode==0)
+      return;
+
+    ScalarType projection;
+
+    for (size_t iter=0; iter<mode; ++iter){
+            projection = X0.dot(EigenVectors.col(iter)) / EigenVectors.col(iter).dot(EigenVectors.col(iter));
+            X0 = X0 - projection * EigenVectors.col(iter);
+    }
 }
 
 vector<ScalarType>
@@ -28,7 +50,6 @@ ComputecOverlaps_(MatrixType EigenVectors0, MatrixType EigenVectors1, size_t ite
 
   for (size_t j=0; j<nMode; ++j)
       Overlap[j] = abs( EigenVectors0.col(iter).transpose() * EigenVectors1.col(j) );
-
 
   return Overlap;
 
@@ -168,36 +189,43 @@ Trapz(VectorType& Vector, ScalarType dx, size_t Nx, size_t Ny){
 
 
 
-class pBar {
-public:
-    void update(ScalarType newProgress) {
-        currentProgress += newProgress;
-        amountOfFiller = (int)((currentProgress / neededProgress)*(ScalarType)pBarLength);
+ScalarType
+dydx(ScalarType x, ScalarType y)
+{
+    return((x - y)/2);
+}
+
+
+
+
+
+//https://www.geeksforgeeks.org/runge-kutta-4th-order-method-solve-differential-equation/
+ScalarType
+rungeKutta(ScalarType x0, ScalarType y0, ScalarType x, ScalarType h)
+{
+    // Count number of iterations using step size or
+    // step height h
+    int n = (int)((x - x0) / h);
+
+    float k1, k2, k3, k4, k5;
+
+    // Iterate for number of iterations
+    float y = y0;
+    for (int i=1; i<=n; i++)
+    {
+        // Apply Runge Kutta Formulas to find
+        // next value of y
+        k1 = h*dydx(x0, y);
+        k2 = h*dydx(x0 + 0.5*h, y + 0.5*k1);
+        k3 = h*dydx(x0 + 0.5*h, y + 0.5*k2);
+        k4 = h*dydx(x0 + h, y + k3);
+
+        // Update next value of y
+        y = y + (1.0/6.0)*(k1 + 2*k2 + 2*k3 + k4);;
+
+        // Update next value of x
+        x0 = x0 + h;
     }
-    void print() {
-        currUpdateVal %= pBarUpdater.length();
-        cout << "\r" //Bring cursor to start of line
-            << firstPartOfpBar; //Print out first part of pBar
-        for (int a = 0; a < amountOfFiller; a++) { //Print out current progress
-            cout << pBarFiller;
-        }
-        cout << pBarUpdater[currUpdateVal];
-        for (int b = 0; b < pBarLength - amountOfFiller; b++) { //Print out spaces
-            cout << " ";
-        }
-        cout << lastPartOfpBar //Print out last part of progress bar
-            << " (" << (int)(100*(currentProgress/neededProgress)) << "%)" //This just prints out the percent
-            << flush;
-        currUpdateVal += 1;
-    }
-    std::string firstPartOfpBar = "[", //Change these at will (that is why I made them public)
-        lastPartOfpBar = "]",
-        pBarFiller = "|",
-        pBarUpdater = "/-\\|";
-private:
-    int amountOfFiller,
-        pBarLength = 50, //I would recommend NOT changing this
-        currUpdateVal = 0; //Do not change
-    ScalarType currentProgress = 0, //Do not change
-        neededProgress = 100; //I would recommend NOT changing this
-};
+
+    return y;
+}

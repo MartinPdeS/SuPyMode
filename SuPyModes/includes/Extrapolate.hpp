@@ -1,20 +1,19 @@
 
 double
-ExtrapolateNext1(vector<VectorType>& y, ndarray& ITRList, size_t NextIter){
+ExtrapolateNext1(vector<VectorType>& y, ndarray& ITRList, size_t NextIter, size_t& mode){
 
-  return y[NextIter-1][0];
+  return y[NextIter-1][mode];
 }
 
 
 double
-ExtrapolateNext2(vector<VectorType>& y, ndarray& X, size_t NextIter){
-
+ExtrapolateNext2(vector<VectorType>& y, ndarray& X, size_t NextIter, size_t& mode){
 
   double * x = (double*) X.request().ptr;
 
   double y0 = y[NextIter-1][0];
 
-  double d1y = +1.0 * y[NextIter-1][0] - 1.0 * y[NextIter-2][0];
+  double d1y = +1.0 * y[NextIter-1][mode] - 1.0 * y[NextIter-2][mode];
   double dx  = +1.0 * x[NextIter-1]    - 1.0 * x[NextIter-2];
 
   return y0 + d1y;
@@ -23,14 +22,14 @@ ExtrapolateNext2(vector<VectorType>& y, ndarray& X, size_t NextIter){
 
 
 double
-ExtrapolateNext3(vector<VectorType>& y, ndarray& X, size_t& NextIter){
+ExtrapolateNext3(vector<VectorType>& y, ndarray& X, size_t& NextIter, size_t& mode){
 
   double * x = (double*) X.request().ptr;
 
   double y0 = y[NextIter-1][0];
 
-  double d1y = +1.0 * y[NextIter-1][0] - 1.0 * y[NextIter-2][0];
-  double d2y = -1.0 * y[NextIter-1][0] + 2.0 * y[NextIter-2][0] - 1.0 * y[NextIter-3][0];
+  double d1y = +1.0 * y[NextIter-1][mode] - 1.0 * y[NextIter-2][mode];
+  double d2y = -1.0 * y[NextIter-1][mode] + 2.0 * y[NextIter-2][mode] - 1.0 * y[NextIter-3][mode];
   double dx  = +1.0 * x[NextIter-1]    - 1.0 * x[NextIter-2];
 
   return y0 + d1y + d2y / 2.0;
@@ -38,15 +37,15 @@ ExtrapolateNext3(vector<VectorType>& y, ndarray& X, size_t& NextIter){
 
 
 double
-ExtrapolateNext4(vector<VectorType>& y, ndarray& X, size_t& NextIter){
+ExtrapolateNext4(vector<VectorType>& y, ndarray& X, size_t& NextIter, size_t& mode){
 
   double * x = (double*) X.request().ptr;
 
   double y0 = y[NextIter-1][0];
 
-  double d1y = +1.0 * y[NextIter-1][0] - 1.0 * y[NextIter-2][0];
-  double d2y = -1.0 * y[NextIter-1][0] + 2.0 * y[NextIter-2][0] - 1.0 * y[NextIter-3][0];
-  double d3y = +1.0 * y[NextIter-1][0] - 3.0 * y[NextIter-2][0] + 3.0 * y[NextIter-3][0] - 1.0 * y[NextIter-4][0];
+  double d1y = +1.0 * y[NextIter-1][mode] - 1.0 * y[NextIter-2][mode];
+  double d2y = -1.0 * y[NextIter-1][mode] + 2.0 * y[NextIter-2][mode] - 1.0 * y[NextIter-3][mode];
+  double d3y = +1.0 * y[NextIter-1][mode] - 3.0 * y[NextIter-2][mode] + 3.0 * y[NextIter-3][mode] - 1.0 * y[NextIter-4][mode];
   double dx  = +1.0 * x[NextIter-1]    - 1.0 * x[NextIter-2];
 
   return y0 + d1y + d2y / 2.0 + d3y / 6.0;
@@ -54,30 +53,30 @@ ExtrapolateNext4(vector<VectorType>& y, ndarray& X, size_t& NextIter){
 
 
 double
-ExtrapolateNext(size_t order, vector<VectorType>& y, ndarray& X, size_t NextIter){
+ExtrapolateNext(size_t order, vector<VectorType>& y, ndarray& X, size_t& NextIter, size_t& mode){
 
   switch(order){
 
     case 1:
-         return ExtrapolateNext1(y, X, NextIter);
+         return ExtrapolateNext1(y, X, NextIter, mode);
          break;
 
     case 2:
-         if ( NextIter < 2 )      { return ExtrapolateNext1(y, X, NextIter); }
-         else                     { return ExtrapolateNext2(y, X, NextIter); }
+         if ( NextIter < 2 )      { return ExtrapolateNext1(y, X, NextIter, mode); }
+         else                     { return ExtrapolateNext2(y, X, NextIter, mode); }
          break;
 
     case 3:
-         if      ( NextIter < 2 ) { return ExtrapolateNext1(y, X, NextIter); }
-         else if ( NextIter < 3 ) { return ExtrapolateNext2(y, X, NextIter); }
-         else                     { return ExtrapolateNext3(y, X, NextIter); }
+         if      ( NextIter < 2 ) { return ExtrapolateNext1(y, X, NextIter, mode); }
+         else if ( NextIter < 3 ) { return ExtrapolateNext2(y, X, NextIter, mode); }
+         else                     { return ExtrapolateNext3(y, X, NextIter, mode); }
          break;
 
     case 4:
-         if      ( NextIter < 2 ) { return ExtrapolateNext1(y, X, NextIter); }
-         else if ( NextIter < 3 ) { return ExtrapolateNext2(y, X, NextIter); }
-         else if ( NextIter < 4 ) { return ExtrapolateNext3(y, X, NextIter); }
-         else                     { return ExtrapolateNext4(y, X, NextIter); }
+         if      ( NextIter < 2 ) { return ExtrapolateNext1(y, X, NextIter, mode); }
+         else if ( NextIter < 3 ) { return ExtrapolateNext2(y, X, NextIter, mode); }
+         else if ( NextIter < 4 ) { return ExtrapolateNext3(y, X, NextIter, mode); }
+         else                     { return ExtrapolateNext4(y, X, NextIter, mode); }
          break;
 
   };
