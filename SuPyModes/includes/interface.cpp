@@ -4,7 +4,7 @@
 #include <eigen3/Eigen/Eigenvalues>
 #include <eigen3/Eigen/Sparse>
 #include <eigen3/Eigen/Core>
-#include "/home/martth/temporary/gnuplot-iostream/gnuplot-iostream.h"
+#include "gnuplot-iostream.h"
 #include <Spectra/GenEigsRealShiftSolver.h>
 #include <Spectra/MatOp/SparseGenRealShiftSolve.h>
 #include <vector>

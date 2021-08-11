@@ -182,7 +182,7 @@ EigenSolving::LoopOverITR_(ndarray ITRList, size_t order = 1){
   for (size_t mode=0; mode<sMode; ++mode)
       for (size_t slice=0; slice<ITRLength; ++slice){
 
-          cout<<"Iteration: "<<slice<<"   ITR:  "<<ITRPtr[slice]<< "   mode:   "<<mode<<endl;
+          cout<<"Iteration: "<<slice<<"   ITR:  "<<ITRPtr[slice]<< "   mode:   "<<mode<<"  alpha:  "<< alpha<<endl;
 
           kDual = kInit * ITRPtr[slice];
 

@@ -29,29 +29,26 @@ In order to use the SuPyMode Simulator Library, one must have installed the foll
 4. Matplotlib
 5. Shapely
 6. Descartes
+7. Progressbar
 
 ----
-
-Using pip3 one can use the following commands:
-
-.. code-block:: python
-
-    pip3 install -r requirement.txt
-    pip3 install -e ../SuPyModes
-
 
 Or to install individually the packages:
 
 .. code-block:: python
-
     >>> pip3 install Numpy
     >>> pip3 install Scipy
     >>> pip3 install Pandas
     >>> pip3 install Matplotlib
     >>> pip3 install Shapely
     >>> pip3 install Descartes
-    >>> apt-get install python-sphinx (for Unix OS)
-    >>> sudo port install py27-sphinx (for Mac OS)
+    >>> git clone https://github.com/MartinPdeS/SuPyMode.git
+    >>> cd SuPyMode && git submodule init && git submodule update
+    >>> cd extern/eigen && mkdir build && cd build && cmake .. && make install && cd ..
+    >>> cd extern/spectra && mkdir build && cd build && cmake .. && make install && cd ..
+    >>> cmake .
+    >>> make EigenSolver
+    >>> python3 setup.py install -v
 
 
 

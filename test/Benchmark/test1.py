@@ -36,7 +36,7 @@ Sol = SuPySolver(Coupler    = SMF28,
                  sMode      = sMode,
                  Error      = 2)
 
-ITRList = np.linspace(1,0.99,1)
+ITRList = np.linspace(1,0.99,100)
 
 Sol.CppSolver.Lambda = 1.55
 Sol.CppSolver.dx = SMF28.Axes.dx
