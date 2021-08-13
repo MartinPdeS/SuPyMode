@@ -152,5 +152,5 @@ class EigenSolving : public BaseLaplacian{
 
    void SortModesIndex();
 
-   void PSM(size_t& slice, size_t& mode);
+   void PSM(VectorType& X0, size_t& slice, size_t& mode);
 };

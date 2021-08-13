@@ -39,6 +39,7 @@ GramSchmidt(MatrixType& EigenVectors, size_t& mode, VectorType& X0)
             projection = X0.dot(EigenVectors.col(iter)) / EigenVectors.col(iter).dot(EigenVectors.col(iter));
             X0 = X0 - projection * EigenVectors.col(iter);
     }
+    X0.normalize();
 }
 
 vector<ScalarType>

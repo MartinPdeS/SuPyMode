@@ -22,36 +22,41 @@ Core0 = Circle( Position = (0,0),
 SMF28 = Geometry(Objects = [Clad, Core0],
                  Xbound  = [-90, 90],
                  Ybound  = [-90, 90],
-                 Nx      = 80,
-                 Ny      = 80,
+                 Nx      = 50,
+                 Ny      = 50,
                  GConv   = 0)
 
+#SMF28.CreateMesh()
+SMF28.Plot()
 
-sMode=8
+sMode=5
 
 Sol = SuPySolver(Coupler    = SMF28,
-                 Tolerance  = 1e-8,
-                 MaxIter    = 1000,
-                 nMode      = sMode,
+                 Tolerance  = 1e-10,
+                 MaxIter    = 10000,
+                 nMode      = 2*sMode+1,
                  sMode      = sMode,
                  Error      = 2)
 
-ITRList = np.linspace(1,0.99,100)
-
+ITRList = np.linspace(1,0.1,300)
+#ITRList = np.ones(30)
 Sol.CppSolver.Lambda = 1.55
 Sol.CppSolver.dx = SMF28.Axes.dx
 Sol.CppSolver.dy = SMF28.Axes.dy
 Sol.CppSolver.ComputeLaplacian(2)
 
 
-Sol.CppSolver.LoopOverITR_(ITRList, 1)
+Sol.CppSolver.LoopOverITR(ITRList, 3)
 
-Field0, beta0 = Sol.CppSolver.GetSlice(0)
+Field0, beta0 = Sol.CppSolver.GetSlice(199)
 
-print(Field0.shape)
+print(beta0)
 
 
 fig, axes = plt.subplots(1,sMode)
+# if not isinstance(axes, list):
+#     axes = [axes]
+
 for i in range(sMode):
     axes[i].pcolormesh(Field0[i])
 

@@ -58,7 +58,7 @@ pybind11_add_module(EigenSolver MODULE SuPyModes/includes/interface.cpp )
 
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(EigenSolver PRIVATE Eigen3::Eigen ${Boost_LIBRARIES})
-target_compile_options (EigenSolver PRIVATE -std=c++17 -Ofast)
+target_compile_options (EigenSolver PRIVATE -std=c++17 -O3)
 
 
 add_custom_command(

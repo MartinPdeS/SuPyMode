@@ -110,32 +110,24 @@ EigenSolving::ComputePreSolution(size_t& slice, size_t& mode){
 
   VectorType X0(size);
 
-  if (slice != 0){
-      X0    = FullEigenVectors[slice-1].col(mode);
-      alpha = ExtrapolateNext(ExtrapolOrder, FullEigenValues, ITRList, slice, mode);
-      }
-  else{
+  if (slice == 0){
       X0    = VectorType::Ones(size); X0.normalize();
       alpha = pow( k * ComputeMaxIndex(), 2 );
+      }
+  else{
+      X0    = FullEigenVectors[slice-1].col(mode);
+      alpha = ExtrapolateNext(ExtrapolOrder, FullEigenValues, ITRList, slice, mode);
       }
 
   return make_tuple(X0, alpha);
 }
 
 void
-EigenSolving::PSM(size_t& slice, size_t& mode){
+EigenSolving::PSM(VectorType& X0, size_t& slice, size_t& mode){
 
-  ScalarType ck=0, c0=1;
+  ScalarType ck=0.0, c0=1.0;
 
-  VectorType X0(size), Y0(size);
-
-  tie(X0, alpha) = ComputePreSolution(slice, mode);
-
-  EigenMatrix = ComputeMatrix();
-
-  M = - EigenMatrix - (alpha * Identity);
-
-  Solver.compute(M);
+  VectorType Y0(size);
 
   for (size_t iter=0; iter<MaxIter; ++iter){
 
@@ -145,19 +137,17 @@ EigenSolving::PSM(size_t& slice, size_t& mode){
 
     ck = Y0.dot(X0);
 
-    if ( abs( (c0-ck)/ck) < Tolerance ) break;
+    Y0.normalize();
+
+    if ( abs( (c0-ck)/ck) < Tolerance && iter!=0 ) break;
 
     c0 = ck;
 
-    Y0.normalize();
-
     X0 = Y0;
-
   }
 
-  FullEigenVectors[slice].col(mode) = X0;
-
-  FullEigenValues[slice](mode)  = 1.0 / ck + alpha;
+  FullEigenVectors[slice].col(mode)  = Y0;
+  FullEigenValues[slice](mode)       = alpha + 1.0/ck;
 
 
 }
@@ -174,21 +164,31 @@ EigenSolving::LoopOverITR_(ndarray ITRList, size_t order = 1){
   FullEigenVectors = vector<MatrixType>(ITRLength, MatrixType(size, sMode));
   FullEigenValues  = vector<VectorType>(ITRLength, VectorType(sMode));
 
-  lambdaInit       = lambda;
   kInit            = 2.0 * PI / lambda;
 
+  VectorType X0(size);
 
+  for (size_t slice=0; slice<ITRLength; ++slice){
 
-  for (size_t mode=0; mode<sMode; ++mode)
-      for (size_t slice=0; slice<ITRLength; ++slice){
+      cout<<"Iteration: "<<slice<<"   ITR:  "<<ITRPtr[slice]<<endl;
 
-          cout<<"Iteration: "<<slice<<"   ITR:  "<<ITRPtr[slice]<< "   mode:   "<<mode<<"  alpha:  "<< alpha<<endl;
+      kDual = kInit * ITRPtr[slice];
 
-          kDual = kInit * ITRPtr[slice];
+      EigenMatrix = ComputeMatrix();
 
-          PSM(slice, mode);
-      }
+      for (size_t mode=0; mode<sMode; ++mode){
 
+          tie(X0, alpha) = ComputePreSolution(slice, mode);
+
+          M = -EigenMatrix - (alpha * Identity);
+
+          Solver.compute(M);
+
+          PSM(X0, slice, mode);
+
+          //cout<<"Mode:   "<<mode<<"  alpha:  "<< alpha<<"Sigma: "<<FullEigenValues[slice](mode)<<"\n\n"<<endl;
+        }
+    }
 }
 
 

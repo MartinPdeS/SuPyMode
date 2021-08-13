@@ -43,6 +43,10 @@ Or to install individually the packages:
     >>> pip3 install Shapely
     >>> pip3 install Descartes
     >>> git clone https://github.com/MartinPdeS/SuPyMode.git
+
+    >>> sudo apt-get install gnuplot
+    >>> sudo apt-get install libgnuplot-iostream-dev
+
     >>> cd SuPyMode && git submodule init && git submodule update
     >>> cd extern/eigen && mkdir build && cd build && cmake .. && make install && cd ..
     >>> cd extern/spectra && mkdir build && cd build && cmake .. && make install && cd ..
