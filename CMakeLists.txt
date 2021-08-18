@@ -45,11 +45,12 @@ add_custom_target(installDependence ALL DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Depe
 
 
 add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/Upload.txt
+  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/UploadPypi.txt
   COMMAND python3.8 -m twine upload --password ${PipPassword} --username ${PipUsername} --repository pypi ./dist/*
   COMMENT "Upload on Pypi")
 
-add_custom_target(Upload ALL DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Upload.txt)
+add_custom_target(UploadPypi ALL DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/UploadPypi.txt)
+
 
 FIND_PACKAGE(Boost REQUIRED COMPONENTS system iostreams)
 
