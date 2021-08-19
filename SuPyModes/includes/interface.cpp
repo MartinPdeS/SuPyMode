@@ -1,13 +1,13 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/complex.h>
 #include <pybind11/numpy.h>
-#include <eigen3/Eigen/Eigenvalues>
-#include <eigen3/Eigen/Sparse>
-#include <eigen3/Eigen/Core>
-#include "gnuplot-iostream.h"
-#include <Spectra/GenEigsRealShiftSolver.h>
-#include <Spectra/MatOp/SparseGenRealShiftSolve.h>
+#include "../../extern/eigen/Eigen/Eigenvalues"
+#include "../../extern/eigen/Eigen/Sparse"
+#include "../../extern/eigen/Eigen/Core"
+#include "../../extern/spectra/include/Spectra/GenEigsRealShiftSolver.h"
+#include "../../extern/spectra/include/Spectra/MatOp/SparseGenRealShiftSolve.h"
 #include <vector>
+#include <iostream>
 
 
 

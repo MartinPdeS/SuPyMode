@@ -19,9 +19,6 @@ EigenSolving::ComputeMatrix(){
 
     EigenMatrix += Identity;
 
-    if (Debug)
-        cout<<EigenMatrix<<endl;
-
     Identity.setIdentity();
 
     return -1.0*EigenMatrix;
@@ -92,7 +89,7 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
     tie(EigenVectors, EigenValues) = ComputeEigen(alpha);
 
-    cout<<"Iteration: "<<i<<"   ITR:  "<<ITRPtr[i]<<endl;
+    std::cout<<"Iteration: "<<i<<"   ITR:  "<<ITRPtr[i]<<std::endl;
 
     FullEigenVectors[i] = EigenVectors;
 
@@ -170,7 +167,7 @@ EigenSolving::LoopOverITR_(ndarray ITRList, size_t order = 1){
 
   for (size_t slice=0; slice<ITRLength; ++slice){
 
-      cout<<"Iteration: "<<slice<<"   ITR:  "<<ITRPtr[slice]<<endl;
+      std::cout<<"Iteration: "<<slice<<"   ITR:  "<<ITRPtr[slice]<<std::endl;
 
       kDual = kInit * ITRPtr[slice];
 
@@ -245,8 +242,8 @@ EigenSolving::ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1, size_t id
           }
 
         if (BestOverlap<0.8)
-            cout<<"Bad mode correspondence: "<< BestOverlap
-                <<"  At ITR: "<< ITRPtr[idx] <<".   You should consider makes more ITR steps"<<endl;
+            std::cout<<"Bad mode correspondence: "<< BestOverlap
+                <<"  At ITR: "<< ITRPtr[idx] <<".   You should consider makes more ITR steps"<<std::endl;
       }
 
   return Indices;
