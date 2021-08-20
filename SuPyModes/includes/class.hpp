@@ -86,7 +86,6 @@ class EigenSolving : public BaseLaplacian{
                  this->dx                = 100./this->Nx;
                  this->dy                = 100./this->Ny;
                  this->MeshPtr           = (ScalarType*) Mesh.request().ptr;
-                 this->DegenerateFactor  = 1.0;
                  this->Debug             = Debug;
                  ScalarType *adress           = (ScalarType*) PyMeshGradient.request().ptr;
 

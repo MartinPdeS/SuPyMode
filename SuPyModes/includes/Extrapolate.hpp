@@ -96,8 +96,6 @@ _ExtrapolateNext2(vector<VectorType>& FullEigenValues, ndarray& ITRList, size_t 
 
   double * ITRPtr = (double*) ITRList.request().ptr;
 
-  double NextValue;
-
   double y;
   double y2 = FullEigenValues[NextIter-1][0];
   double y1 = FullEigenValues[NextIter-2][0];

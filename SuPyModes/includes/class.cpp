@@ -252,7 +252,7 @@ EigenSolving::ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1, size_t id
 
 void
 EigenSolving::SortModesFields(){
-  size_t BestFit, iter = 0;
+  size_t iter = 0;
 
   vector<size_t> Overlap;
 
@@ -354,7 +354,7 @@ EigenSolving::ComputingCoupling(){
 ScalarType
 EigenSolving::ComputeMaxIndex(){
   MaxIndex = 0.0;
-  for (size_t i; i<size; ++i)
+  for (size_t i=0; i<size; ++i)
      if (MeshPtr[i] > MaxIndex)
          MaxIndex = MeshPtr[i];
 

@@ -208,10 +208,10 @@ rungeKutta(ScalarType x0, ScalarType y0, ScalarType x, ScalarType h)
     // step height h
     int n = (int)((x - x0) / h);
 
-    float k1, k2, k3, k4, k5;
+    ScalarType k1, k2, k3, k4;
 
     // Iterate for number of iterations
-    float y = y0;
+    ScalarType y = y0;
     for (int i=1; i<=n; i++)
     {
         // Apply Runge Kutta Formulas to find
@@ -222,7 +222,7 @@ rungeKutta(ScalarType x0, ScalarType y0, ScalarType x, ScalarType h)
         k4 = h*dydx(x0 + h, y + k3);
 
         // Update next value of y
-        y = y + (1.0/6.0)*(k1 + 2*k2 + 2*k3 + k4);;
+        y = y + (1.0/6.0)*(k1 + 2*k2 + 2*k3 + k4);
 
         // Update next value of x
         x0 = x0 + h;

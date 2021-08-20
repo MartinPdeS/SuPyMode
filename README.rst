@@ -17,6 +17,26 @@ All the latest available documentation is available in the docs/build/index.html
 ----
 
 
+Installation
+------------
+
+Manual installation
+*******************
+
+To install manually (os independent) you will need to install:
+    - cmake (3.0+)
+    - Boost (1.58+) 
+    - Boost component: iostream filesystem
+
+Once it's done, do the following:
+
+.. code-block::
+    >>> git clone https://github.com/MartinPdeS/SuPyModes.git
+    >>> cd SuPyModes && mkdir build && cd build
+    >>> cmake ..
+    >>> make install                    (Linux)
+    >>> msbuild INSTALL.vcxproj         (from visual Studio powershell)
+
 Packages depedencies
 ********************
 
@@ -25,12 +45,9 @@ In order to use the SuPyMode Simulator Library, one must have installed the foll
 
 1. Numpy
 2. Scipy
-3. Pandas
 4. Matplotlib
 5. Shapely
 6. Descartes
-7. Progressbar
-
 ----
 
 Or to install individually the packages:
