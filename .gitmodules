@@ -1,12 +1,12 @@
-[submodule "extern/ublas"]
-	path = extern/ublas
-	url = https://github.com/boostorg/ublas.git
 [submodule "extern/eigen"]
-	path = extern/eigen
-	url = https://github.com/libigl/eigen.git
+	path   = extern/eigen
+	url    = https://github.com/libigl/eigen.git
+	ignore = dirty
 [submodule "extern/spectra"]
-	path = extern/spectra
-	url = https://github.com/yixuan/spectra.git
+	path   = extern/spectra
+	url    = https://github.com/yixuan/spectra.git
+	ignore = dirty
 [submodule "extern/pybind11"]
-	path = extern/pybind11
-	url = https://github.com/pybind/pybind11.git
+	path   = extern/pybind11
+	url    = https://github.com/pybind/pybind11.git
+	ignore = dirty
