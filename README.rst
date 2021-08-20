@@ -31,7 +31,11 @@ To install manually (os independent) you will need to install:
 Once it's done, do the following:
 
 .. code-block:: python
-    >>> pip3 install Numpy
+    >>> git clone https://github.com/MartinPdeS/SuPyModes.git
+    >>> cd SuPyModes && mkdir build && cd build
+    >>> cmake ..
+    >>> make install                    (Linux)
+    >>> msbuild INSTALL.vcxproj         (from visual Studio powershell)
 
 
 
