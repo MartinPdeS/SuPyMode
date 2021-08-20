@@ -49,7 +49,7 @@ In order to use the SuPyMode Simulator Library, one must have installed the pyth
 
 .. code-block:: python
 
-   >>> pip3 install Numpy
+    >>> pip3 install Numpy
     >>> pip3 install Scipy
     >>> pip3 install Pandas
     >>> pip3 install Matplotlib
@@ -60,7 +60,7 @@ Then, download and install the SuPyMode package:
 
 .. code-block:: python
 
-   >>> git clone https://github.com/MartinPdeS/SuPyModes.git
+    >>> git clone https://github.com/MartinPdeS/SuPyModes.git
     >>> cd SuPyModes && mkdir build && cd build
     >>> cmake ..
     >>> make install                    (Linux)
@@ -79,7 +79,7 @@ Refractive index for some materials are computed via Sellmeier equation:
 
 .. code-block:: python
 
-   Fused_silica(wavelength = 1.55)
+    Fused_silica(wavelength = 1.55)
     Ambiant_air(wavelength = 1.55)
     BK7_glass(wavelength = 1.55)
 
@@ -103,5 +103,5 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
 .. |python| image:: https://img.shields.io/badge/Made%20with-Python-1f425f.svg
    :target: https://www.python.org/
 
-.. |docs| image:: https://readthedocs.org/projects/pymiesim/badge/?version=latest
+.. |docs| image:: https://readthedocs.org/projects/supymode/badge/?version=latest
    :target: https://supymode.readthedocs.io/en/latest/?badge=latest
