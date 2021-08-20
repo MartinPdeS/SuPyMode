@@ -15,13 +15,13 @@ from setuptools import find_packages, setup, Command
 
 
 # Package meta-data.
-NAME            = 'SuPyModes'
+NAME            = 'SuPyMode'
 DESCRIPTION     = 'A package for light propagation in fiber optics.'
 URL             = 'https://github.com/MartinPdeS/SuPyModes'
 EMAIL           = 'Martin.poinsinet.de.sivry@gmail.com'
 AUTHOR          = 'Martin Poinsinet de Sivry',
 REQUIRES_PYTHON = '>3.8.0'
-VERSION         = '0.0.3'
+VERSION         = '0.0.4'
 
 # What packages are required for this module to be executed?
 REQUIRED = ['scipy',

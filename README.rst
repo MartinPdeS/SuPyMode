@@ -1,5 +1,5 @@
-SuPyModes
-==========
+SuPyMode
+========
 
 
 This project aims to produce an useful tool (python library) to simulate propagation mode in a very wide range of parameters and form.
@@ -37,6 +37,10 @@ Once it's done, do the following:
     >>> make install                    (Linux)
     >>> msbuild INSTALL.vcxproj         (from visual Studio powershell)
 
+
+
+----
+
 Packages depedencies
 ********************
 
@@ -48,6 +52,7 @@ In order to use the SuPyMode Simulator Library, one must have installed the foll
 4. Matplotlib
 5. Shapely
 6. Descartes
+
 ----
 
 Or to install individually the packages:
