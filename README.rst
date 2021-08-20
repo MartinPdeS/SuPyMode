@@ -36,8 +36,7 @@ Once it's done, do the following:
     >>> cmake ..
     >>> make install                    (Linux)
     >>> msbuild INSTALL.vcxproj         (from visual Studio powershell)
-
-
+.
 
 ----
 
