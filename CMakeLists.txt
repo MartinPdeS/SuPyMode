@@ -39,7 +39,7 @@ include_directories( ${PYTHON_INCLUDE_DIRS} ${PYBIND11_INCLUDE_DIRS} )
 
 
 set(BIN_PATH ${PROJECT_BINARY_DIR}/../SuPyModes/includes/)
-pybind11_add_module(EigenSolver MODULE ../SuPyModes/includes/interface.cpp )
+pybind11_add_module(EigenSolver MODULE ../SuPyMode/includes/interface.cpp )
 
 target_link_libraries(EigenSolver PRIVATE Eigen3::Eigen ${Boost_LIBRARIES})
 target_compile_options (EigenSolver PRIVATE "/plateform:anycpu" -O2)
@@ -47,7 +47,7 @@ target_compile_options (EigenSolver PRIVATE "/plateform:anycpu" -O2)
 
 RemoveReleaseCXXFlag("/RTC1")
 RemoveDebugCXXFlag("/RTC1")
-
+message(STATUS "${CMAKE_CXX_FLAGS_RELEASE} \n\n\n")
 
 message(STATUS "Installing file in ${BIN_PATH}" )
 
