@@ -5,11 +5,12 @@ import io
 import os
 import sys
 import numpy
-from shutil import rmtree
 import pathlib
-from setuptools import setup, Extension
 import subprocess
+import pkg_resources
 
+from shutil     import rmtree
+from setuptools import setup, Extension
 from setuptools import find_packages, setup, Command
 
 
@@ -24,16 +25,14 @@ REQUIRES_PYTHON = '>3.8.0'
 VERSION         = '0.0.4'
 
 # What packages are required for this module to be executed?
-REQUIRED = ['scipy',
-            'matplotlib',
-            'cython',
-            'pybind11',
-            'vtk',
-            'pandas',
-            'mayavi',
-            'coverage',
-            'vtk',
-            'numpy']
+requirementPath = os.path.join(os.path.dirname(__file__), 'requirements.txt')
+
+with open(requirementPath,'r') as requirements_txt:
+    REQUIRED = [
+        str(requirement)
+        for requirement
+        in pkg_resources.parse_requirements(requirements_txt)
+    ]
 
 
 EXTRAS = {}
