@@ -1,3 +1,2 @@
-include SuPyMode/includes/EigenSolver.cp38win_amd64.pyd
+include SuPyMode/bin/*
 include SuPyMode/includes/*
-

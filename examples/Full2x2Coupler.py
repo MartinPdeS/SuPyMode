@@ -1,6 +1,6 @@
-from SuPyModes.Geometry          import Geometry, Fused2, Circle
-from SuPyModes.Solver            import SuPySolver
-from SuPyModes.sellmeier         import Fused_silica
+from SuPyMode.Geometry          import Geometry, Fused2, Circle
+from SuPyMode.Solver            import SuPySolver
+from SuPyMode.sellmeier         import Fused_silica
 import numpy as np
 
 
