@@ -18,9 +18,9 @@ from shapely                     import affinity
 from scipy.ndimage.filters import gaussian_filter
 
 """ package imports """
-from SuPyModes.Directories       import RootPath
-from SuPyModes.Special           import Intersection, gradientO4
-from SuPyModes.utils             import *
+from SuPyMode.Directories       import RootPath
+from SuPyMode.Special           import Intersection, gradientO4
+from SuPyMode.utils             import *
 
 Mlogger = logging.getLogger(__name__)
 

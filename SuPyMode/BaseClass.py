@@ -11,9 +11,9 @@ plt.rc('axes', prop_cycle=(
                            cycler('color', ['r', 'g', 'b', 'y', 'k'])
                            ))
 
-from SuPyModes.Config        import *
-from SuPyModes.Directories   import *
-from SuPyModes.utils         import Multipage, prePlot, ToList, Enumerate
+from SuPyMode.Config        import *
+from SuPyMode.Directories   import *
+from SuPyMode.utils         import Multipage, prePlot, ToList, Enumerate
 
 
 class SetPlots(object):
