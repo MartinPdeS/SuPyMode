@@ -1,8 +1,8 @@
 import numpy as np
 
-from SuPyModes.SuperMode             import SuperSet, SetSlice
-from SuPyModes.includes.EigenSolver  import EigenSolving
-from SuPyModes.utils                 import Axes
+from SuPyMode.SuperMode             import SuperSet, SetSlice
+from SuPyMode.includes.EigenSolver  import EigenSolving
+from SuPyMode.utils                 import Axes
 
 
 

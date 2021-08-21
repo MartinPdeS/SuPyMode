@@ -6,9 +6,9 @@ from scipy.interpolate     import interp1d
 from itertools             import combinations, combinations_with_replacement as Combinations
 from mayavi                import mlab
 
-from SuPyModes.Config      import *
-from SuPyModes.utils       import RecomposeSymmetries, Enumerate
-from SuPyModes.BaseClass   import SetPlots, SetProperties
+from SuPyMode.Config      import *
+from SuPyMode.utils       import RecomposeSymmetries, Enumerate
+from SuPyMode.BaseClass   import SetPlots, SetProperties
 
 
 

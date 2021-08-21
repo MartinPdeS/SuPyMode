@@ -40,7 +40,7 @@ pybind11_add_module(EigenSolver MODULE ../SuPyModes/includes/interface.cpp )
 
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(EigenSolver PRIVATE Eigen3::Eigen ${Boost_LIBRARIES})
-target_compile_options (EigenSolver PRIVATE -O2)
+target_compile_options (EigenSolver PRIVATE "/plateform:anycpu" -O2)
 
 message("${CMAKE_CXX_FLAGS_RELEASE} \n\n\n")
 RemoveReleaseCXXFlag("/RTC1")

@@ -1,7 +1,7 @@
 import os
 
-import SuPyModes
+import SuPyMode
 
-RootPath     = SuPyModes.__path__[0]
+RootPath     = SuPyMode.__path__[0]
 
 ZeroPath     = os.path.dirname(RootPath)

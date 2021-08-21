@@ -1,8 +1,8 @@
-from SuPyModes.utils     import *
-from SuPyModes.sellmeier import Fused_silica
-from SuPyModes.Geometry          import Geometry, Circle, Fused3
-from SuPyModes.Solver            import SuPySolver
-from SuPyModes.sellmeier         import Fused_silica
+from SuPyMode.utils     import *
+from SuPyMode.sellmeier import Fused_silica
+from SuPyMode.Geometry          import Geometry, Circle, Fused3
+from SuPyMode.Solver            import SuPySolver
+from SuPyMode.sellmeier         import Fused_silica
 
 
 class Fiber_DCF1300S_20():
