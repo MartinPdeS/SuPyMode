@@ -18,11 +18,11 @@ from setuptools import find_packages, setup, Command
 # Package meta-data.
 NAME            = 'SuPyMode'
 DESCRIPTION     = 'A package for light propagation in fiber optics.'
-URL             = 'https://github.com/MartinPdeS/SuPyModes'
+URL             = 'https://github.com/MartinPdeS/SuPyMode'
 EMAIL           = 'Martin.poinsinet.de.sivry@gmail.com'
 AUTHOR          = 'Martin Poinsinet de Sivry',
 REQUIRES_PYTHON = '>3.8.0'
-VERSION         = '0.0.7'
+VERSION         = '0.0.8'
 
 # What packages are required for this module to be executed?
 requirementPath = os.path.join(os.path.dirname(__file__), 'requirements.txt')
@@ -93,6 +93,4 @@ setup(
         'Topic :: Scientific/Engineering :: Physics',
         'Intended Audience :: Science/Research',
     ],
-    # $ setup.py publish support.
-    #cmdclass={'upload': UploadCommand},
 )
