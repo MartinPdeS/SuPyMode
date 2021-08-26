@@ -1,2 +1,2 @@
-include SuPyMode/bin/*
+include SuPyMode/bin/EigenSolver*
 include SuPyMode/includes/*

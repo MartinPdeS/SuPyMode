@@ -22,7 +22,7 @@ URL             = 'https://github.com/MartinPdeS/SuPyMode'
 EMAIL           = 'Martin.poinsinet.de.sivry@gmail.com'
 AUTHOR          = 'Martin Poinsinet de Sivry',
 REQUIRES_PYTHON = '>3.8.0'
-VERSION         = '0.0.8'
+VERSION         = '0.0.9'
 
 # What packages are required for this module to be executed?
 requirementPath = os.path.join(os.path.dirname(__file__), 'requirements.txt')
