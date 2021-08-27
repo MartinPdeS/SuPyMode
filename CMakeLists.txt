@@ -17,7 +17,7 @@ if (WIN32)
 
     # if windows is used
     set(CMAKE_SYSTEM_NAME Windows)
-    set(TOOLCHAIN_PREFIX x86_64-w64-mingw32)
+    set(TOOLCHAIN_PREFIX clang)
 
     # cross compilers to use for C, C++ and Fortran
     set(CMAKE_C_COMPILER ${TOOLCHAIN_PREFIX}-gcc)
@@ -39,6 +39,7 @@ if (WIN32)
 endif (WIN32)
 
 
+set(CMAKE_CXX_COMPILER clang)
 
 
 project(SuPyModes LANGUAGES CXX)

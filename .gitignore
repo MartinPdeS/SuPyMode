@@ -1,7 +1,7 @@
 *.DS_store
 *.ipynb_checkpoints*
 *__pycache__*
-persos
+
 *.pickle
 *.pkl
 pycallgraph.png
@@ -13,4 +13,3 @@ CMakeFiles
 dist
 build
 *.egg*
-*Perso*

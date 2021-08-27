@@ -1,0 +1,8 @@
+wget https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.gz
+tar xvzf boost_1_77_0.tar.bz2
+mv boost_1_77_0 boost
+cd boost
+
+echo "using gcc :  : x86_64-w64-mingw32-g++ ;" > user-config.jam
+./bootstrap.sh
+./b2 --user-config=./user-config.jam --prefix=./boost-x64 target-os=windows address-model=64 variant=release install
