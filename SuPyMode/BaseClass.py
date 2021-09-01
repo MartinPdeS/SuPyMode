@@ -40,7 +40,7 @@ class SetPlots(object):
         C = self.Coupling
 
         for n, (i,j) in enumerate( self.Combination ):
-            plt.plot(self.Geometry.ITRList[1:], C[:,i,j], label=f'{i} - {j}')
+            plt.plot(self.Geometry.ITRList[0:], C[:,i,j], label=f'{i} - {j}')
 
         return self.PlotKwarg['Coupling'], [min(C), max(C)]
 
@@ -48,9 +48,11 @@ class SetPlots(object):
     @prePlot
     def PlotAdiabatic(self, fig):
         A = self.Adiabatic
-
+        print(A)
+        print('='*100)
+        print(self.Coupling)
         for n, (i,j) in enumerate( self.Combination ):
-            plt.plot(self.Geometry.ITRList[1:], A[:,i,j], label=f'{i} - {j}')
+            plt.plot(self.Geometry.ITRList[0:], A[:,i,j], label=f'{i} - {j}')
 
         return self.PlotKwarg['Adiabatic'], [min(A), max(A)]
 
@@ -155,6 +157,7 @@ class SetProperties(object):
     @property
     def Adiabatic(self):
         if self._Adiabatic is None:
+            self._Coupling = self.CppSolver.ComputingCoupling()
             self._Adiabatic = self.CppSolver.ComputingAdiabatic()
             return self._Adiabatic
 

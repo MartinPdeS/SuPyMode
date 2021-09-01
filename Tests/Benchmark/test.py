@@ -1,7 +1,7 @@
-from SuPyModes.Geometry          import Geometry, Circle, Fused4, Gradient
-from SuPyModes.Solver            import SuPySolver
-from SuPyModes.sellmeier         import Fused_silica
-from SuPyModes.fibers            import *
+from SuPyMode.Geometry          import Geometry, Circle, Fused4, Gradient
+from SuPyMode.Solver            import SuPySolver
+from SuPyMode.sellmeier         import Fused_silica
+from SuPyMode.fibers            import *
 
 
 """
@@ -31,8 +31,8 @@ Core2 = Circle( Position = Clad.C[2], Radi = C.rCore, Index = C.nCore )
 SMF28 = Geometry(Objects = [Clad, Clad0, Clad1, Clad2, Core0, Core1, Core2],
                  Xbound  = [-110, 110],
                  Ybound  = [-110, 110],
-                 Nx      = 15,
-                 Ny      = 15,
+                 Nx      = 50,
+                 Ny      = 50,
                  GConv   = 0)
 
 #SMF28.Plot()
@@ -40,8 +40,8 @@ SMF28 = Geometry(Objects = [Clad, Clad0, Clad1, Clad2, Core0, Core1, Core2],
 Sol = SuPySolver(Coupler    = SMF28,
                  Tolerance  = 1e-30,
                  MaxIter    = 1000,
-                 nMode      = 17,
-                 sMode      = 15,
+                 nMode      = 10,
+                 sMode      = 8,
                  Error      = 2)
 
 SuperModes = Sol.GetModes(wavelength    = 1.55,
@@ -53,4 +53,4 @@ SuperModes = Sol.GetModes(wavelength    = 1.55,
                           Sorting       = 'Field')
 
 
-SuperModes.ComputeM()
+SuperModes.Plot(Input=['Adiabatic'])

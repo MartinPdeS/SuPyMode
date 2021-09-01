@@ -334,6 +334,7 @@ EigenSolving::ComputingCoupling(){
               temp    = overlap.cwiseProduct( MeshGradient );
 
               C       = - (ScalarType) 0.5 * J * kInit*kInit / sqrt(beta0 * beta1) * abs( 1.0f / delta );
+              std::cout<<"Coupling:    "<<"beta0:   "<<beta0<<"    beta1:    "<<beta1<< "   Coupling:   "<<C<<std::endl;
 
               I       = Trapz(temp, 1.0, Nx, Ny);
 
@@ -366,23 +367,19 @@ EigenSolving::ComputeMaxIndex(){
 ndarray
 EigenSolving::ComputingAdiabatic(){
 
-  ITRPtr    = (ScalarType*) ITRList.request().ptr;
-
   vector<VectorType> Betas = ComputeBetas();
 
   size_t iter = 0;
-
-  VectorType temp;
 
   VectorType * Adiabatic = new VectorType(ITRLength * sMode * sMode);
 
   (*Adiabatic).setZero();
 
-  VectorType vec0, vec1, overlap;
+  VectorType vec0, vec1, overlap, temp;
 
   ScalarType delta, beta0, beta1;
 
-  ComplexScalarType C, I = 0.0;
+  ComplexScalarType C, I;
 
   for (size_t l=0; l<ITRLength; ++l)
       for (size_t i=0; i<sMode; ++i)
@@ -394,14 +391,15 @@ EigenSolving::ComputingAdiabatic(){
               vec1    = FullEigenVectors[l].col(j);
               beta0   = Betas[l][i];
               beta1   = Betas[l][j];
-              delta   = beta0 - beta1;
 
               overlap = vec0.cwiseProduct( vec1 );
+
+              delta   = beta0 - beta1;
 
               temp    = overlap.cwiseProduct( MeshGradient );
 
               C       = - (ScalarType) 0.5 * J * (kInit*kInit) / sqrt(beta0 * beta1) * abs( 1.0f / delta );
-
+              std::cout<<"Adiabatic:    "<<"beta0:   "<<beta0<<"    beta1:    "<<beta1<< "   Coupling:   "<<C<<std::endl;
               I       = Trapz(temp, 1.0, Nx, Ny);
 
               C      *=  I;

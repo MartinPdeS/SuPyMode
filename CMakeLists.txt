@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 3.0)
 
 message("PYTHON VERSION=${VERSION}")
 
-set(Token    "$ENV{PipUsername}")
-set(Password "$ENV{PipPassword}")
+set(Token    "$ENV{PyPiUsername}")
+set(Password "$ENV{PyPiPassword}")
+
 
 macro(RemoveDebugCXXFlag flag)
     string(REPLACE "${flag}" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
@@ -39,8 +40,6 @@ if (WIN32)
 endif (WIN32)
 
 
-set(CMAKE_CXX_COMPILER clang)
-
 
 project(SuPyModes LANGUAGES CXX)
 
@@ -53,8 +52,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/../SuPyMode/bin)
 add_subdirectory(extern/pybind11)
 add_subdirectory(extern/eigen)
 
-find_package( Python ${VERSION} COMPONENTS Interpreter EXACT )
-FIND_PACKAGE( PythonInterp ${VERSION} EXACT )
+find_package( Python ${VERSION} COMPONENTS Interpreter Development EXACT )
+
 find_package( Eigen3 REQUIRED NO_MODULE )
 
 set(EIGEN_INCLUDE_DIR ../extern/eigen)
