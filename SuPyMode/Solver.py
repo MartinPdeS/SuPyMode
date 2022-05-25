@@ -2,7 +2,7 @@ import numpy as np
 
 from SuPyMode.SuperMode             import SuperSet, SetSlice
 from SuPyMode.bin.EigenSolver       import EigenSolving
-from SuPyMode.utils                 import Axes
+from SuPyMode.Tools.utils                 import Axes
 
 
 
@@ -50,7 +50,7 @@ class SuPySolver(object):
         for Sym in Symmetries:
             assert Sym in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
 
-        assert Sorting in ['Field', 'Index'], "Sorting can only be done taking account of 'Fields' or 'Index'"
+        assert Sorting in ['Field', 'Index'], "Sorting can only be done taking account of 'Field' or 'Index'"
 
         Set = SuperSet(NSolutions = self.sMode, Geometry = self.Geometry)
 

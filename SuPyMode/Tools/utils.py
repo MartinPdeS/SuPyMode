@@ -11,7 +11,7 @@ from numpy               import pi, cos, sin, sqrt, abs, exp, array, ndarray
 from shapely.affinity    import rotate
 from progressbar         import Bar, Percentage, ETA, ProgressBar
 
-from SuPyMode.Config    import *
+from SuPyMode.Tools.Config    import *
 import numpy as np
 
 
