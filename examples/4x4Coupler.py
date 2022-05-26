@@ -15,13 +15,13 @@ Index = ExpData('FusedSilica').GetRI(Wavelength)
 
 Clad = Fused4(Radius =  62.5, Fusion  = 0.95, Index   = Index)
 
-Core0 = Circle( Position=Clad.C[0], Radius = 4.2, Index = Index+0.005 )
+Core0 = Circle( Position=Clad.C[0], Radius = 4.2, Index = Index+0.015 )
 
-Core1 = Circle( Position=Clad.C[1], Radius = 4.2, Index = Index+0.005 )
+Core1 = Circle( Position=Clad.C[1], Radius = 4.2, Index = Index+0.015 )
 
-Core2 = Circle( Position=Clad.C[2], Radius = 4.2, Index = Index+0.005 )
+Core2 = Circle( Position=Clad.C[2], Radius = 4.2, Index = Index+0.015 )
 
-Core3 = Circle( Position=Clad.C[3], Radius = 4.2, Index = Index+0.005 )
+Core3 = Circle( Position=Clad.C[3], Radius = 4.2, Index = Index+0.015 )
 
 
 Geo = Geometry(Objects = [Clad, Core0, Core1, Core2, Core3],
@@ -31,14 +31,15 @@ Geo = Geometry(Objects = [Clad, Core0, Core1, Core2, Core3],
                Ny      = Ny)
 
 
-Geo.Plot()
-"""
-Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000, nMode=8, sMode=6)
+#Geo.Plot()
+
+
+Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000, nMode=8, sMode=3)
 
 SuperModes = Sol.GetModes(wavelength      = 1.55,
-                          Nstep           = 100,
+                          Nstep           = 20,
                           ITRi            = 1,
-                          ITRf            = 0.1,
+                          ITRf            = 0.9,
                           Sorting         = 'Field',
                           RightSymmetry   = 0,
                           LeftSymmetry    = 0,
@@ -46,6 +47,5 @@ SuperModes = Sol.GetModes(wavelength      = 1.55,
                           BottomSymmetry  = 0
                           )
 
-
-SuperModes.Plot(Input=['Fields'], iter=[0])
-"""
+SuperModes.PlotFields(iter=0)
+#SuperModes.Plot(Input=['Index', 'Coupling'], iter=[0])

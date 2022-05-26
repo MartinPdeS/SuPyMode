@@ -3,13 +3,9 @@
 import os
 import numpy as np
 import logging
-from numpy                       import pi, cos, sin, sqrt, abs, exp, array, ndarray
-from matplotlib.path             import Path
-import matplotlib.pyplot         as plt
 
-from mpl_toolkits.axes_grid1     import make_axes_locatable
+from matplotlib.path             import Path
 from shapely.geometry            import Point
-from shapely.ops                 import cascaded_union
 from shapely                     import affinity
 from scipy.ndimage.filters       import gaussian_filter
 import pickle
@@ -17,7 +13,7 @@ import pickle
 """ package imports """
 from SuPyMode.Tools.Directories       import RootPath
 from SuPyMode.Tools.Special           import gradientO4
-from SuPyMode.Tools.utils             import *
+from SuPyMode.Tools.utils             import ToList, Axes
 from SuPyMode.Plotting.Plots          import Scene2D
 
 Mlogger = logging.getLogger(__name__)
@@ -168,6 +164,8 @@ class Geometry(object):
 
         self.mesh = gaussian_filter(self.mesh, sigma=self.GConv)
 
+    def __plot__(self, Ax):
+        print(Ax)
 
     def Plot(self):
         """ The methode plot the rasterized RI profile.
@@ -188,8 +186,8 @@ class Geometry(object):
                       )
 
         Scene.SetLimits(0, 0, XLim='Auto', YLim='Auto')
-        Scene.Show()
 
+        Scene.Show()
 
 
     def _Gradient(self):
@@ -206,12 +204,6 @@ class Geometry(object):
         Ygrad, Xgrad = gradientO4( self.mesh.T**2, self.Axes.dx, self.Axes.dy )
 
         gradient = (Xgrad * self.Axes.XX + Ygrad * self.Axes.YY)
-
-        if Plot:
-            plt.figure()
-            plt.pcolormesh(gradient)
-            plt.colorbar()
-            plt.show()
 
         return gradient.T
 
@@ -240,11 +232,11 @@ class BasedFused():
         for n, c in enumerate(self.C):
             Scene.AddShapely(0, 0, Object=c, Text=f"P{n}")
 
-        Scene.SetLimits(0, 0, XLim='Auto', YLim='Auto')
+        Scene.SetLimits(0, 0, XLim='auto', YLim='auto')
         Scene.Show()
 
 
-class Circle(BasedFused):
+class Circle_(BasedFused):
     def __init__(self, Radius, Index=None, debug='INFO', Gradient=None, Fusion=None, Position=[0,0]):
         self.Type   = 1
         super().__init__(Radius=Radius, Fusion=Fusion, Index=Index, Gradient=Gradient, debug=debug)
@@ -255,6 +247,29 @@ class Circle(BasedFused):
 
         with open(FileName, "rb") as poly_file:
             self.C, self.Object, self.hole = pickle.load(poly_file)
+
+
+class Circle(object):
+    def __init__(self, Position, Radius, Index=None, debug='INFO', Gradient=None):
+
+
+        assert not all([Index, Gradient]), "Error, you must either define an Index or a Gradient but not both."
+        assert any([Index, Gradient]), "Error, you must at least define an Index or a Gradient."
+        Mlogger.setLevel(getattr(logging, debug))
+
+        self.Points   = Position
+        self.Radius   = Radius
+        self.Index    = Index
+        self.hole     = None
+        self.Gradient = Gradient
+        self.Object   = Point(self.Points).buffer(self.Radius)
+        self.C        = [Point(Position)]
+
+    def Plot(self):
+        PlotObject(Full = [self.Object] + self.C)
+
+
+
 
 class Fused1(BasedFused):
     def __init__(self, Radius, Index=None, debug='INFO', Gradient=None, Fusion=None, Position=[0,0]):
@@ -279,7 +294,6 @@ class Fused3(BasedFused):
     def __init__(self, Radius, Fusion, Index, debug='INFO', Gradient=None):
         self.Type   = 3
         super().__init__(Radius=Radius, Fusion=Fusion, Index=Index, Gradient=Gradient, debug=debug)
-
 
 
 class Fused2(BasedFused):

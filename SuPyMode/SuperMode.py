@@ -8,8 +8,10 @@ from mayavi                import mlab
 
 from SuPyMode.Tools.Config      import *
 from SuPyMode.Tools.utils       import RecomposeSymmetries, Enumerate
-from SuPyMode.Tools.BaseClass   import SetPlots, SetProperties
-
+from SuPyMode.Tools.BaseClass   import SetProperties
+from SuPyMode.Tools.utils       import Multipage, prePlot, ToList
+from SuPyMode.Plotting.Plots       import Scene2D
+from SuPyMode.Plotting.PlotsUtils  import FieldMap
 
 
 Mlogger = logging.getLogger(__name__)
@@ -222,7 +224,7 @@ class _SuperMode(object):
 
 
 
-class SuperSet(SetProperties, SetPlots):
+class SuperSet(SetProperties):
     def __init__(self, NSolutions, Geometry, debug='INFO'):
         Mlogger.setLevel(getattr(logging, debug))
 
@@ -239,6 +241,127 @@ class SuperSet(SetProperties, SetPlots):
 
         self.combinations = tuple(combinations( np.arange(NSolutions), 2 ) )
         self.Combinations = tuple(Combinations( np.arange(NSolutions), 2 ) )
+
+
+    def PlotIndex(self, Scene, Col, Row):
+        for i in range(self.sMode):
+            Scene.AddLine(Row      = Row,
+                          Col      = Col,
+                          x        = self.Geometry.ITRList,
+                          y        = self.Index[:,i],
+                          Fill     = False,
+                          Legend   = f'Mode: {i}',
+                          xLabel   = r'ITR',
+                          yLabel   = r'Effective index n_{eff}',
+                          )
+
+            Scene.SetAxes(0, 0, Equal=False, Legend=True)
+
+
+    def PlotBeta(self, Scene, Col, Row):
+        for i in range(self.sMode):
+            Scene.AddLine(Row      = Row,
+                          Col      = Col,
+                          x        = self.Geometry.ITRList,
+                          y        = self.Beta[:,i],
+                          Fill     = False,
+                          Legend   = f'Mode: {i}',
+                          xLabel   = r'ITR',
+                          yLabel   = r'Propagation constante $\beta$')
+
+            Scene.SetAxes(0, 0, Equal=False, Legend=True)
+
+
+    def PlotCoupling(self, Scene, Col, Row):
+        for n, (i,j) in enumerate( self.Combination ):
+            Scene.AddLine(Row      = Row,
+                          Col      = Col,
+                          x        = self.Geometry.ITRList,
+                          y        = self.Coupling[:,i,j],
+                          Fill     = False,
+                          Legend   = f'Mode: {i}-{j}',
+                          xLabel   = r'ITR',
+                          yLabel   = r'Mode coupling')
+
+            Scene.SetAxes(0, 0, Equal=False, Legend=True)
+
+
+    def PlotAdiabatic(self, Scene, Col, Row):
+        for n, (i,j) in enumerate( self.Combination ):
+            Scene.AddLine(Row      = Row,
+                          Col      = Col,
+                          x        = self.Geometry.ITRList,
+                          y        = self.Adiabatic[:,i,j],
+                          Fill     = False,
+                          Legend   = f'Mode: {i}-{j}',
+                          xLabel   = r'ITR',
+                          yLabel   = r'Adiabatic criterion')
+
+            Scene.SetAxes(0, 0, Equal=False, Legend=True)
+
+
+    def PlotFields(self, iter=0):
+        Scene = Scene2D(nCols=self.sMode, nRows=1, ColorBar=False, UnitSize=[5,5])
+
+        for mode in range(self.sMode):
+            Field, x, y = self[mode][iter].GetField()
+
+            Scene.AddMesh(Row      = 0,
+                          Col      = mode,
+                          x        = x,
+                          y        = y,
+                          Scalar   = Field,
+                          ColorMap = FieldMap,
+                          xLabel   = r'X-distance [$\mu$m]',
+                          yLabel   = r'Y-distance [$\mu$m]',
+                          Title    = f'Mode: {mode} [ITR: {self.Geometry.ITRList[iter]}]'
+                          )
+
+            Scene.SetAxes(mode, 0, Equal=True)
+
+        Scene.Show()
+
+
+
+    def Plot(self, Input, iter=0, PlotKwarg=None, Combination=None):
+        Input = ToList(Input)
+
+        if Combination is None:
+            self.Combination = tuple(combinations( np.arange(self.sMode), 2 ) )
+        else:
+            self.Combination = Combination
+
+        Scene = Scene2D(nCols=1, nRows=len(Input), ColorBar=False)
+
+        i = 0
+        if 'Index' in Input:
+            self.PlotIndex(Scene, 0, i); i += 1
+
+        if 'Beta' in Input:
+            self.PlotBeta(Scene, 0, i); i += 1
+
+        if 'Coupling' in Input:
+            self.PlotCoupling(Scene, 0, i); i += 1
+
+        if 'Adiabatic' in Input:
+            self.PlotAdiabatic(Scene, 0, i); i += 1
+
+        Scene.Show()
+
+
+
+    def SaveFig(self, Input, Directory, iter=0, dpi=100, PlotKwarg=None, Combination=None):
+
+        if Combination is None:
+            self.Combination = tuple(combinations( np.arange(self.sMode), 2 ) )
+        else:
+            self.Combination = Combination
+
+        figures = self.GenFigures(Input, iter, PlotKwarg)
+
+        dir = os.path.join(ZeroPath, Directory) + '.pdf'
+
+        Multipage(dir, figs=figures, dpi=dpi)
 
 
     def ComputeCoupling(self):
@@ -371,6 +494,13 @@ class SetSlice(np.ndarray):
         norm = self.Norm
         self.Field *= 1 / norm
         self.Index *= 1 / norm
+
+    def GetField(self, Symmetries=True):
+        if Symmetries:
+            return RecomposeSymmetries(self.Field, self.ParentSet.Symmetries, self.ParentSet.Geometry.Axes)
+        else:
+            self.Field, self.ParentSet.Geometry.Axes
+
 
     def __plot__(self, ax, title=None):
 

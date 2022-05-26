@@ -6,7 +6,7 @@ import numpy as np
 from descartes           import PolygonPatch
 from shapely.geometry    import Point, LineString, MultiPolygon, Polygon
 
-from SuPyMode.Plotting.PlotsUtils  import FieldMap
+from SuPyMode.Plotting.PlotsUtils  import *
 import matplotlib.pyplot as plt
 
 try:
@@ -17,30 +17,50 @@ except ImportError:
 
 
 class Scene2D:
-    UnitSize       = (10, 6)
+    UnitSize       = (4, 4)
 
-    def __init__(self, nCols, nRows, ColorBar=True, Projection=None, Grid=True, UnitSize=None):
+    Template = {'Function'   : None,
+                'x'          : None,
+                'y'          : None,
+                'Data'       : None,
+                'Scalar'     : None,
+                'ColorMap'   : None,
+                'Colorbar'   : None,
+                'Color'      : None,
+                'Opacity'    : None,
+                'Name'       : None,
+                'Rendered'   : False,
+                'Title'      : None,
+                'xLabel'     : None,
+                'yLabel'     : None,
+                'Ax'         : None,
+                'Text'       : None,
+                'args'       : [],
+                'kwargs'     : {}
+
+             }
+
+    def __init__(self, nCols, nRows, ColorBar=True, Projection=None, Grid=True):
         self.nCols      = nCols
         self.nRows      = nRows
         self.ColorBar   = ColorBar
         self.Projection = Projection
         self.Grid       = Grid
         self.Boundaries = {'x': [0, 0], 'y': [0, 0]}
-        if UnitSize is not None: self.UnitSize = UnitSize
-
-        self.InitScene()
+        self.ToRender = []
+        self.AxesNumber = 0
 
     def InitScene(self):
         plt.rcParams['axes.grid'] = self.Grid
-        plt.rcParams['ytick.labelsize'] = 10
-        plt.rcParams['xtick.labelsize'] = 10
-        plt.rcParams["font.size"]       = 12
+        plt.rcParams['ytick.labelsize'] = '8'
+        plt.rcParams['xtick.labelsize'] = '8'
+        plt.rcParams["font.size"]       = 10
         plt.rcParams["font.family"]     = "serif"
 
         FigSize = [ self.UnitSize[0]*self.nCols, self.UnitSize[1]*self.nRows ]
 
-        self.Figure, self.Axes = plt.subplots(self.nRows,
-                                              self.nCols,
+        self.Figure, self.Axes = plt.subplots(self.nCols*self.nRows,
+                                              1,
                                               figsize=FigSize,
                                               subplot_kw=dict(projection=self.Projection))
 
@@ -49,10 +69,12 @@ class Scene2D:
         else:
             self.Axes = np.reshape(np.asarray( [self.Axes] ), (self.nRows, self.nCols))
 
-    def AddLine(self, x, y, Col, Row, Title=None, Fill=True, Color=None, xLabel=None, yLabel=None, Legend=None):
-        ax = self.Axes[Row, Col]
 
-        ax.plot(x, y, color=Color, label=Legend)
+    def AddLine(self, x, y, Col, Row, Title=None, Fill=True, Color='C0', xLabel=None, yLabel=None):
+        ax = self.Axes[Row, Col]
+        self.AxesNumber += 1
+
+        ax.plot(x, y, color='k')
 
         if Title:
             ax.set_title(Title)
@@ -68,19 +90,29 @@ class Scene2D:
 
 
     def AddShapely(self, Col, Row, Object, Text=None):
-        ax = self.Axes[Row, Col]
+        self.AxesNumber += 1
+        Instance = self.Template.copy()
+        Instance['Text']
 
         if isinstance(Object, Point):
-            ax.scatter(Object.x, Object.y, linewidth=7)
+            Instance['args']           = (Object.x, Object.y)
+            Instance['Function']       = 'scatter'
             self.UpdateBoundary(x=Object.x, y=Object.y)
 
+        if Text is not None:
+
+            Instance['Text']               = True
+            Instance['TextFunction']       = 'text'
+            Instance['TextArgs']           = (Object.x, Object.y, Text)
+
         if isinstance(Object, (Polygon, MultiPolygon) ):
-            Image = ax.add_patch( PolygonPatch(Object, alpha=0.5) )
+            Instance['args']           = PolygonPatch(Object, alpha=0.5),
+            Instance['Function']       = 'add_patch'
+
             Coord = np.array( list(zip(*Object.exterior.coords.xy)) )
             self.UpdateBoundary(x=Coord[:,0], y=Coord[:,1])
 
-        if Text:
-            ax.text(Object.x, Object.y, Text)
+        self.ToRender.append(Instance)
 
 
     def UpdateBoundary(self, x=None, y=None):
@@ -94,48 +126,69 @@ class Scene2D:
             YBound = min(self.Boundaries['y'][0], yMin), max(self.Boundaries['y'][1], yMax)
             self.Boundaries['y'] = XBound
 
-    def SetAxes(self, Col, Row, Equal=None, Legend=None):
-        ax = self.Axes[Row, Col]
-
-        if Equal is True:
-            ax.set_aspect('equal')
-        if Equal is False:
-            ax.set_aspect('auto')
-
-        if Legend is not None:
-            ax.legend().set_visible(Legend)
 
 
     def AddMesh(self, Col, Row, x, y, Scalar, ColorMap='viridis', Title=None, xLabel=None, yLabel=None):
-        ax = self.Axes[Row, Col]
+        self.AxesNumber += 1
+        Instance = self.Template.copy()
 
-        Image = ax.pcolormesh(x, y, Scalar, cmap=ColorMap, shading='auto')
+        Instance['args']       = (x, y, Scalar)
+        Instance['kwargs']     = {'cmap': ColorMap, 'shading':'auto'}
+        Instance['Function']   = 'pcolormesh'
+        Instance['Title']      = Title
+        Instance['yLabel']     = yLabel
+        Instance['xLabel']     = xLabel
+        Instance['Colorbar']   = self.ColorBar
 
-        if Title is not None:
-            ax.set_title(Title)
-
-        if xLabel is not None:
-            ax.set_xlabel(xLabel)
-
-        if yLabel is not None:
-            ax.set_ylabel(yLabel)
-
-        if self.ColorBar:
-            plt.colorbar(Image, ax=ax)
+        self.ToRender.append(Instance)
 
         self.UpdateBoundary(x=x, y=y)
 
 
     def SetLimits(self, Row, Col, XLim="Auto", YLim="auto"):
         ax = self.Axes[Row, Col]
+        factor = 1.2
 
-        if XLim == 'auto': ax.set_xlim(self.Boundaries['x'])
-        if YLim == 'auto': ax.set_ylim(self.Boundaries['y'])
+        if XLim == 'auto':
+            XBoundary = self.Boundaries['x'][0]*factor, self.Boundaries['x'][1]*factor
+            ax.set_xlim(XBoundary)
+        if YLim == 'auto':
+            YBoundary = self.Boundaries['y'][0]*factor, self.Boundaries['y'][1]*factor
+            ax.set_ylim(YBoundary)
 
         if isinstance(XLim, list): ax.set_xlim(XLim)
         if isinstance(YLim, list): ax.set_ylim(YLim)
 
+
+    def Render(self):
+        self.InitScene()
+
+        for scene in self.ToRender:
+            ax = self.Axes[0,0]
+            Image = getattr(ax, scene['Function'])(*scene['args'], **scene['kwargs'])
+
+            if scene['Text'] is not None:
+                getattr(ax, 'text')(*scene['TextArgs'])
+
+            if scene['Title'] is not None:
+                ax.set_title(scene['Title'])
+
+            if scene['xLabel'] is not None:
+                ax.set_xlabel(scene['xLabel'])
+
+            if scene['yLabel'] is not None:
+                ax.set_ylabel(scene['yLabel'])
+
+            if scene['Colorbar']:
+                plt.colorbar(Image, ax=scene['Ax'])
+
+
+
     def Show(self):
+
+        for ax in self.Axes.flatten():
+            ax.set_aspect('equal')
+
         plt.tight_layout()
         plt.show()
 
