@@ -9,7 +9,6 @@ venv
 *.so
 CMakeCache.txt
 CMakeFiles
-*.cmake
 dist
 build
 *.egg*
