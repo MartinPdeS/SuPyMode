@@ -86,8 +86,7 @@ class SetPlottings():
                           yLabel   = r'Effective index n$_{eff}$',
                           )
 
-            Scene.SetAxes(Col, Row, Equal=False, Legend=True)
-            Scene.SetLimits(Row, Col, YLim=[1.4, 1.5])
+            Scene.SetAxes(Col, Row, Equal=False, Legend=True, yLimits=[self.Parent.Geometry.MinIndex/1.005, self.Parent.Geometry.MaxIndex])
 
 
     def PlotBeta(self, Scene, Col, Row):
@@ -104,8 +103,8 @@ class SetPlottings():
             Scene.SetAxes(Col, Row, Equal=False, Legend=True)
 
 
-    def PlotCoupling(self, Scene, Col, Row):
-        for n, (i,j) in enumerate( self.Combination ):
+    def PlotCoupling(self, Scene, Col, Row, Combination):
+        for n, (i,j) in enumerate( Combination ):
             Scene.AddLine(Row      = Row,
                           Col      = Col,
                           x        = self.Geometry.ITRList,
@@ -118,8 +117,8 @@ class SetPlottings():
             Scene.SetAxes(Col, Row, Equal=False, Legend=True)
 
 
-    def PlotAdiabatic(self, Scene, Col, Row):
-        for n, (i,j) in enumerate( self.Combination ):
+    def PlotAdiabatic(self, Scene, Col, Row, Combination):
+        for n, (i,j) in enumerate( Combination ):
             Scene.AddLine(Row      = Row,
                           Col      = Col,
                           x        = self.Geometry.ITRList,
@@ -175,10 +174,10 @@ class SetPlottings():
             self.PlotBeta(Scene, 0, i); i += 1
 
         if 'Coupling' in Input:
-            self.PlotCoupling(Scene, 0, i); i += 1
+            self.PlotCoupling(Scene, 0, i, Combination); i += 1
 
         if 'Adiabatic' in Input:
-            self.PlotAdiabatic(Scene, 0, i); i += 1
+            self.PlotAdiabatic(Scene, 0, i, Combination); i += 1
 
         return Scene
 

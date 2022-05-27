@@ -16,7 +16,6 @@ class SuPySolver(object):
     def __init__(self, Coupler, Tolerance, MaxIter, nMode, sMode, Error=2,  debug='INFO', Debug=False):
 
         self.Geometry     = Coupler
-        self.Geometry.CreateMesh()
         self.Tolerance    = Tolerance
         self.MaxIter      = MaxIter
         self.nMode        = nMode

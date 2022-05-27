@@ -19,7 +19,7 @@ except ImportError:
 
 
 class Scene2D:
-    UnitSize       = (10, 6)
+    UnitSize       = (10, 3)
 
     def __init__(self, nCols, nRows, ColorBar=True, Projection=None, Grid=True, UnitSize=None):
         self.nCols      = nCols
@@ -34,9 +34,9 @@ class Scene2D:
 
     def InitScene(self):
         plt.rcParams['axes.grid'] = self.Grid
-        plt.rcParams['ytick.labelsize'] = 10
-        plt.rcParams['xtick.labelsize'] = 10
-        plt.rcParams["font.size"]       = 12
+        plt.rcParams['ytick.labelsize'] = 8
+        plt.rcParams['xtick.labelsize'] = 8
+        plt.rcParams["font.size"]       = 10
         plt.rcParams["font.family"]     = "serif"
 
         FigSize = [ self.UnitSize[0]*self.nCols, self.UnitSize[1]*self.nRows ]
@@ -96,7 +96,8 @@ class Scene2D:
             YBound = min(self.Boundaries['y'][0], yMin), max(self.Boundaries['y'][1], yMax)
             self.Boundaries['y'] = XBound
 
-    def SetAxes(self, Col, Row, Equal=None, Legend=None):
+
+    def SetAxes(self, Col, Row, Equal=None, Legend=None, xLimits=None, yLimits=None):
         ax = self.Axes[Row, Col]
 
         if Equal is True:
@@ -106,6 +107,13 @@ class Scene2D:
 
         if Legend is not None:
             ax.legend().set_visible(Legend)
+
+        if xLimits == 'auto': ax.set_xlim(self.Boundaries['x'])
+        if yLimits == 'auto': ax.set_ylim(self.Boundaries['y'])
+
+        if isinstance(xLimits, list): ax.set_xlim(xLimits)
+        if isinstance(yLimits, list): ax.set_ylim(yLimits)
+
 
 
     def AddMesh(self, Col, Row, x, y, Scalar, ColorMap='viridis', Title=None, xLabel=None, yLabel=None):
@@ -128,15 +136,6 @@ class Scene2D:
 
         self.UpdateBoundary(x=x, y=y)
 
-
-    def SetLimits(self, Row, Col, XLim="Auto", YLim="auto"):
-        ax = self.Axes[Row, Col]
-
-        if XLim == 'auto': ax.set_xlim(self.Boundaries['x'])
-        if YLim == 'auto': ax.set_ylim(self.Boundaries['y'])
-
-        if isinstance(XLim, list): ax.set_xlim(XLim)
-        if isinstance(YLim, list): ax.set_ylim(YLim)
 
     def Show(self):
         plt.tight_layout()

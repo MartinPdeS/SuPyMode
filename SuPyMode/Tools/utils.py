@@ -6,7 +6,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 from descartes           import PolygonPatch
 from shapely.geometry    import Point, LineString, MultiPolygon, Polygon
 from shapely.geometry.collection import GeometryCollection
-from shapely.ops         import nearest_points, cascaded_union
+from shapely.ops         import nearest_points, unary_union
 from numpy               import pi, cos, sin, sqrt, abs, exp, array, ndarray
 from shapely.affinity    import rotate
 from progressbar         import Bar, Percentage, ETA, ProgressBar
@@ -111,7 +111,7 @@ def RecomposeSymmetries(Input, Symmetries, Axes):
 
 def GetBoundaries(Objects):
     Objects = ToList(Objects)
-    return cascaded_union(Objects).bounds
+    return unary_union(Objects).bounds
 
 
 def Overlap(Objects):
@@ -130,7 +130,7 @@ def Deg2Rad(input):
 
 def ObjectUnion(Objects):
     Objects = ToList(Objects)
-    return cascaded_union(Objects)
+    return unary_union(Objects)
 
 
 def ObjectIntersection(Objects):
