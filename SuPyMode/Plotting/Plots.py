@@ -5,9 +5,11 @@ import logging
 import numpy as np
 from descartes           import PolygonPatch
 from shapely.geometry    import Point, LineString, MultiPolygon, Polygon
+import matplotlib.pyplot as plt
+from matplotlib import colors
 
 from SuPyMode.Plotting.PlotsUtils  import FieldMap
-import matplotlib.pyplot as plt
+
 
 try:
     from mayavi     import mlab
@@ -109,7 +111,8 @@ class Scene2D:
     def AddMesh(self, Col, Row, x, y, Scalar, ColorMap='viridis', Title=None, xLabel=None, yLabel=None):
         ax = self.Axes[Row, Col]
 
-        Image = ax.pcolormesh(x, y, Scalar, cmap=ColorMap, shading='auto')
+        divnorm = colors.TwoSlopeNorm(vcenter=0.)
+        Image = ax.pcolormesh(x, y, Scalar, cmap=ColorMap, shading='auto', norm=divnorm)
 
         if Title is not None:
             ax.set_title(Title)

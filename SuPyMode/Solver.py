@@ -2,15 +2,17 @@ import numpy as np
 
 from SuPyMode.SuperMode             import SuperSet, SetSlice
 from SuPyMode.bin.EigenSolver       import EigenSolving
-from SuPyMode.Tools.utils                 import Axes
+from SuPyMode.Tools.utils           import Axes
 
 
 
 class SuPySolver(object):
-    """ This object corresponds to the solutioner.
+    """ This object corresponds to the solver.
     It solves the eigenvalues problems for a given geometry.
 
     """
+    _Sorting = None
+
     def __init__(self, Coupler, Tolerance, MaxIter, nMode, sMode, Error=2,  debug='INFO', Debug=False):
 
         self.Geometry     = Coupler
@@ -21,7 +23,10 @@ class SuPySolver(object):
         self.sMode        = sMode
         self.Error        = Error
         self.Debug        = Debug
+        self.InitBinding()
 
+
+    def InitBinding(self):
         self.CppSolver = EigenSolving(Mesh      = self.Geometry.mesh,
                                       Gradient  = self.Geometry.Gradient().ravel(),
                                       nMode     = self.nMode,
@@ -30,8 +35,8 @@ class SuPySolver(object):
                                       Tolerance = self.Tolerance,
                                       Debug     = self.Debug)
 
-        self.CppSolver.dx     = self.Geometry.Axes.dx
-        self.CppSolver.dy     = self.Geometry.Axes.dy
+        self.CppSolver.dx     = self.Axes.dx
+        self.CppSolver.dy     = self.Axes.dy
         self.CppSolver.ComputeLaplacian(self.Error)
 
 
@@ -46,33 +51,22 @@ class SuPySolver(object):
                  BottomSymmetry: int   = 0,
                  Sorting:        str   = 'Field'):
 
-        Symmetries = [LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry]
-        for Sym in Symmetries:
-            assert Sym in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
+        self.LeftSymmetry   = LeftSymmetry
+        self.RightSymmetry  = RightSymmetry
+        self.TopSymmetry    = TopSymmetry
+        self.BottomSymmetry = BottomSymmetry
 
-        assert Sorting in ['Field', 'Index'], "Sorting can only be done taking account of 'Field' or 'Index'"
+        self.Sorting        = Sorting
 
-        Set = SuperSet(NSolutions = self.sMode, Geometry = self.Geometry)
+        self.Geometry.Symmetries = self.Symmetries
 
-        self.CppSolver.LeftSymmetry   = LeftSymmetry
-        self.CppSolver.RightSymmetry  = RightSymmetry
-        self.CppSolver.TopSymmetry    = TopSymmetry
-        self.CppSolver.BottomSymmetry = BottomSymmetry
+        self.Wavelength = wavelength
 
-        self.Geometry.Symmetries = {'LeftSymmetry'   : LeftSymmetry,
-                                    'RightSymmetry'  : RightSymmetry,
-                                    'TopSymmetry'    : TopSymmetry,
-                                    'BottomSymmetry' : BottomSymmetry}
-
-        self.CppSolver.Lambda = wavelength
-
-        self.Geometry.Axes.wavelength = wavelength
-
-        self.Geometry.ITRList = np.linspace(ITRi, ITRf, Nstep)
+        self.ITRList = np.linspace(ITRi, ITRf, Nstep)
 
         self.CppSolver.LoopOverITR(ITR = self.Geometry.ITRList, ExtrapolationOrder = 3)
 
-        return self.MakeSet(self.Geometry.ITRList, self.sMode, Sorting)
+        return self.MakeSet()
 
 
 
@@ -84,29 +78,31 @@ class SuPySolver(object):
             self.CppSolver.SortModesIndex()
 
 
-    def MakeSet(self, iteration_list: list, Nsol=1, Sorting='Field'):
+    def MakeSet(self):
 
-        Set = SuperSet(NSolutions = self.sMode, Geometry = self.Geometry)
+        Set = SuperSet(Parent=self)
 
-        Set.Symmetries =  self.Geometry.Symmetries
+        Set.Symmetries =  self.Symmetries
 
         Set.CppSolver = self.CppSolver
 
-        self.SortModes(Sorting)
+        self.SortModes(self.Sorting)
 
-        for n, _ in enumerate(iteration_list):
+        for n, _ in enumerate(self.Geometry.ITRList):
 
             Fields, Betas = self.CppSolver.GetSlice(n)
 
             Fields.swapaxes(1,2)
 
-            for solution in range(Nsol):
+            for solution in range(self.sMode):
 
-                index = Betas[solution] / self.Geometry.Axes.k
+                index = Betas[solution] / self.Axes.k
 
                 Field = Fields[solution,...]
 
-                Set[solution].Slice.append(SetSlice( Field, Index=index, Beta=Betas[solution], ParentSet=Set ))
+                Set[solution].Append(Field = Field,
+                                     Index = index,
+                                     Beta  = Betas[solution])
 
         return Set
 
@@ -114,6 +110,42 @@ class SuPySolver(object):
     def GetCoupling(self):
         Coupling = self.CppSolver.ComputingCoupling()
 
+    @property
+    def Axes(self):
+        return self.Geometry.Axes
+
+    @property
+    def ITRList(self):
+        return self.Geometry.ITRList
+
+    @ITRList.setter
+    def ITRList(self, value):
+        self.Geometry.ITRList = value
+
+    @property
+    def Wavelength(self):
+        return self.CppSolver.Lambda
+
+    @Wavelength.setter
+    def Wavelength(self, value):
+        self.Geometry.Axes.Wavelength = value
+        self.CppSolver.Lambda = value
+
+    @property
+    def Sorting(self):
+        return self._Sorting
+
+    @Sorting.setter
+    def Sorting(self, value):
+        assert value in ['Field', 'Index'], "Sorting can only be done taking account of 'Field' or 'Index'"
+        self._Sorting = value
+
+    @property
+    def Symmetries(self):
+        return {'Left'   : self.LeftSymmetry,
+                'Right'  : self.RightSymmetry,
+                'Top'    : self.TopSymmetry,
+                'Bottom' : self.BottomSymmetry}
 
     @property
     def TopSymmetry(self):
@@ -121,8 +153,8 @@ class SuPySolver(object):
 
     @TopSymmetry.setter
     def TopSymmetry(self, value):
+        assert value in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
         self.CppSolver.TopSymmetry = value
-
 
     @property
     def BottomSymmetry(self):
@@ -130,8 +162,8 @@ class SuPySolver(object):
 
     @BottomSymmetry.setter
     def BottomSymmetry(self, value):
+        assert value in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
         self.CppSolver.BottomSymmetry = value
-
 
     @property
     def LeftSymmetry(self):
@@ -139,8 +171,8 @@ class SuPySolver(object):
 
     @LeftSymmetry.setter
     def LeftSymmetry(self, value):
+        assert value in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
         self.CppSolver.LeftSymmetry = value
-
 
     @property
     def RightSymmetry(self):
@@ -148,6 +180,7 @@ class SuPySolver(object):
 
     @RightSymmetry.setter
     def RightSymmetry(self, value):
+        assert value in [-1,0,1], "Symmetries can only take the following values -1 [antisymmetric], 0 [no symmetries], 1 [symmetric]"
         self.CppSolver.RightSymmetry = value
 
 # ---
