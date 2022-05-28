@@ -15,6 +15,7 @@ class SuPySolver(object):
 
     def __init__(self, Coupler, Tolerance, MaxIter, nMode, sMode, Error=2,  debug='INFO', Debug=False):
 
+        Coupler.CreateMesh()
         self.Geometry     = Coupler
         self.Tolerance    = Tolerance
         self.MaxIter      = MaxIter
@@ -65,7 +66,7 @@ class SuPySolver(object):
 
         self.CppSolver.LoopOverITR(ITR = self.Geometry.ITRList, ExtrapolationOrder = 3)
 
-        return self.MakeSet()
+        return self.MakeSuperSet()
 
 
 
@@ -77,13 +78,9 @@ class SuPySolver(object):
             self.CppSolver.SortModesIndex()
 
 
-    def MakeSet(self):
+    def MakeSuperSet(self):
 
         Set = SuperSet(Parent=self)
-
-        Set.Symmetries =  self.Symmetries
-
-        Set.CppSolver = self.CppSolver
 
         self.SortModes(self.Sorting)
 

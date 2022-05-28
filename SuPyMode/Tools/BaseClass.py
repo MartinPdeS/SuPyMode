@@ -12,7 +12,7 @@ plt.rc('axes', prop_cycle=(
 
 
 from SuPyMode.Tools.Directories   import ZeroPath
-from SuPyMode.Tools.utils         import Multipage, prePlot, ToList
+from SuPyMode.Tools.utils         import Multipage, ToList
 from SuPyMode.Plotting.PlotsUtils import FieldMap
 from SuPyMode.Plotting.Plots      import Scene2D
 
@@ -28,6 +28,34 @@ class SetProperties(object):
     @property
     def ITR(self):
         return self.Geometry.ITRList
+
+    @property
+    def Symmetries(self):
+        return self.Geometry.Symmetries
+
+    @property
+    def CppSolver(self):
+        return self.Parent.CppSolver
+
+
+    @property
+    def LeftSymmetry(self):
+        return self.Parent.LeftSymmetry
+
+
+    @property
+    def RightSymmetry(self):
+        return self.Parent.RightSymmetry
+
+
+    @property
+    def TopSymmetry(self):
+        return self.Parent.TopSymmetry
+
+
+    @property
+    def BottomSymmetry(self):
+        return self.Parent.BottomSymmetry
 
 
     @property
@@ -128,29 +156,36 @@ class SetPlottings():
                           xLabel   = r'ITR',
                           yLabel   = r'Adiabatic criterion')
 
-            Scene.SetAxes(Col, Row, Equal=False, Legend=True)
+            Scene.SetAxes(Col, Row, Equal=False, Legend=True, yScale='log', yLimits=[1e-8, 1e-1])
 
 
     def _PlotFields(self, iter=0):
-        Scene = Scene2D(nCols=self.sMode, nRows=1, ColorBar=False, UnitSize=[5,5])
+        iter = ToList(iter)
+        Scene = Scene2D(nCols=self.sMode, nRows=len(iter), ColorBar=True, UnitSize=[5,5])
 
-        for mode in range(self.sMode):
-            Field, x, y = self[mode][iter].GetField()
 
-            Scene.AddMesh(Row      = 0,
-                          Col      = mode,
-                          x        = x,
-                          y        = y,
-                          Scalar   = Field,
-                          ColorMap = FieldMap,
-                          xLabel   = r'X-distance [$\mu$m]',
-                          yLabel   = r'Y-distance [$\mu$m]',
-                          Title    = f'Mode: {mode} [ITR: {self.Geometry.ITRList[iter]}]'
-                          )
+        for m, supermode in self.IterateSuperMode():
+            for s, slice in enumerate(iter):
+                Field, x, y = supermode[s].GetField()
+                Scene.AddMesh(Row      = s,
+                              Col      = m,
+                              x        = x,
+                              y        = y,
+                              Scalar   = Field,
+                              ColorMap = FieldMap,
+                              xLabel   = r'X-distance [$\mu$m]',
+                              yLabel   = r'Y-distance [$\mu$m]' if m==0 else "",
+                              Title    = f'{supermode.Name} [ITR: {self.Geometry.ITRList[slice]:.2f}]'
+                              )
 
-            Scene.SetAxes(mode, 0, Equal=True)
+                Scene.SetAxes(m, s, Equal=True)
+
+
+
 
         return Scene
+
+
 
 
     def PlotFields(self, iter=0):

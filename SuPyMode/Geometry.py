@@ -114,8 +114,11 @@ class Geometry(object):
 
         self.CreateBackGround()
 
-        self.CreateMesh()
 
+
+    @property
+    def AllObjects(self):
+        return [self.BackGround, self.Clad] + self.Objects
 
     @property
     def MaxIndex(self):
@@ -147,18 +150,20 @@ class Geometry(object):
 
     def CreateBackGround(self):
         self.BackGround        = Namespace
-        self.BackGround.Object = box(minx=self.xMin*2,
-                                     miny=self.yMin*2,
-                                     maxx=self.xMax*2,
-                                     maxy=self.yMax*2)
+        xBound = 5*max(abs(self.xMin), abs(self.xMax))
+        yBound = 5*max(abs(self.yMin), abs(self.yMax))
+        self.BackGround.Object = box(minx=-xBound,
+                                     miny=-yBound,
+                                     maxx=+xBound,
+                                     maxy=+yBound)
         self.BackGround.Index    = 1
         self.BackGround.hole     = None
         self.BackGround.Gradient = None
 
 
-    def Rotate(self, angle):
-        for object in self.Objects:
-            object.Object = affinity.rotate(object.Object, 28, (0,0))
+    def Rotate(self, Angle):
+        for object in self.AllObjects:
+            object.Object = affinity.rotate(object.Object, Angle, (0,0))
 
 
     def rasterize_polygone(self, polygone):
@@ -240,7 +245,9 @@ class Geometry(object):
 
         """
 
-        Scene = Scene2D(nCols=1, nRows=1)
+        self.CreateMesh()
+
+        Scene = Scene2D(nCols=1, nRows=1, UnitSize=(4, 4))
 
         Scene.AddMesh(Row      = 0,
                       Col      = 0,
@@ -252,7 +259,7 @@ class Geometry(object):
                       yLabel   = r'Y-distance [$\mu$m]',
                       )
 
-        Scene.SetAxes(0, 0, xLimits='auto', yLimits='auto', Equal=True)
+        Scene.SetAxes(0, 0, xLimits=[self.xMin, self.xMax], yLimits=[self.yMin, self.yMax], Equal=True)
 
         Scene.Show()
 

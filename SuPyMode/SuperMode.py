@@ -20,6 +20,10 @@ class SuperMode(object):
         self._Coupling  = None
         self.Parent     = ParentSet
 
+    def IterateSlice(self):
+        for n, slice in enumerate(self.Slice):
+            yield n, slice
+
     @property
     def Geometry(self):
         return self.Parent.Geometry
@@ -108,6 +112,11 @@ class SuperSet(SetProperties, SetPlottings):
     def __init__(self, Parent):
         self.Parent        = Parent
         self.Init()
+
+
+    def IterateSuperMode(self):        
+        for n, supermode in enumerate(self.SuperModes):
+            yield n, supermode
 
 
     def ComputeCoupling(self):

@@ -6,9 +6,10 @@ import numpy as np
 from descartes           import PolygonPatch
 from shapely.geometry    import Point, LineString, MultiPolygon, Polygon
 import matplotlib.pyplot as plt
-from matplotlib import colors
+from matplotlib          import colors
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from SuPyMode.Plotting.PlotsUtils  import FieldMap
+from SuPyMode.Plotting.PlotsUtils  import FieldMap, MidPointNorm
 
 
 try:
@@ -97,7 +98,7 @@ class Scene2D:
             self.Boundaries['y'] = XBound
 
 
-    def SetAxes(self, Col, Row, Equal=None, Legend=None, xLimits=None, yLimits=None):
+    def SetAxes(self, Col, Row, Equal=None, Legend=None, xLimits=None, yLimits=None, xScale='linear', yScale='linear'):
         ax = self.Axes[Row, Col]
 
         if Equal is True:
@@ -114,13 +115,15 @@ class Scene2D:
         if isinstance(xLimits, list): ax.set_xlim(xLimits)
         if isinstance(yLimits, list): ax.set_ylim(yLimits)
 
+        ax.set_yscale(yScale)
+        ax.set_xscale(xScale)
+
 
 
     def AddMesh(self, Col, Row, x, y, Scalar, ColorMap='viridis', Title=None, xLabel=None, yLabel=None):
         ax = self.Axes[Row, Col]
 
-        divnorm = colors.TwoSlopeNorm(vcenter=0.)
-        Image = ax.pcolormesh(x, y, Scalar, cmap=ColorMap, shading='auto', norm=divnorm)
+        Image = ax.pcolormesh(x, y, Scalar, cmap=ColorMap, shading='auto', vmin=-np.max(np.abs(Scalar)), vmax=+np.max(np.abs(Scalar)) )
 
         if Title is not None:
             ax.set_title(Title)
@@ -132,13 +135,14 @@ class Scene2D:
             ax.set_ylabel(yLabel)
 
         if self.ColorBar:
-            plt.colorbar(Image, ax=ax)
+            plt.colorbar(Image, ax=ax, location='bottom')
 
         self.UpdateBoundary(x=x, y=y)
+        plt.tight_layout(pad=3)
 
 
     def Show(self):
-        plt.tight_layout()
+        #plt.tight_layout(pad=3)
         plt.show()
 
 
@@ -361,6 +365,7 @@ class Scene3D:
         if Wait: return
 
         mlab.show()
+
 
 
 

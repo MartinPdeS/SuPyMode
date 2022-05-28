@@ -5,10 +5,10 @@ import numpy as np
 
 
 nMode   = 6
-Xbound  = [-150, 150]
-Ybound  = [-150, 150]
-Nx      = 120
-Ny      = 120
+Xbound  = [-150, 0]
+Ybound  = [-150, 0]
+Nx      = 80
+Ny      = 80
 
 Index = ExpData('FusedSilica').GetRI(1.55e-6)
 
@@ -30,23 +30,24 @@ Geo = Geometry(Clad    = Clad,
                Nx      = Nx,
                Ny      = Ny)
 
+Geo.Rotate(45)
 
 #Geo.Plot()
 
 
 Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000, nMode=8, sMode=5)
 
-SuperModes = Sol.GetModes(wavelength      = 1.55,
-                          Nstep           = 300,
+SuperSet = Sol.GetModes(wavelength      = 1.55,
+                          Nstep           = 3,
                           ITRi            = 1,
                           ITRf            = 0.05,
                           Sorting         = 'Index',
-                          RightSymmetry   = 0,
+                          RightSymmetry   = -1,
                           LeftSymmetry    = 0,
-                          TopSymmetry     = 0,
+                          TopSymmetry     = -1,
                           BottomSymmetry  = 0
                           )
 
-#SuperModes.PlotFields(iter=0)
-#SuperModes.Plot(Input=['Index', 'Adiabatic'], iter=[-1])
-SuperModes.ExportPDF(Directory='RodrigoMexicano', iter=0)
+SuperSet.PlotFields(iter=-1)
+#SuperSet.Plot(Input=['Index', 'Adiabatic'], iter=[-1])
+#SuperSet.ExportPDF(Directory='4x4_SMF28_Hybrid_Ax_Ay', iter=[0, 100, 200, 290])
