@@ -40,7 +40,7 @@ Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000, nMode=8, sMode=5)
 SuperSet = Sol.GetModes(wavelength      = 1.55,
                           Nstep           = 3,
                           ITRi            = 1,
-                          ITRf            = 0.05,
+                          ITRf            = 0.99,
                           Sorting         = 'Index',
                           RightSymmetry   = -1,
                           LeftSymmetry    = 0,
@@ -48,6 +48,8 @@ SuperSet = Sol.GetModes(wavelength      = 1.55,
                           BottomSymmetry  = 0
                           )
 
-SuperSet.PlotFields(iter=-1)
-#SuperSet.Plot(Input=['Index', 'Adiabatic'], iter=[-1])
+#Scene0 = SuperSet0.PlotFields(iter=-1)
+
+
+SuperSet.Plot(Input=['Beta'], iter=[-1])
 #SuperSet.ExportPDF(Directory='4x4_SMF28_Hybrid_Ax_Ay', iter=[0, 100, 200, 290])

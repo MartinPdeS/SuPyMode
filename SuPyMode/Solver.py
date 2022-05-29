@@ -80,7 +80,7 @@ class SuPySolver(object):
 
     def MakeSuperSet(self):
 
-        Set = SuperSet(Parent=self)
+        Set = SuperSet(ParentSolver=self)
 
         self.SortModes(self.Sorting)
 
@@ -99,6 +99,8 @@ class SuPySolver(object):
                 Set[solution].Append(Field = Field,
                                      Index = index,
                                      Beta  = Betas[solution])
+
+                Set[solution].AddSymmetries(Left=self.LeftSymmetry, Right=self.RightSymmetry, Top=self.TopSymmetry, Bottom=self.BottomSymmetry)
 
         return Set
 

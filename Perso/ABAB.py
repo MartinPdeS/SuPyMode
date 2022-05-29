@@ -34,7 +34,7 @@ Geo = Geometry(Clad    = Clad,
 #Geo.Rotate(45)
 
 Geo.Plot()
-dsa
+
 
 Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000, nMode=8, sMode=5)
 

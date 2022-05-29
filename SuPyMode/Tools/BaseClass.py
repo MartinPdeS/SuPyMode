@@ -26,6 +26,10 @@ class SetProperties(object):
     SuperModes    = []
 
     @property
+    def Geometry(self):
+        return self.ParentSolver.Geometry
+
+    @property
     def ITR(self):
         return self.Geometry.ITRList
 
@@ -35,27 +39,27 @@ class SetProperties(object):
 
     @property
     def CppSolver(self):
-        return self.Parent.CppSolver
+        return self.ParentSolver.CppSolver
 
 
     @property
     def LeftSymmetry(self):
-        return self.Parent.LeftSymmetry
+        return self.ParentSolver.LeftSymmetry
 
 
     @property
     def RightSymmetry(self):
-        return self.Parent.RightSymmetry
+        return self.ParentSolver.RightSymmetry
 
 
     @property
     def TopSymmetry(self):
-        return self.Parent.TopSymmetry
+        return self.ParentSolver.TopSymmetry
 
 
     @property
     def BottomSymmetry(self):
-        return self.Parent.BottomSymmetry
+        return self.ParentSolver.BottomSymmetry
 
 
     @property
@@ -103,7 +107,7 @@ class SetProperties(object):
 class SetPlottings():
 
     def PlotIndex(self, Scene, Col, Row):
-        for i in range(self.sMode):
+        for i in range(len(self.SuperModes)):
             Scene.AddLine(Row      = Row,
                           Col      = Col,
                           x        = self.Geometry.ITRList,
@@ -114,14 +118,14 @@ class SetPlottings():
                           yLabel   = r'Effective index n$_{eff}$',
                           )
 
-            Scene.SetAxes(Col, Row, Equal=False, Legend=True, yLimits=[self.Parent.Geometry.MinIndex/1.005, self.Parent.Geometry.MaxIndex])
+            Scene.SetAxes(Col, Row, Equal=False, Legend=True, yLimits=[self.Geometry.MinIndex/1.005, self.Geometry.MaxIndex])
 
 
     def PlotBeta(self, Scene, Col, Row):
-        for i in range(self.sMode):
+        for i, supermode in enumerate(self.SuperModes):
             Scene.AddLine(Row      = Row,
                           Col      = Col,
-                          x        = self.Geometry.ITRList,
+                          x        = supermode.ITRList,
                           y        = self.Beta[:,i],
                           Fill     = False,
                           Legend   = f'Mode: {i}',
@@ -161,12 +165,12 @@ class SetPlottings():
 
     def _PlotFields(self, iter=0):
         iter = ToList(iter)
-        Scene = Scene2D(nCols=self.sMode, nRows=len(iter), ColorBar=True, UnitSize=[5,5])
+        Scene = Scene2D(nCols=len(self.SuperModes), nRows=len(iter), ColorBar=True, UnitSize=[5,5])
 
 
         for m, supermode in self.IterateSuperMode():
             for s, slice in enumerate(iter):
-                Field, x, y = supermode[s].GetField()
+                Field, x, y = supermode[slice].GetFullField()
                 Scene.AddMesh(Row      = s,
                               Col      = m,
                               x        = x,
@@ -179,8 +183,6 @@ class SetPlottings():
                               )
 
                 Scene.SetAxes(m, s, Equal=True)
-
-
 
 
         return Scene
@@ -197,7 +199,7 @@ class SetPlottings():
     def _Plot(self, Input, iter=0, Combination=None):
         Input = ToList(Input)
 
-        if Combination is None: Combination = tuple(combinations( np.arange(self.sMode), 2 ) )
+        if Combination is None: Combination = tuple(combinations( np.arange(len(self.SuperModes)), 2 ) )
 
         Scene = Scene2D(nCols=1, nRows=len(Input), ColorBar=False)
 

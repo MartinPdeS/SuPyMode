@@ -65,50 +65,6 @@ class Axes(object):
         self._wavelength = 2*np.pi / value
 
 
-def RecomposeSymmetries(Input, Symmetries, Axes):
-
-    Xaxis = Axes.Y
-    Yaxis = Axes.X
-
-    if Symmetries['Bottom'] == 1:
-        Input = np.concatenate((Input[:,::-1], Input), axis=1)
-        Xaxis = np.concatenate( [Xaxis + Xaxis[0] - Xaxis[-1], Xaxis] )
-
-
-    elif Symmetries['Bottom'] == -1:
-        Input = np.concatenate((-Input[:,::-1], Input), axis=1)
-        Xaxis = np.concatenate( [Xaxis + Xaxis[0] - Xaxis[-1], Xaxis] )
-
-
-    if Symmetries['Top'] == 1:
-        Input = np.concatenate((Input, Input[:,::-1]), axis=1)
-        Xaxis = np.concatenate( [Xaxis, Xaxis - Xaxis[0] + Xaxis[-1]] )
-
-    elif Symmetries['Top'] == -1:
-        Input = np.concatenate((Input, -Input[:,::-1]), axis=1)
-        Xaxis = np.concatenate( [Xaxis, Xaxis - Xaxis[0] + Xaxis[-1]] )
-
-
-    if Symmetries['Right'] == 1:
-        Input = np.concatenate((Input, Input[::-1,:]), axis=0)
-        Yaxis = np.concatenate( [Yaxis, Yaxis - Yaxis[0] + Yaxis[-1]] )
-
-    elif Symmetries['Right'] == -1:
-        Input = np.concatenate((Input, -Input[::-1,:]), axis=0)
-        Yaxis = np.concatenate( [Yaxis, Yaxis - Yaxis[0] + Yaxis[-1]] )
-
-
-    if Symmetries['Left'] == 1:
-        Input = np.concatenate((Input[::-1,:], Input), axis=0)
-        Yaxis = np.concatenate( [Yaxis + Yaxis[0] - Yaxis[-1], Yaxis] )
-
-    elif Symmetries['Left'] == -1:
-        Input = np.concatenate((-Input[::-1,:], Input), axis=0)
-        Yaxis = np.concatenate( [Yaxis + Yaxis[0] - Yaxis[-1], Yaxis] )
-
-    return Input, Xaxis, Yaxis
-
-
 def GetBoundaries(Objects):
     Objects = ToList(Objects)
     return unary_union(Objects).bounds
