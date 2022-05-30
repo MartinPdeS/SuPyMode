@@ -7,8 +7,8 @@ import numpy as np
 nMode   = 6
 Xbound  = [-150, 0]
 Ybound  = [-150, 0]
-Nx      = 80
-Ny      = 80
+Nx      = 50
+Ny      = 50
 
 Index = ExpData('FusedSilica').GetRI(1.55e-6)
 
@@ -38,9 +38,9 @@ Geo.Rotate(45)
 Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000, nMode=8, sMode=5)
 
 SuperSet = Sol.GetModes(wavelength      = 1.55,
-                          Nstep           = 3,
+                          Nstep           = 300,
                           ITRi            = 1,
-                          ITRf            = 0.99,
+                          ITRf            = 0.05,
                           Sorting         = 'Index',
                           RightSymmetry   = -1,
                           LeftSymmetry    = 0,
@@ -48,8 +48,8 @@ SuperSet = Sol.GetModes(wavelength      = 1.55,
                           BottomSymmetry  = 0
                           )
 
-#Scene0 = SuperSet0.PlotFields(iter=-1)
+Scene0 = SuperSet.PlotFields(iter=-1)
 
 
-SuperSet.Plot(Input=['Beta'], iter=[-1])
+#SuperSet.Plot(Input=['Coupling'], iter=[-1])
 #SuperSet.ExportPDF(Directory='4x4_SMF28_Hybrid_Ax_Ay', iter=[0, 100, 200, 290])

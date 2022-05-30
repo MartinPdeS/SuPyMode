@@ -107,83 +107,81 @@ class SetProperties(object):
 class SetPlottings():
 
     def PlotIndex(self, Scene, Col, Row):
-        for i in range(len(self.SuperModes)):
+        for supermode in self.SuperModes:
             Scene.AddLine(Row      = Row,
                           Col      = Col,
-                          x        = self.Geometry.ITRList,
-                          y        = self.Index[:,i],
+                          x        = self.ITRList,
+                          y        = supermode.Index,
                           Fill     = False,
-                          Legend   = f'Mode: {i}',
-                          xLabel   = r'ITR',
-                          yLabel   = r'Effective index n$_{eff}$',
-                          )
-
-            Scene.SetAxes(Col, Row, Equal=False, Legend=True, yLimits=[self.Geometry.MinIndex/1.005, self.Geometry.MaxIndex])
-
-
-    def PlotBeta(self, Scene, Col, Row):
-        for i, supermode in enumerate(self.SuperModes):
-            Scene.AddLine(Row      = Row,
-                          Col      = Col,
-                          x        = supermode.ITRList,
-                          y        = self.Beta[:,i],
-                          Fill     = False,
-                          Legend   = f'Mode: {i}',
+                          Legend   = supermode.ModeNumber,
                           xLabel   = r'ITR',
                           yLabel   = r'Propagation constante $\beta$')
 
-            Scene.SetAxes(Col, Row, Equal=False, Legend=True)
+            Scene.SetAxes(Col, Row, Equal=False, Legend=True, yLimits=[self.Geometry.MinIndex/1.005, self.Geometry.MaxIndex], LegendTitle='Mode')
+
+
+    def PlotBeta(self, Scene, Col, Row):
+        for supermode in self.SuperModes:
+            Scene.AddLine(Row      = Row,
+                          Col      = Col,
+                          x        = self.ITRList,
+                          y        = supermode.Beta,
+                          Fill     = False,
+                          Legend   = supermode.ModeNumber,
+                          xLabel   = r'ITR',
+                          yLabel   = r'Propagation constante $\beta$')
+
+            Scene.SetAxes(Col, Row, Equal=False, Legend=True, LegendTitle='Mode')
 
 
     def PlotCoupling(self, Scene, Col, Row, Combination):
-        for n, (i,j) in enumerate( Combination ):
+        for (Mode0, Mode1) in Combination:
             Scene.AddLine(Row      = Row,
                           Col      = Col,
-                          x        = self.Geometry.ITRList,
-                          y        = self.Coupling[:,i,j],
+                          x        = self.ITRList,
+                          y        = self.GetCoupling( Mode0.ModeNumber, Mode1.ModeNumber ),
                           Fill     = False,
-                          Legend   = f'Mode: {i}-{j}',
+                          Legend   = f'{Mode0.ModeNumber} - {Mode1.ModeNumber}',
                           xLabel   = r'ITR',
                           yLabel   = r'Mode coupling')
 
-            Scene.SetAxes(Col, Row, Equal=False, Legend=True)
+            Scene.SetAxes(Col, Row, Equal=False, Legend=True, LegendTitle='Mode')
 
 
     def PlotAdiabatic(self, Scene, Col, Row, Combination):
-        for n, (i,j) in enumerate( Combination ):
+        for (Mode0, Mode1) in Combination:
             Scene.AddLine(Row      = Row,
                           Col      = Col,
-                          x        = self.Geometry.ITRList,
-                          y        = self.Adiabatic[:,i,j],
+                          x        = self.ITRList,
+                          y        = self.GetAdiabatic( Mode0.ModeNumber, Mode1.ModeNumber ),
                           Fill     = False,
-                          Legend   = f'Mode: {i}-{j}',
+                          Legend   = f'{Mode0.ModeNumber} - {Mode1.ModeNumber}',
                           xLabel   = r'ITR',
                           yLabel   = r'Adiabatic criterion')
 
-            Scene.SetAxes(Col, Row, Equal=False, Legend=True, yScale='log', yLimits=[1e-8, 1e-1])
+            Scene.SetAxes(Col, Row, Equal=False, Legend=True, yScale='log', yLimits=[1e-8, 1e-1], LegendTitle='Mode')
 
 
     def _PlotFields(self, iter=0):
         iter = ToList(iter)
-        Scene = Scene2D(nCols=len(self.SuperModes), nRows=len(iter), ColorBar=True, UnitSize=[5,5])
+        Scene = Scene2D(nCols=self.Size, nRows=len(iter), ColorBar=True, UnitSize=[5,5])
 
+        for supermode in self.IterateSuperMode():
+            for s, slice in enumerate(supermode.GetSlices(iter)):
+                Field, x, y = slice.GetFullField()
 
-        for m, supermode in self.IterateSuperMode():
-            for s, slice in enumerate(iter):
-                Field, x, y = supermode[slice].GetFullField()
                 Scene.AddMesh(Row      = s,
-                              Col      = m,
+                              Col      = supermode.ModeNumber,
                               x        = x,
                               y        = y,
                               Scalar   = Field,
                               ColorMap = FieldMap,
                               xLabel   = r'X-distance [$\mu$m]',
-                              yLabel   = r'Y-distance [$\mu$m]' if m==0 else "",
-                              Title    = f'{supermode.Name} [ITR: {self.Geometry.ITRList[slice]:.2f}]'
+                              yLabel   = r'Y-distance [$\mu$m]' if supermode.ModeNumber==0 else "",
+                              Title    = f'{supermode.Name} [ITR: {slice.ITR:.2f}]'
                               )
 
-                Scene.SetAxes(m, s, Equal=True)
-
+                Scene.SetAxes(supermode.ModeNumber, s, Equal=True)
 
         return Scene
 
@@ -195,11 +193,18 @@ class SetPlottings():
 
         Scene.Show()
 
+    def GetCombination(self, Combination):
+        if Combination is None:
+            return tuple( combinations( self.SuperModes, 2 ) )
+        else:
+            Output = []
+            for (c0, c1) in Combination:
+                Output.append( ( self.SuperModes[c0], self.SuperModes[c1] ) )
 
     def _Plot(self, Input, iter=0, Combination=None):
         Input = ToList(Input)
 
-        if Combination is None: Combination = tuple(combinations( np.arange(len(self.SuperModes)), 2 ) )
+        Combination = self.GetCombination(Combination)
 
         Scene = Scene2D(nCols=1, nRows=len(Input), ColorBar=False)
 

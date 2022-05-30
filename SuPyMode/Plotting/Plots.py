@@ -98,7 +98,7 @@ class Scene2D:
             self.Boundaries['y'] = XBound
 
 
-    def SetAxes(self, Col, Row, Equal=None, Legend=None, xLimits=None, yLimits=None, xScale='linear', yScale='linear'):
+    def SetAxes(self, Col, Row, Equal=None, Legend=None, xLimits=None, yLimits=None, xScale='linear', yScale='linear', LegendTitle=None):
         ax = self.Axes[Row, Col]
 
         if Equal is True:
@@ -117,6 +117,8 @@ class Scene2D:
 
         ax.set_yscale(yScale)
         ax.set_xscale(xScale)
+
+        if LegendTitle: ax.legend().set_title(LegendTitle)
 
 
 

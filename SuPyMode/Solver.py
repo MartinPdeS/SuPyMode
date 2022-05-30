@@ -96,9 +96,10 @@ class SuPySolver(object):
 
                 Field = Fields[solution,...]
 
-                Set[solution].Append(Field = Field,
-                                     Index = index,
-                                     Beta  = Betas[solution])
+                Set[solution].Append(Field       = Field,
+                                     Index       = index,
+                                     Beta        = Betas[solution],
+                                     SliceNumber = n)
 
                 Set[solution].AddSymmetries(Left=self.LeftSymmetry, Right=self.RightSymmetry, Top=self.TopSymmetry, Bottom=self.BottomSymmetry)
 

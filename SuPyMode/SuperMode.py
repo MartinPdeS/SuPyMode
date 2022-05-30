@@ -14,24 +14,17 @@ Mlogger = logging.getLogger(__name__)
 
 class SuperSet(SetProperties, SetPlottings):
     def __init__(self, ParentSolver):
-        self.ParentSolver  = ParentSolver
-        self.Init()
+        self.ParentSolver   = ParentSolver
+        self.SuperModes     = [SuperMode(ParentSet=self, ModeNumber=m) for m in range(self.ParentSolver.sMode)]
 
 
     def IterateSuperMode(self):
         for n, supermode in enumerate(self.SuperModes):
-            yield n, supermode
+            yield supermode
 
 
     def ComputeCoupling(self):
         return self.CppSolver.ComputingCoupling()
-
-
-    def Init(self):
-        for solution in range(self.sMode):
-            supermode = SuperMode(Name=f"Mode {solution}", ParentSet=self)
-            supermode.number = solution
-            self.SuperModes.append(supermode)
 
 
     def ComputeM(self, CouplingFactor):
@@ -42,10 +35,6 @@ class SuperSet(SetProperties, SetPlottings):
             M[iter] = CouplingFactor[iter] * self.Coupling[iter] + beta * np.identity(shape[1])
 
         return M
-
-
-    def GetMode(self, Amplitude, Name = 1):
-        return _SuperMode(Amplitude=Amplitude, Name=Name, ParentMode=self)
 
 
     def ComputeCouplingFactor(self, Length):
@@ -81,17 +70,31 @@ class SuperSet(SetProperties, SetPlottings):
 
         return sol
 
+
+    @property
+    def Size(self):
+        return len(self.SuperModes)
+
     @property
     def Geometry(self):
         return self.ParentSolver.Geometry
 
     @property
+    def ITRList(self):
+        return self.ParentSolver.Geometry.ITRList
+
+    @property
     def Axes(self):
         return self.ParentSolver.Geometry.Axes
 
-    @property
-    def sMode(self):
-        return self.ParentSolver.sMode
+
+    def GetCoupling(self, Mode0: int, Mode1: int):
+        return self.Coupling[:, Mode0, Mode1]
+
+
+    def GetAdiabatic(self, Mode0: int, Mode1: int):
+        return self.Adiabatic[:, Mode0, Mode1]
+
 
     def Append(self, Object):
         self.SuperModes.append(Object)
@@ -138,12 +141,21 @@ class SuperSet(SetProperties, SetPlottings):
 
 class SuperMode(object):
 
-    def __init__(self, Name, ParentSet):
-        self.Name       = Name
+    def __init__(self, ParentSet, ModeNumber):
+        self.Name       = f"Mode: {ModeNumber}"
+        self.ModeNumber = ModeNumber
         self.Slice      = []
-        self._Adiabatic = None
-        self._Coupling  = None
-        self.ParentSet     = ParentSet
+        self.ParentSet  = ParentSet
+        self.Index      = self.ParentSet.Index[:, self.ModeNumber]
+        self.Beta       = self.ParentSet.Beta[:, self.ModeNumber]
+
+
+
+    def AddSymmetries(self, Left, Right, Top, Bottom):
+        self.LeftSymmetry   = Left
+        self.RightSymmetry  = Right
+        self.TopSymmetry    = Top
+        self.BottomSymmetry = Bottom
 
 
     def IterateSlice(self):
@@ -158,7 +170,12 @@ class SuperMode(object):
 
     @property
     def ITRList(self):
-        return self.ParentSet.ITRList
+        return self.ParentSet.Geometry.ITRList
+
+
+    @property
+    def Axes(self):
+        return self.ParentSet.Geometry.Axes
 
 
     @property
@@ -166,20 +183,16 @@ class SuperMode(object):
         return np.array(self.LeftSymmetry, self.RightSymmetry, self.TopSymmetry, self.BottomSymmetry)
 
 
-    def AddSymmetries(self, Left, Right, Top, Bottom):
-        self.LeftSymmetry = Left
-        self.RightSymmetry = Right
-        self.TopSymmetry = Top
-        self.BottomSymmetry = Bottom
-
-
     def CompareSymmetries(self, Other):
         assert isinstance(Other, SuperMode), "Can only compare SuperMode instance with another"
         return np.all(self.Symmetries == Other.Symmetries)
 
 
-    def Append(self, Field, Index, Beta):
-        self.Slice.append(SetSlice(Field, Index=Index, Beta=Beta, ParentMode=self))
+    def Append(self, Field, Index, Beta, SliceNumber):
+        self.Slice.append( SetSlice(Field, Index=Index, Beta=Beta, ParentMode=self, SliceNumber=SliceNumber) )
+
+    def GetSlices(self, SlicesNumber: list):
+        return [self[slice] for slice in SlicesNumber]
 
 
     def __getitem__(self, N):
@@ -272,7 +285,7 @@ class SuperMode(object):
 
 class SetSlice(np.ndarray):
 
-    def __new__(cls, Field, Index, Beta, ParentMode):
+    def __new__(cls, Field, Index, Beta, ParentMode, SliceNumber):
         self      = Field.view(SetSlice)
         return self
 
@@ -281,10 +294,11 @@ class SetSlice(np.ndarray):
         assert isinstance(Other, SetSlice), "Can only compare SetSlice instance with another"
         return np.all(self.Symmetries == Other.Symmetries)
 
-    def __init__(self, Field, Index, Beta, ParentMode):
+    def __init__(self, Field, Index, Beta, ParentMode, SliceNumber):
         self.Field  = Field
         self.Index  = Index
         self.Beta   = Beta
+        self.SliceNumber = SliceNumber
         self.ParentMode = ParentMode
 
 
@@ -314,19 +328,20 @@ class SetSlice(np.ndarray):
 
 
     @property
+    def ITR(self):
+        return self.ParentMode.ITRList[self.SliceNumber]
+
+    @property
     def RightSymmetry(self):
         return self.ParentMode.RightSymmetry
-
 
     @property
     def TopSymmetry(self):
         return self.ParentMode.TopSymmetry
 
-
     @property
     def BottomSymmetry(self):
         return self.ParentMode.BottomSymmetry
-
 
     @property
     def Axes(self):
