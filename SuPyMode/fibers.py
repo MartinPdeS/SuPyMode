@@ -8,7 +8,7 @@ from SuPyMode.Geometry          import Circle
 class Fiber_DCF1300S_20():
     def __init__(self, Wavelength):
         Index = ExpData('FusedSilica').GetRI(Wavelength*1e-6)
-        self.nClad = NA2nCore( 0.11, Index  )
+        self.nClad = NA2nCore( 0.11, Index )
         self.nCore = NA2nCore( 0.12, self.nClad )
         self.rClad = 19.9/2
         self.rCore = 4.6

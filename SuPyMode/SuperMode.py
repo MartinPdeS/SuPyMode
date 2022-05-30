@@ -71,6 +71,27 @@ class SuperSet(SetProperties, SetPlottings):
         return sol
 
 
+    def PlotPropagation(self, Modes):
+        Mode0 = self[0]
+        Mode1 = self[1]
+
+        Field = Mode0[0].GetFullField(Axes=False) + Mode1[0].GetFullField(Axes=False)
+
+        surface = mlab.surf( np.abs( Field ) , warp_scale="auto" )
+
+        @mlab.animate(delay=100)
+        def anim_loc():
+            for n, _ in Mode0.IterateSlice():
+                Field = Mode0[n].GetFullField(Axes=False) + Mode1[n].GetFullField(Axes=False)
+
+                surface.mlab_source.scalars = np.abs( Field )
+
+                yield
+
+        anim_loc()
+        mlab.show
+    
+
     @property
     def Size(self):
         return len(self.SuperModes)
@@ -204,21 +225,20 @@ class SuperMode(object):
 
 
     def PlotPropagation(self):
-        image, _, _ = self.FullField(0)
+        image = np.abs( self[0].GetFullField(Axes=False) )
 
-        image = np.abs(image)
-
-        mlab.surf(image, warp_scale="auto")
+        surface = mlab.surf(image, warp_scale="auto")
 
         @mlab.animate(delay=100)
         def anim_loc():
-            for i in range(len(self.Field)):
-                image, _, _ = self.FullField(i)
-                mlab.surf( np.abs(image), warp_scale="auto")
+            for n, slice in self.IterateSlice():
+                surface.mlab_source.scalars = np.abs( slice.GetFullField(Axes=False) )
+
                 yield
 
         anim_loc()
         mlab.show()
+
         """
         import os
         fps = 20
@@ -363,7 +383,7 @@ class SetSlice(np.ndarray):
         return self.Field, self.Axes.X, self.Axes.Y
 
 
-    def GetFullField(self):
+    def GetFullField(self, Axes: bool = True):
         Xaxis = self.Axes.Y.copy()
         Yaxis = self.Axes.X.copy()
         Field = self.Field.copy()
@@ -404,7 +424,12 @@ class SetSlice(np.ndarray):
             Field = np.concatenate((-Field[::-1,:], Field), axis=0)
             Yaxis = np.concatenate( [Yaxis + Yaxis[0] - Yaxis[-1], Yaxis] )
 
-        return Field, Xaxis, Yaxis
+        if Axes is True:
+            return Field, Xaxis, Yaxis
+
+        if Axes is False:
+            return Field
+
 
 
     def __copy__(self):
