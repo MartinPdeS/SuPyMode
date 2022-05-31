@@ -1,4 +1,4 @@
-# Install script for directory: /home/martth/Desktop/git_project/SuPyMode
+# Install script for directory: /Users/martinpdes/Desktop/GitProject/SuPyMode
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -27,34 +27,28 @@ if(NOT CMAKE_INSTALL_COMPONENT)
   endif()
 endif()
 
-# Install shared libraries without execute permission?
-if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
-  set(CMAKE_INSTALL_SO_NO_EXE "1")
-endif()
-
 # Is this installation the result of a crosscompile?
 if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
 endif()
 
+# Set default install directory permissions.
+if(NOT DEFINED CMAKE_OBJDUMP)
+  set(CMAKE_OBJDUMP "/Library/Developer/CommandLineTools/usr/bin/objdump")
+endif()
+
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/martth/Desktop/git_project/SuPyMode/extern/pybind11/cmake_install.cmake")
+  include("/Users/martinpdes/Desktop/GitProject/SuPyMode/extern/pybind11/cmake_install.cmake")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   if("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
-    if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/SuPyMode/bin/EigenSolver.cpython-38-x86_64-linux-gnu.so" AND
-       NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/SuPyMode/bin/EigenSolver.cpython-38-x86_64-linux-gnu.so")
-      file(RPATH_CHECK
-           FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/SuPyMode/bin/EigenSolver.cpython-38-x86_64-linux-gnu.so"
-           RPATH "")
-    endif()
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/SuPyMode/bin" TYPE MODULE FILES "/home/martth/Desktop/git_project/SuPyMode/SuPyMode/bin/EigenSolver.cpython-38-x86_64-linux-gnu.so")
-    if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/SuPyMode/bin/EigenSolver.cpython-38-x86_64-linux-gnu.so" AND
-       NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/SuPyMode/bin/EigenSolver.cpython-38-x86_64-linux-gnu.so")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/SuPyMode/bin" TYPE MODULE FILES "/Users/martinpdes/Desktop/GitProject/SuPyMode/SuPyMode/bin/EigenSolver.cpython-39-darwin.so")
+    if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/SuPyMode/bin/EigenSolver.cpython-39-darwin.so" AND
+       NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/SuPyMode/bin/EigenSolver.cpython-39-darwin.so")
       if(CMAKE_INSTALL_DO_STRIP)
-        execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/SuPyMode/bin/EigenSolver.cpython-38-x86_64-linux-gnu.so")
+        execute_process(COMMAND "/Library/Developer/CommandLineTools/usr/bin/strip" -x "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/SuPyMode/bin/EigenSolver.cpython-39-darwin.so")
       endif()
     endif()
   endif("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
@@ -68,5 +62,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/martth/Desktop/git_project/SuPyMode/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/martinpdes/Desktop/GitProject/SuPyMode/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

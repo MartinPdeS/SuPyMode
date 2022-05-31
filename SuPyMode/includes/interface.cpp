@@ -42,14 +42,17 @@ PYBIND11_MODULE(EigenSolver, module) {
     module.doc() = "A c++ solver for EigenPairs";
 
     py::class_<EigenSolving>(module, "EigenSolving")
-    .def(py::init<ndarray&, ndarray&, size_t, size_t, size_t, ScalarType, bool>(),
+    .def(py::init<ndarray&, ndarray&, size_t, size_t, size_t, ScalarType, ScalarType, ScalarType, ScalarType, bool>(),
          py::arg("Mesh"),
          py::arg("Gradient"),
          py::arg("nMode"),
          py::arg("sMode"),
          py::arg("MaxIter"),
          py::arg("Tolerance"),
-         py::arg("Debug")=false
+         py::arg("dx"),
+         py::arg("dy"),
+         py::arg("Wavelength"),
+         py::arg("Debug") = false
        )
 
      .def("LoopOverITR", &EigenSolving::LoopOverITR, py::arg("ITR"), py::arg("ExtrapolationOrder"))
@@ -62,9 +65,7 @@ PYBIND11_MODULE(EigenSolver, module) {
 
      .def("ComputingCoupling", &EigenSolving::ComputingCoupling)
 
-     .def("SortModesFields", &EigenSolving::SortModesFields)
-
-     .def("SortModesIndex", &EigenSolving::SortModesIndex)
+     .def("SortModes", &EigenSolving::SortModes, py::arg("Sorting"))
 
      .def("ComputeLaplacian", &EigenSolving::ComputeLaplacian, py::arg("Order"))
 
@@ -73,15 +74,16 @@ PYBIND11_MODULE(EigenSolver, module) {
      .def("GetIndices", &EigenSolving::GetIndices)
      .def("GetBetas", &EigenSolving::GetBetas)
 
-     .def_property("LeftSymmetry", &EigenSolving::GetLeftSymmetry, &EigenSolving::SetLeftSymmetry)
-     .def_property("RightSymmetry", &EigenSolving::GetRightSymmetry, &EigenSolving::SetRightSymmetry)
-     .def_property("TopSymmetry", &EigenSolving::GetTopSymmetry, &EigenSolving::SetTopSymmetry)
-     .def_property("BottomSymmetry", &EigenSolving::GetBottomSymmetry, &EigenSolving::SetBottomSymmetry)
 
-     .def_property("dx", &EigenSolving::Getdx, &EigenSolving::Setdx)
+     .def_readwrite("LeftSymmetry",   &EigenSolving::LeftSymmetry)
+     .def_readwrite("RightSymmetry",  &EigenSolving::RightSymmetry)
+     .def_readwrite("TopSymmetry",    &EigenSolving::TopSymmetry)
+     .def_readwrite("BottomSymmetry", &EigenSolving::BottomSymmetry)
 
-     .def_property("dy", &EigenSolving::Getdy, &EigenSolving::Setdy)
 
-     .def_property("Lambda", &EigenSolving::Getlambda, &EigenSolving::Setlambda);
+     .def_readwrite("sMode", &EigenSolving::sMode)
+     .def_readwrite("nMode", &EigenSolving::nMode)
+
+     .def_readwrite("Wavelength", &EigenSolving::lambda);
 
 }

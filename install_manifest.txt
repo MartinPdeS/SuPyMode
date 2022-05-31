@@ -1,1 +1,1 @@
-/usr/local/SuPyMode/bin/EigenSolver.cpython-38-x86_64-linux-gnu.so
+/usr/local/SuPyMode/bin/EigenSolver.cpython-39-darwin.so

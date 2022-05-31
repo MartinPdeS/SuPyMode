@@ -16,7 +16,8 @@ class SuperSet(SetProperties, SetPlottings):
     def __init__(self, ParentSolver, CppSolver):
         self.ParentSolver   = ParentSolver
         self.CppSolver      = CppSolver
-        self.SuperModes     = [SuperMode(ParentSet=self, ModeNumber=m) for m in range(self.ParentSolver.sMode)]
+        self.SuperModes     = []
+        #self.SuperModes     = [SuperMode(ParentSet=self, ModeNumber=m) for m in range(self.ParentSolver.sMode)]
 
 
     def IterateSuperMode(self):
@@ -163,24 +164,39 @@ class SuperSet(SetProperties, SetPlottings):
 
 class SuperMode(object):
 
-    def __init__(self, ParentSet, ModeNumber):
+    def __init__(self, ParentSet, ModeNumber, CppSolver):
         self.Name           = f"Mode: {ModeNumber}"
         self.ModeNumber     = ModeNumber
+        self.CppSolver      = CppSolver
         self.Slice          = []
         self.ParentSet      = ParentSet
         self.Index          = self.ParentSet.Index[:, self.ModeNumber]
         self.Beta           = self.ParentSet.Beta[:, self.ModeNumber]
 
-        self.LeftSymmetry   = ParentSet.CppSolver.LeftSymmetry
-        self.RightSymmetry  = ParentSet.CppSolver.RightSymmetry
-        self.TopSymmetry    = ParentSet.CppSolver.TopSymmetry
-        self.BottomSymmetry = ParentSet.CppSolver.BottomSymmetry
+    @property
+    def LeftSymmetry(self):
+        return self.CppSolver.LeftSymmetry
+
+    @property
+    def RightSymmetry(self):
+        return self.CppSolver.RightSymmetry
+
+    @property
+    def TopSymmetry(self):
+        return self.CppSolver.TopSymmetry
+
+    @property
+    def BottomSymmetry(self):
+        return self.CppSolver.BottomSymmetry
 
 
     def IterateSlice(self):
         for n, slice in enumerate(self.Slice):
             yield n, slice
 
+    @property
+    def Size(self):
+        return len(self.Slice)
 
     @property
     def Geometry(self):
@@ -189,7 +205,7 @@ class SuperMode(object):
 
     @property
     def ITRList(self):
-        return self.ParentSet.Geometry.ITRList
+        return self.ParentSet.ParentSolver.ITRList
 
 
     @property
@@ -341,13 +357,13 @@ class SetSlice(np.ndarray):
 
 
     @property
-    def LeftSymmetry(self):
-        return self.ParentMode.LeftSymmetry
+    def ITR(self):
+        return self.ParentMode.ITRList[self.SliceNumber]
 
 
     @property
-    def ITR(self):
-        return self.ParentMode.ITRList[self.SliceNumber]
+    def LeftSymmetry(self):
+        return self.ParentMode.LeftSymmetry
 
     @property
     def RightSymmetry(self):
@@ -372,6 +388,7 @@ class SetSlice(np.ndarray):
     @property
     def Norm(self):
         return (self.Field**2).sum()
+
 
     def Normalize(self):
         self.Field *= 1 / self.Norm

@@ -9,6 +9,7 @@ MSparse
 EigenSolving::ComputeMatrix(){
 
     EigenMatrix = BaseLaplacian::Laplacian;
+
     size_t iter = 0;
 
     for(size_t i=0; i<Nx; ++i)
@@ -48,7 +49,6 @@ EigenSolving::ComputeEigen(ScalarType alpha){
 
 void
 EigenSolving::ComputeLaplacian(size_t Order){
-
   Identity = MSparse(size,size); Identity.setIdentity();
 
   this->Order = Order;
@@ -85,11 +85,11 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
   for (size_t i=0; i<ITRLength; ++i){
 
+    std::cout<<"Iteration: "<< i <<"   ITR:  "<<ITRPtr[i]<<std::endl;
+
     kDual = kInit * ITRPtr[i] ;
 
     tie(EigenVectors, EigenValues) = ComputeEigen(alpha);
-
-    std::cout<<"Iteration: "<<i<<"   ITR:  "<<ITRPtr[i]<<std::endl;
 
     FullEigenVectors[i] = EigenVectors;
 
@@ -162,6 +162,8 @@ EigenSolving::LoopOverITR_(ndarray ITRList, size_t order = 1){
   FullEigenValues  = vector<VectorType>(ITRLength, VectorType(sMode));
 
   kInit            = 2.0 * PI / lambda;
+
+
 
   VectorType X0(size);
 
@@ -248,6 +250,14 @@ EigenSolving::ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1, size_t id
 
   return Indices;
 
+}
+
+
+void
+EigenSolving::SortModes(std::string Type)
+{
+  if (Type == "Field") SortModesFields(); return;
+  if (Type == "Index") SortModesIndex(); return;
 }
 
 void

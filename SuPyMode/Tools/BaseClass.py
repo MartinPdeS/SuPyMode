@@ -42,10 +42,8 @@ class SetProperties(object):
     def Coupling(self):
         if self._Coupling is None:
             self._Coupling = self.CppSolver.ComputingCoupling()
-            return self._Coupling
 
-        else:
-            return self._Coupling
+        return self._Coupling
 
 
     @property
@@ -53,30 +51,24 @@ class SetProperties(object):
         if self._Adiabatic is None:
             self._Coupling = self.CppSolver.ComputingCoupling()
             self._Adiabatic = self.CppSolver.ComputingAdiabatic()
-            return self._Adiabatic
 
-        else:
-            return self._Adiabatic
+        return self._Adiabatic
 
 
     @property
     def Beta(self):
         if self._Beta is None:
             self._Beta = self.CppSolver.GetBetas()
-            return self._Beta
 
-        else:
-            return self._Beta
+        return self._Beta
 
 
     @property
     def Index(self):
         if self._Index is None:
             self._Index = self.CppSolver.GetIndices()
-            return self._Index
 
-        else:
-            return self._Index
+        return self._Index
 
 
 

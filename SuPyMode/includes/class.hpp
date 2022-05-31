@@ -11,11 +11,7 @@ class BaseLaplacian{
       this->Nx                = Mesh.request().shape[0];
       this->Ny                = Mesh.request().shape[1];
       this->size              = Mesh.request().size;
-      this->TopSymmetry      = 0;
-      this->BottomSymmetry   = 0;
-      this->LeftSymmetry     = 0;
-      this->RightSymmetry    = 0;
-      this->Debug            = Debug;
+      this->Debug             = Debug;
     }
 
     void SetLeftSymmetry(int value);
@@ -48,17 +44,13 @@ class BaseLaplacian{
     void Laplacian5Boundary();
 
     MSparse Points5Laplacian();
-
-    void Setdx(ScalarType value){ dx = value; }
-
-    void Setdy(ScalarType value){ dy = value; }
 };
 
 
 class EigenSolving : public BaseLaplacian{
   public:
     size_t             nMode, sMode, MaxIter, Nx, Ny, size, DegenerateFactor, ITRLength, Order, ExtrapolOrder;
-    ScalarType         Tolerance, dx, dy, k, kInit, kDual, lambda, lambdaInit, MaxIndex, alpha;
+    ScalarType         Tolerance, k, kInit, kDual, lambda, lambdaInit, MaxIndex, alpha;
     ScalarType        *MeshPtr, *ITRPtr;
     ndarray            Mesh, ITRList, PyOverlap, PyIndices;
     MSparse            Laplacian, EigenMatrix, Identity, M;
@@ -74,7 +66,13 @@ class EigenSolving : public BaseLaplacian{
                size_t     sMode,
                size_t     MaxIter,
                ScalarType Tolerance,
-               bool       Debug): BaseLaplacian(Mesh, Debug){
+               ScalarType dx,
+               ScalarType dy,
+               ScalarType Wavelength,
+               bool       Debug)
+               : BaseLaplacian(Mesh, Debug){
+                 this->dx                = dx;
+                 this->dy                = dy;
                  this->nMode             = nMode;
                  this->sMode             = sMode;
                  this->MaxIter           = MaxIter;
@@ -83,11 +81,12 @@ class EigenSolving : public BaseLaplacian{
                  this->Nx                = Mesh.request().shape[0];
                  this->Ny                = Mesh.request().shape[1];
                  this->size              = Mesh.request().size;
-                 this->dx                = 100./this->Nx;
-                 this->dy                = 100./this->Ny;
                  this->MeshPtr           = (ScalarType*) Mesh.request().ptr;
                  this->Debug             = Debug;
-                 ScalarType *adress           = (ScalarType*) PyMeshGradient.request().ptr;
+                 this->lambda            = Wavelength;
+                 this->k                 = 2.0 * PI / Wavelength;
+                 this->kInit             = this->k;
+                 ScalarType *adress      = (ScalarType*) PyMeshGradient.request().ptr;
 
                  Map<VectorType> MeshGradient( adress, size );
                  this->MeshGradient = MeshGradient;
@@ -99,20 +98,9 @@ class EigenSolving : public BaseLaplacian{
 
 
 
-
-   void Setlambda(ScalarType value){ this->lambda = value; this->k = 2.0 * PI / lambda;}
-
-
    void    LoopOverITR(ndarray ITRList, size_t order);
 
    void    LoopOverITR_(ndarray ITRList, size_t order);
-
-
-   ScalarType              Getdx(){ return dx; }
-
-   ScalarType              Getdy(){ return dy; }
-
-   ScalarType              Getlambda(){ return lambda;}
 
    tuple<ndarray, ndarray> GetSlice(size_t slice);
 
@@ -150,6 +138,8 @@ class EigenSolving : public BaseLaplacian{
    void SortModesFields();
 
    void SortModesIndex();
+
+   void SortModes(std::string Type);
 
    void PSM(VectorType& X0, size_t& slice, size_t& mode);
 };
