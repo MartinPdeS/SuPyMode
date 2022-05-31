@@ -37,10 +37,6 @@ class SetProperties(object):
     def Symmetries(self):
         return self.Geometry.Symmetries
 
-    @property
-    def CppSolver(self):
-        return self.ParentSolver.CppSolver
-
 
     @property
     def Coupling(self):

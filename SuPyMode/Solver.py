@@ -26,78 +26,63 @@ class SuPySolver(object):
 
 
 
-    def InitBinding(self, LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry):
+    def InitBinding(self, Symmetries: dict, Sorting: str, Wavelength: float):
+
         CppSolver = EigenSolving(Mesh      = self.Geometry.mesh,
                                  Gradient  = self.Geometry.Gradient().ravel(),
                                  nMode     = self.nMode,
                                  sMode     = self.sMode,
                                  MaxIter   = self.MaxIter,
-                                 Tolerance = self.Tolerance)
+                                 Tolerance = self.Tolerance,
+                                 )
 
-        CppSolver.dx     = self.Axes.dx
-        CppSolver.dy     = self.Axes.dy
+        CppSolver.dx             = self.Axes.dx
+        CppSolver.dy             = self.Axes.dy
+        CppSolver.Lambda         = Wavelength
+        CppSolver.TopSymmetry    = Symmetries['Top']
+        CppSolver.BottomSymmetry = Symmetries['Bottom']
+        CppSolver.LeftSymmetry   = Symmetries['Left']
+        CppSolver.RightSymmetry  = Symmetries['Right']
+
         CppSolver.ComputeLaplacian(self.Error)
-
-        self.SetBindingSymmetries(CppSolver = CppSolver,
-                                  Left      = LeftSymmetry,
-                                  Right     = RightSymmetry,
-                                  Top       = TopSymmetry,
-                                  Bottom    = BottomSymmetry)
 
         return CppSolver
 
 
     def GetModes(self,
-                 wavelength:     float,
+                 Wavelength:     float,
                  Nstep:          int   = 2,
                  ITRi:           float = 1.0,
                  ITRf:           float = 0.1,
-                 LeftSymmetry:   int   = 0,
-                 RightSymmetry:  int   = 0,
-                 TopSymmetry:    int   = 0,
-                 BottomSymmetry: int   = 0,
+                 Symmetries:     dict = 0,
                  Sorting:        str   = 'Field'):
 
-        self.CppSolver = self.InitBinding(LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry)
-        self.CppSolver1 = self.InitBinding(+1, RightSymmetry, TopSymmetry, BottomSymmetry)
-
-        self.Sorting        = Sorting
-
-        self.Wavelength = wavelength
+        CppSolver = self.InitBinding(Symmetries, Sorting, Wavelength)
 
         self.ITRList = np.linspace(ITRi, ITRf, Nstep)
 
-        self.CppSolver.LoopOverITR(ITR=self.Geometry.ITRList, ExtrapolationOrder = 3)
+        CppSolver.LoopOverITR(ITR=self.ITRList, ExtrapolationOrder = 3)
+
+        self.SortModes(CppSolver=CppSolver, Sorting=Sorting)
+
+        return self.MakeSuperSet(CppSolver)
 
 
-
-        return self.MakeSuperSet()
-
-
-    def SetBindingSymmetries(self, CppSolver, Left, Right, Top, Bottom):
-        CppSolver.TopSymmetry    = Top
-        CppSolver.BottomSymmetry = Bottom
-        CppSolver.LeftSymmetry   = Left
-        CppSolver.RightSymmetry  = Right
-
-
-    def SortModes(self, Sorting):
+    def SortModes(self, CppSolver, Sorting):
         if Sorting == 'Field':
-            self.CppSolver.SortModesFields()
+            CppSolver.SortModesFields()
 
         elif Sorting == 'Index':
-            self.CppSolver.SortModesIndex()
+            CppSolver.SortModesIndex()
 
 
-    def MakeSuperSet(self):
+    def MakeSuperSet(self, CppSolver):
 
-        Set = SuperSet(ParentSolver=self)
+        Set = SuperSet(ParentSolver=self, CppSolver=CppSolver)
 
-        self.SortModes(self.Sorting)
+        for n, _ in enumerate(self.ITRList):
 
-        for n, _ in enumerate(self.Geometry.ITRList):
-
-            Fields, Betas = self.CppSolver.GetSlice(n)
+            Fields, Betas = CppSolver.GetSlice(n)
 
             Fields.swapaxes(1,2)
 
@@ -112,11 +97,6 @@ class SuPySolver(object):
                                      Beta        = Betas[solution],
                                      SliceNumber = n)
 
-                Set[solution].AddSymmetries(Left   = self.CppSolver.LeftSymmetry,
-                                            Right  = self.CppSolver.RightSymmetry,
-                                            Top    = self.CppSolver.TopSymmetry,
-                                            Bottom = self.CppSolver.BottomSymmetry)
-
         return Set
 
 
@@ -127,22 +107,6 @@ class SuPySolver(object):
     def Axes(self):
         return self.Geometry.Axes
 
-    @property
-    def ITRList(self):
-        return self.Geometry.ITRList
-
-    @ITRList.setter
-    def ITRList(self, value):
-        self.Geometry.ITRList = value
-
-    @property
-    def Wavelength(self):
-        return self.CppSolver.Lambda
-
-    @Wavelength.setter
-    def Wavelength(self, value):
-        self.Geometry.Axes.Wavelength = value
-        self.CppSolver.Lambda = value
 
     @property
     def Sorting(self):

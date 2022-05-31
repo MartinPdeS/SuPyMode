@@ -13,8 +13,9 @@ Mlogger = logging.getLogger(__name__)
 
 
 class SuperSet(SetProperties, SetPlottings):
-    def __init__(self, ParentSolver):
+    def __init__(self, ParentSolver, CppSolver):
         self.ParentSolver   = ParentSolver
+        self.CppSolver      = CppSolver
         self.SuperModes     = [SuperMode(ParentSet=self, ModeNumber=m) for m in range(self.ParentSolver.sMode)]
 
 
@@ -90,7 +91,7 @@ class SuperSet(SetProperties, SetPlottings):
 
         anim_loc()
         mlab.show
-    
+
 
     @property
     def Size(self):
@@ -102,7 +103,7 @@ class SuperSet(SetProperties, SetPlottings):
 
     @property
     def ITRList(self):
-        return self.ParentSolver.Geometry.ITRList
+        return self.ParentSolver.ITRList
 
     @property
     def Axes(self):
@@ -163,20 +164,17 @@ class SuperSet(SetProperties, SetPlottings):
 class SuperMode(object):
 
     def __init__(self, ParentSet, ModeNumber):
-        self.Name       = f"Mode: {ModeNumber}"
-        self.ModeNumber = ModeNumber
-        self.Slice      = []
-        self.ParentSet  = ParentSet
-        self.Index      = self.ParentSet.Index[:, self.ModeNumber]
-        self.Beta       = self.ParentSet.Beta[:, self.ModeNumber]
+        self.Name           = f"Mode: {ModeNumber}"
+        self.ModeNumber     = ModeNumber
+        self.Slice          = []
+        self.ParentSet      = ParentSet
+        self.Index          = self.ParentSet.Index[:, self.ModeNumber]
+        self.Beta           = self.ParentSet.Beta[:, self.ModeNumber]
 
-
-
-    def AddSymmetries(self, Left, Right, Top, Bottom):
-        self.LeftSymmetry   = Left
-        self.RightSymmetry  = Right
-        self.TopSymmetry    = Top
-        self.BottomSymmetry = Bottom
+        self.LeftSymmetry   = ParentSet.CppSolver.LeftSymmetry
+        self.RightSymmetry  = ParentSet.CppSolver.RightSymmetry
+        self.TopSymmetry    = ParentSet.CppSolver.TopSymmetry
+        self.BottomSymmetry = ParentSet.CppSolver.BottomSymmetry
 
 
     def IterateSlice(self):
