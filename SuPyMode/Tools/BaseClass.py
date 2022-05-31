@@ -43,26 +43,6 @@ class SetProperties(object):
 
 
     @property
-    def LeftSymmetry(self):
-        return self.ParentSolver.LeftSymmetry
-
-
-    @property
-    def RightSymmetry(self):
-        return self.ParentSolver.RightSymmetry
-
-
-    @property
-    def TopSymmetry(self):
-        return self.ParentSolver.TopSymmetry
-
-
-    @property
-    def BottomSymmetry(self):
-        return self.ParentSolver.BottomSymmetry
-
-
-    @property
     def Coupling(self):
         if self._Coupling is None:
             self._Coupling = self.CppSolver.ComputingCoupling()

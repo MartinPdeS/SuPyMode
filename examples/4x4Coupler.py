@@ -48,9 +48,9 @@ SuperSet = Sol.GetModes(wavelength      = 1.55,
                           BottomSymmetry  = 0
                           )
 
-#Scene0 = SuperSet.PlotFields(iter=-1)
+Scene0 = SuperSet.PlotFields(iter=-1)
 
-SuperSet.PlotPropagation(Modes = [0,1])
+#SuperSet.PlotPropagation(Modes = [0,1])
 
 #SuperSet.Plot(Input=['Coupling'], iter=[-1])
 #SuperSet.ExportPDF(Directory='4x4_SMF28_Hybrid_Ax_Ay', iter=[0, 100, 200, 290])
