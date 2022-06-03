@@ -79,11 +79,11 @@ class SetPlottings():
             Scene.AddLine(Row      = Row,
                           Col      = Col,
                           x        = self.ITRList,
-                          y        = supermode.Index,
+                          y        = supermode.GetIndex(),
                           Fill     = False,
                           Legend   = supermode.ModeNumber,
                           xLabel   = r'ITR',
-                          yLabel   = r'Propagation constante $\beta$')
+                          yLabel   = r'Effective refractive index n$_{eff}$')
 
             Scene.SetAxes(Col, Row, Equal=False, Legend=True, yLimits=[self.Geometry.MinIndex/1.005, self.Geometry.MaxIndex], LegendTitle='Mode')
 
@@ -93,7 +93,7 @@ class SetPlottings():
             Scene.AddLine(Row      = Row,
                           Col      = Col,
                           x        = self.ITRList,
-                          y        = supermode.Beta,
+                          y        = supermode.GetBetas(),
                           Fill     = False,
                           Legend   = supermode.ModeNumber,
                           xLabel   = r'ITR',
@@ -103,11 +103,12 @@ class SetPlottings():
 
 
     def PlotCoupling(self, Scene, Col, Row, Combination):
+        Coupling = Combination[0][0].CppSolver.ComputingCoupling()
         for (Mode0, Mode1) in Combination:
             Scene.AddLine(Row      = Row,
                           Col      = Col,
                           x        = self.ITRList,
-                          y        = self.GetCoupling( Mode0.ModeNumber, Mode1.ModeNumber ),
+                          y        = Coupling[:, Mode0.ModeNumber, Mode1.ModeNumber],
                           Fill     = False,
                           Legend   = f'{Mode0.ModeNumber} - {Mode1.ModeNumber}',
                           xLabel   = r'ITR',
@@ -121,7 +122,7 @@ class SetPlottings():
             Scene.AddLine(Row      = Row,
                           Col      = Col,
                           x        = self.ITRList,
-                          y        = self.GetAdiabatic( Mode0.ModeNumber, Mode1.ModeNumber ),
+                          y        = Mode0.GetAdiabatic(Mode1),
                           Fill     = False,
                           Legend   = f'{Mode0.ModeNumber} - {Mode1.ModeNumber}',
                           xLabel   = r'ITR',

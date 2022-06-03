@@ -41,6 +41,8 @@ ScalarType inf = numeric_limits<ScalarType>::infinity();
 PYBIND11_MODULE(EigenSolver, module) {
     module.doc() = "A c++ solver for EigenPairs";
 
+    py::class_<SuperMode>(module, "SuperMode");
+
     py::class_<EigenSolving>(module, "EigenSolving")
     .def(py::init<ndarray&, ndarray&, size_t, size_t, size_t, ScalarType, ScalarType, ScalarType, ScalarType, bool>(),
          py::arg("Mesh"),
@@ -57,8 +59,6 @@ PYBIND11_MODULE(EigenSolver, module) {
 
      .def("LoopOverITR", &EigenSolving::LoopOverITR, py::arg("ITR"), py::arg("ExtrapolationOrder"))
 
-     .def("LoopOverITR_", &EigenSolving::LoopOverITR_, py::arg("ITR"), py::arg("ExtrapolationOrder"))
-
      .def("ComputingOverlap", &EigenSolving::ComputingOverlap)
 
      .def("ComputingAdiabatic", &EigenSolving::ComputingAdiabatic)
@@ -73,6 +73,8 @@ PYBIND11_MODULE(EigenSolver, module) {
      .def("GetFields", &EigenSolving::GetFields, py::arg("slice"))
      .def("GetIndices", &EigenSolving::GetIndices)
      .def("GetBetas", &EigenSolving::GetBetas)
+     .def("GetFullEigen", &EigenSolving::GetFullEigen)
+     .def("GetMode", &EigenSolving::GetMode)
 
 
      .def_readwrite("LeftSymmetry",   &EigenSolving::LeftSymmetry)
@@ -83,6 +85,8 @@ PYBIND11_MODULE(EigenSolver, module) {
 
      .def_readwrite("sMode", &EigenSolving::sMode)
      .def_readwrite("nMode", &EigenSolving::nMode)
+     .def_readwrite("ITRLength", &EigenSolving::ITRLength)
+     .def_readwrite("ITRList", &EigenSolving::ITRList)
 
      .def_readwrite("Wavelength", &EigenSolving::lambda);
 

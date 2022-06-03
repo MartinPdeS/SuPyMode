@@ -108,9 +108,8 @@ EigenSolving::PopulateModes(size_t Slice, MatrixType& EigenVectors, VectorType& 
 {
   for (SuperMode& mode : SuperModes)
   {
-    mode.Fields.col(Slice)   << EigenVectors.col(mode.ModeNumber);
-    mode.Betas[Slice]        = sqrt( - EigenValues[mode.ModeNumber] ) / ITRPtr[Slice];
-    mode.EigenValues[Slice]  = EigenValues[mode.ModeNumber];
+    mode.Fields.col(Slice) << EigenVectors.col(mode.ModeNumber);
+    mode.Betas[Slice]  = sqrt( - EigenValues[mode.ModeNumber] ) / ITRPtr[Slice];
   }
 
 }
@@ -129,16 +128,18 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
   MatrixType EigenVectors;
   VectorType EigenValues;
 
+
+
+
   PrepareSuperModes();
+
 
   FullEigenVectors = vector<MatrixType>(ITRLength);
   FullEigenValues = vector<VectorType>(ITRLength);
 
-  std::vector<ScalarType> AllFirstEigenValues;
-  AllFirstEigenValues.reserve(ITRLength);
-
 
   ScalarType alpha = -pow( k * ComputeMaxIndex(), 2 );
+
 
   for (size_t i=0; i<ITRLength; ++i)
   {
@@ -151,15 +152,13 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
     PopulateModes(i, EigenVectors, EigenValues);
 
-    AllFirstEigenValues.push_back(EigenValues[0]);
-
     FullEigenVectors[i] = EigenVectors;
 
     FullEigenValues[i]  = EigenValues;
 
     size_t next = i+1, mode=0;
 
-    alpha = ExtrapolateNext(order, AllFirstEigenValues, ITRList, next);
+    alpha = ExtrapolateNext(order, FullEigenValues, ITRList, next, mode);
   }
 }
 
@@ -216,6 +215,97 @@ EigenSolving::GetFullEigen(){
 
 
 
+tuple<VectorType, ScalarType>
+EigenSolving::ComputePreSolution(size_t& slice, size_t& mode){
+
+  VectorType X0(size);
+
+  if (slice == 0){
+      X0    = VectorType::Ones(size); X0.normalize();
+      alpha = pow( k * ComputeMaxIndex(), 2 );
+      }
+  else{
+      X0    = FullEigenVectors[slice-1].col(mode);
+      alpha = ExtrapolateNext(ExtrapolOrder, FullEigenValues, ITRList, slice, mode);
+      }
+
+  return make_tuple(X0, alpha);
+}
+
+void
+EigenSolving::PSM(VectorType& X0, size_t& slice, size_t& mode){
+
+  ScalarType ck=0.0, c0=1.0;
+
+  VectorType Y0(size);
+
+  for (size_t iter=0; iter<MaxIter; ++iter){
+
+    GramSchmidt(FullEigenVectors[slice], mode, X0);
+
+    Y0 = Solver.solve(X0);
+
+    ck = Y0.dot(X0);
+
+    Y0.normalize();
+
+    if ( abs( (c0-ck)/ck) < Tolerance && iter!=0 ) break;
+
+    c0 = ck;
+
+    X0 = Y0;
+  }
+
+  FullEigenVectors[slice].col(mode)  = Y0;
+  FullEigenValues[slice](mode)       = alpha + 1.0/ck;
+
+
+}
+
+
+
+
+
+
+void
+EigenSolving::LoopOverITR_(ndarray ITRList, size_t order = 1){
+
+  this->ITRList    = ITRList;
+  ITRLength        = ITRList.request().size;
+  ITRPtr           = (ScalarType*) ITRList.request().ptr;
+  ExtrapolOrder    = order;
+
+  FullEigenVectors = vector<MatrixType>(ITRLength, MatrixType(size, sMode));
+  FullEigenValues  = vector<VectorType>(ITRLength, VectorType(sMode));
+
+  kInit            = 2.0 * PI / lambda;
+
+  VectorType X0(size);
+
+  for (size_t slice=0; slice<ITRLength; ++slice){
+
+      std::cout<<"Iteration: "<<slice<<"   ITR:  "<<ITRPtr[slice]<<std::endl;
+
+      kDual = kInit * ITRPtr[slice];
+
+      EigenMatrix = ComputeMatrix();
+
+      for (size_t mode=0; mode<sMode; ++mode){
+
+          tie(X0, alpha) = ComputePreSolution(slice, mode);
+
+          M = -EigenMatrix - (alpha * Identity);
+
+          Solver.compute(M);
+
+          PSM(X0, slice, mode);
+        }
+    }
+}
+
+
+
+
 
 vector<VectorType>
 EigenSolving::ComputeBetas(){
@@ -243,8 +333,7 @@ EigenSolving::ComputingOverlap(){
 
   for (size_t l=0; l<ITRLength-1; ++l)
       for (size_t i=0; i<nMode; ++i)
-          for (size_t j=0; j<nMode; ++j)
-          {
+          for (size_t j=0; j<nMode; ++j){
               if (j > i){(*Overlap)[iter] = 0.0; ++iter; continue;}
               (*Overlap)[iter] = FullEigenVectors[l].col(i).transpose() * FullEigenVectors[l+1].col(j);
               ++iter; }
@@ -256,27 +345,24 @@ EigenSolving::ComputingOverlap(){
 
 
 vector<size_t>
-EigenSolving::ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1, size_t Slice){
+EigenSolving::ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1, size_t idx){
 
   size_t nMode = Matrix0.cols();
 
   ScalarType BestOverlap, Overlap;
   vector<size_t> Indices(sMode);
 
-  for (size_t i=0; i<sMode; ++i)
-    {
+  for (size_t i=0; i<sMode; ++i){
       BestOverlap = 0;
-      for (size_t j=0; j<nMode; ++j)
-          {
-              SuperMode Mode0 = SuperModes[i], Mode1 = SuperModes[j];
-
-              Overlap = Mode0.ComputeOverlap(Mode1, Slice);
-
-              if (Overlap > BestOverlap) {Indices[i] = j; BestOverlap = Overlap;}
+      for (size_t j=0; j<nMode; ++j){
+          Overlap = abs( Matrix0.col(i).transpose() * Matrix1.col(j) );
+          if (Overlap > BestOverlap) {Indices[i] = j; BestOverlap = Overlap;}
           }
-          if (BestOverlap<0.8)
-              std::cout<<"Bad mode correspondence: "<< BestOverlap <<"  At ITR: "<< ITRPtr[Slice] <<". You should consider makes more ITR steps"<<std::endl;
-    }
+
+        if (BestOverlap<0.8)
+            std::cout<<"Bad mode correspondence: "<< BestOverlap
+                <<"  At ITR: "<< ITRPtr[idx] <<".   You should consider makes more ITR steps"<<std::endl;
+      }
 
   return Indices;
 
@@ -394,6 +480,51 @@ EigenSolving::ComputingCoupling()
 }
 
 
+ndarray
+EigenSolving::ComputingCoupling_(){
+
+  vector<VectorType> Betas = ComputeBetas();
+
+  size_t iter = 0;
+
+  VectorType * Coupling = new VectorType(ITRLength * sMode * sMode);
+
+  (*Coupling).setZero();
+
+  VectorType vec0, vec1, overlap, temp;
+
+  ScalarType delta, beta0, beta1;
+
+  ComplexScalarType C, I;
+
+  for (size_t l=0; l<ITRLength; ++l)
+      for (size_t i=0; i<sMode; ++i)
+          for (size_t j=0; j<sMode; ++j){
+              if (j == i){ (*Coupling)[iter] = 0.0; ++iter; continue; }
+
+              vec0    = FullEigenVectors[l].col(i);
+              vec1    = FullEigenVectors[l].col(j);
+              beta0   = Betas[l][i];
+              beta1   = Betas[l][j];
+
+              overlap = vec0.cwiseProduct( vec1 );
+
+              delta   = beta0 - beta1;
+
+              C       = - (ScalarType) 0.5 * J * kInit*kInit / sqrt(beta0 * beta1) * abs( 1.0f / delta );
+
+              I       = Trapz(overlap.cwiseProduct( MeshGradient ), 1.0, Nx, Ny);
+
+              C      *=  I;
+
+              (*Coupling)[iter] = abs(C);
+
+             ++iter;
+            }
+
+  return Eigen2ndarray( Coupling, { ITRLength, sMode, sMode }) ;
+
+}
 
 
 ScalarType

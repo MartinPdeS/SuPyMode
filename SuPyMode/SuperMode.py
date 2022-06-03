@@ -13,20 +13,20 @@ Mlogger = logging.getLogger(__name__)
 
 
 class SuperSet(SetProperties, SetPlottings):
-    def __init__(self, ParentSolver, CppSolver):
+    def __init__(self, ParentSolver):
         self.ParentSolver   = ParentSolver
-        self.CppSolver      = CppSolver
         self.SuperModes     = []
-        #self.SuperModes     = [SuperMode(ParentSet=self, ModeNumber=m) for m in range(self.ParentSolver.sMode)]
+        self._NextMode      = 0
 
+
+    @property
+    def NextMode(self):
+        self._NextMode += 1
+        return self._NextMode - 1
 
     def IterateSuperMode(self):
         for n, supermode in enumerate(self.SuperModes):
             yield supermode
-
-
-    def ComputeCoupling(self):
-        return self.CppSolver.ComputingCoupling()
 
 
     def ComputeM(self, CouplingFactor):
@@ -111,16 +111,10 @@ class SuperSet(SetProperties, SetPlottings):
         return self.ParentSolver.Geometry.Axes
 
 
-    def GetCoupling(self, Mode0: int, Mode1: int):
-        return self.Coupling[:, Mode0, Mode1]
+    def AppendSuperMode(self, CppSolver, BindingNumber):
+        superMode = SuperMode(ParentSet=self, ModeNumber=self.NextMode, CppSolver=CppSolver, BindingNumber=BindingNumber )
 
-
-    def GetAdiabatic(self, Mode0: int, Mode1: int):
-        return self.Adiabatic[:, Mode0, Mode1]
-
-
-    def Append(self, Object):
-        self.SuperModes.append(Object)
+        self.SuperModes.append( superMode )
 
 
     def __getitem__(self, N):
@@ -164,14 +158,33 @@ class SuperSet(SetProperties, SetPlottings):
 
 class SuperMode(object):
 
-    def __init__(self, ParentSet, ModeNumber, CppSolver):
+    def __init__(self, ParentSet, ModeNumber, CppSolver,  BindingNumber):
         self.Name           = f"Mode: {ModeNumber}"
         self.ModeNumber     = ModeNumber
+        self.BindingNumber  = BindingNumber
         self.CppSolver      = CppSolver
         self.Slice          = []
         self.ParentSet      = ParentSet
-        self.Index          = self.ParentSet.Index[:, self.ModeNumber]
-        self.Beta           = self.ParentSet.Beta[:, self.ModeNumber]
+
+
+    def GetCoupling(self, OtherMode):
+        return self.CppSolver.ComputingCoupling()
+
+
+    def GetAdiabatic(self, OtherMode):
+        if self.CppSolver != OtherMode.CppSolver:
+            return np.zeros(self.CppSolver.ITRLength)
+
+        return self.CppSolver.ComputingAdiabatic()[:, self.BindingNumber, OtherMode.BindingNumber]
+
+
+    def GetIndex(self):
+        return self.CppSolver.GetIndices()[:, self.BindingNumber]
+
+
+    def GetBetas(self):
+        return self.CppSolver.GetBetas()[:, self.BindingNumber]
+
 
     @property
     def LeftSymmetry(self):
@@ -223,12 +236,11 @@ class SuperMode(object):
         return np.all(self.Symmetries == Other.Symmetries)
 
 
-    def Append(self, Field, Index, Beta, SliceNumber):
-        self.Slice.append( SetSlice(Field, Index=Index, Beta=Beta, ParentMode=self, SliceNumber=SliceNumber) )
+    def AppendSlice(self, SliceNumber):
+        self.Slice.append( SetSlice(ParentMode=self, SliceNumber=SliceNumber) )
 
     def GetSlices(self, SlicesNumber: list):
         return [self[slice] for slice in SlicesNumber]
-
 
     def __getitem__(self, N):
         return self.Slice[N]
@@ -296,48 +308,40 @@ class SuperMode(object):
         return copy_
 
 
+    def GetIndex(self):
+        return self.CppSolver.GetIndices()[:, self.BindingNumber]
+
+
+    def GetBetas(self):
+        return self.CppSolver.GetBetas()[:, self.BindingNumber]
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class SetSlice(np.ndarray):
-
-    def __new__(cls, Field, Index, Beta, ParentMode, SliceNumber):
-        self      = Field.view(SetSlice)
-        return self
-
+class SetSlice():
 
     def CompareSymmetries(self, Other):
         assert isinstance(Other, SetSlice), "Can only compare SetSlice instance with another"
         return np.all(self.Symmetries == Other.Symmetries)
 
-    def __init__(self, Field, Index, Beta, ParentMode, SliceNumber):
-        self.Field  = Field
-        self.Index  = Index
-        self.Beta   = Beta
-        self.SliceNumber = SliceNumber
+
+    def __init__(self, ParentMode, SliceNumber):
         self.ParentMode = ParentMode
+        self.SliceNumber = SliceNumber
 
 
-    def __array_finalize__(self, viewed):
-        pass
+    @property
+    def Index(self):
+        return self.ParentMode.GetIndex()[self.SliceNumber]
+
+
+    @property
+    def Beta(self):
+        return self.ParentMode.GetBeta()[self.SliceNumber]
+
+
+    @property
+    def Field(self):
+        return self.ParentMode.CppSolver.GetFields(self.SliceNumber)[self.ParentMode.BindingNumber]
 
 
     def __pow__(self, other):

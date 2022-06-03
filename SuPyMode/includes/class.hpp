@@ -1,3 +1,81 @@
+std::complex<ScalarType> J(0.0, 1.0);
+
+
+struct SuperMode
+{
+  MatrixType Fields;
+  VectorType Betas, EigenValues;
+  size_t ITRLength, Nx, Ny, ModeNumber;
+
+  SuperMode(size_t ModeNumber){this->ModeNumber = ModeNumber;}
+  SuperMode(){}
+
+  ndarray GetField(size_t slice)
+  {
+    MatrixType * Vectors = new MatrixType;
+
+    (*Vectors) = this->Fields.col(slice);
+
+    return Eigen2ndarray( Vectors, { Nx, Ny}  );
+  }
+
+  void Init(size_t ITRLength, size_t Nx, size_t Ny)
+  {
+    this->Nx = Nx;
+    this->Ny = Ny;
+    this->ITRLength   = ITRLength;
+    this->Fields      = MatrixType(Nx * Ny, ITRLength);
+    this->Betas       = VectorType(ITRLength);
+    this->EigenValues = VectorType(ITRLength);
+  }
+
+  void CopyOtherSlice(SuperMode& Other, size_t Slice)
+  {
+      Fields.col(Slice) = Other.Fields.col(Slice);
+      Betas[Slice]  = Other.Betas[Slice];
+  }
+
+
+  ScalarType ComputeOverlap(SuperMode& Other, size_t Slice)
+  {
+    return abs( this->Fields.col(Slice).transpose() * Other.Fields.col(Slice) );
+  }
+
+
+  ScalarType ComputeCoupling(SuperMode& Other, size_t Slice, VectorType &MeshGradient, ScalarType &kInit)
+  {
+    VectorType overlap = this->Fields.col(Slice).cwiseProduct( Other.Fields.col(Slice) );
+
+    ScalarType Beta0 = this->Betas[Slice],
+               Beta1 = Other.Betas[Slice];
+
+
+    ComplexScalarType C  = - (ScalarType) 0.5 * J * kInit*kInit / sqrt(Beta0 *  Beta1) * abs( 1.0f / (Beta0 - Beta1) );
+
+    ScalarType I       = Trapz(overlap.cwiseProduct( MeshGradient ), 1.0, Nx, Ny);
+
+    C      *=  I;
+
+    return abs(C);
+
+  }
+
+
+
+  ndarray GetFields()
+  {
+    MatrixType * Vectors = new MatrixType;
+
+    (*Vectors) = this->Fields;
+
+    return Eigen2ndarray( Vectors, { ITRLength, Nx, Ny} );
+  }
+
+};
+
+
+
+
 class BaseLaplacian{
   public:
     int        TopSymmetry, BottomSymmetry, LeftSymmetry, RightSymmetry, Order;
@@ -59,6 +137,9 @@ class EigenSolving : public BaseLaplacian{
     VectorType         MeshGradient;
     bool               Debug;
     BiCGSTAB<MSparse>  Solver;
+    MatrixType         Mode0, Mode1, Mode2, Mode3;
+    SuperMode          SuperMode0, SuperMode1, SuperMode2;
+    std::vector<SuperMode>        SuperModes;
 
   EigenSolving(ndarray&   Mesh,
                ndarray&   PyMeshGradient,
@@ -70,7 +151,8 @@ class EigenSolving : public BaseLaplacian{
                ScalarType dy,
                ScalarType Wavelength,
                bool       Debug)
-               : BaseLaplacian(Mesh, Debug){
+               : BaseLaplacian(Mesh, Debug)
+                {
                  this->dx                = dx;
                  this->dy                = dy;
                  this->nMode             = nMode;
@@ -91,6 +173,9 @@ class EigenSolving : public BaseLaplacian{
                  Map<VectorType> MeshGradient( adress, size );
                  this->MeshGradient = MeshGradient;
 
+                 for (int i=0; i<nMode; ++i)
+                    SuperModes.push_back(SuperMode(i));
+
                  ComputeMaxIndex();
 
 
@@ -98,11 +183,17 @@ class EigenSolving : public BaseLaplacian{
 
 
 
+   void PopulateModes(size_t Slice, MatrixType& EigenVectors, VectorType& EigenValues);
+   ndarray GetMode(size_t Mode);
+   void PrepareSuperModes();
+   void SwapMode(SuperMode &Mode0, SuperMode &Mode1);
+   void SortSliceIndex(size_t Slice);
+
    void    LoopOverITR(ndarray ITRList, size_t order);
 
-   void    LoopOverITR_(ndarray ITRList, size_t order);
-
    tuple<ndarray, ndarray> GetSlice(size_t slice);
+
+   ndarray                 GetFullEigen();
 
    ndarray                 GetFields(size_t slice);
 
@@ -110,14 +201,11 @@ class EigenSolving : public BaseLaplacian{
 
    ndarray                 GetBetas();
 
-
    tuple<MatrixType, VectorType> ComputeEigen(ScalarType alpha);
 
    ScalarType                    ComputeMaxIndex();
 
    MSparse                       ComputeMatrix();
-
-   tuple<VectorType, ScalarType> ComputePreSolution(size_t& slice, size_t& mode);
 
    ndarray                       ComputingOverlap();
 
@@ -129,8 +217,6 @@ class EigenSolving : public BaseLaplacian{
 
    vector<size_t>                ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1, size_t idx);
 
-   void                          ComputePSMMatrix();
-
    void                          ComputeLaplacian(size_t order);
 
 
@@ -141,5 +227,4 @@ class EigenSolving : public BaseLaplacian{
 
    void SortModes(std::string Type);
 
-   void PSM(VectorType& X0, size_t& slice, size_t& mode);
 };

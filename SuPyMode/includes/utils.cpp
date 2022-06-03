@@ -105,10 +105,37 @@ sort_indexes(const vector<ScalarType> &v) {
 
 
 
+
+
+
+
+
+
+std::vector<size_t>
+GetStride(std::vector<size_t> Dimension)
+{
+  std::reverse(Dimension.begin(), Dimension.end());
+
+  std::vector<size_t> stride;
+  stride.push_back( sizeof(ScalarType) );
+
+  for (size_t i=0; i<Dimension.size()-1; ++i)
+      stride.push_back( stride[i] * Dimension[i] );
+
+  std::reverse(stride.begin(), stride.end());
+
+  return stride;
+
+}
+
+
+
 ndarray
-Eigen2ndarray(MatrixType *Eigen3Vector, vector<size_t> dimension, vector<size_t> stride){
+Eigen2ndarray(MatrixType *Eigen3Vector, vector<size_t> dimension){
 
   ndarray PyVector;
+
+  vector<size_t> stride = GetStride(dimension);
 
   py::capsule free_when_done(Eigen3Vector->data(), [](void *f) {
      ScalarType *foo = reinterpret_cast<ScalarType *>(f);
@@ -119,10 +146,15 @@ Eigen2ndarray(MatrixType *Eigen3Vector, vector<size_t> dimension, vector<size_t>
    return PyVector;
 }
 
+
+
+
 ndarray
-Eigen2ndarray(VectorType *Eigen3Vector, vector<size_t> dimension, vector<size_t> stride){
+Eigen2ndarray(VectorType *Eigen3Vector, vector<size_t> dimension){
 
   ndarray PyVector;
+
+  vector<size_t> stride = GetStride(dimension);
 
   py::capsule free_when_done(Eigen3Vector->data(), [](void *f) {
      ScalarType *foo = reinterpret_cast<ScalarType *>(f);
@@ -134,31 +166,15 @@ Eigen2ndarray(VectorType *Eigen3Vector, vector<size_t> dimension, vector<size_t>
 }
 
 
-ndarray
-Eigen2ndarray(VectorType &Eigen3Vector, size_t size, vector<size_t> dimension, vector<size_t> stride){
-
-
-  VectorType * temp = new VectorType(size);
-
-  (*temp) = Eigen3Vector;
-
-  ndarray PyVector;
-
-  py::capsule free_when_done(temp->data(), [](void *f) {
-     ScalarType *foo = reinterpret_cast<ScalarType *>(f);
-     delete []foo; } );
-
-  PyVector = ndarray( dimension, stride, temp->data(), free_when_done );
-
-   return PyVector;
-}
 
 
 
 Cndarray
-Eigen2Cndarray(ComplexVectorType *Eigen3Vector, vector<size_t> dimension, vector<size_t> stride){
+Eigen2Cndarray(ComplexVectorType *Eigen3Vector, vector<size_t> dimension){
 
   Cndarray PyVector;
+
+  vector<size_t> stride = GetStride(dimension);
 
   py::capsule free_when_done(Eigen3Vector->data(), [](void *f) {
      ComplexScalarType *foo = reinterpret_cast<ComplexScalarType *>(f);
@@ -171,8 +187,10 @@ Eigen2Cndarray(ComplexVectorType *Eigen3Vector, vector<size_t> dimension, vector
 }
 
 
+
+
 ScalarType
-Trapz(VectorType& Vector, ScalarType dx, size_t Nx, size_t Ny){
+Trapz(VectorType&& Vector, ScalarType dx, size_t Nx, size_t Ny){
 
   return Vector.sum();
   ScalarType sum  = 0;

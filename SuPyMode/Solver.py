@@ -63,43 +63,64 @@ class SuPySolver(object):
                     ):
 
         CppSolver  = self.InitBinding(Symmetries, Wavelength, nMode, sMode)
+        #CppSolver1  = self.InitBinding({'Right': +1, 'Left': 0, 'Top': -1, 'Bottom': 0}, Wavelength, nMode, sMode)
 
         self.ITRList = np.linspace(ITRi, ITRf, Nstep)
 
+
+
         CppSolver.LoopOverITR(ITR=self.ITRList, ExtrapolationOrder=3)
+        #CppSolver1.LoopOverITR(ITR=self.ITRList, ExtrapolationOrder=3)
+
+
 
         CppSolver.SortModes(Sorting=Sorting)
+        #CppSolver1.SortModes(Sorting=Sorting)
 
-        Set = SuperSet(ParentSolver=self, CppSolver=CppSolver)
+        Set = SuperSet(ParentSolver=self)
 
-        self.PopulateSuperSet(Set, CppSolver)
-
-        self.PopulateSuperModes(Set, CppSolver)
+        self.PopulateSuperSet(Set, [CppSolver])
 
         return Set
 
 
 
-    def PopulateSuperSet(self, Set, CppSolver):
-        for m in range(CppSolver.sMode):
-            Set.SuperModes.append( SuperMode(ParentSet=Set, ModeNumber=m, CppSolver=CppSolver)  )
+    def PopulateSuperSet(self, Set, CppSolvers):
+        for CppSolver in CppSolvers:
+            for BindingNumber in range(CppSolver.sMode):
+                Set.AppendSuperMode(CppSolver=CppSolver, BindingNumber=BindingNumber)
+
+        for Mode in Set.SuperModes:
+            for SliceNumber, _ in enumerate(self.ITRList):
+                Mode.AppendSlice(SliceNumber = SliceNumber)
 
 
-    def PopulateSuperModes(self, Set, CppSolver):
-        for SliceNumber, _ in enumerate(self.ITRList):
-            Fields, Betas = CppSolver.GetSlice(SliceNumber)
 
-            for mode, (field, beta) in enumerate( zip(Fields, Betas) ):
-                Set[mode].Append(Field       = field,
-                                 Index       = beta / self.Axes.k,
-                                 Beta        = beta,
-                                 SliceNumber = SliceNumber)
+        """
+        for Mode in Set.SuperModes:
+            for SliceNumber, _ in enumerate(self.ITRList):
+                Fields, Betas = Mode.CppSolver.GetSlice(SliceNumber)
+                Mode.Append(Field       = field,
+                            Index       = beta / self.Axes.k,
+                            Beta        = beta,
+                            SliceNumber = SliceNumber)
+        """
 
 
-    def GetCoupling_(self):
-        for Solver in self.CppSolvers:
-            print(Solver)
-        #Coupling = self.CppSolver.ComputingCoupling()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     @property
