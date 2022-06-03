@@ -118,11 +118,12 @@ class SetPlottings():
 
 
     def PlotAdiabatic(self, Scene, Col, Row, Combination):
+        Adiabatic = Combination[0][0].CppSolver.ComputingAdiabatic()
         for (Mode0, Mode1) in Combination:
             Scene.AddLine(Row      = Row,
                           Col      = Col,
                           x        = self.ITRList,
-                          y        = Mode0.GetAdiabatic(Mode1),
+                          y        = Adiabatic[:, Mode0.ModeNumber, Mode1.ModeNumber],
                           Fill     = False,
                           Legend   = f'{Mode0.ModeNumber} - {Mode1.ModeNumber}',
                           xLabel   = r'ITR',

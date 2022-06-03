@@ -111,6 +111,7 @@ EigenSolving::PopulateModes(size_t Slice, MatrixType& EigenVectors, VectorType& 
     mode.Fields.col(Slice)   << EigenVectors.col(mode.ModeNumber);
     mode.Betas[Slice]        = sqrt( - EigenValues[mode.ModeNumber] ) / ITRPtr[Slice];
     mode.EigenValues[Slice]  = EigenValues[mode.ModeNumber];
+    mode.Index[Slice]        = sqrt( abs( mode.EigenValues[Slice] ) ) / (ITRPtr[Slice] * kInit);
   }
 
 }
@@ -131,8 +132,6 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
   PrepareSuperModes();
 
-  FullEigenVectors = vector<MatrixType>(ITRLength);
-  FullEigenValues = vector<VectorType>(ITRLength);
 
   std::vector<ScalarType> AllFirstEigenValues;
   AllFirstEigenValues.reserve(ITRLength);
@@ -153,10 +152,6 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
     AllFirstEigenValues.push_back(EigenValues[0]);
 
-    FullEigenVectors[i] = EigenVectors;
-
-    FullEigenValues[i]  = EigenValues;
-
     size_t next = i+1, mode=0;
 
     alpha = ExtrapolateNext(order, AllFirstEigenValues, ITRList, next);
@@ -173,18 +168,6 @@ EigenSolving::GetMode(size_t Mode){
 }
 
 
-ndarray
-EigenSolving::GetFullEigen(){
-
-  MatrixType * Vectors = new MatrixType;
-
-  (*Vectors) = Mode0;
-
-  size_t s = Vectors->size();
-  ndarray Output = Eigen2ndarray( Vectors, {s} );
-
-  return Output;
-}
 
 
 
@@ -213,46 +196,6 @@ EigenSolving::GetFullEigen(){
 
 
 
-
-
-
-
-vector<VectorType>
-EigenSolving::ComputeBetas(){
-  vector<VectorType> Betas(ITRLength);
-
-  for (size_t i=0; i<ITRLength; ++i)
-      Betas[i] = (-FullEigenValues[i]).cwiseSqrt() / ITRPtr[i];
-
-  return Betas;
-
-}
-
-
-
-ndarray
-EigenSolving::ComputingOverlap(){
-
-  size_t iter   = 0;
-
-  VectorType * Overlap = new VectorType((ITRLength-1) * nMode * nMode),
-             vec0,
-             vec1;
-
-  (*Overlap).setZero();
-
-  for (size_t l=0; l<ITRLength-1; ++l)
-      for (size_t i=0; i<nMode; ++i)
-          for (size_t j=0; j<nMode; ++j)
-          {
-              if (j > i){(*Overlap)[iter] = 0.0; ++iter; continue;}
-              (*Overlap)[iter] = FullEigenVectors[l].col(i).transpose() * FullEigenVectors[l+1].col(j);
-              ++iter; }
-
-  ndarray PyOverlap = Eigen2ndarray( Overlap, { ITRLength-1, nMode, nMode } );
-
-  return PyOverlap;
-}
 
 
 vector<size_t>
@@ -294,27 +237,7 @@ EigenSolving::SortModes(std::string Type)
 
 void
 EigenSolving::SortModesFields(){
-  size_t iter = 0;
 
-  vector<size_t> Overlap;
-
-  vector<VectorType> Vec(nMode);
-  vector<ScalarType> Val(nMode);
-
-  for (size_t l=0; l<ITRLength-1; ++l){
-      Overlap = ComputecOverlaps(FullEigenVectors[l], FullEigenVectors[l+1], l);
-
-        for (size_t j=0; j<nMode; ++j){
-            Vec[j] = FullEigenVectors[l+1].col(j);
-            Val[j] = FullEigenValues[l+1][j] ;
-            }
-
-        for (size_t j=0; j<sMode; ++j){
-
-            FullEigenVectors[l+1].col(j)   = Vec[Overlap[j]];
-            FullEigenValues[l+1][j]        = Val[Overlap[j]];
-        }
-    }
 }
 
 
@@ -411,45 +334,22 @@ EigenSolving::ComputeMaxIndex(){
 ndarray
 EigenSolving::ComputingAdiabatic(){
 
-  vector<VectorType> Betas = ComputeBetas();
-
-  size_t iter = 0;
+  std::cout<<"Computing adiabatic\n";
 
   VectorType * Adiabatic = new VectorType(ITRLength * sMode * sMode);
-
   (*Adiabatic).setZero();
 
-  VectorType vec0, vec1, overlap, temp;
-
-  ScalarType delta, beta0, beta1;
-
-  ComplexScalarType C, I;
-
-  for (size_t l=0; l<ITRLength; ++l)
+  size_t iter = 0;
+  for (size_t slice=0; slice<ITRLength; ++slice)
       for (size_t i=0; i<sMode; ++i)
-          for (size_t j=0; j<sMode; ++j){
-              if (j == i){(*Adiabatic)[iter] = inf; ++iter; continue;}
-
-
-              vec0    = FullEigenVectors[l].col(i);
-              vec1    = FullEigenVectors[l].col(j);
-              beta0   = Betas[l][i];
-              beta1   = Betas[l][j];
-
-              overlap = vec0.cwiseProduct( vec1 );
-
-              delta   = beta0 - beta1;
-
-              C       = - (ScalarType) 0.5 * J * (kInit*kInit) / sqrt(beta0 * beta1) * abs( 1.0f / delta );
-
-              I       = Trapz(overlap.cwiseProduct( MeshGradient ), 1.0, Nx, Ny);
-
-              C      *=  I;
-
-              (*Adiabatic)[iter] = abs( delta/C ) ;
-
-              ++iter;
-            }
+          for (size_t j=0; j<sMode; ++j)
+              {
+                  if (j == i){ (*Adiabatic)[iter] = 0.0; ++iter; continue; }
+                  SuperMode mode0 = SuperModes[i];
+                  SuperMode mode1 = SuperModes[j];
+                  (*Adiabatic)[iter] = mode0.ComputeAdiabatic(mode1, slice, MeshGradient, kInit);
+                  ++iter;
+              }
 
   return Eigen2ndarray( Adiabatic, { ITRLength, sMode, sMode } ) ;
 
@@ -457,20 +357,22 @@ EigenSolving::ComputingAdiabatic(){
 
 
 tuple<ndarray, ndarray>
-EigenSolving::GetSlice(size_t slice){
+EigenSolving::GetSlice(size_t Slice){
+  MatrixType OutputFields(size, sMode);
+  VectorType OutputBetas(sMode);
 
-  MatrixType * Vectors = new MatrixType;
-  MatrixType * Values  = new MatrixType;
-
-  (*Vectors) = FullEigenVectors[slice];
-  (*Values)  = (-1.0 * FullEigenValues[slice] ).cwiseSqrt() / ITRPtr[slice];
-
-  ndarray PyFullEigenVectors = Eigen2ndarray( Vectors, { sMode, Nx, Ny } ) ;
-
-  ndarray PyFullEigenValues = Eigen2ndarray( Values, { sMode } ) ;
+  for (size_t mode=0; mode<sMode; ++mode)
+  {
+    OutputFields.col(mode) = SuperModes[mode].Fields.col(Slice);
+    OutputBetas[mode]      = SuperModes[mode].Betas[Slice];
+  }
 
 
-  return std::make_tuple( PyFullEigenVectors, PyFullEigenValues );
+  ndarray FieldsPython = Eigen2ndarray_( OutputFields, { sMode, Nx, Ny } ) ;
+
+  ndarray BetasPython = Eigen2ndarray_( OutputBetas, { sMode } ) ;
+
+  return std::make_tuple( FieldsPython, BetasPython );
 }
 
 
@@ -478,59 +380,35 @@ EigenSolving::GetSlice(size_t slice){
 
 
 ndarray
-EigenSolving::GetFields(size_t slice){
+EigenSolving::GetFields(){
+  MatrixType Output(ITRLength*size, sMode);
 
-  MatrixType * Vectors = new MatrixType;
-  MatrixType * Values  = new MatrixType;
+  for (size_t mode=0; mode<sMode; ++mode)
+    Output.col(mode)  = SuperModes[mode].Fields;
 
-  (*Vectors) = FullEigenVectors[slice];
-  (*Values)  = FullEigenValues[slice];
-
-  ndarray PyFullEigenVectors = Eigen2ndarray( Vectors, { sMode, Ny, Nx } ) ;
-
-
-  return PyFullEigenVectors;
-
+  return Eigen2ndarray_( Output, { sMode, ITRLength, Nx, Ny } ) ;
 }
-
 
 
 ndarray
 EigenSolving::GetIndices(){
+  MatrixType Output(ITRLength, sMode);
 
-  ndarray PyIndices(ITRLength * sMode);
+  for (size_t mode=0; mode<sMode; ++mode)
+    Output.col(mode)  = SuperModes[mode].Index;
 
-  ScalarType  *PyIndicesPtr = (ScalarType*) PyIndices.request().ptr;
-
-  size_t iter = 0;
-
-  for (size_t l=0; l<ITRLength; ++l)
-      for (size_t i=0; i<sMode; ++i){
-          PyIndicesPtr[iter] = sqrt(abs(FullEigenValues[l][i])) / (ITRPtr[l] * kInit);
-          ++iter;}
-
-  PyIndices.resize({ITRLength, sMode});
-  return PyIndices;
+  return Eigen2ndarray_( Output, { ITRLength, sMode } ) ;
 }
 
 
 ndarray
 EigenSolving::GetBetas(){
+  MatrixType Output(ITRLength, sMode);
 
-  ndarray PyBetas(ITRLength * sMode);
+  for (size_t mode=0; mode<sMode; ++mode)
+    Output.col(mode)  = SuperModes[mode].Betas;
 
-  ScalarType  *PyBetasPtr = (ScalarType*) PyBetas.request().ptr;
-
-  size_t iter = 0;
-
-  for (size_t l=0; l<ITRLength; ++l)
-      for (size_t i=0; i<sMode; ++i){
-          PyBetasPtr[iter] = sqrt(abs(FullEigenValues[l][i])) / ITRPtr[l];
-          ++iter;}
-
-  PyBetas.resize({ITRLength, sMode});
-
-  return PyBetas;
+  return Eigen2ndarray_( Output, { ITRLength, sMode } ) ;
 }
 
 

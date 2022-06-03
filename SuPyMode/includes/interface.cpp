@@ -59,8 +59,6 @@ PYBIND11_MODULE(EigenSolver, module) {
 
      .def("LoopOverITR", &EigenSolving::LoopOverITR, py::arg("ITR"), py::arg("ExtrapolationOrder"))
 
-     .def("ComputingOverlap", &EigenSolving::ComputingOverlap)
-
      .def("ComputingAdiabatic", &EigenSolving::ComputingAdiabatic)
 
      .def("ComputingCoupling", &EigenSolving::ComputingCoupling)
@@ -69,11 +67,12 @@ PYBIND11_MODULE(EigenSolver, module) {
 
      .def("ComputeLaplacian", &EigenSolving::ComputeLaplacian, py::arg("Order"))
 
-     .def("GetSlice", &EigenSolving::GetSlice, py::arg("slice"))
-     .def("GetFields", &EigenSolving::GetFields, py::arg("slice"))
+     .def("GetSlice",   &EigenSolving::GetSlice, py::arg("slice"))
+
      .def("GetIndices", &EigenSolving::GetIndices)
-     .def("GetBetas", &EigenSolving::GetBetas)
-     .def("GetFullEigen", &EigenSolving::GetFullEigen)
+     .def("GetBetas",   &EigenSolving::GetBetas)
+     .def("GetFields",  &EigenSolving::GetFields)
+
      .def("GetMode", &EigenSolving::GetMode)
 
 

@@ -4,7 +4,7 @@ std::complex<ScalarType> J(0.0, 1.0);
 struct SuperMode
 {
   MatrixType Fields;
-  VectorType Betas, EigenValues;
+  VectorType Betas, EigenValues, Index;
   size_t ITRLength, Nx, Ny, ModeNumber;
 
   SuperMode(size_t ModeNumber){this->ModeNumber = ModeNumber;}
@@ -27,6 +27,7 @@ struct SuperMode
     this->Fields      = MatrixType(Nx * Ny, ITRLength);
     this->Betas       = VectorType(ITRLength);
     this->EigenValues = VectorType(ITRLength);
+    this->Index       = VectorType(ITRLength);
   }
 
   void CopyOtherSlice(SuperMode& Other, size_t Slice)
@@ -57,18 +58,31 @@ struct SuperMode
     C      *=  I;
 
     return abs(C);
+  }
 
+
+  ScalarType ComputeAdiabatic(SuperMode& Other, size_t Slice, VectorType &MeshGradient, ScalarType &kInit)
+  {
+    VectorType overlap = this->Fields.col(Slice).cwiseProduct( Other.Fields.col(Slice) );
+
+    ScalarType Beta0 = this->Betas[Slice],
+               Beta1 = Other.Betas[Slice];
+
+
+    ComplexScalarType C  = - (ScalarType) 0.5 * J * kInit*kInit / sqrt(Beta0 *  Beta1) * abs( 1.0f / (Beta0 - Beta1) );
+
+    ScalarType I       = Trapz(overlap.cwiseProduct( MeshGradient ), 1.0, Nx, Ny);
+
+    C      *=  I;
+
+    return abs(C/(Beta0-Beta1));
   }
 
 
 
   ndarray GetFields()
   {
-    MatrixType * Vectors = new MatrixType;
-
-    (*Vectors) = this->Fields;
-
-    return Eigen2ndarray( Vectors, { ITRLength, Nx, Ny} );
+    return Eigen2ndarray_( this->Fields, { ITRLength, Nx, Ny} );
   }
 
 };
@@ -132,8 +146,6 @@ class EigenSolving : public BaseLaplacian{
     ScalarType        *MeshPtr, *ITRPtr;
     ndarray            Mesh, ITRList, PyOverlap, PyIndices;
     MSparse            Laplacian, EigenMatrix, Identity, M;
-    vector<MatrixType> FullEigenVectors, SortedEigenVectors;
-    vector<VectorType> FullEigenValues, SortedEigenValues;
     VectorType         MeshGradient;
     bool               Debug;
     BiCGSTAB<MSparse>  Solver;
@@ -193,21 +205,15 @@ class EigenSolving : public BaseLaplacian{
 
    tuple<ndarray, ndarray> GetSlice(size_t slice);
 
-   ndarray                 GetFullEigen();
-
-   ndarray                 GetFields(size_t slice);
-
    ndarray                 GetIndices();
-
    ndarray                 GetBetas();
+   ndarray                 GetFields();
 
    tuple<MatrixType, VectorType> ComputeEigen(ScalarType alpha);
 
    ScalarType                    ComputeMaxIndex();
 
    MSparse                       ComputeMatrix();
-
-   ndarray                       ComputingOverlap();
 
    ndarray                       ComputingCoupling();
 

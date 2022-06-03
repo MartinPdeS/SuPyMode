@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 np.set_printoptions(edgeitems=30, linewidth=100000,
-    formatter=dict(float=lambda x: "%.1e" % x))
+    formatter=dict(float=lambda x: "%.3e" % x))
 
 
 
@@ -40,7 +40,7 @@ Geo.Rotate(45)
 
 Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000)
 
-SuperSet = Sol.GetSuperSet(Wavelength      = 1.55,
+SuperSet = Sol.GetSuperSet(Wavelength      = 1.55*5,
                           Nstep           = 300,
                           ITRi            = 1,
                           ITRf            = 0.05,
@@ -50,11 +50,20 @@ SuperSet = Sol.GetSuperSet(Wavelength      = 1.55,
                           sMode=5
                           )
 
-#SuperSet[0].CppSolver.SortModes("Index")
+Fields = SuperSet[0].CppSolver.GetFields()
+print(Fields.shape)
+
+
+import matplotlib.pyplot as plt
+Fig, ax = plt.subplots(1, 5)
+for i in range(5):
+    ax[i].pcolormesh(Fields[i,0,:,:])
+
+plt.show()
 #a = SuperSet[0].CppSolver.GetMode(2)
 
-
+#SuperSet.PlotFields()
 #Set.PlotPropagation(Modes = [0,1])
 
-SuperSet.Plot(Input=['Coupling'])
+#SuperSet.Plot(Input=['Coupling'])
 #SuperSet.ExportPDF(Directory='4x4_SMF28_Hybrid_Ax_Ay', iter=[0, 100, 200, 290])
