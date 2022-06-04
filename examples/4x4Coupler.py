@@ -6,8 +6,8 @@ from PyOptik                    import ExpData
 import numpy as np
 import matplotlib.pyplot as plt
 
-np.set_printoptions(edgeitems=30, linewidth=100000,
-    formatter=dict(float=lambda x: "%.3e" % x))
+#np.set_printoptions(edgeitems=30, linewidth=100000,
+#    formatter=dict(float=lambda x: "%.3e" % x))
 
 
 
@@ -40,16 +40,24 @@ Geo.Rotate(45)
 
 Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000)
 
-SuperSet = Sol.GetSuperSet(Wavelength      = 1.55*5,
-                          Nstep           = 300,
-                          ITRi            = 1,
-                          ITRf            = 0.05,
-                          Sorting         = 'Index',
-                          Symmetries      = {'Right': 0, 'Left': 0, 'Top': 0, 'Bottom': 0},
-                          nMode=8,
-                          sMode=5
-                          )
+SuperSet = Sol.GetSuperSet(Wavelength      = 1.55,
+                           Nstep           = 300,
+                           ITRi            = 1,
+                           ITRf            = 0.05,
+                           Sorting         = 'Index',
+                           Symmetries      = {'Right': 0, 'Left': 0, 'Top': 0, 'Bottom': 0},
+                           nMode=8,
+                           sMode=5
+                           )
 
+Mode = SuperSet[0]
+
+Mode.PlotFields(Slice=[0, -1])
+
+"""
+
+print(dir(SuperSet[0].CppSolver.GetMode(0)))
+dsa
 Fields = SuperSet[0].CppSolver.GetFields()
 print(Fields.shape)
 
@@ -67,3 +75,4 @@ plt.show()
 
 #SuperSet.Plot(Input=['Coupling'])
 #SuperSet.ExportPDF(Directory='4x4_SMF28_Hybrid_Ax_Ay', iter=[0, 100, 200, 290])
+"""

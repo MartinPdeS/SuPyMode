@@ -105,9 +105,6 @@ BaseLaplacian::Points5Laplacian(){
 
   Laplacian5Boundary();
 
-  if (Debug==true)
-      cout<<Laplacian<<endl;
-
   return Laplacian;
 }
 
@@ -121,8 +118,6 @@ void BaseLaplacian::SetLeftSymmetry(int value){
     case 2: SetLeftSymmetry3(value); break;
     case 4: SetLeftSymmetry5(value); break;
   }
-  if (Debug==true)
-      cout<<Laplacian<<endl;
 }
 
 void BaseLaplacian::SetTopSymmetry(int value){
@@ -130,8 +125,6 @@ void BaseLaplacian::SetTopSymmetry(int value){
     case 2: SetTopSymmetry3(value); break;
     case 4: SetTopSymmetry5(value); break;
   }
-  if (Debug==true)
-      cout<<Laplacian<<endl;
 }
 
 void BaseLaplacian::SetBottomSymmetry(int value){
@@ -139,8 +132,6 @@ void BaseLaplacian::SetBottomSymmetry(int value){
     case 2: SetBottomSymmetry3(value); break;
     case 4: SetBottomSymmetry5(value); break;
   }
-  if (Debug==true)
-      cout<<Laplacian<<endl;
 }
 
 void BaseLaplacian::SetRightSymmetry(int value){
@@ -148,8 +139,6 @@ void BaseLaplacian::SetRightSymmetry(int value){
     case 2: SetRightSymmetry3(value); break;
     case 4: SetRightSymmetry5(value); break;
   }
-  if (Debug==true)
-      cout<<Laplacian<<endl;
 }
 
 

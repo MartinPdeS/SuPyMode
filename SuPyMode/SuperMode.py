@@ -7,9 +7,30 @@ from scipy.interpolate     import interp1d
 from mayavi                import mlab
 
 from SuPyMode.Tools.BaseClass   import SetProperties, SetPlottings
-
+from SuPyMode.Plotting.Plots      import Scene2D
 
 Mlogger = logging.getLogger(__name__)
+
+
+class ReprBase:
+    Description = ''
+    ReprVar     = []
+    HLine       = "\n" + "--"*20 + "\n"
+    Methods     = []
+
+    def __repr__(self):
+        String = []
+        String.append(f"{self.Description}")
+        String.append(self.HLine)
+        String.append("Attributes:")
+
+        for element in self.ReprVar:
+            String += f"\n\t {element:20s}:\t {getattr(self, element)}"
+
+        String.append("\n\nMethods:\n\t")
+        String.append( f"\n\t".join(self.Methods) )
+        String.append(self.HLine)
+        return "".join(String)
 
 
 class SuperSet(SetProperties, SetPlottings):
@@ -156,51 +177,129 @@ class SuperSet(SetProperties, SetPlottings):
 
 
 
-class SuperMode(object):
+class SuperMode(ReprBase):
+    Description = 'Supermode class'
+    ReprVar     = ["ModeNumber",
+                   "BindingNumber",
+                   "ParentSet",
+                   "LeftSymmetry",
+                   "RightSymmetry",
+                   "TopSymmetry",
+                   "BottomSymmetry",
+                   "Size"]
+
+    Methods     = ["Fields",
+                   "Index",
+                   "Betas",
+                   "PlotIndex",
+                   "PlotBetas",
+                   "PlotPropagation"]
 
     def __init__(self, ParentSet, ModeNumber, CppSolver,  BindingNumber):
-        self.Name           = f"Mode: {ModeNumber}"
+        self.Binded         = CppSolver.GetMode(ModeNumber)
         self.ModeNumber     = ModeNumber
-        self.BindingNumber  = BindingNumber
+
+        self.Name           = f"Mode: {self.ModeNumber}"
+
         self.CppSolver      = CppSolver
         self.Slice          = []
         self.ParentSet      = ParentSet
 
-
-    def GetCoupling(self, OtherMode):
-        return self.CppSolver.ComputingCoupling()
-
-
-    def GetAdiabatic(self, OtherMode):
-        if self.CppSolver != OtherMode.CppSolver:
-            return np.zeros(self.CppSolver.ITRLength)
-
-        return self.CppSolver.ComputingAdiabatic()[:, self.BindingNumber, OtherMode.BindingNumber]
+        self._Fields        = None
+        self._Index         = None
+        self._Betas         = None
 
 
-    def GetIndex(self):
-        return self.CppSolver.GetIndices()[:, self.BindingNumber]
+    @property
+    def BindingNumber(self):
+        return self.Binded.BindingNumber
 
 
-    def GetBetas(self):
-        return self.CppSolver.GetBetas()[:, self.BindingNumber]
+    @property
+    def Fields(self):
+        if self._Fields is None:
+            self._Fields = self.Binded.GetFields()
+        return self._Fields
+
+
+    @property
+    def Index(self):
+        if self._Index is None:
+            self._Index = self.Binded.GetIndex()
+        return self._Index
+
+
+    @property
+    def Betas(self):
+        if self._Betas is None:
+            self._Betas = self.Binded.GetBetas()
+        return self._Betas
+
+
+    def PlotIndex(self):
+        Scene = Scene2D(nCols=1, nRows=1, ColorBar=False)
+
+        Scene.AddLine(Row      = 0,
+                      Col      = 0,
+                      x        = self.ITRList,
+                      y        = self.Index,
+                      Fill     = False,
+                      Legend   = self.ModeNumber,
+                      xLabel   = r'ITR',
+                      yLabel   = r'Effective refractive index n$_{eff}$')
+
+        Scene.SetAxes(0, 0, Equal=False, Legend=True, yLimits=[self.Geometry.MinIndex/1.005, self.Geometry.MaxIndex], LegendTitle='Mode')
+        Scene.Show()
+
+
+    def PlotBetas(self):
+        Scene = Scene2D(nCols=1, nRows=1, ColorBar=False)
+
+        Scene.AddLine(Row      = 0,
+                      Col      = 0,
+                      x        = self.ITRList,
+                      y        = self.Betas,
+                      Fill     = False,
+                      Legend   = self.ModeNumber,
+                      xLabel   = r'ITR',
+                      yLabel   = r'Propagation constante $\beta$')
+
+        Scene.SetAxes(0, 0, Equal=False, Legend=True, LegendTitle='Mode')
+        Scene.Show()
+
+
+    def PlotFields(self, Slice: list):
+        Scene = Scene2D(nCols=len(Slice), nRows=1, ColorBar=False, UnitSize=[3,3])
+
+        for n, slice in enumerate(Slice):
+            Scene.AddMesh(Row      = 0,
+                          Col      = n,
+                          x        = self.Axes.X,
+                          y        = self.Axes.Y,
+                          Scalar   = self.Fields[Slice[slice]],
+                          xLabel   = r'X-Direction [$\mu m$]',
+                          yLabel   = r'Y-direction [$\mu m$]')
+
+            Scene.SetAxes(Row=0, Col=n, Equal=True, Legend=False)
+        Scene.Show()
+
 
 
     @property
     def LeftSymmetry(self):
-        return self.CppSolver.LeftSymmetry
+        return self.Binded.LeftSymmetry
 
     @property
     def RightSymmetry(self):
-        return self.CppSolver.RightSymmetry
+        return self.Binded.RightSymmetry
 
     @property
     def TopSymmetry(self):
-        return self.CppSolver.TopSymmetry
+        return self.Binded.TopSymmetry
 
     @property
     def BottomSymmetry(self):
-        return self.CppSolver.BottomSymmetry
+        return self.Binded.BottomSymmetry
 
 
     def IterateSlice(self):
@@ -209,7 +308,7 @@ class SuperMode(object):
 
     @property
     def Size(self):
-        return len(self.Slice)
+        return len(self.ParentSet.ITRList)
 
     @property
     def Geometry(self):
@@ -218,17 +317,12 @@ class SuperMode(object):
 
     @property
     def ITRList(self):
-        return self.ParentSet.ParentSolver.ITRList
+        return self.ParentSet.ITRList
 
 
     @property
     def Axes(self):
-        return self.ParentSet.Geometry.Axes
-
-
-    @property
-    def Symmetries(self):
-        return np.array(self.LeftSymmetry, self.RightSymmetry, self.TopSymmetry, self.BottomSymmetry)
+        return self.ParentSet.Axes
 
 
     def CompareSymmetries(self, Other):
@@ -241,6 +335,7 @@ class SuperMode(object):
 
     def GetSlices(self, SlicesNumber: list):
         return [self[slice] for slice in SlicesNumber]
+
 
     def __getitem__(self, N):
         return self.Slice[N]
@@ -274,46 +369,6 @@ class SuperMode(object):
         import subprocess
         animate_plots(base_directory='yolo', fname_prefix='dasda')"""
 
-
-
-    def __copy__(self):
-        to_be_copied = ['Slice']
-
-        copy_ = SuperSet( self.Name, self.Geometry)
-
-        for attr in self.__dict__:
-            if attr in to_be_copied:
-
-                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
-            else:
-
-                copy_.__dict__[attr] = self.__dict__[attr]
-
-        return copy_
-
-
-    def __deepcopy__(self, memo):
-        to_be_copied = ['Slice']
-
-        copy_ = SuperMode(Name=self.Name)
-
-        for attr in self.__dict__:
-
-            if attr in to_be_copied:
-                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
-
-            else:
-                copy_.__dict__[attr] = self.__dict__[attr]
-
-        return copy_
-
-
-    def GetIndex(self):
-        return self.CppSolver.GetIndices()[:, self.BindingNumber]
-
-
-    def GetBetas(self):
-        return self.CppSolver.GetBetas()[:, self.BindingNumber]
 
 
 

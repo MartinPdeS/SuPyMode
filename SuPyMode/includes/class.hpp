@@ -6,6 +6,7 @@ struct SuperMode
   MatrixType Fields;
   VectorType Betas, EigenValues, Index;
   size_t ITRLength, Nx, Ny, ModeNumber;
+  int LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry;
 
   SuperMode(size_t ModeNumber){this->ModeNumber = ModeNumber;}
   SuperMode(){}
@@ -19,21 +20,32 @@ struct SuperMode
     return Eigen2ndarray( Vectors, { Nx, Ny}  );
   }
 
-  void Init(size_t ITRLength, size_t Nx, size_t Ny)
+  void Init(size_t &ITRLength,
+            size_t &Nx,
+            size_t &Ny,
+            int    &LeftSymmetry,
+            int    &RightSymmetry,
+            int    &TopSymmetry,
+            int    &BottomSymmetry)
   {
-    this->Nx = Nx;
-    this->Ny = Ny;
-    this->ITRLength   = ITRLength;
-    this->Fields      = MatrixType(Nx * Ny, ITRLength);
-    this->Betas       = VectorType(ITRLength);
-    this->EigenValues = VectorType(ITRLength);
-    this->Index       = VectorType(ITRLength);
+    this->Nx             = Nx;
+    this->Ny             = Ny;
+    this->ITRLength      = ITRLength;
+    this->Fields         = MatrixType(Nx * Ny, ITRLength);
+    this->Betas          = VectorType(ITRLength);
+    this->EigenValues    = VectorType(ITRLength);
+    this->Index          = VectorType(ITRLength);
+    this->BottomSymmetry = BottomSymmetry;
+    this->TopSymmetry    = TopSymmetry;
+    this->RightSymmetry  = RightSymmetry;
+    this->LeftSymmetry   = LeftSymmetry;
   }
 
   void CopyOtherSlice(SuperMode& Other, size_t Slice)
   {
       Fields.col(Slice) = Other.Fields.col(Slice);
-      Betas[Slice]  = Other.Betas[Slice];
+      Betas[Slice]      = Other.Betas[Slice];
+      Index[Slice]      = Other.Index[Slice];
   }
 
 
@@ -47,9 +59,7 @@ struct SuperMode
   {
     VectorType overlap = this->Fields.col(Slice).cwiseProduct( Other.Fields.col(Slice) );
 
-    ScalarType Beta0 = this->Betas[Slice],
-               Beta1 = Other.Betas[Slice];
-
+    ScalarType Beta0 = this->Betas[Slice], Beta1 = Other.Betas[Slice];
 
     ComplexScalarType C  = - (ScalarType) 0.5 * J * kInit*kInit / sqrt(Beta0 *  Beta1) * abs( 1.0f / (Beta0 - Beta1) );
 
@@ -63,27 +73,18 @@ struct SuperMode
 
   ScalarType ComputeAdiabatic(SuperMode& Other, size_t Slice, VectorType &MeshGradient, ScalarType &kInit)
   {
-    VectorType overlap = this->Fields.col(Slice).cwiseProduct( Other.Fields.col(Slice) );
+    ScalarType Beta0 = this->Betas[Slice], Beta1 = Other.Betas[Slice];
 
-    ScalarType Beta0 = this->Betas[Slice],
-               Beta1 = Other.Betas[Slice];
-
-
-    ComplexScalarType C  = - (ScalarType) 0.5 * J * kInit*kInit / sqrt(Beta0 *  Beta1) * abs( 1.0f / (Beta0 - Beta1) );
-
-    ScalarType I       = Trapz(overlap.cwiseProduct( MeshGradient ), 1.0, Nx, Ny);
-
-    C      *=  I;
+    ComplexScalarType C  = ComputeCoupling(Other, Slice, MeshGradient, kInit);
 
     return abs(C/(Beta0-Beta1));
   }
 
 
 
-  ndarray GetFields()
-  {
-    return Eigen2ndarray_( this->Fields, { ITRLength, Nx, Ny} );
-  }
+  ndarray GetFields(){ return Eigen2ndarray_( this->Fields, { ITRLength, Nx, Ny} ); }
+  ndarray GetIndex(){ return Eigen2ndarray_( this->Index, { ITRLength} ); }
+  ndarray GetBetas(){ return Eigen2ndarray_( this->Betas, { ITRLength} ); }
 
 };
 
@@ -97,27 +98,21 @@ class BaseLaplacian{
     size_t     Nx, Ny, size;
     ScalarType dx, dy, D0xy, D1y, D2y, D1x, D2x;
     MSparse    Laplacian;
-    bool       Debug;
+    bool       Debug=false;
 
-    BaseLaplacian(ndarray&  Mesh, bool Debug){
+    BaseLaplacian(ndarray&  Mesh, ScalarType dx, ScalarType dy){
       this->Nx                = Mesh.request().shape[0];
       this->Ny                = Mesh.request().shape[1];
       this->size              = Mesh.request().size;
-      this->Debug             = Debug;
+      this->dx                = dx;
+      this->dy                = dy;
+      this->Mesh              = Mesh;
     }
 
     void SetLeftSymmetry(int value);
-    int GetLeftSymmetry(){ return LeftSymmetry; }
-
     void SetRightSymmetry(int value);
-    int GetRightSymmetry(){ return RightSymmetry; }
-
     void SetTopSymmetry(int value);
-    int GetTopSymmetry(){ return TopSymmetry; }
-
     void SetBottomSymmetry(int value);
-    int GetBottomSymmetry(){ return BottomSymmetry; }
-
 
     void SetLeftSymmetry3(int value);
     void SetRightSymmetry3(int value);
@@ -139,18 +134,16 @@ class BaseLaplacian{
 };
 
 
-class EigenSolving : public BaseLaplacian{
+class EigenSolving : public BaseLaplacian
+{
   public:
-    size_t             nMode, sMode, MaxIter, Nx, Ny, size, DegenerateFactor, ITRLength, Order, ExtrapolOrder;
-    ScalarType         Tolerance, k, kInit, kDual, lambda, lambdaInit, MaxIndex, alpha;
+    size_t             nMode, sMode, MaxIter, DegenerateFactor, ITRLength, Order, ExtrapolOrder;
+    ScalarType         Tolerance, k, kInit, kDual, lambda, MaxIndex;
     ScalarType        *MeshPtr, *ITRPtr;
-    ndarray            Mesh, ITRList, PyOverlap, PyIndices;
-    MSparse            Laplacian, EigenMatrix, Identity, M;
+    ndarray            ITRList;
+    MSparse            EigenMatrix, Identity, M;
     VectorType         MeshGradient;
-    bool               Debug;
     BiCGSTAB<MSparse>  Solver;
-    MatrixType         Mode0, Mode1, Mode2, Mode3;
-    SuperMode          SuperMode0, SuperMode1, SuperMode2;
     std::vector<SuperMode>        SuperModes;
 
   EigenSolving(ndarray&   Mesh,
@@ -163,20 +156,14 @@ class EigenSolving : public BaseLaplacian{
                ScalarType dy,
                ScalarType Wavelength,
                bool       Debug)
-               : BaseLaplacian(Mesh, Debug)
+               : BaseLaplacian(Mesh, dx, dy)
                 {
-                 this->dx                = dx;
-                 this->dy                = dy;
                  this->nMode             = nMode;
                  this->sMode             = sMode;
                  this->MaxIter           = MaxIter;
                  this->Tolerance         = Tolerance;
-                 this->Mesh              = Mesh;
-                 this->Nx                = Mesh.request().shape[0];
-                 this->Ny                = Mesh.request().shape[1];
-                 this->size              = Mesh.request().size;
+
                  this->MeshPtr           = (ScalarType*) Mesh.request().ptr;
-                 this->Debug             = Debug;
                  this->lambda            = Wavelength;
                  this->k                 = 2.0 * PI / Wavelength;
                  this->kInit             = this->k;
@@ -195,16 +182,15 @@ class EigenSolving : public BaseLaplacian{
 
 
 
-   void PopulateModes(size_t Slice, MatrixType& EigenVectors, VectorType& EigenValues);
-   ndarray GetMode(size_t Mode);
-   void PrepareSuperModes();
-   void SwapMode(SuperMode &Mode0, SuperMode &Mode1);
-   void SortSliceIndex(size_t Slice);
+   void      PopulateModes(size_t Slice, MatrixType& EigenVectors, VectorType& EigenValues);
+   SuperMode GetMode(size_t Mode);
+   void      PrepareSuperModes();
+   void      SwapMode(SuperMode &Mode0, SuperMode &Mode1);
+   void      SortSliceIndex(size_t Slice);
 
-   void    LoopOverITR(ndarray ITRList, size_t order);
+   void      LoopOverITR(ndarray ITRList, size_t order);
 
    tuple<ndarray, ndarray> GetSlice(size_t slice);
-
    ndarray                 GetIndices();
    ndarray                 GetBetas();
    ndarray                 GetFields();
@@ -216,21 +202,13 @@ class EigenSolving : public BaseLaplacian{
    MSparse                       ComputeMatrix();
 
    ndarray                       ComputingCoupling();
-
    ndarray                       ComputingAdiabatic();
 
-   vector<VectorType>            ComputeBetas();
-
-   vector<size_t>                ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1, size_t idx);
-
+   vector<size_t>                ComputecOverlaps(size_t idx);
    void                          ComputeLaplacian(size_t order);
 
-
-
    void SortModesFields();
-
    void SortModesIndex();
-
    void SortModes(std::string Type);
 
 };

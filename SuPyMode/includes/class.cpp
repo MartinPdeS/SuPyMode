@@ -99,7 +99,7 @@ void
 EigenSolving::PrepareSuperModes()
 {
   for (SuperMode& mode : SuperModes)
-      mode.Init(ITRLength, Nx, Ny);
+      mode.Init(ITRLength, Nx, Ny, LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry);
 }
 
 
@@ -161,10 +161,10 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
 
 
-ndarray
+SuperMode
 EigenSolving::GetMode(size_t Mode){
 
-  return SuperModes[Mode].GetFields();
+  return SuperModes[Mode];
 }
 
 
@@ -199,9 +199,7 @@ EigenSolving::GetMode(size_t Mode){
 
 
 vector<size_t>
-EigenSolving::ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1, size_t Slice){
-
-  size_t nMode = Matrix0.cols();
+EigenSolving::ComputecOverlaps(size_t Slice){
 
   ScalarType BestOverlap, Overlap;
   vector<size_t> Indices(sMode);
