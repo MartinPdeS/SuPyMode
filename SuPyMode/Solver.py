@@ -1,6 +1,6 @@
 import numpy as np
 
-from SuPyMode.SuperMode             import SuperSet, SetSlice, SuperMode
+from SuPyMode.SuperMode             import SuperSet, SuperMode
 from SuPyMode.bin.EigenSolver       import EigenSolving
 from SuPyMode.Tools.utils           import Axes
 
@@ -89,33 +89,6 @@ class SuPySolver(object):
         for CppSolver in CppSolvers:
             for BindingNumber in range(CppSolver.sMode):
                 Set.AppendSuperMode(CppSolver=CppSolver, BindingNumber=BindingNumber)
-
-        for Mode in Set.SuperModes:
-            for SliceNumber, _ in enumerate(self.ITRList):
-                Mode.AppendSlice(SliceNumber = SliceNumber)
-
-
-
-        """
-        for Mode in Set.SuperModes:
-            for SliceNumber, _ in enumerate(self.ITRList):
-                Fields, Betas = Mode.CppSolver.GetSlice(SliceNumber)
-                Mode.Append(Field       = field,
-                            Index       = beta / self.Axes.k,
-                            Beta        = beta,
-                            SliceNumber = SliceNumber)
-        """
-
-
-
-
-
-
-
-
-
-
-
 
 
 

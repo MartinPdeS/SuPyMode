@@ -91,6 +91,8 @@ struct SuperMode
 
 
 
+
+
 class BaseLaplacian{
   public:
     int        TopSymmetry, BottomSymmetry, LeftSymmetry, RightSymmetry, Order;
@@ -109,20 +111,20 @@ class BaseLaplacian{
       this->Mesh              = Mesh;
     }
 
-    void SetLeftSymmetry(int value);
-    void SetRightSymmetry(int value);
-    void SetTopSymmetry(int value);
-    void SetBottomSymmetry(int value);
+    void SetLeftSymmetry();
+    void SetRightSymmetry();
+    void SetTopSymmetry();
+    void SetBottomSymmetry();
 
-    void SetLeftSymmetry3(int value);
-    void SetRightSymmetry3(int value);
-    void SetTopSymmetry3(int value);
-    void SetBottomSymmetry3(int value);
+    void SetLeftSymmetry3();
+    void SetRightSymmetry3();
+    void SetTopSymmetry3();
+    void SetBottomSymmetry3();
 
-    void SetLeftSymmetry5(int value);
-    void SetRightSymmetry5(int value);
-    void SetTopSymmetry5(int value);
-    void SetBottomSymmetry5(int value);
+    void SetLeftSymmetry5();
+    void SetRightSymmetry5();
+    void SetTopSymmetry5();
+    void SetBottomSymmetry5();
 
     void Points3Laplacian();
 

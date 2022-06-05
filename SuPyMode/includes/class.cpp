@@ -3,14 +3,6 @@
 #include "Laplacian.cpp"
 
 
-using Eigen::internal::BandMatrix;
-
-
-
-
-
-
-
 
 
 MSparse
@@ -64,10 +56,15 @@ EigenSolving::ComputeLaplacian(size_t Order){
   switch(Order){
 
   case 2:
-      Points3Laplacian(); break;
+      Points3Laplacian();
 
   case 4:
-      Points5Laplacian(); break;
+      Points5Laplacian();
+
+  SetLeftSymmetry();
+  SetRightSymmetry();
+  SetTopSymmetry();
+  SetBottomSymmetry();
   }
 
 }

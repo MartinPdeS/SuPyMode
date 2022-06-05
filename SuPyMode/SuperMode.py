@@ -33,12 +33,35 @@ class ReprBase:
         return "".join(String)
 
 
-class SuperSet(SetProperties, SetPlottings):
+class SuperSet(SetProperties, SetPlottings, ReprBase):
+
+    Description = 'SuperSet class'
+
+    ReprVar     = ["ParentSolver",
+                   "Size",
+                   "Geometry"]
+
+    Methods     = [ "Propagate"]
+
     def __init__(self, ParentSolver):
         self.ParentSolver   = ParentSolver
         self.SuperModes     = []
         self._NextMode      = 0
+        self._Matrix = None
 
+
+    def ComputePropagationMatrix(self):
+        M = np.zeros([self.Size, self.Size, len(self.ITRList)])
+        for mode in self.SuperModes:
+            M[mode.ModeNumber, mode.ModeNumber, :] = mode.Betas
+
+        return M
+
+    @property
+    def Matrix(self):
+        if self._Matrix is None:
+            self._Matrix = self.ComputePropagationMatrix()
+        return self._Matrix
 
     @property
     def NextMode(self):
@@ -70,7 +93,31 @@ class SuperSet(SetProperties, SetPlottings):
         return factor/10
 
 
-    def Propagate(self, Amplitude, Length, **kwargs):
+    def Propagate(self, Amplitude=[1,1, 0, 0, 0], Length=1000):
+        Amplitude = np.asarray(Amplitude)
+
+        Distance = np.linspace(0, Length, self.ITRList.size)
+
+        #Factor = self.ComputeCouplingFactor(Length)
+
+        #M = self.ComputeM(CouplingFactor=Factor)
+
+
+
+        Minterp = interp1d(Distance, self.Matrix, axis=-1)
+
+        def foo(t, y):
+            return 1j * Minterp(t).dot(y)
+
+        sol = solve_ivp(foo,
+                        y0       = Amplitude.astype(complex),
+                        t_span   = [0, Length],
+                        method   = 'RK45')
+
+        return sol.y
+
+
+    def Propagate_(self, Amplitude, Length, **kwargs):
         Amplitude = np.asarray(Amplitude)
 
         Distance = np.linspace(0, Length, self.Geometry.ITRList.size)
@@ -146,28 +193,6 @@ class SuperSet(SetProperties, SetPlottings):
         self.SuperModes[N] = val
 
 
-    def __copy__(self):
-        to_be_copied = ['SuperModes']
-
-        copy_ = SuperSet(Parent)
-
-        for attr in self.__dict__:
-
-            if attr in to_be_copied:
-                copy_.__dict__[attr] =  cp.deepcopy( self.__dict__[attr] )
-            else:
-                copy_.__dict__[attr] = self.__dict__[attr]
-
-        return copy_
-
-
-
-
-
-
-
-
-
 
 
 
@@ -199,13 +224,13 @@ class SuperMode(ReprBase):
         self.Binded         = CppSolver.GetMode(ModeNumber)
         self.ModeNumber     = ModeNumber
 
-        self.Name           = f"Mode: {self.ModeNumber}"
-
         self.CppSolver      = CppSolver
-        self.Slice          = []
         self.ParentSet      = ParentSet
 
         self._Fields        = None
+        self._FullFields    = None
+        self._FullxAxis     = None
+        self._FullxAxis     = None
         self._Index         = None
         self._Betas         = None
 
@@ -220,6 +245,26 @@ class SuperMode(ReprBase):
         if self._Fields is None:
             self._Fields = self.Binded.GetFields()
         return self._Fields
+
+    @property
+    def FullFields(self):
+        if self._FullFields is None:
+            self.ComputeFullFields()
+        return self._FullFields
+
+
+    @property
+    def FullxAxis(self):
+        if self._FullxAxis is None:
+            self.ComputeFullFields()
+        return self._FullxAxis
+
+
+    @property
+    def FullyAxis(self):
+        if self._FullyAxis is None:
+            self.ComputeFullFields()
+        return self._FullyAxis
 
 
     @property
@@ -274,9 +319,9 @@ class SuperMode(ReprBase):
         for n, slice in enumerate(Slice):
             Scene.AddMesh(Row      = 0,
                           Col      = n,
-                          x        = self.Axes.X,
-                          y        = self.Axes.Y,
-                          Scalar   = self.Fields[Slice[slice]],
+                          x        = self.FullxAxis,
+                          y        = self.FullyAxis,
+                          Scalar   = self.FullFields[slice].T,
                           xLabel   = r'X-Direction [$\mu m$]',
                           yLabel   = r'Y-direction [$\mu m$]')
 
@@ -325,6 +370,68 @@ class SuperMode(ReprBase):
         return self.ParentSet.Axes
 
 
+    def ApplySymmetry(self, Field, xAxis, yAxis, axis):
+        Slice = [slice(None), slice(None), slice(None, None, -1)]
+        Output = np.concatenate((Field[Slice], Field), axis=axis)
+
+
+    def ExtendAxis(self, Axis: np.ndarray, sign: str):
+        d     = Axis[1] - Axis[0]
+
+        if sign == "Plus":
+            start = Axis[-1] + d
+            Next  = np.arange(0, Axis.size) * d + start
+            Next  = [Axis, Next]
+
+        if sign == "Minus":
+            stop = Axis[0]
+            Next  = np.arange(-Axis.size, 0) * d + stop
+            Next  = [Next, Axis]
+
+        return np.concatenate(Next)
+
+
+
+    def ComputeFullFields(self):
+        self._FullxAxis = self.Axes.X
+        self._FullyAxis = self.Axes.Y
+        self._FullFields = self.Fields
+
+        if self.BottomSymmetry == 1:
+            self._FullFields = np.concatenate((self._FullFields[:, :, ::-1], self._FullFields), axis=2)
+            self._FullyAxis = self.ExtendAxis(Axis=self._FullyAxis, sign="Minus")
+
+        elif self.BottomSymmetry == -1:
+            self._FullFields = np.concatenate((-self._FullFields[:, :, ::-1], self._FullFields), axis=2)
+            self._FullyAxis = self.ExtendAxis(Axis=self._FullyAxis, sign="Minus")
+
+        if self.TopSymmetry == 1:
+            self._FullFields = np.concatenate((self._FullFields, self._FullFields[:, :, ::-1]), axis=2)
+            self._FullyAxis = self.ExtendAxis(Axis=self._FullyAxis, sign="Plus")
+
+        elif self.TopSymmetry == -1:
+            self._FullFields = np.concatenate((self._FullFields, -self._FullFields[:, :, ::-1]), axis=2)
+            self._FullyAxis = self.ExtendAxis(Axis=self._FullyAxis, sign="Plus")
+
+
+        if self.RightSymmetry == 1:
+            self._FullFields = np.concatenate((self._FullFields[...], self._FullFields[:, ::-1, :]), axis=1) #Here
+            self._FullxAxis = self.ExtendAxis(Axis=self._FullxAxis, sign="Plus")
+
+        elif self.RightSymmetry == -1:
+            self._FullFields = np.concatenate((self._FullFields[...], -self._FullFields[:, ::-1, :]), axis=1) #Here
+            self._FullxAxis = self.ExtendAxis(Axis=self._FullxAxis, sign="Plus")
+
+        if self.LeftSymmetry == 1:
+            self._FullFields = np.concatenate((self._FullFields[:, ::-1, :], self._FullFields[...]), axis=1) #Here
+            self._FullxAxis = self.ExtendAxis(Axis=self._FullxAxis, sign="Minus")
+
+        elif self.LeftSymmetry == -1:
+            self._FullFields = np.concatenate((-self._FullFields[:, ::-1, :], self._FullFields[...]), axis=1) #Here
+            self._FullxAxis = self.ExtendAxis(Axis=self._FullxAxis, sign="Minus")
+
+
+
     def CompareSymmetries(self, Other):
         assert isinstance(Other, SuperMode), "Can only compare SuperMode instance with another"
         return np.all(self.Symmetries == Other.Symmetries)
@@ -346,14 +453,12 @@ class SuperMode(ReprBase):
 
 
     def PlotPropagation(self):
-        image = np.abs( self[0].GetFullField(Axes=False) )
-
-        surface = mlab.surf(image, warp_scale="auto")
+        surface = mlab.surf( np.abs( self.Fields[0]), warp_scale="auto")
 
         @mlab.animate(delay=100)
         def anim_loc():
-            for n, slice in self.IterateSlice():
-                surface.mlab_source.scalars = np.abs( slice.GetFullField(Axes=False) )
+            for field in self.Fields:
+                surface.mlab_source.scalars = np.abs( field )
 
                 yield
 
@@ -368,188 +473,6 @@ class SuperMode(ReprBase):
 
         import subprocess
         animate_plots(base_directory='yolo', fname_prefix='dasda')"""
-
-
-
-
-class SetSlice():
-
-    def CompareSymmetries(self, Other):
-        assert isinstance(Other, SetSlice), "Can only compare SetSlice instance with another"
-        return np.all(self.Symmetries == Other.Symmetries)
-
-
-    def __init__(self, ParentMode, SliceNumber):
-        self.ParentMode = ParentMode
-        self.SliceNumber = SliceNumber
-
-
-    @property
-    def Index(self):
-        return self.ParentMode.GetIndex()[self.SliceNumber]
-
-
-    @property
-    def Beta(self):
-        return self.ParentMode.GetBeta()[self.SliceNumber]
-
-
-    @property
-    def Field(self):
-        return self.ParentMode.CppSolver.GetFields(self.SliceNumber)[self.ParentMode.BindingNumber]
-
-
-    def __pow__(self, other):
-        assert isinstance(other, SetSlice), f'Cannot multiply supermodes with {other.__class__}'
-
-        overlap = np.abs( np.sum( np.multiply( self, other ) ) )
-
-        return float( overlap )
-
-
-    def Overlap(self, other):
-        assert isinstance(other, SetSlice), f'Cannot multiply supermodes with {other.__class__}'
-
-        overlap = np.abs( np.sum( np.multiply( self, other ) ) )
-
-        return float( overlap )
-
-
-    @property
-    def ITR(self):
-        return self.ParentMode.ITRList[self.SliceNumber]
-
-
-    @property
-    def LeftSymmetry(self):
-        return self.ParentMode.LeftSymmetry
-
-    @property
-    def RightSymmetry(self):
-        return self.ParentMode.RightSymmetry
-
-    @property
-    def TopSymmetry(self):
-        return self.ParentMode.TopSymmetry
-
-    @property
-    def BottomSymmetry(self):
-        return self.ParentMode.BottomSymmetry
-
-    @property
-    def Axes(self):
-        return self.ParentMode.Geometry.Axes
-
-    @property
-    def Symmetries(self):
-        return self.ParentMode.Symmetries
-
-    @property
-    def Norm(self):
-        return (self.Field**2).sum()
-
-
-    def Normalize(self):
-        self.Field *= 1 / self.Norm
-        self.Index *= 1 / self.Norm
-
-    def GetField(self, Symmetries=True):
-        return self.Field, self.Axes.X, self.Axes.Y
-
-
-    def GetFullField(self, Axes: bool = True):
-        Xaxis = self.Axes.Y.copy()
-        Yaxis = self.Axes.X.copy()
-        Field = self.Field.copy()
-
-        if self.BottomSymmetry == 1:
-            Field = np.concatenate((Field[:,::-1], Field), axis=1)
-            Xaxis = np.concatenate( [Xaxis + Xaxis[0] - Xaxis[-1], Xaxis] )
-
-
-        elif self.BottomSymmetry == -1:
-            Field = np.concatenate((-Field[:,::-1], Field), axis=1)
-            Xaxis = np.concatenate( [Xaxis + Xaxis[0] - Xaxis[-1], Xaxis] )
-
-
-        if self.TopSymmetry == 1:
-            Field = np.concatenate((Field, Field[:,::-1]), axis=1)
-            Xaxis = np.concatenate( [Xaxis, Xaxis - Xaxis[0] + Xaxis[-1]] )
-
-        elif self.TopSymmetry == -1:
-            Field = np.concatenate((Field, -Field[:,::-1]), axis=1)
-            Xaxis = np.concatenate( [Xaxis, Xaxis - Xaxis[0] + Xaxis[-1]] )
-
-
-        if self.RightSymmetry == 1:
-            Field = np.concatenate((Field, Field[::-1,:]), axis=0)
-            Yaxis = np.concatenate( [Yaxis, Yaxis - Yaxis[0] + Yaxis[-1]] )
-
-        elif self.RightSymmetry == -1:
-            Field = np.concatenate((Field, -Field[::-1,:]), axis=0)
-            Yaxis = np.concatenate( [Yaxis, Yaxis - Yaxis[0] + Yaxis[-1]] )
-
-
-        if self.LeftSymmetry == 1:
-            Field = np.concatenate((Field[::-1,:], Field), axis=0)
-            Yaxis = np.concatenate( [Yaxis + Yaxis[0] - Yaxis[-1], Yaxis] )
-
-        elif self.LeftSymmetry == -1:
-            Field = np.concatenate((-Field[::-1,:], Field), axis=0)
-            Yaxis = np.concatenate( [Yaxis + Yaxis[0] - Yaxis[-1], Yaxis] )
-
-        if Axes is True:
-            return Field, Xaxis, Yaxis
-
-        if Axes is False:
-            return Field
-
-
-
-    def __copy__(self):
-        to_be_copied = ['Field', 'Index', 'Axes', 'Beta']
-
-        copy_ = SetSlice(self, self.Axes, self.Index, self.Beta)
-
-        for attr in self.__dict__:
-            if attr in to_be_copied:
-
-                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
-            else:
-
-                copy_.__dict__[attr] = self.__dict__[attr]
-
-        return copy_
-
-
-
-    def __deepcopy__(self, memo):
-        to_be_copied = ['Field', 'Index', 'Axes', 'Beta']
-
-        copy_ = SetSlice(self, self.Axes, self.Index, self.Beta)
-
-        for attr in self.__dict__:
-            if attr in to_be_copied:
-
-                copy_.__dict__[attr] = cp.copy(self.__dict__[attr])
-            else:
-
-                copy_.__dict__[attr] = self.__dict__[attr]
-
-        return copy_
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

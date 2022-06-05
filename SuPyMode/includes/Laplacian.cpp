@@ -113,88 +113,99 @@ BaseLaplacian::Points5Laplacian(){
 
 
 
-void BaseLaplacian::SetLeftSymmetry(int value){
-  switch (Order) {
-    case 2: SetLeftSymmetry3(value); break;
-    case 4: SetLeftSymmetry5(value); break;
+void BaseLaplacian::SetLeftSymmetry()
+{
+  if (LeftSymmetry == 0) return;
+
+  std::cout<<"order: "<<Order<<"\n";
+  switch (Order)
+  {
+    case 2: SetLeftSymmetry3();
+    case 4: SetLeftSymmetry5();
   }
 }
 
-void BaseLaplacian::SetTopSymmetry(int value){
-  switch (Order) {
-    case 2: SetTopSymmetry3(value); break;
-    case 4: SetTopSymmetry5(value); break;
+void BaseLaplacian::SetTopSymmetry()
+{
+  if (TopSymmetry == 0) return;
+  switch (Order)
+  {
+    case 2: SetTopSymmetry3();
+    case 4: SetTopSymmetry5();
   }
 }
 
-void BaseLaplacian::SetBottomSymmetry(int value){
-  switch (Order) {
-    case 2: SetBottomSymmetry3(value); break;
-    case 4: SetBottomSymmetry5(value); break;
+void BaseLaplacian::SetBottomSymmetry()
+{
+  if (BottomSymmetry == 0) return;
+  switch (Order)
+  {
+    case 2: SetBottomSymmetry3();
+    case 4: SetBottomSymmetry5();
   }
 }
 
-void BaseLaplacian::SetRightSymmetry(int value){
-  switch (Order) {
-    case 2: SetRightSymmetry3(value); break;
-    case 4: SetRightSymmetry5(value); break;
+void BaseLaplacian::SetRightSymmetry()
+{
+  if (RightSymmetry == 0) return;
+  switch (Order)
+  {
+    case 2: SetRightSymmetry3();
+    case 4: SetRightSymmetry5();
   }
 }
 
 
 
 
-void BaseLaplacian::SetBottomSymmetry3(int value){
-  BottomSymmetry = value;
-
-  if (value == 1)
+void BaseLaplacian::SetBottomSymmetry3()
+{
+  if (BottomSymmetry == 1)
       for (size_t j=0; j<size; ++j)
           if (j%Ny == 0)
               Laplacian.coeffRef(j,j+1)         += D1y;
 
-  if (value == -1)
+  if (BottomSymmetry == -1)
       for (size_t j=0; j<size; ++j)
           if (j%Ny == 0)
               Laplacian.coeffRef(j,j+1)          = 0.0;
 }
 
 
-void BaseLaplacian::SetTopSymmetry3(int value){
-
-  TopSymmetry = value;
-  if (value == 1)
+void BaseLaplacian::SetTopSymmetry3()
+{
+  if (TopSymmetry == 1)
       for (size_t j=1; j<size; ++j)
           if (j%Ny == Ny-1)
               Laplacian.coeffRef(j,j-1)          += D1y;
 
 
-  if (value == -1)
+  if (TopSymmetry == -1)
       for (size_t j=1; j<size; ++j)
           if (j%Ny == Ny-1)
               Laplacian.coeffRef(j,j-1)           = 0.0;
 }
 
 
-void BaseLaplacian::SetRightSymmetry3(int value){
-  RightSymmetry = value;
-
-  if (value == 1)
+void BaseLaplacian::SetRightSymmetry3()
+{
+  if (RightSymmetry == 1)
       for(size_t j=size-2*Ny; j<size-Ny; ++j)
           Laplacian.coeffRef(j+Ny,j)            += D1x;
 
-  if (value == -1)
+  if (RightSymmetry == -1)
       for(size_t j=size-2*Ny; j<size-Ny; ++j)
           Laplacian.coeffRef(j+Ny,j)             = 0.0;
 
 }
 
-void BaseLaplacian::SetLeftSymmetry3(int value){
-  LeftSymmetry = value;
-  if (value == 1)
+void BaseLaplacian::SetLeftSymmetry3()
+{
+  if (LeftSymmetry == 1)
       for(size_t j=0; j<Ny; ++j)
         Laplacian.coeffRef(j,j+Ny)              += D1x;
 
-  if (value == -1)
+  if (LeftSymmetry == -1)
       for(size_t j=0; j<Ny; ++j)
           Laplacian.coeffRef(j,j+Ny)             = 0.0;
 }
@@ -223,10 +234,9 @@ void BaseLaplacian::SetLeftSymmetry3(int value){
 
 
 
-void BaseLaplacian::SetRightSymmetry5(int value){
-  RightSymmetry = value;
-
-  if (value == 1){
+void BaseLaplacian::SetRightSymmetry5()
+{
+  if (RightSymmetry == 1){
       for(size_t j=size-Ny; j<size; ++j){
           Laplacian.coeffRef(j,j-Ny)         += D1x ;
           Laplacian.coeffRef(j,j-2*Ny)       += D2x ;
@@ -235,7 +245,7 @@ void BaseLaplacian::SetRightSymmetry5(int value){
           Laplacian.coeffRef(j,j+Ny)         += D2x ;
       }
 
-  if (value == -1){
+  if (RightSymmetry == -1){
       for(size_t j=size-2*Ny; j<size-Ny; ++j){
           Laplacian.coeffRef(j,j-Ny)         = 0.0 ;
           Laplacian.coeffRef(j,j-2*Ny)       = 0.0 ;
@@ -246,10 +256,10 @@ void BaseLaplacian::SetRightSymmetry5(int value){
 
 }
 
-void BaseLaplacian::SetLeftSymmetry5(int value){
-  LeftSymmetry = value;
-
-  if (value == 1){
+void BaseLaplacian::SetLeftSymmetry5()
+{
+  std::cout<<"YOYOYOY\n";
+  if (LeftSymmetry == 1){
       for(size_t j=0; j<Ny; ++j){
         Laplacian.coeffRef(j,j+Ny)           *= 2.0 ;
         Laplacian.coeffRef(j,j+2*Ny)         *= 2.0 ;
@@ -259,7 +269,7 @@ void BaseLaplacian::SetLeftSymmetry5(int value){
   }
 
 
-  if (value == -1){
+  if (LeftSymmetry == -1){
       for(size_t j=0; j<Ny; ++j){
         Laplacian.coeffRef(j,j+Ny)           = 0.0 ;
         Laplacian.coeffRef(j,j+2*Ny)         = 0.0 ;
@@ -272,10 +282,9 @@ void BaseLaplacian::SetLeftSymmetry5(int value){
 }
 
 
-void BaseLaplacian::SetTopSymmetry5(int value){
-  TopSymmetry = value;
-
-  if (value == 1)
+void BaseLaplacian::SetTopSymmetry5()
+{
+  if (TopSymmetry == 1)
       for (size_t j=0; j<size; ++j)
           if (j%Ny == Ny-1){
               Laplacian.coeffRef(j,j-1)     += D1y ;
@@ -283,7 +292,7 @@ void BaseLaplacian::SetTopSymmetry5(int value){
               Laplacian.coeffRef(j-1,j)     += D2y ;
               }
 
-  if (value == -1)
+  if (TopSymmetry == -1)
       for (size_t j=0; j<size; ++j)
           if (j%Ny == Ny-1){
               Laplacian.coeffRef(j,j-1)      = 0.0 ;
@@ -296,10 +305,9 @@ void BaseLaplacian::SetTopSymmetry5(int value){
 
 
 
-void BaseLaplacian::SetBottomSymmetry5(int value){
-  BottomSymmetry = value;
-
-  if (value == 1)
+void BaseLaplacian::SetBottomSymmetry5()
+{
+  if (BottomSymmetry == 1)
       for (size_t j=0; j<size; ++j)
           if (j%Ny == 0){
               Laplacian.coeffRef(j,j+1)     += D1y ;
@@ -307,7 +315,7 @@ void BaseLaplacian::SetBottomSymmetry5(int value){
               Laplacian.coeffRef(j+1,j)     += D2y ;
               }
 
-  if (value == -1)
+  if (BottomSymmetry == -1)
       for (size_t j=0; j<size; ++j)
           if (j%Ny == 0){
               Laplacian.coeffRef(j,j+1)      = 0.0 ;
