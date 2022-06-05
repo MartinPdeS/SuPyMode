@@ -13,22 +13,22 @@ import matplotlib.pyplot as plt
 
 nMode   = 6
 
-N = Nx = Ny  = 30
+N = Nx = Ny  = 60
 
 
 Index = ExpData('FusedSilica').GetRI(1.55e-6)
 
 Clad = Fused2(Radius =  62.5, Fusion  = 0.95, Index   = Index)
 
-Core0 = Circle( Position=Clad.C[0], Radius = 4.2, Index = Index+1.005 )
-Core1 = Circle( Position=Clad.C[1], Radius = 4.2, Index = Index+1.005 )
+Core0 = Circle( Position=Clad.C[0], Radius = 4.2, Index = Index+0.005 )
+Core1 = Circle( Position=Clad.C[1], Radius = 4.2, Index = Index+0.005 )
 
 
 Geo = Geometry(Clad    = Clad,
                Objects = [Core0, Core1],
                Xbound  = [-150, 0],
                Ybound  = [-150, 150],
-               Nx      = Nx,
+               Nx      = Nx//2,
                Ny      = Ny)
 
 Geo.Rotate(90)
@@ -43,26 +43,18 @@ SuperSet = Sol.GetSuperSet(Wavelength      = 1.55,
                            ITRi            = 1,
                            ITRf            = 0.05,
                            Sorting         = 'Index',
-                           Symmetries      = {'Right':  1,
-                                              'Left':   0,
-                                              'Top':    0,
-                                              'Bottom': 0},
-                           nMode=7,
-                           sMode=5
+                           Symmetries      = {'Right': 1, 'Left': 0, 'Top': 0, 'Bottom': 0},
+                           nMode=5,
+                           sMode=3
                            )
 
-SuperSet[0].PlotFields([0])
+SuperSet.PlotFields([-1])
 
-Amplitudes = SuperSet.Propagate()
+#Mode = SuperSet.GetSuperposition(Amplitudes=[1,1,0,0,0])
 
+#Mode.CouplerLength = 2000
 
-
-
-import matplotlib.pyplot as plt
-plt.figure()
-plt.plot(np.real(Amplitudes[0]) + np.real(Amplitudes[1]))
-
-plt.show()
+#Mode.PlotFields()
 
 
 """

@@ -33,6 +33,108 @@ class ReprBase:
         return "".join(String)
 
 
+
+class SuperPosition(ReprBase):
+    Description = 'Mode superposition class'
+    ReprVar     = ["SuperSet", "Amplitudes"]
+
+    def __init__(self, SuperSet, InitialAmplitudes: list):
+        self.SuperSet   = SuperSet
+        self.InitialAmplitudes = np.asarray(InitialAmplitudes).astype(complex)
+        self._CouplerLength    = None
+        self._Amplitudes       = None
+
+
+    def ComputeAmpltiudes(self):
+        self.MatrixInterp = interp1d(self.Distance, self.SuperSet.Matrix, axis=-1)
+
+        def foo(t, y):
+            return 1j * self.MatrixInterp(t).dot(y)
+
+        sol = solve_ivp(foo,
+                        y0       = self.InitialAmplitudes,
+                        t_span   = [0, self._CouplerLength],
+                        method   = 'RK45')
+
+        self.Amplitudes = sol.y
+        self.Distances  = sol.t
+        self.AmplitudeInterpolation = interp1d(self.Distances, self.Amplitudes, axis=-1)
+
+    @property
+    def ITRList(self):
+        return self.SuperSet.ITRList
+
+    @property
+    def CouplerLength(self):
+        assert self._CouplerLength is not None, "CouplerLength attribute has to be defined before computing propagation."
+        return self._CouplerLength
+
+    @CouplerLength.setter
+    def CouplerLength(self, Value: float):
+        self._CouplerLength = Value
+        self.Distance = np.linspace(0, self._CouplerLength, self.ITRList.size)
+
+
+    @property
+    def Amplitudes(self):
+        if self._Amplitudes is None:
+            self.ComputeAmpltiudes()
+
+        return self._Amplitudes
+
+
+    @Amplitudes.setter
+    def Amplitudes(self, Value):
+        self._Amplitudes = Value
+
+
+    def PlotAmplitudes(self):
+        Scene = Scene2D(nCols=1, nRows=1, ColorBar=False)
+        A = self.InitialAmplitudes.dot(self.Amplitudes)
+        z = self.Distances
+        Scene.AddLine(Row      = 0,
+                      Col      = 0,
+                      x        = z,
+                      y        = A,
+                      Fill     = False,
+                      Legend   = None,
+                      xLabel   = r'Z-Distance [$\mu m$]',
+                      yLabel   = r'Mode complex ampltiude')
+
+        Scene.SetAxes(0, 0, Equal=False)
+        Scene.Show()
+
+
+    def PlotFields(self):
+        if self._Amplitudes is None: self.ComputeAmpltiudes()
+
+        y = self.AmplitudeInterpolation(self.Distance)
+
+        z = self.Distance
+
+        Field = self.SuperSet[0].FullFields.astype(complex)*0.
+
+        for mode, _ in enumerate(self.InitialAmplitudes):
+            a = y[0].astype(complex)
+            field = self.SuperSet[0].FullFields.astype(complex)
+            Field += np.einsum('i, ijk->ijk', a, field)
+
+        surface = mlab.surf( np.abs( Field[0] ) , warp_scale="auto" )
+
+        @mlab.animate(delay=100)
+        def anim_loc():
+            for n, _ in enumerate(self.Distance):
+                surface.mlab_source.scalars = np.abs( Field[n] )
+
+                yield
+
+        anim_loc()
+        mlab.show()
+
+
+
+
+
 class SuperSet(SetProperties, SetPlottings, ReprBase):
 
     Description = 'SuperSet class'
@@ -88,9 +190,11 @@ class SuperSet(SetProperties, SetPlottings, ReprBase):
 
         dITR = np.gradient(np.log(self.Geometry.ITRList), 1)
 
-        factor = dITR/dx
+        return dITR/dx
 
-        return factor/10
+
+    def GetSuperposition(self, Amplitudes):
+        return SuperPosition(SuperSet=self, InitialAmplitudes=Amplitudes)
 
 
     def Propagate(self, Amplitude=[1,1, 0, 0, 0], Length=1000):
@@ -139,28 +243,6 @@ class SuperSet(SetProperties, SetPlottings, ReprBase):
                         **kwargs)
 
         return sol
-
-
-    def PlotPropagation(self, Modes):
-        Mode0 = self[0]
-        Mode1 = self[1]
-
-        Field = Mode0[0].GetFullField(Axes=False) + Mode1[0].GetFullField(Axes=False)
-
-        surface = mlab.surf( np.abs( Field ) , warp_scale="auto" )
-
-        @mlab.animate(delay=100)
-        def anim_loc():
-            for n, _ in Mode0.IterateSlice():
-                Field = Mode0[n].GetFullField(Axes=False) + Mode1[n].GetFullField(Axes=False)
-
-                surface.mlab_source.scalars = np.abs( Field )
-
-                yield
-
-        anim_loc()
-        mlab.show
-
 
     @property
     def Size(self):
@@ -221,7 +303,7 @@ class SuperMode(ReprBase):
                    "PlotPropagation"]
 
     def __init__(self, ParentSet, ModeNumber, CppSolver,  BindingNumber):
-        self.Binded         = CppSolver.GetMode(ModeNumber)
+        self.Binded         = CppSolver.GetMode(BindingNumber)
         self.ModeNumber     = ModeNumber
 
         self.CppSolver      = CppSolver
@@ -431,6 +513,12 @@ class SuperMode(ReprBase):
             self._FullxAxis = self.ExtendAxis(Axis=self._FullxAxis, sign="Minus")
 
 
+    def GetSlice(self, Slice: int, Full: bool=True):
+        if Full:
+            return self.Betas[Slice], self.FullFields[Slice], self._FullxAxis, self._FullyAxis
+        else:
+            return self.Betas[Slice], self.Fields[Slice], self.Axis.X, self.Axis.Y
+
 
     def CompareSymmetries(self, Other):
         assert isinstance(Other, SuperMode), "Can only compare SuperMode instance with another"
@@ -439,9 +527,6 @@ class SuperMode(ReprBase):
 
     def AppendSlice(self, SliceNumber):
         self.Slice.append( SetSlice(ParentMode=self, SliceNumber=SliceNumber) )
-
-    def GetSlices(self, SlicesNumber: list):
-        return [self[slice] for slice in SlicesNumber]
 
 
     def __getitem__(self, N):

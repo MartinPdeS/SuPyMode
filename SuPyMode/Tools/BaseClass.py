@@ -132,23 +132,23 @@ class SetPlottings():
             Scene.SetAxes(Col, Row, Equal=False, Legend=True, yScale='log', yLimits=[1e-8, 1e-1], LegendTitle='Mode')
 
 
-    def _PlotFields(self, iter=0):
-        iter = ToList(iter)
-        Scene = Scene2D(nCols=self.Size, nRows=len(iter), ColorBar=True, UnitSize=[5,5])
+    def _PlotFields(self, Slices=0):
+        Slices = ToList(Slices)
+        Scene = Scene2D(nCols=self.Size, nRows=len(Slices), ColorBar=True, UnitSize=[5,5])
 
-        for supermode in self.IterateSuperMode():
-            for s, slice in enumerate(supermode.GetSlices(iter)):
-                Field, x, y = slice.GetFullField()
+        for supermode in self.SuperModes:
+            for s, slice in enumerate(Slices):
+                Beta, Field, x, y = supermode.GetSlice(Slice=slice, Full=True)
 
                 Scene.AddMesh(Row      = s,
                               Col      = supermode.ModeNumber,
-                              x        = x,
-                              y        = y,
-                              Scalar   = Field,
+                              x        = np.arange(x.size),
+                              y        = np.arange(y.size),
+                              Scalar   = Field.T,
                               ColorMap = FieldMap,
                               xLabel   = r'X-distance [$\mu$m]',
                               yLabel   = r'Y-distance [$\mu$m]' if supermode.ModeNumber==0 else "",
-                              Title    = f'{supermode.Name} [ITR: {slice.ITR:.2f}]'
+                              Title    = f'Mode: {supermode.ModeNumber} [ITR: {self.ITRList[slice]:.2f}]'
                               )
 
                 Scene.SetAxes(supermode.ModeNumber, s, Equal=True)
@@ -158,8 +158,8 @@ class SetPlottings():
 
 
 
-    def PlotFields(self, iter=0):
-        Scene =  self._PlotFields(iter=iter)
+    def PlotFields(self, Slices=0):
+        Scene =  self._PlotFields(Slices=Slices)
 
         Scene.Show()
 
