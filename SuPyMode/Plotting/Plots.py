@@ -52,6 +52,7 @@ class Scene2D:
         else:
             self.Axes = np.reshape(np.asarray( [self.Axes] ), (self.nRows, self.nCols))
 
+
     def AddLine(self, x, y, Col, Row, Title=None, Fill=True, Color=None, xLabel=None, yLabel=None, Legend=None):
         ax = self.Axes[Row, Col]
 
@@ -122,8 +123,10 @@ class Scene2D:
 
 
 
-    def AddMesh(self, Col, Row, x, y, Scalar, ColorMap='viridis', Title=None, xLabel=None, yLabel=None):
+    def AddMesh(self, Col, Row, x, y, Scalar, ColorMap='viridis', Title=None, xLabel=None, yLabel=None, DiscretNorm=None):
         ax = self.Axes[Row, Col]
+
+        norm = colors.BoundaryNorm(DiscretNorm, ColorMap) if DiscretNorm is not None else None
 
         Image = ax.pcolormesh(x, y, Scalar, cmap=ColorMap, shading='auto', vmin=-np.max(np.abs(Scalar)), vmax=+np.max(np.abs(Scalar)) )
 
@@ -138,6 +141,28 @@ class Scene2D:
 
         if self.ColorBar:
             plt.colorbar(Image, ax=ax, location='bottom')
+
+        self.UpdateBoundary(x=x, y=y)
+        plt.tight_layout(pad=3)
+
+
+    def AddContour(self, Col, Row, x, y, Scalar, ColorMap='viridis', Title=None, xLabel=None, yLabel=None, IsoLines=None):
+        ax = self.Axes[Row, Col]
+
+        ax.contour(x, y, Scalar, levels=IsoLines, colors='black', linewidth=.5)
+        Image = ax.contourf(x, y, Scalar, levels=IsoLines, cmap='jet', norm=colors.LogNorm() )
+
+        if Title is not None:
+            ax.set_title(Title)
+
+        if xLabel is not None:
+            ax.set_xlabel(xLabel)
+
+        if yLabel is not None:
+            ax.set_ylabel(yLabel)
+
+        if self.ColorBar:
+            plt.colorbar(Image, ax=ax, location='bottom', format="%.3f")
 
         self.UpdateBoundary(x=x, y=y)
         plt.tight_layout(pad=3)

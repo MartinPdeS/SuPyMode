@@ -90,21 +90,19 @@ class Geometry(object):
         Number of point for Y dimensions discretization.
     """
 
-    def __init__(self, Clad, Objects, Xbound, Ybound, Nx, Ny, Length=None, GConv=0, debug='INFO'):
+    def __init__(self, Clad, Objects, Xbound, Ybound, Nx, Ny, GConv=0, BackGroundIndex=1.):
+        self.Clad       = Clad
 
-        Mlogger.setLevel(getattr(logging, debug))
-
-        self.Clad              = Clad
-
-        self.Objects          = ToList(Objects)
+        self.Objects    = ToList(Objects)
 
         self.Boundaries = [Xbound, Ybound]
 
         self.Shape      = [Nx, Ny]
 
-        self.Length     = Length
-
         self.GConv      = GConv
+        self._Mesh      = None
+
+        self.BackGroundIndex = BackGroundIndex
 
         self.Axes  = Axes( {'wavelength': 1.0,
                             'Xbound'    : Xbound,
@@ -113,8 +111,14 @@ class Geometry(object):
                             'Ny'        : Ny } )
 
         self.CreateBackGround()
+        self.GetAllIndex()
 
 
+    @property
+    def Mesh(self):
+        if self._Mesh is None:
+            self.CreateMesh()
+        return self._Mesh
 
     @property
     def AllObjects(self):
@@ -156,9 +160,17 @@ class Geometry(object):
                                      miny=-yBound,
                                      maxx=+xBound,
                                      maxy=+yBound)
-        self.BackGround.Index    = 1
+
+        self.BackGround.Index    = self.BackGroundIndex
         self.BackGround.hole     = None
         self.BackGround.Gradient = None
+
+
+    def GetAllIndex(self,):
+        self.AllIndex = []
+        for obj in self.AllObjects:
+            self.AllIndex.append(obj.Index)
+
 
 
     def Rotate(self, Angle):
@@ -211,14 +223,14 @@ class Geometry(object):
 
         """
 
-        self.mesh[np.where(polygone.raster > 0)] = 0
+        self._Mesh[np.where(polygone.raster > 0)] = 0
 
         if polygone.Gradient:
             Grad = polygone.Gradient.Evaluate( self.X, self.Y )
-            self.mesh += polygone.raster * Grad
+            self._Mesh += polygone.raster * Grad
 
         else:
-            self.mesh += polygone.raster * polygone.Index
+            self._Mesh += polygone.raster * polygone.Index
 
 
     def CreateMesh(self):
@@ -226,7 +238,7 @@ class Geometry(object):
 
         """
 
-        self.mesh = np.zeros(self.Shape)
+        self._Mesh = np.zeros(self.Shape)
 
         self.X, self.Y = np.mgrid[self.xMin: self.xMax: complex(self.Shape[0]),
                                   self.yMin: self.yMax: complex(self.Shape[1]) ]
@@ -237,7 +249,7 @@ class Geometry(object):
             self.rasterize_polygone(object)
             self.add_object_to_mesh(object)
 
-        self.mesh = gaussian_filter(self.mesh, sigma=self.GConv)
+        self._Mesh = gaussian_filter(self._Mesh, sigma=self.GConv)
 
 
     def Plot(self):
@@ -247,26 +259,32 @@ class Geometry(object):
 
         self.CreateMesh()
 
-        Scene = Scene2D(nCols=1, nRows=1, UnitSize=(4, 4))
+        Scene = Scene2D(nCols=1, nRows=1, UnitSize=(6, 6))
 
-        Scene.AddMesh(Row      = 0,
-                      Col      = 0,
-                      x        = self.X,
-                      y        = self.Y,
-                      Scalar   = self.mesh,
-                      ColorMap = 'coolwarm',
-                      xLabel   = r'X-distance [$\mu$m]',
-                      yLabel   = r'Y-distance [$\mu$m]',
+        Scene.AddContour(Row      = 0,
+                         Col      = 0,
+                         x        = self.X,
+                         y        = self.Y,
+                         Scalar   = self._Mesh,
+                         ColorMap = 'coolwarm',
+                         xLabel   = r'X-distance [$\mu$m]',
+                         yLabel   = r'Y-distance [$\mu$m]',
+                         IsoLines = np.sort( [0.99] + list(set(self._Mesh.flatten())) + [1.6] )
+                         )
+
+        Scene.SetAxes(Col=0,
+                      Row=0,
+                      xLimits=[self.xMin, self.xMax],
+                      yLimits=[self.yMin, self.yMax],
+                      Equal=True,
                       )
-
-        Scene.SetAxes(0, 0, xLimits=[self.xMin, self.xMax], yLimits=[self.yMin, self.yMax], Equal=True)
 
         Scene.Show()
 
 
     def _Gradient(self):
 
-        Ygrad, Xgrad = gradientO4( self.mesh.T**2, self.Axes.dx, self.Axes.dy )
+        Ygrad, Xgrad = gradientO4( self._Mesh.T**2, self.Axes.dx, self.Axes.dy )
 
         return Ygrad, Xgrad
 
@@ -275,7 +293,7 @@ class Geometry(object):
 
         #blurred = gaussian_filter(self.mesh, sigma=0)
 
-        Ygrad, Xgrad = gradientO4( self.mesh.T**2, self.Axes.dx, self.Axes.dy )
+        Ygrad, Xgrad = gradientO4( self._Mesh.T**2, self.Axes.dx, self.Axes.dy )
 
         gradient = (Xgrad * self.Axes.XX + Ygrad * self.Axes.YY)
 

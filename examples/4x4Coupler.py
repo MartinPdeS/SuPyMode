@@ -29,7 +29,8 @@ Geo = Geometry(Clad    = Clad,
                Xbound  = [-150, 0],
                Ybound  = [-150, 150],
                Nx      = Nx//2,
-               Ny      = Ny)
+               Ny      = Ny,
+               BackGroundIndex = 1.)
 
 Geo.Rotate(90)
 

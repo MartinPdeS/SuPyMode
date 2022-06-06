@@ -26,7 +26,7 @@ class SuPySolver(object):
 
     def InitBinding(self, Symmetries: dict, Wavelength: float, nMode: int, sMode: int):
 
-        CppSolver = EigenSolving(Mesh       = self.Geometry.mesh,
+        CppSolver = EigenSolving(Mesh       = self.Geometry._Mesh,
                                  Gradient   = self.Geometry.Gradient().ravel(),
                                  nMode      = nMode,
                                  sMode      = sMode,
