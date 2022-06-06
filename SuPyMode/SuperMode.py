@@ -36,7 +36,7 @@ class ReprBase:
 
 class SuperPosition(ReprBase):
     Description = 'Mode superposition class'
-    ReprVar     = ["SuperSet", "Amplitudes"]
+    ReprVar     = ["Amplitudes"]
 
     def __init__(self, SuperSet, InitialAmplitudes: list):
         self.SuperSet   = SuperSet
@@ -45,7 +45,7 @@ class SuperPosition(ReprBase):
         self._Amplitudes       = None
 
 
-    def ComputeAmpltiudes(self):
+    def ComputeAmpltiudes(self, rTol=1e-8, aTol=1e-7, MaxStep=np.inf):
         self.MatrixInterp = interp1d(self.Distance, self.SuperSet.Matrix, axis=-1)
 
         def foo(t, y):
@@ -54,7 +54,10 @@ class SuperPosition(ReprBase):
         sol = solve_ivp(foo,
                         y0       = self.InitialAmplitudes,
                         t_span   = [0, self._CouplerLength],
-                        method   = 'RK45')
+                        method   = 'RK45',
+                        rtol     = rTol,
+                        atol     = aTol,
+                        max_step = MaxStep)
 
         self.Amplitudes = sol.y
         self.Distances  = sol.t
@@ -95,17 +98,49 @@ class SuperPosition(ReprBase):
         Scene.AddLine(Row      = 0,
                       Col      = 0,
                       x        = z,
-                      y        = A,
+                      y        = A.real,
                       Fill     = False,
-                      Legend   = None,
+                      Legend   = r"$\Re${A}",
                       xLabel   = r'Z-Distance [$\mu m$]',
-                      yLabel   = r'Mode complex ampltiude')
+                      yLabel   = r'Mode complex ampltiude [normalized]')
 
-        Scene.SetAxes(0, 0, Equal=False)
+        Scene.AddLine(Row      = 0,
+                      Col      = 0,
+                      x        = z,
+                      y        = np.abs(A),
+                      Fill     = False,
+                      Legend   = r"|A|",
+                      xLabel   = r'Z-Distance [$\mu m$]',
+                      yLabel   = r'Mode complex ampltiude [normalized]')
+
+
+        Scene.SetAxes(0, 0, Equal=False, Legend=True)
+        Scene.Show()
+
+    def PlotField(self, Slice):
+        if self._Amplitudes is None: self.ComputeAmpltiudes()
+        Scene = Scene2D(nCols=1, nRows=1, ColorBar=False)
+
+        Field = self.SuperSet[0].FullFields[0]*0.
+
+        for a, mode in zip(self.InitialAmplitudes, self.SuperSet.SuperModes):
+            field = np.real(a)*mode.FullFields[Slice]
+            Field += field
+
+
+        Scene.AddMesh(Row      = 0,
+                      Col      = 0,
+                      x        = self.SuperSet[0].FullxAxis,
+                      y        = self.SuperSet[0].FullyAxis,
+                      Scalar   = Field.T.real,
+                      xLabel   = r'X-Direction [$\mu m$]',
+                      yLabel   = r'Y-direction [$\mu m$]')
+
+        Scene.SetAxes(Row=0, Col=0, Equal=True, Legend=False)
         Scene.Show()
 
 
-    def PlotFields(self):
+    def PlotPropagation(self):
         if self._Amplitudes is None: self.ComputeAmpltiudes()
 
         y = self.AmplitudeInterpolation(self.Distance)
@@ -115,8 +150,8 @@ class SuperPosition(ReprBase):
         Field = self.SuperSet[0].FullFields.astype(complex)*0.
 
         for mode, _ in enumerate(self.InitialAmplitudes):
-            a = y[0].astype(complex)
-            field = self.SuperSet[0].FullFields.astype(complex)
+            a = y[mode].astype(complex)
+            field = self.SuperSet[mode].FullFields.astype(complex)
             Field += np.einsum('i, ijk->ijk', a, field)
 
         surface = mlab.surf( np.abs( Field[0] ) , warp_scale="auto" )
@@ -124,7 +159,7 @@ class SuperPosition(ReprBase):
         @mlab.animate(delay=100)
         def anim_loc():
             for n, _ in enumerate(self.Distance):
-                surface.mlab_source.scalars = np.abs( Field[n] )
+                surface.mlab_source.scalars = np.abs(np.abs( Field[n] ) )
 
                 yield
 
@@ -143,7 +178,7 @@ class SuperSet(SetProperties, SetPlottings, ReprBase):
                    "Size",
                    "Geometry"]
 
-    Methods     = [ "Propagate"]
+    Methods     = ["GetSuperposition", "Matrix"]
 
     def __init__(self, ParentSolver):
         self.ParentSolver   = ParentSolver

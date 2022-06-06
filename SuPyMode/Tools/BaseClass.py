@@ -142,8 +142,8 @@ class SetPlottings():
 
                 Scene.AddMesh(Row      = s,
                               Col      = supermode.ModeNumber,
-                              x        = np.arange(x.size),
-                              y        = np.arange(y.size),
+                              x        = x,
+                              y        = y,
                               Scalar   = Field.T,
                               ColorMap = FieldMap,
                               xLabel   = r'X-distance [$\mu$m]',
@@ -162,6 +162,7 @@ class SetPlottings():
         Scene =  self._PlotFields(Slices=Slices)
 
         Scene.Show()
+
 
     def GetCombination(self, Combination):
         if Combination is None:
