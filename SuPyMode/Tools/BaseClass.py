@@ -103,12 +103,11 @@ class SetPlottings():
 
 
     def PlotCoupling(self, Scene, Col, Row, Combination):
-        Coupling = Combination[0][0].CppSolver.ComputingCoupling()
         for (Mode0, Mode1) in Combination:
             Scene.AddLine(Row      = Row,
                           Col      = Col,
                           x        = self.ITRList,
-                          y        = Coupling[:, Mode0.ModeNumber, Mode1.ModeNumber],
+                          y        = Mode0.Adiabatic[:, Mode1.ModeNumber],
                           Fill     = False,
                           Legend   = f'{Mode0.ModeNumber} - {Mode1.ModeNumber}',
                           xLabel   = r'ITR',
@@ -118,12 +117,12 @@ class SetPlottings():
 
 
     def PlotAdiabatic(self, Scene, Col, Row, Combination):
-        Adiabatic = self.Adiabatic
+
         for (Mode0, Mode1) in Combination:
             Scene.AddLine(Row      = Row,
                           Col      = Col,
                           x        = self.ITRList,
-                          y        = Adiabatic[:, Mode0.ModeNumber, Mode1.ModeNumber],
+                          y        = Mode0.Adiabatic[:, Mode1.ModeNumber],
                           Fill     = False,
                           Legend   = f'{Mode0.ModeNumber} - {Mode1.ModeNumber}',
                           xLabel   = r'ITR',

@@ -74,8 +74,10 @@ class SuPySolver(object):
 
 
 
-        CppSolver.SortModes(Sorting=Sorting)
+        #CppSolver.SortModes(Sorting=Sorting)
         #CppSolver1.SortModes(Sorting=Sorting)
+        CppSolver.ComputeCoupling()
+        CppSolver.ComputeAdiabatic()
 
         Set = SuperSet(ParentSolver=self)
 

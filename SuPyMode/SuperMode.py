@@ -350,11 +350,28 @@ class SuperMode(ReprBase):
         self._FullxAxis     = None
         self._Index         = None
         self._Betas         = None
+        self._Adiabatic     = None
+        self._Coupling      = None
 
 
     @property
     def BindingNumber(self):
         return self.Binded.BindingNumber
+
+
+    @property
+    def Adiabatic(self):
+        if self._Adiabatic is None:
+            self._Adiabatic = self.Binded.GetAdiabatic()
+
+        return self._Adiabatic
+
+
+    @property
+    def Coupling(self):
+        if self._Coupling is None:
+            self._Coupling = self.Binded.GetCoupling()
+        return self._Coupling
 
 
     @property

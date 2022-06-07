@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 nMode   = 6
 
-N = Nx = Ny  = 40
+N = Nx = Ny  = 30
 
 
 Index = ExpData('FusedSilica').GetRI(1.55e-6)
@@ -49,6 +49,7 @@ SuperSet = Sol.GetSuperSet(Wavelength      = 1.55,
                            sMode=3
                            )
 
+a = SuperSet.Plot("Coupling")
 #SuperSet.PlotFields([-1])
 
 #Mode = SuperSet.GetSuperposition(Amplitudes=[1,0,0,1,0,0])

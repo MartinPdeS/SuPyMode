@@ -96,7 +96,7 @@ void
 EigenSolving::PrepareSuperModes()
 {
   for (SuperMode& mode : SuperModes)
-      mode.Init(ITRLength, Nx, Ny, LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry);
+      mode.Init(ITRLength, Nx, Ny, LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry, sMode);
 }
 
 
@@ -149,7 +149,7 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
         else if (i == pos) std::cout << ">";
         else std::cout << " ";
     }
-    std::cout << "] " << int(progress * 100.0) << " %\n";
+    std::cout << "] " << "ITR: " <<slice << "\n";
     std::cout.flush();
 
 
@@ -166,16 +166,12 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
     alpha = ExtrapolateNext(order, AllFirstEigenValues, ITRList, next);
   }
+  SortModesIndex();
 }
 
 
 
 
-SuperMode
-EigenSolving::GetMode(size_t Mode){
-
-  return SuperModes[Mode];
-}
 
 
 
@@ -283,12 +279,20 @@ EigenSolving::SortSliceIndex(size_t Slice)
 
   vector<size_t> sorted = sort_indexes( Betas );
 
+  SortedSuperModes = std::vector<*SuperMode>(sMode);
+
   iter = 0;
-  for (auto order : sorted)
+
+  for (size_t mode=0; mode<sMode; ++mode)
   {
+      auto order = sorted[mode];
       SuperModes[iter].CopyOtherSlice(TemporaryModes[order], Slice);
+
+      SortedSuperModes[iter] = &SuperModes[iter];
       ++iter;
   }
+
+
 }
 
 
@@ -300,30 +304,43 @@ EigenSolving::SortModesIndex()
 
 }
 
-ndarray
-EigenSolving::ComputingCoupling()
+void
+EigenSolving::ComputeCoupling()
 {
 
   std::cout<<"Computing coupling\n";
-  VectorType * Coupling = new VectorType(ITRLength, sMode * sMode);
+  ScalarType C;
 
-  (*Coupling).setZero();
+  for (size_t slice=0; slice<ITRLength; ++slice)
+      for (size_t i=0; i<sMode; ++i)
+          for (size_t j=0; j<sMode; ++j)
+              {
+                if (i == 0) { C = 0.0; }
+                else { C = SortedSuperModes[j].ComputeCoupling(SortedSuperModes[i], slice, MeshGradient, kInit); }
+                SortedSuperModes[j].Coupling(i, slice) = C;
+              }
 
-    size_t iter = 0;
-    for (size_t slice=0; slice<ITRLength; ++slice)
-        for (size_t i=0; i<sMode; ++i)
-            for (size_t j=0; j<sMode; ++j)
-                {
-                    if (j == i){ (*Coupling)[iter] = 0.0; ++iter; continue; }
-                    SuperMode mode0 = SuperModes[i];
-                    SuperMode mode1 = SuperModes[j];
-                    (*Coupling)[iter] = mode0.ComputeCoupling(mode1, slice, MeshGradient, kInit);
-                    ++iter;
-                }
-
-    return Eigen2ndarray( Coupling, { ITRLength, sMode, sMode } ) ;
 }
 
+
+void
+EigenSolving::ComputeAdiabatic(){
+
+  std::cout<<"Computing adiabatic\n";
+  ScalarType A;
+
+  for (size_t slice=0; slice<ITRLength; ++slice)
+      for (size_t i=0; i<sMode; ++i)
+          //for (size_t j=0; j<sMode; ++j)
+          for (SuperMode mode1 : SortedSuperModes)
+              {
+                std::cout<<slice<< "  " << i << "  " <<mode1.ModeNumber << "   " <<SortedSuperModes.size()<<"\n";
+                if (i == 0) { A = 0.0; }
+                else { A = mode1.ComputeAdiabatic(SortedSuperModes[i], slice, MeshGradient, kInit); }
+                mode1.Adiabatic(i, slice) = A;
+              }
+
+}
 
 
 
@@ -335,32 +352,6 @@ EigenSolving::ComputeMaxIndex(){
          MaxIndex = MeshPtr[i];
 
  return MaxIndex;
-}
-
-
-
-ndarray
-EigenSolving::ComputingAdiabatic(){
-
-  std::cout<<"Computing adiabatic\n";
-
-  VectorType * Adiabatic = new VectorType(ITRLength * sMode * sMode);
-  (*Adiabatic).setZero();
-
-  size_t iter = 0;
-  for (size_t slice=0; slice<ITRLength; ++slice)
-      for (size_t i=0; i<sMode; ++i)
-          for (size_t j=0; j<sMode; ++j)
-              {
-                  if (j == i){ (*Adiabatic)[iter] = 0.0; ++iter; continue; }
-                  SuperMode mode0 = SuperModes[i];
-                  SuperMode mode1 = SuperModes[j];
-                  (*Adiabatic)[iter] = mode0.ComputeAdiabatic(mode1, slice, MeshGradient, kInit);
-                  ++iter;
-              }
-
-  return Eigen2ndarray( Adiabatic, { ITRLength, sMode, sMode } ) ;
-
 }
 
 
@@ -392,7 +383,7 @@ EigenSolving::GetFields(){
   MatrixType Output(ITRLength*size, sMode);
 
   for (size_t mode=0; mode<sMode; ++mode)
-    Output.col(mode)  = SuperModes[mode].Fields;
+    Output.col(mode)  = SortedSuperModes[mode].Fields;
 
   return Eigen2ndarray_( Output, { sMode, ITRLength, Nx, Ny } ) ;
 }
@@ -403,7 +394,7 @@ EigenSolving::GetIndices(){
   MatrixType Output(ITRLength, sMode);
 
   for (size_t mode=0; mode<sMode; ++mode)
-    Output.col(mode)  = SuperModes[mode].Index;
+    Output.col(mode)  = SortedSuperModes[mode].Index;
 
   return Eigen2ndarray_( Output, { ITRLength, sMode } ) ;
 }
@@ -414,7 +405,7 @@ EigenSolving::GetBetas(){
   MatrixType Output(ITRLength, sMode);
 
   for (size_t mode=0; mode<sMode; ++mode)
-    Output.col(mode)  = SuperModes[mode].Betas;
+    Output.col(mode)  = SortedSuperModes[mode].Betas;
 
   return Eigen2ndarray_( Output, { ITRLength, sMode } ) ;
 }

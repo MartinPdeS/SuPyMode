@@ -5,8 +5,9 @@ struct SuperMode
 {
   MatrixType Fields;
   VectorType Betas, EigenValues, Index;
-  size_t ITRLength, Nx, Ny, ModeNumber;
+  size_t ITRLength, Nx, Ny, ModeNumber, sMode;
   int LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry;
+  MatrixType Coupling, Adiabatic;
 
   SuperMode(size_t ModeNumber){this->ModeNumber = ModeNumber;}
   SuperMode(){}
@@ -26,15 +27,19 @@ struct SuperMode
             int    &LeftSymmetry,
             int    &RightSymmetry,
             int    &TopSymmetry,
-            int    &BottomSymmetry)
+            int    &BottomSymmetry,
+            int     sMode)
   {
     this->Nx             = Nx;
     this->Ny             = Ny;
+    this->sMode          = sMode;
     this->ITRLength      = ITRLength;
     this->Fields         = MatrixType(Nx * Ny, ITRLength);
     this->Betas          = VectorType(ITRLength);
     this->EigenValues    = VectorType(ITRLength);
     this->Index          = VectorType(ITRLength);
+    this->Adiabatic      = MatrixType(sMode, ITRLength);
+    this->Coupling       = MatrixType(sMode, ITRLength);
     this->BottomSymmetry = BottomSymmetry;
     this->TopSymmetry    = TopSymmetry;
     this->RightSymmetry  = RightSymmetry;
@@ -46,6 +51,8 @@ struct SuperMode
       Fields.col(Slice) = Other.Fields.col(Slice);
       Betas[Slice]      = Other.Betas[Slice];
       Index[Slice]      = Other.Index[Slice];
+      Adiabatic         = Other.Adiabatic;
+      Coupling          = Other.Coupling;
   }
 
 
@@ -85,6 +92,8 @@ struct SuperMode
   ndarray GetFields(){ return Eigen2ndarray_( this->Fields, { ITRLength, Nx, Ny} ); }
   ndarray GetIndex(){ return Eigen2ndarray_( this->Index, { ITRLength} ); }
   ndarray GetBetas(){ return Eigen2ndarray_( this->Betas, { ITRLength} ); }
+  ndarray GetAdiabatic(){ return Eigen2ndarray_( this->Adiabatic, { ITRLength, sMode} ); }
+  ndarray GetCoupling(){ return Eigen2ndarray_( this->Coupling, { ITRLength, sMode} ); }
 
 };
 
@@ -146,7 +155,7 @@ class EigenSolving : public BaseLaplacian
     MSparse            EigenMatrix, Identity, M;
     VectorType         MeshGradient;
     BiCGSTAB<MSparse>  Solver;
-    std::vector<SuperMode>        SuperModes;
+    std::vector<SuperMode> SuperModes, *SortedSuperModes;
 
   EigenSolving(ndarray&   Mesh,
                ndarray&   PyMeshGradient,
@@ -177,6 +186,9 @@ class EigenSolving : public BaseLaplacian
                  for (int i=0; i<nMode; ++i)
                     SuperModes.push_back(SuperMode(i));
 
+                 for (int i=0; i<sMode; ++i)
+                    SortedSuperModes.push_back(SuperMode(i));
+
                  ComputeMaxIndex();
 
 
@@ -185,7 +197,8 @@ class EigenSolving : public BaseLaplacian
 
 
    void      PopulateModes(size_t Slice, MatrixType& EigenVectors, VectorType& EigenValues);
-   SuperMode GetMode(size_t Mode);
+   SuperMode GetMode(size_t Mode){ return *SortedSuperModes[Mode]; }
+
    void      PrepareSuperModes();
    void      SwapMode(SuperMode &Mode0, SuperMode &Mode1);
    void      SortSliceIndex(size_t Slice);
@@ -203,9 +216,8 @@ class EigenSolving : public BaseLaplacian
 
    MSparse                       ComputeMatrix();
 
-   ndarray                       ComputingCoupling();
-   ndarray                       ComputingAdiabatic();
-
+   void                          ComputeCoupling();
+   void                          ComputeAdiabatic();
    vector<size_t>                ComputecOverlaps(size_t idx);
    void                          ComputeLaplacian(size_t order);
 
