@@ -136,20 +136,33 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
   ScalarType alpha = -pow( k * ComputeMaxIndex(), 2 );
 
-  for (size_t i=0; i<ITRLength; ++i)
+  size_t barWidth = 70;
+  std::cout << "[";
+  for (size_t slice=0; slice<ITRLength; ++slice)
   {
+    double progress = (double) slice/ITRLength;
 
-    std::cout<<"Iteration: "<< i <<"   ITR:  "<<ITRPtr[i]<<"\n";
+    size_t pos = (size_t) (barWidth * progress);
 
-    kDual = kInit * ITRPtr[i] ;
+    for (size_t i = 0; i < barWidth; ++i) {
+        if (i < pos) std::cout << "=";
+        else if (i == pos) std::cout << ">";
+        else std::cout << " ";
+    }
+    std::cout << "] " << int(progress * 100.0) << " %\n";
+    std::cout.flush();
+
+
+
+    kDual = kInit * ITRPtr[slice] ;
 
     tie(EigenVectors, EigenValues) = ComputeEigen(alpha);
 
-    PopulateModes(i, EigenVectors, EigenValues);
+    PopulateModes(slice, EigenVectors, EigenValues);
 
     AllFirstEigenValues.push_back(EigenValues[0]);
 
-    size_t next = i+1, mode=0;
+    size_t next = slice+1, mode=0;
 
     alpha = ExtrapolateNext(order, AllFirstEigenValues, ITRList, next);
   }

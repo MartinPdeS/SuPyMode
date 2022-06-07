@@ -118,7 +118,7 @@ class SetPlottings():
 
 
     def PlotAdiabatic(self, Scene, Col, Row, Combination):
-        Adiabatic = Combination[0][0].CppSolver.ComputingAdiabatic()
+        Adiabatic = self.Adiabatic
         for (Mode0, Mode1) in Combination:
             Scene.AddLine(Row      = Row,
                           Col      = Col,

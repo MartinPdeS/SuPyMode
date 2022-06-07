@@ -63,29 +63,30 @@ class SuPySolver(object):
                     ):
 
         CppSolver  = self.InitBinding(Symmetries, Wavelength, nMode, sMode)
-        CppSolver1  = self.InitBinding({'Right': -1, 'Left': 0, 'Top': 0, 'Bottom': 0}, Wavelength, nMode, sMode)
+        #CppSolver1  = self.InitBinding({'Right': -1, 'Left': 0, 'Top': 0, 'Bottom': 0}, Wavelength, nMode, sMode)
 
         self.ITRList = np.linspace(ITRi, ITRf, Nstep)
 
 
 
         CppSolver.LoopOverITR(ITR=self.ITRList, ExtrapolationOrder=3)
-        CppSolver1.LoopOverITR(ITR=self.ITRList, ExtrapolationOrder=3)
+        #CppSolver1.LoopOverITR(ITR=self.ITRList, ExtrapolationOrder=3)
 
 
 
         CppSolver.SortModes(Sorting=Sorting)
-        CppSolver1.SortModes(Sorting=Sorting)
+        #CppSolver1.SortModes(Sorting=Sorting)
 
         Set = SuperSet(ParentSolver=self)
 
-        self.PopulateSuperSet(Set, [CppSolver, CppSolver1])
+        self.PopulateSuperSet(Set, [CppSolver])
 
         return Set
 
 
 
     def PopulateSuperSet(self, Set, CppSolvers):
+        Set.CppSolvers = CppSolvers
         for CppSolver in CppSolvers:
             for BindingNumber in range(CppSolver.sMode):
                 Set.AppendSuperMode(CppSolver=CppSolver, BindingNumber=BindingNumber)

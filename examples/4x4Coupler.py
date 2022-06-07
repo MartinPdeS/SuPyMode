@@ -51,13 +51,13 @@ SuperSet = Sol.GetSuperSet(Wavelength      = 1.55,
 
 #SuperSet.PlotFields([-1])
 
-Mode = SuperSet.GetSuperposition(Amplitudes=[1,0,0,1,0,0])
+#Mode = SuperSet.GetSuperposition(Amplitudes=[1,0,0,1,0,0])
 
-Mode.CouplerLength = 500
-Mode.ComputeAmpltiudes(MaxStep=0.1)
+#Mode.CouplerLength = 500
+#Mode.ComputeAmpltiudes(MaxStep=0.1)
 
 
-Mode.PlotField(Slice=0)
+#Mode.PlotField(Slice=0)
 
 
 """
