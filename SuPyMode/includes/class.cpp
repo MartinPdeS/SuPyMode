@@ -97,6 +97,9 @@ EigenSolving::PrepareSuperModes()
 {
   for (SuperMode& mode : SuperModes)
       mode.Init(ITRLength, Nx, Ny, LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry, sMode);
+
+  for (SuperMode& mode : SortedSuperModes)
+      mode.Init(ITRLength, Nx, Ny, LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry, sMode);
 }
 
 
@@ -267,31 +270,24 @@ EigenSolving::SortSliceIndex(size_t Slice)
 {
   vector<ScalarType> Betas;
   Betas.reserve(nMode);
-  vector<SuperMode> TemporaryModes(nMode);
+  SortedSuperModes = std::vector<SuperMode>(sMode);
 
   size_t iter=0;
-  for (SuperMode mode : SuperModes)
+  for (size_t mode=0; mode<sMode; ++mode)
   {
-      Betas.push_back(mode.Betas[Slice]);
-      TemporaryModes[iter] = mode;
+      Betas.push_back(SuperModes[mode].Betas[Slice]);
+      SortedSuperModes[mode] = SuperModes[mode];
       ++iter;
   }
 
   vector<size_t> sorted = sort_indexes( Betas );
 
-  SortedSuperModes = std::vector<*SuperMode>(sMode);
-
-  iter = 0;
-
   for (size_t mode=0; mode<sMode; ++mode)
   {
       auto order = sorted[mode];
-      SuperModes[iter].CopyOtherSlice(TemporaryModes[order], Slice);
 
-      SortedSuperModes[iter] = &SuperModes[iter];
-      ++iter;
+      SortedSuperModes[mode].CopyOtherSlice(SuperModes[order], Slice);
   }
-
 
 }
 
@@ -309,15 +305,15 @@ EigenSolving::ComputeCoupling()
 {
 
   std::cout<<"Computing coupling\n";
-  ScalarType C;
 
   for (size_t slice=0; slice<ITRLength; ++slice)
-      for (size_t i=0; i<sMode; ++i)
-          for (size_t j=0; j<sMode; ++j)
+      for (SuperMode &mode0 : SortedSuperModes)
+          for (size_t m=0; m<sMode;++m)
               {
-                if (i == 0) { C = 0.0; }
-                else { C = SortedSuperModes[j].ComputeCoupling(SortedSuperModes[i], slice, MeshGradient, kInit); }
-                SortedSuperModes[j].Coupling(i, slice) = C;
+                SuperMode &mode1 = SortedSuperModes[m];
+
+                mode1.ComputeCoupling(mode0, slice, MeshGradient, kInit);
+
               }
 
 }
@@ -327,22 +323,32 @@ void
 EigenSolving::ComputeAdiabatic(){
 
   std::cout<<"Computing adiabatic\n";
-  ScalarType A;
 
   for (size_t slice=0; slice<ITRLength; ++slice)
-      for (size_t i=0; i<sMode; ++i)
-          //for (size_t j=0; j<sMode; ++j)
-          for (SuperMode mode1 : SortedSuperModes)
+      for (SuperMode &mode0 : SortedSuperModes)
+          for (size_t m=0; m<sMode;++m)
               {
-                std::cout<<slice<< "  " << i << "  " <<mode1.ModeNumber << "   " <<SortedSuperModes.size()<<"\n";
-                if (i == 0) { A = 0.0; }
-                else { A = mode1.ComputeAdiabatic(SortedSuperModes[i], slice, MeshGradient, kInit); }
-                mode1.Adiabatic(i, slice) = A;
+                SuperMode &mode1 = SortedSuperModes[m];
+
+                mode1.Adiabatic(mode0.ModeNumber, slice) = mode1.ComputeAdiabatic(mode0, slice, MeshGradient, kInit);
               }
 
 }
 
 
+
+
+void
+EigenSolving::ComputeCouplingAdiabatic(){
+
+  std::cout<<"Computing coupling/adiabatic\n";
+
+  for (size_t slice=0; slice<ITRLength; ++slice)
+      for (SuperMode &mode0 : SortedSuperModes)
+          for (size_t m=0; m<sMode;++m)
+                mode0.PopulateCouplingAdiabatic(SortedSuperModes[m], slice, MeshGradient, kInit);
+
+}
 
 ScalarType
 EigenSolving::ComputeMaxIndex(){

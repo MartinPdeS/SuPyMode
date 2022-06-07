@@ -64,15 +64,26 @@ struct SuperMode
 
   ScalarType ComputeCoupling(SuperMode& Other, size_t Slice, VectorType &MeshGradient, ScalarType &kInit)
   {
-    VectorType overlap = this->Fields.col(Slice).cwiseProduct( Other.Fields.col(Slice) );
+    ComplexScalarType C;
+    if (this->ModeNumber == Other.ModeNumber){C = 0.0;}
 
-    ScalarType Beta0 = this->Betas[Slice], Beta1 = Other.Betas[Slice];
+    else
+    {
+      VectorType overlap = this->Fields.col(Slice).cwiseProduct( Other.Fields.col(Slice) );
 
-    ComplexScalarType C  = - (ScalarType) 0.5 * J * kInit*kInit / sqrt(Beta0 *  Beta1) * abs( 1.0f / (Beta0 - Beta1) );
+      ScalarType Beta0 = this->Betas[Slice], Beta1 = Other.Betas[Slice];
 
-    ScalarType I       = Trapz(overlap.cwiseProduct( MeshGradient ), 1.0, Nx, Ny);
+      C  = - (ScalarType) 0.5 * J * kInit*kInit / sqrt(Beta0 *  Beta1) * abs( 1.0f / (Beta0 - Beta1) );
 
-    C      *=  I;
+      ScalarType I       = Trapz(overlap.cwiseProduct( MeshGradient ), 1.0, Nx, Ny);
+
+      C      *=  I;
+
+      C = abs(C);
+    }
+
+    this->Coupling(Other.ModeNumber, Slice) = abs(C);
+    Other.Coupling(this->ModeNumber, Slice) = abs(C);
 
     return abs(C);
   }
@@ -80,12 +91,36 @@ struct SuperMode
 
   ScalarType ComputeAdiabatic(SuperMode& Other, size_t Slice, VectorType &MeshGradient, ScalarType &kInit)
   {
+    ScalarType A;
+
     ScalarType Beta0 = this->Betas[Slice], Beta1 = Other.Betas[Slice];
 
-    ComplexScalarType C  = ComputeCoupling(Other, Slice, MeshGradient, kInit);
+    if (this->ModeNumber == Other.ModeNumber) { A = 0.0; }
+    else {A = abs( ComputeCoupling(Other, Slice, MeshGradient, kInit) / (Beta0-Beta1) );}
 
-    return abs(C/(Beta0-Beta1));
+    this->Adiabatic(Other.ModeNumber, Slice) = A;
+    Other.Adiabatic(this->ModeNumber, Slice) = A;
+
+    return A;
   }
+
+
+  void PopulateCouplingAdiabatic(SuperMode& Other, size_t Slice, VectorType &MeshGradient, ScalarType &kInit)
+  {
+    ScalarType Beta0 = this->Betas[Slice], Beta1 = Other.Betas[Slice];
+
+    ScalarType C  = ComputeCoupling(Other, Slice, MeshGradient, kInit);
+
+    this->Adiabatic(Other.ModeNumber, Slice) = abs(C / (Beta0-Beta1));
+    Other.Adiabatic(this->ModeNumber, Slice) = abs(C / (Beta0-Beta1));
+
+    this->Coupling(Other.ModeNumber, Slice) = abs(C);
+    Other.Coupling(this->ModeNumber, Slice) = abs(C);
+
+  }
+
+
+
 
 
 
@@ -155,7 +190,7 @@ class EigenSolving : public BaseLaplacian
     MSparse            EigenMatrix, Identity, M;
     VectorType         MeshGradient;
     BiCGSTAB<MSparse>  Solver;
-    std::vector<SuperMode> SuperModes, *SortedSuperModes;
+    std::vector<SuperMode> SuperModes, SortedSuperModes;
 
   EigenSolving(ndarray&   Mesh,
                ndarray&   PyMeshGradient,
@@ -197,7 +232,7 @@ class EigenSolving : public BaseLaplacian
 
 
    void      PopulateModes(size_t Slice, MatrixType& EigenVectors, VectorType& EigenValues);
-   SuperMode GetMode(size_t Mode){ return *SortedSuperModes[Mode]; }
+   SuperMode GetMode(size_t Mode){ return SortedSuperModes[Mode]; }
 
    void      PrepareSuperModes();
    void      SwapMode(SuperMode &Mode0, SuperMode &Mode1);
@@ -220,6 +255,7 @@ class EigenSolving : public BaseLaplacian
    void                          ComputeAdiabatic();
    vector<size_t>                ComputecOverlaps(size_t idx);
    void                          ComputeLaplacian(size_t order);
+   void                          ComputeCouplingAdiabatic();
 
    void SortModesFields();
    void SortModesIndex();

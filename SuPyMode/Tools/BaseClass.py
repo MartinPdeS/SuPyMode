@@ -38,38 +38,6 @@ class SetProperties(object):
         return self.Geometry.Symmetries
 
 
-    @property
-    def Coupling(self):
-        if self._Coupling is None:
-            self._Coupling = self.CppSolver.ComputingCoupling()
-
-        return self._Coupling
-
-
-    @property
-    def Adiabatic(self):
-        if self._Adiabatic is None:
-            self._Coupling = self.CppSolver.ComputingCoupling()
-            self._Adiabatic = self.CppSolver.ComputingAdiabatic()
-
-        return self._Adiabatic
-
-
-    @property
-    def Beta(self):
-        if self._Beta is None:
-            self._Beta = self.CppSolver.GetBetas()
-
-        return self._Beta
-
-
-    @property
-    def Index(self):
-        if self._Index is None:
-            self._Index = self.CppSolver.GetIndices()
-
-        return self._Index
-
 
 
 class SetPlottings():
@@ -79,7 +47,7 @@ class SetPlottings():
             Scene.AddLine(Row      = Row,
                           Col      = Col,
                           x        = self.ITRList,
-                          y        = supermode.GetIndex(),
+                          y        = supermode.Index,
                           Fill     = False,
                           Legend   = supermode.ModeNumber,
                           xLabel   = r'ITR',
@@ -93,7 +61,7 @@ class SetPlottings():
             Scene.AddLine(Row      = Row,
                           Col      = Col,
                           x        = self.ITRList,
-                          y        = supermode.GetBetas(),
+                          y        = supermode.Betas,
                           Fill     = False,
                           Legend   = supermode.ModeNumber,
                           xLabel   = r'ITR',
@@ -103,7 +71,9 @@ class SetPlottings():
 
 
     def PlotCoupling(self, Scene, Col, Row, Combination):
-        for (Mode0, Mode1) in Combination:
+        for supermode in self.SuperModes:
+            print(supermode.Adiabatic.shape)
+            Coupling = supermode.Coupling.T
             Scene.AddLine(Row      = Row,
                           Col      = Col,
                           x        = self.ITRList,

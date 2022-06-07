@@ -67,12 +67,13 @@ PYBIND11_MODULE(EigenSolver, module) {
          py::arg("Debug") = false
        )
 
-     .def("LoopOverITR",        &EigenSolving::LoopOverITR, py::arg("ITR"), py::arg("ExtrapolationOrder"))
-     .def("ComputeAdiabatic",   &EigenSolving::ComputeAdiabatic)
-     .def("ComputeCoupling",    &EigenSolving::ComputeCoupling)
-     .def("SortModes",          &EigenSolving::SortModes, py::arg("Sorting"))
-     .def("ComputeLaplacian",   &EigenSolving::ComputeLaplacian, py::arg("Order"))
-     .def("GetSlice",           &EigenSolving::GetSlice, py::arg("slice"))
+     .def("LoopOverITR",                 &EigenSolving::LoopOverITR, py::arg("ITR"), py::arg("ExtrapolationOrder"))
+     .def("ComputeAdiabatic",            &EigenSolving::ComputeAdiabatic)
+     .def("ComputeCouplingAdiabatic",    &EigenSolving::ComputeCouplingAdiabatic)
+     .def("ComputeCoupling",             &EigenSolving::ComputeCoupling)
+     .def("SortModes",                   &EigenSolving::SortModes, py::arg("Sorting"))
+     .def("ComputeLaplacian",            &EigenSolving::ComputeLaplacian, py::arg("Order"))
+     .def("GetSlice",                    &EigenSolving::GetSlice, py::arg("slice"))
 
      .def("GetIndices", &EigenSolving::GetIndices)
      .def("GetBetas",   &EigenSolving::GetBetas)

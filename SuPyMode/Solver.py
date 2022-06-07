@@ -24,6 +24,7 @@ class SuPySolver(object):
 
 
 
+
     def InitBinding(self, Symmetries: dict, Wavelength: float, nMode: int, sMode: int):
 
         CppSolver = EigenSolving(Mesh       = self.Geometry._Mesh,
@@ -51,47 +52,37 @@ class SuPySolver(object):
         return CppSolver
 
 
-    def GetSuperSet(self,
-                    Wavelength:     float,
-                    Nstep:          int,
+    def CreateSuperSet(self, Wavelength: float, NStep: int, ITRi: float, ITRf: float):
+        self.Wavelength = Wavelength
+        self.NStep      = NStep
+        self.ITRi       = ITRi
+        self.ITRf       = ITRf
+        self.ITRList    = np.linspace(ITRi, ITRf, NStep)
+        self.Set        = SuperSet(ParentSolver=self)
+
+
+    def AddModes(self,
                     nMode:          int,
                     sMode:          int,
-                    ITRi:           float = 1.0,
-                    ITRf:           float = 0.1,
                     Symmetries:     dict = 0,
                     Sorting:        str   = 'Index',
                     ):
 
-        CppSolver  = self.InitBinding(Symmetries, Wavelength, nMode, sMode)
-        #CppSolver1  = self.InitBinding({'Right': -1, 'Left': 0, 'Top': 0, 'Bottom': 0}, Wavelength, nMode, sMode)
-
-        self.ITRList = np.linspace(ITRi, ITRf, Nstep)
-
-
+        CppSolver  = self.InitBinding(Symmetries, self.Wavelength, nMode, sMode)
 
         CppSolver.LoopOverITR(ITR=self.ITRList, ExtrapolationOrder=3)
-        #CppSolver1.LoopOverITR(ITR=self.ITRList, ExtrapolationOrder=3)
+
+        CppSolver.SortModes(Sorting=Sorting)
+
+        CppSolver.ComputeCouplingAdiabatic()
+
+        for BindingNumber in range(CppSolver.sMode):
+            self.Set.AppendSuperMode(CppSolver=CppSolver, BindingNumber=BindingNumber)
 
 
+    def GetSet(self):
+        return self.Set
 
-        #CppSolver.SortModes(Sorting=Sorting)
-        #CppSolver1.SortModes(Sorting=Sorting)
-        CppSolver.ComputeCoupling()
-        CppSolver.ComputeAdiabatic()
-
-        Set = SuperSet(ParentSolver=self)
-
-        self.PopulateSuperSet(Set, [CppSolver])
-
-        return Set
-
-
-
-    def PopulateSuperSet(self, Set, CppSolvers):
-        Set.CppSolvers = CppSolvers
-        for CppSolver in CppSolvers:
-            for BindingNumber in range(CppSolver.sMode):
-                Set.AppendSuperMode(CppSolver=CppSolver, BindingNumber=BindingNumber)
 
 
 

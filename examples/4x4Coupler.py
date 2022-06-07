@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 nMode   = 6
 
-N = Nx = Ny  = 30
+N = Nx = Ny  = 40
 
 
 Index = ExpData('FusedSilica').GetRI(1.55e-6)
@@ -39,17 +39,21 @@ Geo.Rotate(90)
 
 Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000)
 
-SuperSet = Sol.GetSuperSet(Wavelength      = 1.55,
-                           Nstep           = 300,
-                           ITRi            = 1,
-                           ITRf            = 0.05,
-                           Sorting         = 'Index',
-                           Symmetries      = {'Right': 1, 'Left': 0, 'Top': 0, 'Bottom': 0},
-                           nMode=5,
-                           sMode=3
-                           )
+Sol.CreateSuperSet(Wavelength=1.55, NStep=300, ITRi=1, ITRf=0.05)
 
-a = SuperSet.Plot("Coupling")
+Sol.AddModes(Sorting         = 'Index',
+             Symmetries      = {'Right': 1, 'Left': 0, 'Top': 0, 'Bottom': 0},
+             nMode=5,
+             sMode=3 )
+
+Sol.AddModes(Sorting         = 'Index',
+             Symmetries      = {'Right': -1, 'Left': 0, 'Top': 0, 'Bottom': 0},
+             nMode=5,
+             sMode=3 )
+
+Set = Sol.GetSet()
+#Set.PlotFields([0])
+Set.Plot("Coupling")
 #SuperSet.PlotFields([-1])
 
 #Mode = SuperSet.GetSuperposition(Amplitudes=[1,0,0,1,0,0])
