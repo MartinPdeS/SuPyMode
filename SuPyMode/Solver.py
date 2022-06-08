@@ -13,14 +13,15 @@ class SuPySolver(object):
     """
     _Sorting = None
 
-    def __init__(self, Coupler, Tolerance, MaxIter, Error=2,  debug='INFO'):
+    def __init__(self, Coupler, Tolerance, MaxIter, Error=2,  Debug=True):
 
         Coupler.CreateMesh()
         self.Geometry     = Coupler
         self.Tolerance    = Tolerance
         self.MaxIter      = MaxIter
         self.Error        = Error
-        self.CppSolvers   = []
+        self.SolverNumber = 0
+        self.Debug        = Debug
 
 
 
@@ -36,7 +37,7 @@ class SuPySolver(object):
                                  dx         = self.Axes.dx,
                                  dy         = self.Axes.dy,
                                  Wavelength = Wavelength,
-                                 Debug      = False
+                                 Debug      = self.Debug
                                  )
 
         CppSolver.TopSymmetry    = Symmetries['Top']
@@ -47,7 +48,6 @@ class SuPySolver(object):
 
         CppSolver.ComputeLaplacian(self.Error)
 
-        self.CppSolvers.append(CppSolver)
 
         return CppSolver
 
@@ -76,8 +76,13 @@ class SuPySolver(object):
 
         CppSolver.ComputeCouplingAdiabatic()
 
+
         for BindingNumber in range(CppSolver.sMode):
-            self.Set.AppendSuperMode(CppSolver=CppSolver, BindingNumber=BindingNumber)
+            self.Set.AppendSuperMode(CppSolver=CppSolver, BindingNumber=BindingNumber, SolverNumber=self.SolverNumber)
+
+        self.SolverNumber += 1
+
+
 
 
     def GetSet(self):

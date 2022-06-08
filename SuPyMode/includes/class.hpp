@@ -96,7 +96,7 @@ struct SuperMode
     ScalarType Beta0 = this->Betas[Slice], Beta1 = Other.Betas[Slice];
 
     if (this->ModeNumber == Other.ModeNumber) { A = 0.0; }
-    else {A = abs( ComputeCoupling(Other, Slice, MeshGradient, kInit) / (Beta0-Beta1) );}
+    else { A = abs( (Beta0-Beta1) / ComputeCoupling(Other, Slice, MeshGradient, kInit) ); }
 
     this->Adiabatic(Other.ModeNumber, Slice) = A;
     Other.Adiabatic(this->ModeNumber, Slice) = A;
@@ -107,16 +107,8 @@ struct SuperMode
 
   void PopulateCouplingAdiabatic(SuperMode& Other, size_t Slice, VectorType &MeshGradient, ScalarType &kInit)
   {
-    ScalarType Beta0 = this->Betas[Slice], Beta1 = Other.Betas[Slice];
-
-    ScalarType C  = ComputeCoupling(Other, Slice, MeshGradient, kInit);
-
-    this->Adiabatic(Other.ModeNumber, Slice) = abs(C / (Beta0-Beta1));
-    Other.Adiabatic(this->ModeNumber, Slice) = abs(C / (Beta0-Beta1));
-
-    this->Coupling(Other.ModeNumber, Slice) = abs(C);
-    Other.Coupling(this->ModeNumber, Slice) = abs(C);
-
+    ComputeCoupling(Other, Slice, MeshGradient, kInit);
+    ComputeAdiabatic(Other, Slice, MeshGradient, kInit);
   }
 
 
@@ -144,7 +136,7 @@ class BaseLaplacian{
     size_t     Nx, Ny, size;
     ScalarType dx, dy, D0xy, D1y, D2y, D1x, D2x;
     MSparse    Laplacian;
-    bool       Debug=false;
+    bool       Debug;
 
     BaseLaplacian(ndarray&  Mesh, ScalarType dx, ScalarType dy){
       this->Nx                = Mesh.request().shape[0];
@@ -204,6 +196,7 @@ class EigenSolving : public BaseLaplacian
                bool       Debug)
                : BaseLaplacian(Mesh, dx, dy)
                 {
+                 this->Debug             = Debug;
                  this->nMode             = nMode;
                  this->sMode             = sMode;
                  this->MaxIter           = MaxIter;

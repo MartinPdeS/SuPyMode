@@ -54,8 +54,6 @@ BaseLaplacian::Points3Laplacian(){
 
     Laplacian3Boundary();
 
-    if (Debug==true)
-        cout<<Laplacian<<endl;
 }
 
 

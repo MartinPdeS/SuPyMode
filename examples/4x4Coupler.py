@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 nMode   = 6
 
-N = Nx = Ny  = 40
+N = Nx = Ny  = 80
 
 
 Index = ExpData('FusedSilica').GetRI(1.55e-6)
@@ -21,7 +21,7 @@ Index = ExpData('FusedSilica').GetRI(1.55e-6)
 Clad = Fused2(Radius =  62.5, Fusion  = 0.95, Index   = Index)
 
 Core0 = Circle( Position=Clad.C[0], Radius = 4.2, Index = Index+0.005 )
-Core1 = Circle( Position=Clad.C[1], Radius = 4.2, Index = Index+0.005 )
+Core1 = Circle( Position=Clad.C[1], Radius = 8.2, Index = Index+0.005 )
 
 
 Geo = Geometry(Clad    = Clad,
@@ -32,12 +32,12 @@ Geo = Geometry(Clad    = Clad,
                Ny      = Ny,
                BackGroundIndex = 1.)
 
-Geo.Rotate(90)
+Geo.Rotate(0)
 
-#Geo.Plot()
+Geo.Plot()
 
 
-Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000)
+Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000, Debug=False)
 
 Sol.CreateSuperSet(Wavelength=1.55, NStep=300, ITRi=1, ITRf=0.05)
 
@@ -52,8 +52,13 @@ Sol.AddModes(Sorting         = 'Index',
              sMode=3 )
 
 Set = Sol.GetSet()
-#Set.PlotFields([0])
+
+
 Set.Plot("Coupling")
+
+
+#Set.PlotFields([0])
+#Set.Plot("Coupling")
 #SuperSet.PlotFields([-1])
 
 #Mode = SuperSet.GetSuperposition(Amplitudes=[1,0,0,1,0,0])

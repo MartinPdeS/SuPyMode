@@ -296,8 +296,8 @@ class SuperSet(SetProperties, SetPlottings, ReprBase):
         return self.ParentSolver.Geometry.Axes
 
 
-    def AppendSuperMode(self, CppSolver, BindingNumber):
-        superMode = SuperMode(ParentSet=self, ModeNumber=self.NextMode, CppSolver=CppSolver, BindingNumber=BindingNumber )
+    def AppendSuperMode(self, CppSolver, BindingNumber, SolverNumber):
+        superMode = SuperMode(ParentSet=self, ModeNumber=self.NextMode, CppSolver=CppSolver, BindingNumber=BindingNumber, SolverNumber=SolverNumber )
 
         self.SuperModes.append( superMode )
 
@@ -337,9 +337,12 @@ class SuperMode(ReprBase):
                    "PlotBetas",
                    "PlotPropagation"]
 
-    def __init__(self, ParentSet, ModeNumber, CppSolver,  BindingNumber):
+    def __init__(self, ParentSet, ModeNumber, CppSolver,  BindingNumber, SolverNumber):
         self.Binded         = CppSolver.GetMode(BindingNumber)
         self.ModeNumber     = ModeNumber
+        self.SolverNumber   = SolverNumber
+        self.ID             = [SolverNumber, BindingNumber]
+        self.Name           = f"Mode {self.ID[0]}:{self.ID[1]}"
 
         self.CppSolver      = CppSolver
         self.ParentSet      = ParentSet
@@ -423,7 +426,7 @@ class SuperMode(ReprBase):
                       x        = self.ITRList,
                       y        = self.Index,
                       Fill     = False,
-                      Legend   = self.ModeNumber,
+                      Legend   = self.Name,
                       xLabel   = r'ITR',
                       yLabel   = r'Effective refractive index n$_{eff}$')
 
@@ -439,7 +442,7 @@ class SuperMode(ReprBase):
                       x        = self.ITRList,
                       y        = self.Betas,
                       Fill     = False,
-                      Legend   = self.ModeNumber,
+                      Legend   = self.Name,
                       xLabel   = r'ITR',
                       yLabel   = r'Propagation constante $\beta$')
 
@@ -457,7 +460,8 @@ class SuperMode(ReprBase):
                           y        = self.FullyAxis,
                           Scalar   = self.FullFields[slice].T,
                           xLabel   = r'X-Direction [$\mu m$]',
-                          yLabel   = r'Y-direction [$\mu m$]')
+                          yLabel   = r'Y-direction [$\mu m$]',
+                          Title    = self.Name)
 
             Scene.SetAxes(Row=0, Col=n, Equal=True, Legend=False)
         Scene.Show()
