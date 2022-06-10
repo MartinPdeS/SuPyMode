@@ -166,6 +166,43 @@ Eigen2ndarray(VectorType *Eigen3Vector, vector<size_t> dimension){
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+ndarray
+Eigen2ndarray_(VectorType &&Eigen3Vector, vector<size_t> dimension){
+
+  ndarray PyVector;
+
+
+  VectorType * Vectors = new VectorType;
+  (*Vectors) = Eigen3Vector;
+
+
+  vector<size_t> stride = GetStride(dimension);
+
+  py::capsule free_when_done(Vectors->data(), [](void *f) {
+     ScalarType *foo = reinterpret_cast<ScalarType *>(f);
+     delete []foo; } );
+
+  PyVector = ndarray( dimension, stride, Vectors->data(), free_when_done );
+
+   return PyVector;
+}
+
+
+
+
+
 ndarray
 Eigen2ndarray_(VectorType &Eigen3Vector, vector<size_t> dimension){
 
@@ -209,6 +246,30 @@ Eigen2ndarray_(MatrixType &Eigen3Vector, vector<size_t> dimension){
 
    return PyVector;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

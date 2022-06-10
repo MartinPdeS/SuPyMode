@@ -47,6 +47,7 @@ PYBIND11_MODULE(EigenSolver, module) {
     .def("GetBetas",                 &SuperMode::GetBetas)
     .def("GetCoupling",              &SuperMode::GetCoupling)
     .def("GetAdiabatic",             &SuperMode::GetAdiabatic)
+    .def("GetAdiabaticSpecific",     &SuperMode::GetAdiabaticSpecific)
     .def_readwrite("LeftSymmetry",   &SuperMode::LeftSymmetry)
     .def_readwrite("RightSymmetry",  &SuperMode::RightSymmetry)
     .def_readwrite("TopSymmetry",    &SuperMode::TopSymmetry)

@@ -120,6 +120,7 @@ struct SuperMode
   ndarray GetIndex(){ return Eigen2ndarray_( this->Index, { ITRLength} ); }
   ndarray GetBetas(){ return Eigen2ndarray_( this->Betas, { ITRLength} ); }
   ndarray GetAdiabatic(){ return Eigen2ndarray_( this->Adiabatic, { ITRLength, sMode} ); }
+  ndarray GetAdiabaticSpecific(SuperMode& Mode){ return Eigen2ndarray_( this->Adiabatic.row(Mode.ModeNumber), { ITRLength} ); }
   ndarray GetCoupling(){ return Eigen2ndarray_( this->Coupling, { ITRLength, sMode} ); }
 
 };

@@ -7,7 +7,8 @@ from scipy.interpolate     import interp1d
 from mayavi                import mlab
 
 from SuPyMode.Tools.BaseClass   import SetProperties, SetPlottings
-from SuPyMode.Plotting.Plots      import Scene2D
+from SuPyMode.Plotting.Plots      import Scene2D, Scene, Axis, Line, Mesh
+from SuPyMode.Plotting.PlotsUtils  import FieldMap, MidPointNorm
 
 Mlogger = logging.getLogger(__name__)
 
@@ -418,54 +419,89 @@ class SuperMode(ReprBase):
         return self._Betas
 
 
+    def _PlotIndex(self, Ax):
+        artist = Line(X=self.ITRList, Y=self.Index, Label=None, Fill=False)
+
+        Ax.AddArtist(artist)
+
+
+    def _PlotBetas(self, Ax):
+        artist = Line(X=self.ITRList, Y=self.Betas, Label=self.Name, Fill=False)
+
+        Ax.AddArtist(artist)
+
+
     def PlotIndex(self):
-        Scene = Scene2D(nCols=1, nRows=1, ColorBar=False)
+        Fig = Scene('SuPyMode Figure', UnitSize=(10,4))
 
-        Scene.AddLine(Row      = 0,
-                      Col      = 0,
-                      x        = self.ITRList,
-                      y        = self.Index,
-                      Fill     = False,
-                      Legend   = self.Name,
-                      xLabel   = r'ITR',
-                      yLabel   = r'Effective refractive index n$_{eff}$')
+        ax = Axis(Row    = 0,
+                  Col    = 0,
+                  xLabel = 'ITR',
+                  yLabel = r'Effective refraction index',
+                  Title  = None,
+                  Grid   = True,
+                  xScale = 'linear',
+                  yScale = 'linear')
 
-        Scene.SetAxes(0, 0, Equal=False, Legend=True, yLimits=[self.Geometry.MinIndex/1.005, self.Geometry.MaxIndex], LegendTitle='Mode')
-        Scene.Show()
+        self._PlotIndex(ax)
+
+        Fig.AddAxes(ax)
+
+        Fig.Show()
 
 
     def PlotBetas(self):
-        Scene = Scene2D(nCols=1, nRows=1, ColorBar=False)
+        Fig = Scene('SuPyMode Figure', UnitSize=(10,4))
 
-        Scene.AddLine(Row      = 0,
-                      Col      = 0,
-                      x        = self.ITRList,
-                      y        = self.Betas,
-                      Fill     = False,
-                      Legend   = self.Name,
-                      xLabel   = r'ITR',
-                      yLabel   = r'Propagation constante $\beta$')
+        ax = Axis(Row    = 0,
+                  Col    = 0,
+                  xLabel = 'ITR',
+                  yLabel = r'Propagation constante $\beta$',
+                  Title  = None,
+                  Grid   = True,
+                  xScale = 'linear',
+                  yScale = 'linear')
 
-        Scene.SetAxes(0, 0, Equal=False, Legend=True, LegendTitle='Mode')
-        Scene.Show()
+        self._PlotBetas(ax)
+
+        Fig.AddAxes(ax)
+
+        Fig.Show()
+
+
+    def _PlotFields(self, Ax, slice):
+        artist = Mesh(X           = self.FullxAxis,
+                      Y           = self.FullyAxis,
+                      Scalar      = self.FullFields[slice].T,
+                      ColorMap    = FieldMap,
+                      DiscretNorm = True,
+                      )
+
+        Ax.AddArtist(artist)
 
 
     def PlotFields(self, Slice: list):
-        Scene = Scene2D(nCols=len(Slice), nRows=1, ColorBar=False, UnitSize=[3,3])
+        Fig = Scene('SuPyMode Figure', UnitSize=(10,4))
 
         for n, slice in enumerate(Slice):
-            Scene.AddMesh(Row      = 0,
-                          Col      = n,
-                          x        = self.FullxAxis,
-                          y        = self.FullyAxis,
-                          Scalar   = self.FullFields[slice].T,
-                          xLabel   = r'X-Direction [$\mu m$]',
-                          yLabel   = r'Y-direction [$\mu m$]',
-                          Title    = self.Name)
+            ax = Axis(Row    = 0,
+                      Col    = n,
+                      xLabel = r'X-Direction [$\mu m$]',
+                      yLabel = r'Y-direction [$\mu m$]',
+                      Title  = f'{self.Name}  [ITR: {self.ITRList[slice]:.2f}]',
+                      Legend = False,
+                      ColorBar=True,
+                      ColorbarPosition = 'right',
+                      Grid   = True,
+                      Equal  = True,
+                      xScale = 'linear',
+                      yScale = 'linear')
 
-            Scene.SetAxes(Row=0, Col=n, Equal=True, Legend=False)
-        Scene.Show()
+            self._PlotFields(ax, slice)
 
+            Fig.AddAxes(ax)
+
+        Fig.Show()
 
 
     @property
