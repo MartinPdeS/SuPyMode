@@ -14,8 +14,7 @@ plt.rc('axes', prop_cycle=(
 from SuPyMode.Tools.Directories   import ZeroPath
 from SuPyMode.Tools.utils         import Multipage, ToList
 from SuPyMode.Plotting.PlotsUtils import FieldMap
-from SuPyMode.Plotting.Plots      import Scene2D
-from SuPyMode.Plotting.Plots      import Scene2D, Scene, Axis, Line, Mesh
+from SuPyMode.Plotting.Plots      import Scene, Axis, Line, Mesh
 
 
 class SetProperties(object):
@@ -194,9 +193,6 @@ class SetPlottings():
             return Fig.Figure
 
         Fig.Show()
-
-
-
 
 
     def ExportPDF(self, Directory='ExportedPDF', Slices=[0, -1], dpi=100):

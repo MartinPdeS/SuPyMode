@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 nMode   = 6
 
-N = Nx = Ny  = 40
+N = Nx = Ny  = 120
 
 
 Index = ExpData('FusedSilica').GetRI(1.55e-6)
@@ -26,8 +26,8 @@ Core1 = Circle( Position=Clad.C[1], Radius = 8.2, Index = Index+0.005 )
 
 Geo = Geometry(Clad    = Clad,
                Objects = [Core0, Core1],
-               Xbound  = [-150, 0],
-               Ybound  = [-150, 150],
+               Xbound  = [-100, 0],
+               Ybound  = [-100, 100],
                Nx      = Nx//2,
                Ny      = Ny,
                BackGroundIndex = 1.)
@@ -43,14 +43,20 @@ Sol.CreateSuperSet(Wavelength=1.55, NStep=300, ITRi=1, ITRf=0.05)
 
 Sol.AddModes(Sorting         = 'Index',
              Symmetries      = {'Right': 1, 'Left': 0, 'Top': 0, 'Bottom': 0},
-             nMode=6,
+             nMode=8,
              sMode=5 )
 
 
 Set = Sol.GetSet()
-Set.ExportPDF()
-#Set.PlotFields([0, -1])
-#Set[0].PlotFields([0, -1])
+
+
+
+#Set.PlotFields([0, 5, -1])
+
+Set[1].PlotPropagation(SaveName="LP11")
+#Set.PlotFields(Slices=[-1])
+#Set.ExportPDF()
+
 
 
 

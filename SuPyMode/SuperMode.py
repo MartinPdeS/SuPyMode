@@ -7,8 +7,9 @@ from scipy.interpolate     import interp1d
 from mayavi                import mlab
 
 from SuPyMode.Tools.BaseClass   import SetProperties, SetPlottings
-from SuPyMode.Plotting.Plots      import Scene2D, Scene, Axis, Line, Mesh
+from SuPyMode.Plotting.Plots      import Scene, Axis, Line, Mesh
 from SuPyMode.Plotting.PlotsUtils  import FieldMap, MidPointNorm
+from SuPyMode.Tools.Directories import RootPath
 
 Mlogger = logging.getLogger(__name__)
 
@@ -120,6 +121,7 @@ class SuperPosition(ReprBase):
 
     def PlotField(self, Slice):
         if self._Amplitudes is None: self.ComputeAmpltiudes()
+
         Scene = Scene2D(nCols=1, nRows=1, ColorBar=False)
 
         Field = self.SuperSet[0].FullFields[0]*0.
@@ -474,7 +476,7 @@ class SuperMode(ReprBase):
                       Y           = self.FullyAxis,
                       Scalar      = self.FullFields[slice].T,
                       ColorMap    = FieldMap,
-                      DiscretNorm = True,
+                      DiscretNorm = False,
                       )
 
         Ax.AddArtist(artist)
@@ -521,10 +523,6 @@ class SuperMode(ReprBase):
         return self.Binded.BottomSymmetry
 
 
-    def IterateSlice(self):
-        for n, slice in enumerate(self.Slice):
-            yield n, slice
-
     @property
     def Size(self):
         return len(self.ParentSet.ITRList)
@@ -543,10 +541,6 @@ class SuperMode(ReprBase):
     def Axes(self):
         return self.ParentSet.Axes
 
-
-    def ApplySymmetry(self, Field, xAxis, yAxis, axis):
-        Slice = [slice(None), slice(None), slice(None, None, -1)]
-        Output = np.concatenate((Field[Slice], Field), axis=axis)
 
 
     def ExtendAxis(self, Axis: np.ndarray, sign: str):
@@ -611,16 +605,6 @@ class SuperMode(ReprBase):
         else:
             return self.Betas[Slice], self.Fields[Slice], self.Axis.X, self.Axis.Y
 
-
-    def CompareSymmetries(self, Other):
-        assert isinstance(Other, SuperMode), "Can only compare SuperMode instance with another"
-        return np.all(self.Symmetries == Other.Symmetries)
-
-
-    def AppendSlice(self, SliceNumber):
-        self.Slice.append( SetSlice(ParentMode=self, SliceNumber=SliceNumber) )
-
-
     def __getitem__(self, N):
         return self.Slice[N]
 
@@ -629,27 +613,74 @@ class SuperMode(ReprBase):
         self.Slice[N] = val
 
 
-    def PlotPropagation(self):
-        surface = mlab.surf( np.abs( self.Fields[0]), warp_scale="auto")
+    def GetArrangedFields(self):
+        sign = np.sign( np.sum(self.FullFields[0]))
+        FullFields = [sign*self.FullFields[0]]
 
-        @mlab.animate(delay=100)
+        for field in self._FullFields:
+            overlap = np.sum(field*FullFields[-1])
+            if overlap > 0:
+                FullFields.append(field/np.max(np.abs(field)))
+
+            if overlap <= 0:
+                FullFields.append(-field/np.max(np.abs(field)))
+
+        return FullFields
+
+    def PlotPropagation(self, SaveName=None):
+
+        FullFields = self.GetArrangedFields()
+
+        FileName = []
+
+        factor = 5
+        offset = 11
+
+        fig = mlab.figure(size=(1000,700), bgcolor=(1,1,1), fgcolor=(0,0,0))
+
+        surface = mlab.surf(FullFields[0]*factor + offset, colormap='coolwarm', warp_scale='4', representation='wireframe', line_width=6, opacity=0.9, transparent=True)
+
+        mesh = self.Geometry.GetFullMesh(self.LeftSymmetry, self.RightSymmetry, self.TopSymmetry, self.BottomSymmetry)
+        baseline = mlab.surf(mesh*0, color=(0,0,0), representation='wireframe', opacity=0.53)
+
+        #mlab.contour_surf(mesh, color=(0,0,0), contours=[mesh.min(), 1.4, mesh.max()], line_width=6)
+
+        mlab.axes( xlabel='x', ylabel='y', zlabel='z', color=(0,0,0), nb_labels=10, ranges=(0,40,0,40,0,20), y_axis_visibility=False )
+
+
+        mlab.gcf().scene.parallel_projection = False
+        mlab.view(elevation=70, distance=300)
+        mlab.move(up=-6)
+
+        #mlab.outline(baseline)
+
+
+        import imageio
+
+        @mlab.animate(delay=10)
         def anim_loc():
-            for field in self.Fields:
-                surface.mlab_source.scalars = np.abs( field )
+            for n, field in enumerate(FullFields):
+                surface.mlab_source.scalars = field*factor + offset
+                baseline.mlab_source.scalars = field*3
+
+
+                if SaveName is not None:
+                    FileName.append( f'{RootPath}/Animation/Animation_{n:03d}.png' )
+                    mlab.savefig(filename=FileName[-1])
 
                 yield
 
         anim_loc()
         mlab.show()
 
-        """
-        import os
-        fps = 20
-        prefix = 'ani'
-        ext = '.png'
 
-        import subprocess
-        animate_plots(base_directory='yolo', fname_prefix='dasda')"""
+        if SaveName is not None:
+
+            with imageio.get_writer(f'{RootPath}/Animation/{SaveName}.gif', mode='I', fps=50) as writer:
+                for filename in FileName:
+                    image = imageio.imread(filename)
+                    writer.append_data(image)
+
 
 
 

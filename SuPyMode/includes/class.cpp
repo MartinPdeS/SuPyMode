@@ -98,8 +98,6 @@ EigenSolving::PrepareSuperModes()
   for (SuperMode& mode : SuperModes)
       mode.Init(ITRLength, Nx, Ny, LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry, sMode);
 
-  for (SuperMode& mode : SortedSuperModes)
-      mode.Init(ITRLength, Nx, Ny, LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry, sMode);
 }
 
 
@@ -109,21 +107,21 @@ EigenSolving::PopulateModes(size_t Slice, MatrixType& EigenVectors, VectorType& 
   for (SuperMode& mode : SuperModes)
   {
     mode.Fields.col(Slice)   << EigenVectors.col(mode.ModeNumber);
-    mode.Betas[Slice]        = sqrt( - EigenValues[mode.ModeNumber] ) / ITRPtr[Slice];
+    mode.Fields.col(Slice).normalize();
+    mode.Betas[Slice]        = sqrt( - EigenValues[mode.ModeNumber] ) / ITRList[Slice];
     mode.EigenValues[Slice]  = EigenValues[mode.ModeNumber];
-    mode.Index[Slice]        = sqrt( abs( mode.EigenValues[Slice] ) ) / (ITRPtr[Slice] * kInit);
+    mode.Index[Slice]        = sqrt( abs( mode.EigenValues[Slice] ) ) / (ITRList[Slice] * kInit);
   }
 
 }
 
 
 void
-EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
+EigenSolving::LoopOverITR(std::vector<double> ITRList, size_t order = 1){
+  this->ITRList     = ITRList;
 
+  ITRLength        = ITRList.size();
 
-  ITRList          = ITRList;
-  ITRLength        = ITRList.request().size;
-  ITRPtr           = (ScalarType*) ITRList.request().ptr;
 
   kInit            = 2.0 * PI / lambda;
 
@@ -138,12 +136,6 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
 
   ScalarType alpha = -pow( k * ComputeMaxIndex(), 2 );
-
-
-
-
-
-
 
 
 
@@ -173,7 +165,7 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
 
 
-    kDual = kInit * ITRPtr[slice];
+    kDual = kInit * ITRList[slice];
 
     tie(EigenVectors, EigenValues) = ComputeEigen(alpha);
 
@@ -185,7 +177,7 @@ EigenSolving::LoopOverITR(ndarray ITRList, size_t order = 1){
 
     alpha = ExtrapolateNext(order, AllFirstEigenValues, ITRList, next);
   }
-  SortModesIndex();
+
 }
 
 
@@ -241,7 +233,7 @@ EigenSolving::ComputecOverlaps(size_t Slice){
               if (Overlap > BestOverlap) {Indices[i] = j; BestOverlap = Overlap;}
           }
           if (BestOverlap<0.8)
-              std::cout<<"Bad mode correspondence: "<< BestOverlap <<"  At ITR: "<< ITRPtr[Slice] <<". You should consider makes more ITR steps"<<std::endl;
+              std::cout<<"Bad mode correspondence: "<< BestOverlap <<"  At ITR: "<< ITRList[Slice] <<". You should consider makes more ITR steps"<<std::endl;
     }
 
   return Indices;
@@ -249,36 +241,29 @@ EigenSolving::ComputecOverlaps(size_t Slice){
 }
 
 
+
+
 void
 EigenSolving::SortModes(std::string Type)
 {
   std::cout<<"Sorting SuperModes\n";
+  SortedSuperModes = std::vector<SuperMode>(sMode);
+
+  for (SuperMode &mode : SortedSuperModes)
+      mode.Init(ITRLength, Nx, Ny, LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry, sMode);
+
   if (Type == "Field") SortModesFields();
   else if (Type == "Index") SortModesIndex();
+  else if (Type == "None") SortModesNone();
 }
 
 
-void
-EigenSolving::SortModesFields(){
-
-}
 
 
-void
-EigenSolving::SwapMode(SuperMode &Mode0, SuperMode &Mode1)
-{
-  MatrixType TempField0 = Mode0.Fields,
-             TempField1 = Mode1.Fields;
 
-  VectorType TempBeta0 = Mode0.Betas,
-             TempBeta1 = Mode1.Betas;
 
-  Mode0.Fields = TempField1;
-  Mode1.Fields = TempField0;
 
-  Mode0.Betas = TempBeta1;
-  Mode1.Betas = TempBeta0;
-}
+
 
 
 void
@@ -286,13 +271,13 @@ EigenSolving::SortSliceIndex(size_t Slice)
 {
   vector<ScalarType> Betas;
   Betas.reserve(nMode);
-  SortedSuperModes = std::vector<SuperMode>(sMode);
+
 
   size_t iter=0;
   for (size_t mode=0; mode<sMode; ++mode)
   {
       Betas.push_back(SuperModes[mode].Betas[Slice]);
-      SortedSuperModes[mode] = SuperModes[mode];
+
       ++iter;
   }
 
@@ -301,10 +286,8 @@ EigenSolving::SortSliceIndex(size_t Slice)
   for (size_t mode=0; mode<sMode; ++mode)
   {
       auto order = sorted[mode];
-
       SortedSuperModes[mode].CopyOtherSlice(SuperModes[order], Slice);
   }
-
 }
 
 
@@ -313,8 +296,70 @@ EigenSolving::SortModesIndex()
 {
   for (size_t l=0; l<ITRLength; ++l)
       SortSliceIndex(l);
+}
+
+
+void
+EigenSolving::SortModesFields()
+{
+  for (size_t mode=0; mode<sMode; ++mode)
+      SortedSuperModes[mode] = SuperModes[mode];
+
+
+  for (size_t slice=0; slice<ITRLength-1; ++slice)
+      SortSliceFields(slice);
+}
+
+
+void
+EigenSolving::SortSliceFields(size_t Slice)
+{
+  for (size_t previous=0; previous<sMode; ++previous)
+  {
+      SuperMode &Mode0 = SortedSuperModes[previous];
+      std::vector<ScalarType> Overlaps(nMode, 0);
+
+      for (size_t after=0; after<nMode; ++after)
+          {
+            SuperMode &Mode1 = SuperModes[after];
+            Overlaps[after] = abs( Mode0.Fields.col(Slice).transpose() * Mode1.Fields.col(Slice+1)  );
+          }
+
+    int bestFit = std::max_element(Overlaps.begin(), Overlaps.end()) - Overlaps.begin();
+
+    Mode0.Fields.col(Slice+1) = SuperModes[bestFit].Fields.col(Slice+1);
+    Mode0.Betas[Slice+1]      = SuperModes[bestFit].Betas[Slice+1];
+    Mode0.Index[Slice+1]      = SuperModes[bestFit].Index[Slice+1];
+  }
+}
+
+
+
+void
+EigenSolving::SortModesNone()
+{
+  SortedSuperModes = std::vector<SuperMode>(sMode);
+
+  for (size_t mode=0; mode<sMode; ++mode)
+      SortedSuperModes[mode] = SuperModes[mode];
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void
 EigenSolving::ComputeCoupling()
@@ -396,41 +441,6 @@ EigenSolving::GetSlice(size_t Slice){
   return std::make_tuple( FieldsPython, BetasPython );
 }
 
-
-
-
-
-ndarray
-EigenSolving::GetFields(){
-  MatrixType Output(ITRLength*size, sMode);
-
-  for (size_t mode=0; mode<sMode; ++mode)
-    Output.col(mode)  = SortedSuperModes[mode].Fields;
-
-  return Eigen2ndarray_( Output, { sMode, ITRLength, Nx, Ny } ) ;
-}
-
-
-ndarray
-EigenSolving::GetIndices(){
-  MatrixType Output(ITRLength, sMode);
-
-  for (size_t mode=0; mode<sMode; ++mode)
-    Output.col(mode)  = SortedSuperModes[mode].Index;
-
-  return Eigen2ndarray_( Output, { ITRLength, sMode } ) ;
-}
-
-
-ndarray
-EigenSolving::GetBetas(){
-  MatrixType Output(ITRLength, sMode);
-
-  for (size_t mode=0; mode<sMode; ++mode)
-    Output.col(mode)  = SortedSuperModes[mode].Betas;
-
-  return Eigen2ndarray_( Output, { ITRLength, sMode } ) ;
-}
 
 
 

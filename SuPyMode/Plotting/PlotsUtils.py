@@ -38,8 +38,6 @@ FieldMap = LinearSegmentedColormap.from_list('my_gradient', (
 
 
 
-
-
 class MidPointNorm(Normalize):
     def __init__(self, midpoint=0, vmin=None, vmax=None, clip=False):
         Normalize.__init__(self,vmin, vmax, clip)

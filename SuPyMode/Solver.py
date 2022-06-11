@@ -72,9 +72,9 @@ class SuPySolver(object):
 
         CppSolver.LoopOverITR(ITR=self.ITRList, ExtrapolationOrder=3)
 
-        CppSolver.SortModes(Sorting=Sorting)
+        CppSolver.SortModes(Sorting='Field')
 
-        CppSolver.ComputeCouplingAdiabatic()
+        #CppSolver.ComputeCouplingAdiabatic()
 
 
         for BindingNumber in range(CppSolver.sMode):
@@ -86,11 +86,8 @@ class SuPySolver(object):
 
 
     def GetSet(self):
+
         return self.Set
-
-
-
-
 
 
 

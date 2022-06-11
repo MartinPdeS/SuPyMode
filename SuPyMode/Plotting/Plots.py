@@ -73,23 +73,28 @@ class Contour:
 
 
 class Mesh:
-    def __init__(self, X, Y, Scalar, ColorMap='viridis', DiscretNorm=None, Label=''):
+    def __init__(self, X, Y, Scalar, ColorMap='viridis', DiscretNorm=False, Label=''):
         self.X = X
         self.Y = Y
         self.Scalar = Scalar
         self.ColorMap=ColorMap
         self.Label = Label
 
-        #norm = colors.BoundaryNorm(DiscretNorm, ColorMap) if DiscretNorm is not None else None
+
+        self.Norm = colors.BoundaryNorm(DiscretNorm, 200, extend='both') if DiscretNorm is not False else None
+
 
     def Render(self, Ax):
         Image = Ax.pcolormesh(self.X,
                               self.Y,
                               self.Scalar,
-                              cmap=self.ColorMap,
-                              shading='auto',
-                              vmin=-np.max(np.abs(self.Scalar)),
-                              vmax=+np.max(np.abs(self.Scalar)))
+                              cmap    = self.ColorMap,
+                              shading = 'auto',
+                              #vmin    = -np.max(np.abs(self.Scalar)),
+                              #vmax    = +np.max(np.abs(self.Scalar)),
+                              norm = self.Norm
+
+                              )
 
         return Image
 
@@ -207,7 +212,7 @@ class Scene:
         self.Figure, Ax  = plt.subplots(ncols=ColMax+1, nrows=RowMax+1, figsize=FigSize)
 
         if not isinstance(Ax, np.ndarray): Ax = np.asarray([[Ax]])
-        if Ax.shape == 1: Ax = np.asarray([A])
+        if Ax.ndim == 1: Ax = np.asarray([Ax])
 
         self.Figure.suptitle(self.Title)
 
@@ -232,170 +237,6 @@ class Scene:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-class Scene2D:
-    UnitSize       = (10, 3)
-
-    def __init__(self, nCols, nRows, ColorBar=True, Projection=None, Grid=True, UnitSize=None):
-        self.nCols      = nCols
-        self.nRows      = nRows
-        self.ColorBar   = ColorBar
-        self.Projection = Projection
-        self.Grid       = Grid
-        self.Boundaries = {'x': [0, 0], 'y': [0, 0]}
-        if UnitSize is not None: self.UnitSize = UnitSize
-
-        self.InitScene()
-
-    def InitScene(self):
-        plt.rcParams['axes.grid'] = self.Grid
-        plt.rcParams['ytick.labelsize'] = 8
-        plt.rcParams['xtick.labelsize'] = 8
-        plt.rcParams["font.size"]       = 10
-        plt.rcParams["font.family"]     = "serif"
-
-        FigSize = [ self.UnitSize[0]*self.nCols, self.UnitSize[1]*self.nRows ]
-
-        self.Figure, self.Axes = plt.subplots(self.nRows,
-                                              self.nCols,
-                                              figsize=FigSize,
-                                              subplot_kw=dict(projection=self.Projection))
-
-        if np.size(self.Axes) == 1:
-            self.Axes = np.reshape(np.asarray( [self.Axes] ), (1, 1))
-        else:
-            self.Axes = np.reshape(np.asarray( [self.Axes] ), (self.nRows, self.nCols))
-
-
-    def AddLine(self, x, y, Col, Row, Title=None, Fill=True, Color=None, xLabel=None, yLabel=None, Legend=None):
-        ax = self.Axes[Row, Col]
-
-        ax.plot(x, y, color=Color, label=Legend)
-
-        if Title:
-            ax.set_title(Title)
-
-        if Fill:
-            ax.fill_between(x, y.min(), y, color=Color, alpha=0.7)
-
-        if xLabel:
-            ax.set_xlabel(xLabel)
-
-        if yLabel:
-            ax.set_ylabel(yLabel)
-
-
-    def AddShapely(self, Col, Row, Object, Text=None):
-        ax = self.Axes[Row, Col]
-
-        if isinstance(Object, Point):
-            ax.scatter(Object.x, Object.y, linewidth=7)
-            self.UpdateBoundary(x=Object.x, y=Object.y)
-
-        if isinstance(Object, (Polygon, MultiPolygon) ):
-            Image = ax.add_patch( PolygonPatch(Object, alpha=0.5) )
-            Coord = np.array( list(zip(*Object.exterior.coords.xy)) )
-            self.UpdateBoundary(x=Coord[:,0], y=Coord[:,1])
-
-        if Text:
-            ax.text(Object.x, Object.y, Text)
-
-
-    def UpdateBoundary(self, x=None, y=None):
-        if x is not None:
-            xMax, xMin = np.max(x), np.min(x)
-            XBound = min(self.Boundaries['x'][0], xMin), max(self.Boundaries['x'][1], xMax)
-            self.Boundaries['x'] = XBound
-
-        if y is not None:
-            yMax, yMin = np.max(y), np.min(y)
-            YBound = min(self.Boundaries['y'][0], yMin), max(self.Boundaries['y'][1], yMax)
-            self.Boundaries['y'] = XBound
-
-
-    def SetAxes(self, Col, Row, Equal=None, Legend=None, xLimits=None, yLimits=None, xScale='linear', yScale='linear', LegendTitle=None):
-        ax = self.Axes[Row, Col]
-
-        if Equal is True:
-            ax.set_aspect('equal')
-        if Equal is False:
-            ax.set_aspect('auto')
-
-        if Legend is not None:
-            ax.legend().set_visible(Legend)
-
-        if xLimits == 'auto': ax.set_xlim(self.Boundaries['x'])
-        if yLimits == 'auto': ax.set_ylim(self.Boundaries['y'])
-
-        if isinstance(xLimits, list): ax.set_xlim(xLimits)
-        if isinstance(yLimits, list): ax.set_ylim(yLimits)
-
-        ax.set_yscale(yScale)
-        ax.set_xscale(xScale)
-
-        if LegendTitle: ax.legend().set_title(LegendTitle)
-
-
-
-    def AddMesh(self, Col, Row, x, y, Scalar, ColorMap='viridis', Title=None, xLabel=None, yLabel=None, DiscretNorm=None):
-        ax = self.Axes[Row, Col]
-
-        norm = colors.BoundaryNorm(DiscretNorm, ColorMap) if DiscretNorm is not None else None
-
-        Image = ax.pcolormesh(x, y, Scalar, cmap=ColorMap, shading='auto', vmin=-np.max(np.abs(Scalar)), vmax=+np.max(np.abs(Scalar)) )
-
-        if Title is not None:
-            ax.set_title(Title)
-
-        if xLabel is not None:
-            ax.set_xlabel(xLabel)
-
-        if yLabel is not None:
-            ax.set_ylabel(yLabel)
-
-        if self.ColorBar:
-            plt.colorbar(Image, ax=ax, location='bottom')
-
-        self.UpdateBoundary(x=x, y=y)
-        plt.tight_layout(pad=3)
-
-
-    def AddContour(self, Col, Row, x, y, Scalar, ColorMap='viridis', Title=None, xLabel=None, yLabel=None, IsoLines=None):
-        ax = self.Axes[Row, Col]
-
-        ax.contour(x, y, Scalar, levels=IsoLines, colors='black', linewidth=.5)
-        Image = ax.contourf(x, y, Scalar, levels=IsoLines, cmap='jet', norm=colors.LogNorm() )
-
-        if Title is not None:
-            ax.set_title(Title)
-
-        if xLabel is not None:
-            ax.set_xlabel(xLabel)
-
-        if yLabel is not None:
-            ax.set_ylabel(yLabel)
-
-        if self.ColorBar:
-            plt.colorbar(Image, ax=ax, location='bottom', format="%.3f")
-
-        self.UpdateBoundary(x=x, y=y)
-        plt.tight_layout(pad=3)
-
-
-    def Show(self):
-        #plt.tight_layout(pad=3)
-        plt.show()
 
 
 class Scene3D:

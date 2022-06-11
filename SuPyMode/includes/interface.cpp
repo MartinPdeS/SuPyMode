@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <pybind11/complex.h>
 #include <pybind11/numpy.h>
 #include "../../extern/eigen/Eigen/Eigenvalues"
@@ -48,11 +49,13 @@ PYBIND11_MODULE(EigenSolver, module) {
     .def("GetCoupling",              &SuperMode::GetCoupling)
     .def("GetAdiabatic",             &SuperMode::GetAdiabatic)
     .def("GetAdiabaticSpecific",     &SuperMode::GetAdiabaticSpecific)
+    .def("GetCouplingSpecific",      &SuperMode::GetCouplingSpecific)
     .def_readwrite("LeftSymmetry",   &SuperMode::LeftSymmetry)
     .def_readwrite("RightSymmetry",  &SuperMode::RightSymmetry)
     .def_readwrite("TopSymmetry",    &SuperMode::TopSymmetry)
     .def_readwrite("BottomSymmetry", &SuperMode::BottomSymmetry)
-    .def_readwrite("BindingNumber",     &SuperMode::ModeNumber);
+    .def_readwrite("BindingNumber",  &SuperMode::ModeNumber);
+
 
     py::class_<EigenSolving>(module, "EigenSolving")
     .def(py::init<ndarray&, ndarray&, size_t, size_t, size_t, ScalarType, ScalarType, ScalarType, ScalarType, bool>(),
@@ -76,9 +79,7 @@ PYBIND11_MODULE(EigenSolver, module) {
      .def("ComputeLaplacian",            &EigenSolving::ComputeLaplacian, py::arg("Order"))
      .def("GetSlice",                    &EigenSolving::GetSlice, py::arg("slice"))
 
-     .def("GetIndices", &EigenSolving::GetIndices)
-     .def("GetBetas",   &EigenSolving::GetBetas)
-     .def("GetFields",  &EigenSolving::GetFields)
+
      .def("GetMode",    &EigenSolving::GetMode)
 
 

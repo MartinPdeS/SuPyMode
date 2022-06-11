@@ -5,6 +5,26 @@
 using namespace std;
 
 
+template <typename T>
+vector<size_t> sort_indexes(const vector<T> &v, bool Reverse=true) {
+
+  // initialize original index locations
+  vector<size_t> idx(v.size());
+  iota(idx.begin(), idx.end(), 0);
+
+  // sort indexes based on comparing values in v
+  // using std::stable_sort instead of std::sort
+  // to avoid unnecessary index re-orderings
+  // when v contains elements of equal values
+  stable_sort(idx.begin(), idx.end(),
+       [&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
+
+  if (Reverse)
+      std::reverse(idx.begin(), idx.end());
+
+  return idx;
+}
+
 VectorType
 GetRandomVector(size_t size){
   VectorType Output = VectorType::Random(size);
@@ -79,29 +99,29 @@ ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1){
 
 }
 
-vector<size_t>
-sort_indexes(const VectorType &v) {
-
-  vector<size_t> idx(v.size());
-  iota(idx.begin(), idx.end(), 0);
-
-  stable_sort(idx.begin(), idx.end(),
-       [&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
-
-  return idx;
-}
-
-
-vector<size_t>
-sort_indexes(const vector<ScalarType> &v) {
-
-  vector<size_t> idx(v.size());
-  iota(idx.begin(), idx.end(), 0);
-
-  stable_sort(idx.begin(), idx.end(), [&v](size_t i1, size_t i2) {return v[i1] > v[i2];});
-
-  return idx;
-}
+// vector<size_t>
+// sort_indexes(const VectorType &v) {
+//
+//   vector<size_t> idx(v.size());
+//   iota(idx.begin(), idx.end(), 0);
+//
+//   stable_sort(idx.begin(), idx.end(),
+//        [&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
+//
+//   return idx;
+// }
+//
+//
+// vector<size_t>
+// sort_indexes(const vector<ScalarType> &v) {
+//
+//   vector<size_t> idx(v.size());
+//   iota(idx.begin(), idx.end(), 0);
+//
+//   stable_sort(idx.begin(), idx.end(), [&v](size_t i1, size_t i2) {return v[i1] > v[i2];});
+//
+//   return idx;
+// }
 
 
 

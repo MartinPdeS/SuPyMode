@@ -19,7 +19,8 @@ import pickle
 from SuPyMode.Tools.Directories       import RootPath
 from SuPyMode.Tools.Special           import gradientO4
 from SuPyMode.Tools.utils             import ToList, Axes
-from SuPyMode.Plotting.Plots          import Scene2D
+from SuPyMode.Plotting.PlotsUtils     import FieldMap
+from SuPyMode.Plotting.Plots          import Scene, Axis, Mesh, Contour
 from SuPyMode.Tools.utils             import ObjectUnion
 
 Mlogger = logging.getLogger(__name__)
@@ -114,6 +115,29 @@ class Geometry(object):
         self.GetAllIndex()
 
 
+    def GetFullMesh(self, LeftSymmetry, RightSymmetry, TopSymmetry, BottomSymmetry):
+
+        FullMesh = self._Mesh
+
+        if BottomSymmetry in [1,-1]:
+            FullMesh = np.concatenate((FullMesh[::-1, :], FullMesh), axis=1)
+
+
+        if TopSymmetry in [1, -1]:
+            FullMesh = np.concatenate((FullMesh, FullMesh[::-1, :]), axis=1)
+
+
+        if RightSymmetry in [1, -1]:
+            FullMesh = np.concatenate((FullMesh[...], FullMesh[::-1, :]), axis=0)
+
+
+        if LeftSymmetry in [1, -1]:
+            FullMesh = np.concatenate((FullMesh[::-1, :], FullMesh[...]), axis=0)
+
+
+        return FullMesh
+
+
     @property
     def Mesh(self):
         if self._Mesh is None:
@@ -169,7 +193,7 @@ class Geometry(object):
     def GetAllIndex(self,):
         self.AllIndex = []
         for obj in self.AllObjects:
-            self.AllIndex.append(obj.Index)
+            self.AllIndex.append(float(obj.Index))
 
 
 
@@ -259,27 +283,35 @@ class Geometry(object):
 
         self.CreateMesh()
 
-        Scene = Scene2D(nCols=1, nRows=1, UnitSize=(6, 6))
+        Fig = Scene('SuPyMode Figure', UnitSize=(4,4))
 
-        Scene.AddContour(Row      = 0,
-                         Col      = 0,
-                         x        = self.X,
-                         y        = self.Y,
-                         Scalar   = self._Mesh,
-                         ColorMap = 'coolwarm',
-                         xLabel   = r'X-distance [$\mu$m]',
-                         yLabel   = r'Y-distance [$\mu$m]',
-                         IsoLines = np.sort( [0.99] + list(set(self._Mesh.flatten())) + [1.6] )
-                         )
+        ax = Axis(Row              = 0,
+                  Col              = 0,
+                  xLabel           = r'x [$\mu m$]',
+                  yLabel           = r'y [$\mu m$]',
+                  Title            = f'Refractive index structure',
+                  Legend           = False,
+                  ColorBar         = True,
+                  ColorbarPosition = 'right',
+                  Grid             = False,
+                  Equal            = True,
+                  xScale           = 'linear',
+                  yScale           = 'linear')
 
-        Scene.SetAxes(Col=0,
-                      Row=0,
-                      xLimits=[self.xMin, self.xMax],
-                      yLimits=[self.yMin, self.yMax],
-                      Equal=True,
+        artist = Mesh(X           = self.X,
+                      Y           = self.Y,
+                      Scalar      = self._Mesh,
+                      ColorMap    = 'cool',
+                      DiscretNorm = self.AllIndex,
                       )
 
-        Scene.Show()
+        ax.AddArtist(artist)
+
+        Fig.AddAxes(ax)
+
+        Fig.Show()
+
+
 
 
     def _Gradient(self):
