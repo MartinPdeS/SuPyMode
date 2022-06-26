@@ -6,6 +6,7 @@ import numpy as np
 from descartes           import PolygonPatch
 from shapely.geometry    import Point, LineString, MultiPolygon, Polygon
 import matplotlib.pyplot as plt
+import matplotlib.cm     as cm
 from matplotlib          import colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
@@ -73,7 +74,7 @@ class Contour:
 
 
 class Mesh:
-    def __init__(self, X, Y, Scalar, ColorMap='viridis', DiscretNorm=False, Label=''):
+    def __init__(self, X, Y, Scalar, ColorMap='viridis', Label=''):
         self.X = X
         self.Y = Y
         self.Scalar = Scalar
@@ -81,20 +82,27 @@ class Mesh:
         self.Label = Label
 
 
-        self.Norm = colors.BoundaryNorm(DiscretNorm, 200, extend='both') if DiscretNorm is not False else None
+    def Render(self, Ax, ColorBarDict):
+        self.Norm = colors.BoundaryNorm(np.unique(self.Scalar), 200, extend='both') if ColorBarDict['Discreet'] else None
 
-
-    def Render(self, Ax):
-        Image = Ax.pcolormesh(self.X,
+        Image = Ax._ax.pcolormesh(self.X,
                               self.Y,
                               self.Scalar,
                               cmap    = self.ColorMap,
                               shading = 'auto',
-                              #vmin    = -np.max(np.abs(self.Scalar)),
-                              #vmax    = +np.max(np.abs(self.Scalar)),
                               norm = self.Norm
-
                               )
+
+        if ColorBarDict['Create']:
+            divider = make_axes_locatable(Ax._ax)
+            cax = divider.append_axes(ColorBarDict['Position'], size="10%", pad=0.15)
+
+            if ColorBarDict['Discreet']:
+                ticks = np.unique(self.Scalar)
+                plt.colorbar(mappable=Image, norm=self.Norm, boundaries=ticks, ticks=ticks, cax=cax)
+            else:
+                plt.colorbar(mappable=Image, norm=self.Norm, cax=cax)
+
 
         return Image
 
@@ -118,23 +126,32 @@ class Line:
 
 
 class Axis:
-    def __init__(self, Row, Col, xLabel, yLabel, Title, Grid=True, Legend=True, xScale='linear', yScale='linear', xLimits=None, yLimits=None, Equal=False, ColorBar=False, ColorbarPosition='bottom'):
-        self.Row    = Row
-        self.Col    = Col
-        self.xLabel = xLabel
-        self.yLabel = yLabel
-        self.Title  = Title
-        self.Legend = Legend
-        self.Artist = []
-        self.MPLAxis = None
+    def __init__(self,
+                 Row, Col,
+                 xLabel='', yLabel='', Title='',
+                 Grid=True, Legend=True,
+                 xScale='linear', yScale='linear',
+                 xLimits=None, yLimits=None, Equal=False,
+                 ColorBar=False, ColorbarPosition='bottom', DiscreetColorbar=False, ):
+        self.Row     = Row
+        self.Col     = Col
+        self.Legend  = Legend
+        self.Artist  = []
+        self._ax     = None
         self.Grid    = Grid
         self.xScale  = xScale
         self.yScale  = yScale
         self.xLimits = xLimits
         self.yLimits = yLimits
         self.Equal   = Equal
-        self.ColorBar = ColorBar
-        self.ColorbarPosition = ColorbarPosition
+
+        self.Labels  = {'x': xLabel,
+                        'y': yLabel,
+                        'Title': Title}
+
+        self.ColorBarDict = {'Create': ColorBar,
+                             'Position': ColorbarPosition,
+                             'Discreet': DiscreetColorbar}
 
 
     def AddArtist(self, *Artist):
@@ -143,30 +160,27 @@ class Axis:
 
     def Render(self):
         for art in self.Artist:
-            Image = art.Render(self.MPLAxis)
+            Image = art.Render(self, ColorBarDict=self.ColorBarDict)
 
         if self.Legend:
-            self.MPLAxis.legend()
+            self._ax.legend()
 
-        self.MPLAxis.grid(self.Grid)
+        self._ax.grid(self.Grid)
 
-        if self.xLimits is not None: self.MPLAxis.set_xlim(self.xLimits)
-        if self.yLimits is not None: self.MPLAxis.set_ylim(self.yLimits)
+        if self.xLimits is not None: self._ax.set_xlim(self.xLimits)
+        if self.yLimits is not None: self._ax.set_ylim(self.yLimits)
 
-        self.MPLAxis.set_xlabel(self.xLabel)
-        self.MPLAxis.set_ylabel(self.yLabel)
-        self.MPLAxis.set_title(self.Title)
+        self._ax.set_xlabel(self.Labels['x'])
+        self._ax.set_ylabel(self.Labels['y'])
+        self._ax.set_title(self.Labels['Title'])
 
-        self.MPLAxis.set_xscale(self.xScale)
-        self.MPLAxis.set_yscale(self.yScale)
+        self._ax.set_xscale(self.xScale)
+        self._ax.set_yscale(self.yScale)
 
         if self.Equal:
-            self.MPLAxis.set_aspect("equal")
+            self._ax.set_aspect("equal")
 
-        if self.ColorBar:
-            divider = make_axes_locatable(self.MPLAxis)
-            cax = divider.append_axes(self.ColorbarPosition, size="5%", pad=0.05)
-            plt.colorbar(Image, cax=cax, )
+
 
 
 
@@ -217,7 +231,7 @@ class Scene:
         self.Figure.suptitle(self.Title)
 
         for ax in self.Axis:
-            ax.MPLAxis = Ax[ax.Row, ax.Col]
+            ax._ax = Ax[ax.Row, ax.Col]
 
 
     def Render(self):
@@ -233,231 +247,6 @@ class Scene:
         self.Render()
         plt.show()
 
-
-
-
-
-
-
-class Scene3D:
-    Size       = (600, 350)
-    BackGround = (1,1,1)
-    ForGround  = (0,0,0)
-
-    def __init__(self, Axes=None, UnitSphere=None, ColorBar=True, AddSource=True, Bounds=None):
-        self.Objects    = []
-        self.Axes       = Axes
-        self.UnitSphere = UnitSphere
-        self.ColorBar   = ColorBar
-        self.AddSource  = AddSource
-        self.Bounds     = Bounds
-
-        self.InitScene()
-
-
-    def InitScene(self):
-        self.Figure = mlab.figure(size    = self.Size,
-                                  bgcolor = self.BackGround,
-                                  fgcolor = self.ForGround
-                                  )
-
-        visual.set_viewer(self.Figure)
-
-
-    def ConfigScene(self):
-        self.Figure.scene.camera.position = [5, 8.5, 9.5]
-        self.Figure.scene.camera.focal_point = [0.04, 0.8, -0.6]
-        self.Figure.scene.camera.view_angle = 30.0
-        self.Figure.scene.camera.view_up = [0.93, -0.22, -0.28]
-        self.Figure.scene.camera.clipping_range = [0.03, 31]
-
-
-
-    def AddStructured(self,
-                      Coordinate,
-                      Scalar,
-                      Offsets         = [0,0,0],
-                      ColorMap        = 'RdBu',
-                      Opacity         = 1,
-                      Name            = '',
-                      Orientation     = 'horizontal',
-                      Text            = None
-                      ):
-
-        Coordinate = [Coordinate[i] + Offsets[i] for i in range(3)]
-
-        object = {'Type'           : 'Structured',
-                  'Coordinate'     : Coordinate,
-                  'Scalar'         : Scalar,
-                  'Offsets'        : Offsets,
-                  'ColorMap'       : ColorMap,
-                  'Opacity'        : Opacity,
-                  'Extra'          : True,
-                  'Name'           : Name,
-                  'Orientation'    : Orientation,
-                  'Text'           : Text
-                 }
-
-        self.Objects.append( object )
-
-
-    def AddQuiver(self,
-                  Phi,
-                  Theta,
-                  Quiver,
-                  Offsets = [0,0,0],
-                  Skip    = 5,
-                  Text    = None
-                  ):
-
-        Coordinate, PhiQuiver, ThetaQuiver = GetUnitVector(Phi[::Skip, ::Skip],
-                                                           Theta[::Skip, ::Skip])
-
-        Coordinate = [Coordinate[i]*1.1 + Offsets[i] for i in range(3)]
-
-        if Quiver == 'Theta':
-            Vector = ThetaQuiver
-        elif Quiver == 'Phi':
-            Vector = PhiQuiver
-
-
-        object = {'Type'       : 'Quiver',
-                  'Coordinate' : Coordinate,
-                  'Vector'     : Vector,
-                  'Offsets'    : Offsets,
-                  'Color'      : (0,0,0),
-                  'Scale'      : 0.1,
-                  'Extra'      : False,
-                  'Name'       : 'QuiverPlot',
-                  'ScaleMode'  : 'vector',
-                  'Rendered'   : False,
-                  'Text'       : Text
-                 }
-
-        self.Objects.append( object )
-
-
-    def AddUnstructured(self,
-                        Coordinate,
-                        Scalar,
-                        Offsets         = [0,0,0],
-                        ColorMap        = 'RdBu',
-                        Opacity         = 1,
-                        Name            = '',
-                        Orientation     = 'horizontal',
-                        Text            = None
-                        ):
-
-        Coordinate = [Coordinate[i] + Offsets[i] for i in range(3)]
-
-        object = {'Type'       : 'Unstructured',
-                  'Coordinate' : Coordinate,
-                  'Scalar'     : Scalar,
-                  'Offsets'    : Offsets,
-                  'ColorMap'   : ColorMap,
-                  'Opacity'    : Opacity,
-                  'Extra'      : True,
-                  'Name'       : Name,
-                  'Orientation': Orientation,
-                  'Rendered'   : False,
-                  'Text'       : Text
-                 }
-
-        self.Objects.append( object )
-
-
-    def AddExtra(self, Object):
-        if self.Axes:
-            AddUnitAxes(Figure=self.Figure, Scale=2.5, Origin=Object['Offsets'], ScaleTube=0.7)
-
-        if self.UnitSphere:
-            AddUnitSphere(Num = 50, Radius = 1., Origin = Object['Offsets'], Figure = self.Figure)
-
-        if self.Bounds:
-            Object['Image'].module_manager.scalar_lut_manager.data_range = self.Bounds
-
-        if self.ColorBar and Object['ColorMap'] is not None:
-            cb = mlab.colorbar(object            = Object['Image'],
-                               label_fmt         = "%.0e",
-                               nb_labels         = 5,
-                               title             = Object['Name'],
-                               orientation       = Object['Orientation'] )
-
-            cb.scalar_bar.unconstrained_font_size = True
-            cb.title_text_property.font_family    = 'times'
-            cb.label_text_property.font_size      = 20
-
-        if self.AddSource:
-            Pad = [0, 0, -4]
-            Offset = [Object['Offsets'][i] + Pad[i] for i in range(3)]
-            WavenumberArrow(self.Figure, Origin=Offset, Scale=1)
-
-        if Object['Text']:
-            mlab.text3d(x          = Object['Offsets'][0],
-                        y          = Object['Offsets'][1],
-                        z          = Object['Offsets'][2]-2,
-                        text       = Object['Text'],
-                        line_width = 0.1,
-                        figure     = self.Figure,
-                        scale      = 0.25,
-                        color      = (0,0,0))
-
-
-    def RenderStructured(self, Object):
-
-        Object['Image'] = mlab.mesh(*Object['Coordinate'],
-                          scalars  = Object['Scalar'],
-                          colormap = Object['ColorMap'],
-                          figure   = self.Figure,
-                          opacity  = Object['Opacity'] )
-
-        Object['Rendered'] = True
-
-
-    def RenderUnstructured(self, Object):
-        Object['Image'] = mlab.points3d(*Object['Coordinate'], Object['Scalar'],
-                                         mode       = 'sphere',
-                                         scale_mode = 'none',
-                                         colormap   = Object['ColorMap'])
-
-        Object['Rendered'] = True
-
-
-    def RenderQuiver(self, Object):
-        Object['Image'] = mlab.quiver3d(*Object['Coordinate'],
-                                        *Object['Vector'],
-                                        color        = Object['Color'],
-                                        scale_factor = Object['Scale'],
-                                        scale_mode   = Object['ScaleMode'],
-                                        figure       = self.Figure)
-
-        Object['Rendered'] = True
-
-
-
-    def Render(self):
-        for Object in self.Objects:
-
-            if Object['Type'] == 'Structured':
-                self.RenderStructured(Object)
-
-
-            elif Object['Type'] == 'Unstructured':
-                self.RenderUnstructured(Object)
-
-            elif Object['Type'] == 'Quiver':
-                self.RenderQuiver(Object)
-
-            if Object['Extra']:
-                self.AddExtra(Object)
-
-
-    def Show(self, Wait=False):
-        self.ConfigScene()
-
-        if Wait: return
-
-        mlab.show()
 
 
 

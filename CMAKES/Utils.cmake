@@ -1,10 +1,12 @@
-#Upload Pypi package------------------------------------------------------------
+#Upload Pypi package-----------------------------------------------------------------------
 add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/UploadPypi.txt
-  COMMAND python3.8 -m twine upload --password ${Password} --username ${Token} --repository pypi /Project/SuPyMode/output/*
+  OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/Upload.txt
+  COMMAND rm -rf dist/*
+  COMMAND python3 setup.py bdist_wheel --NewMinor
+  COMMAND python3 -m twine upload --password $ENV{PyPiPassword} --username $ENV{PyPiToken} --repository pypi dist/*
   COMMENT "Upload on Pypi")
-
 add_custom_target(UploadPypi DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/UploadPypi.txt)
+
 
 
 #Cleaning command---------------------------------------------------------------

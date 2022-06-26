@@ -41,8 +41,6 @@ class SetProperties(object):
 
 
 class SetPlottings():
-
-
     def GetCombinations(self):
         Combination = []
         for Mode0 in self.SuperModes:

@@ -22,7 +22,24 @@ URL             = 'https://github.com/MartinPdeS/SuPyMode'
 EMAIL           = 'Martin.poinsinet.de.sivry@gmail.com'
 AUTHOR          = 'Martin Poinsinet de Sivry',
 REQUIRES_PYTHON = '>3.8.0'
-VERSION         = '0.0.9'
+
+
+Major, Mid, Minor = 0, 0, 9
+
+if '--NewMajor' in sys.argv:
+    Major += 1
+    sys.argv.remove('--NewMajor')
+if '--NewMid' in sys.argv:
+    Mid += 1
+    sys.argv.remove('--NewMidr')
+if '--NewMinor' in sys.argv:
+    Minor += 1
+    sys.argv.remove('--NewMinor')
+
+Version = f'{Major}.{Mid}.{Minor}'
+
+print(f"PyMieSim Version: {Version}")
+
 
 # What packages are required for this module to be executed?
 requirementPath = os.path.join(os.path.dirname(__file__), 'requirements.txt')
@@ -40,7 +57,7 @@ EXTRAS = {}
 here = os.path.abspath(os.path.dirname(__file__))
 
 
-macro = [('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION')]
+macro = [('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_Version')]
 
 
 try:
@@ -51,12 +68,12 @@ except FileNotFoundError:
 
 
 about = {}
-if not VERSION:
+if not Version:
     project_slug = NAME.lower().replace("-", "_").replace(" ", "_")
     with open(os.path.join(here, project_slug, '__version__.py')) as f:
         exec(f.read(), about)
 else:
-    about['__version__'] = VERSION
+    about['__version__'] = Version
 
 
 # Where the magic happens:

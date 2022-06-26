@@ -45,6 +45,16 @@ class SuperPosition(ReprBase):
         self.InitialAmplitudes = np.asarray(InitialAmplitudes).astype(complex)
         self._CouplerLength    = None
         self._Amplitudes       = None
+        self.Init()
+
+
+
+    def Init(self):
+        shape = [len(self.InitialAmplitudes)] + list(self.SuperSet[0].FullFields.shape)
+
+        self.Fields = np.zeros(shape)
+        for n, mode in enumerate(self.SuperSet.SuperModes):
+            self.Fields[n] = mode.FullFields
 
 
     def ComputeAmpltiudes(self, rTol=1e-8, aTol=1e-7, MaxStep=np.inf):
@@ -94,10 +104,13 @@ class SuperPosition(ReprBase):
 
 
     def PlotAmplitudes(self):
-        Scene = Scene2D(nCols=1, nRows=1, ColorBar=False)
+
+        Fig = Scene('SuPyMode Figure', UnitSize=(10,4))
+
         A = self.InitialAmplitudes.dot(self.Amplitudes)
         z = self.Distances
-        Scene.AddLine(Row      = 0,
+
+        Fig.AddLine(Row      = 0,
                       Col      = 0,
                       x        = z,
                       y        = A.real,
@@ -106,7 +119,7 @@ class SuperPosition(ReprBase):
                       xLabel   = r'Z-Distance [$\mu m$]',
                       yLabel   = r'Mode complex ampltiude [normalized]')
 
-        Scene.AddLine(Row      = 0,
+        scene.AddLine(Row      = 0,
                       Col      = 0,
                       x        = z,
                       y        = np.abs(A),
@@ -116,31 +129,44 @@ class SuperPosition(ReprBase):
                       yLabel   = r'Mode complex ampltiude [normalized]')
 
 
-        Scene.SetAxes(0, 0, Equal=False, Legend=True)
-        Scene.Show()
-
-    def PlotField(self, Slice):
-        if self._Amplitudes is None: self.ComputeAmpltiudes()
-
-        Scene = Scene2D(nCols=1, nRows=1, ColorBar=False)
-
-        Field = self.SuperSet[0].FullFields[0]*0.
-
-        for a, mode in zip(self.InitialAmplitudes, self.SuperSet.SuperModes):
-            field = np.real(a)*mode.FullFields[Slice]
-            Field += field
+        scene.SetAxes(0, 0, Equal=False, Legend=True)
+        scene.Show()
 
 
-        Scene.AddMesh(Row      = 0,
-                      Col      = 0,
-                      x        = self.SuperSet[0].FullxAxis,
-                      y        = self.SuperSet[0].FullyAxis,
-                      Scalar   = Field.T.real,
-                      xLabel   = r'X-Direction [$\mu m$]',
-                      yLabel   = r'Y-direction [$\mu m$]')
+    def PlotField(self, Slices: list=[0]):
+        Fig = Scene('SuPyMode Figure', UnitSize=(4,4))
 
-        Scene.SetAxes(Row=0, Col=0, Equal=True, Legend=False)
-        Scene.Show()
+        Field =
+
+        for n, slice in enumerate(Slices):
+
+            ax = Axis(Row              = 0,
+                      Col              = n,
+                      xLabel           = r'x [$\mu m$]',
+                      yLabel           = r'y [$\mu m$]',
+                      Title            = f'Mode field  [ITR: {self.ITRList[slice]:.2f}]',
+                      Legend           = False,
+                      ColorBar         = True,
+                      Grid             = False,
+                      Equal            = True,
+                      DiscreetColorbar = False,
+                      ColorbarPosition = 'right',
+                      xScale           = 'linear',
+                      yScale           = 'linear')
+
+
+            artist = Mesh(X           = self.SuperSet.FullxAxis,
+                          Y           = self.SuperSet.FullyAxis,
+                          Scalar      = self.Fields[0,slice,...],
+                          ColorMap    = FieldMap,
+                          )
+
+            ax.AddArtist(artist)
+
+            Fig.AddAxes(ax)
+
+        Fig.Show()
+
 
 
     def PlotPropagation(self):
@@ -177,9 +203,7 @@ class SuperSet(SetProperties, SetPlottings, ReprBase):
 
     Description = 'SuperSet class'
 
-    ReprVar     = ["ParentSolver",
-                   "Size",
-                   "Geometry"]
+    ReprVar     = ["ParentSolver", "Size", "Geometry"]
 
     Methods     = ["GetSuperposition", "Matrix"]
 
@@ -197,11 +221,21 @@ class SuperSet(SetProperties, SetPlottings, ReprBase):
 
         return M
 
+
     @property
     def Matrix(self):
         if self._Matrix is None:
             self._Matrix = self.ComputePropagationMatrix()
         return self._Matrix
+
+    @property
+    def FullxAxis(self):
+        return self[0].FullxAxis
+
+    @property
+    def FullyAxis(self):
+        return self[0].FullyAxis
+
 
     @property
     def NextMode(self):
@@ -476,7 +510,6 @@ class SuperMode(ReprBase):
                       Y           = self.FullyAxis,
                       Scalar      = self.FullFields[slice].T,
                       ColorMap    = FieldMap,
-                      DiscretNorm = False,
                       )
 
         Ax.AddArtist(artist)

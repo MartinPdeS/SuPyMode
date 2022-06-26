@@ -1,36 +1,44 @@
-from SuPyModes.Geometry          import Geometry, Fused2, Circle
-from SuPyModes.Solver            import SuPySolver
-from SuPyModes.sellmeier         import Fused_silica
+from SuPyMode.Geometry          import Geometry, Fused2, Circle
+from SuPyMode.Solver            import SuPySolver
+from SuPyMode.Materials         import FusedSilica
 
-Clad = Fused2(Radius =  62.5,
-              Fusion  = 1,
-              Index   = Fused_silica(1.55))
 
-Core0 = Circle( Position=Clad.C[0], Radi = 4.1, Index = Fused_silica(1.55)+0.005 )
+Wavelength = 1.55e-6
+Index = FusedSilica.GetRI(Wavelength)
 
-Core1 = Circle( Position=Clad.C[1], Radi = 4.1, Index = Fused_silica(1.55)+0.005 )
+Clad = Fused2(Radius = 62.5, Fusion = 1, Index = Index)
 
-Geo = Geometry(Objects = [Clad, Core0, Core1],
-               Xbound  = [-100, 100],
+Core0 = Circle( Position=Clad.C[0], Radius = 4.1, Index = Index+0.005 )
+
+Core1 = Circle( Position=Clad.C[1], Radius = 4.1, Index = Index+0.005 )
+
+Geo = Geometry(Clad    = Clad,
+               Objects = [Core0, Core1],
+               Xbound  = [-100, 0],
                Ybound  = [-100, 100],
-               Nx      = 100,
+               Nx      = 50,
                Ny      = 100)
+Geo.Rotate(90)
 
 Geo.Plot()
 
-Sol = SuPySolver(Coupler=Geo)
+Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000)
 
-SuperModes = Sol.GetModes(wavelength = 1.55,
-                          Nstep      = 150,
-                          Nsol       = 7,
-                          debug      = False,
-                          ITRi       = 1,
-                          ITRf       = 0.05,
-                          tolerance  = 1e-20,
-                          error      = 3,
-                          Xsym       = 0,
-                          Ysym       = 0 )
+Sol.CreateSuperSet(Wavelength=1.55, NStep=300, ITRi=1, ITRf=0.05)
 
-SuperModes.SaveFig(Directory  = '2x2Coupler',
-                   Input      = ['All'],
-                   nMax       = 4)
+
+Sol.AddModes(Sorting         = 'Index',
+             Symmetries      = {'Right': 1, 'Left': 0, 'Top': 0, 'Bottom': 0},
+             nMode           = 4,
+             sMode           = 2 )
+
+Sol.AddModes(Sorting         = 'Index',
+             Symmetries      = {'Right': -1, 'Left': 0, 'Top': 0, 'Bottom': 0},
+             nMode           = 4,
+             sMode           = 2 )
+
+Set = Sol.GetSet()
+
+Set.PlotFields([0, -1])
+
+Set.PlotAdiabatic()

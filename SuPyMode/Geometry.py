@@ -9,17 +9,15 @@ from itertools                   import combinations
 from shapely.geometry            import Point, box
 from shapely                     import affinity
 from scipy.ndimage.filters       import gaussian_filter
-from shapely.geometry            import Point, LineString, MultiPolygon, Polygon
+from shapely.geometry            import Point, MultiPolygon, Polygon
 from shapely.ops                 import nearest_points, unary_union
 from shapely.geometry.collection import GeometryCollection
 from scipy.optimize              import minimize_scalar
-import pickle
 
 """ package imports """
 from SuPyMode.Tools.Directories       import RootPath
 from SuPyMode.Tools.Special           import gradientO4
 from SuPyMode.Tools.utils             import ToList, Axes
-from SuPyMode.Plotting.PlotsUtils     import FieldMap
 from SuPyMode.Plotting.Plots          import Scene, Axis, Mesh, Contour
 from SuPyMode.Tools.utils             import ObjectUnion
 
@@ -292,17 +290,17 @@ class Geometry(object):
                   Title            = f'Refractive index structure',
                   Legend           = False,
                   ColorBar         = True,
-                  ColorbarPosition = 'right',
                   Grid             = False,
                   Equal            = True,
+                  DiscreetColorbar = True,
+                  ColorbarPosition = 'right',
                   xScale           = 'linear',
                   yScale           = 'linear')
 
         artist = Mesh(X           = self.X,
                       Y           = self.Y,
                       Scalar      = self._Mesh,
-                      ColorMap    = 'cool',
-                      DiscretNorm = self.AllIndex,
+                      ColorMap    = 'Blues',
                       )
 
         ax.AddArtist(artist)
