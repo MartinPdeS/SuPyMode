@@ -1,6 +1,9 @@
+#pragma once
+
 #include <numeric>      // std::iota
 #include <algorithm>    // std::sort, std::stable_sort
 #include "FinitCoefficient.hpp"
+#include "Definitions.cpp"
 
 using namespace std;
 
@@ -96,38 +99,7 @@ ComputecOverlaps(MatrixType Matrix0, MatrixType Matrix1){
       }
 
   return Indices;
-
 }
-
-// vector<size_t>
-// sort_indexes(const VectorType &v) {
-//
-//   vector<size_t> idx(v.size());
-//   iota(idx.begin(), idx.end(), 0);
-//
-//   stable_sort(idx.begin(), idx.end(),
-//        [&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
-//
-//   return idx;
-// }
-//
-//
-// vector<size_t>
-// sort_indexes(const vector<ScalarType> &v) {
-//
-//   vector<size_t> idx(v.size());
-//   iota(idx.begin(), idx.end(), 0);
-//
-//   stable_sort(idx.begin(), idx.end(), [&v](size_t i1, size_t i2) {return v[i1] > v[i2];});
-//
-//   return idx;
-// }
-
-
-
-
-
-
 
 
 

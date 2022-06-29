@@ -24,7 +24,11 @@ AUTHOR          = 'Martin Poinsinet de Sivry',
 REQUIRES_PYTHON = '>3.8.0'
 
 
-Major, Mid, Minor = 0, 0, 9
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+with open(os.path.join(__location__, 'Version.py'), "r+") as f:
+    Version = f.read().rstrip("\n").split(".")
+    Major, Mid, Minor = int(Version[0]), int(Version[1]), int(Version[2])
 
 if '--NewMajor' in sys.argv:
     Major += 1
@@ -38,7 +42,10 @@ if '--NewMinor' in sys.argv:
 
 Version = f'{Major}.{Mid}.{Minor}'
 
-print(f"PyMieSim Version: {Version}")
+print(f"SuPyMode Version: {Version}")
+
+with open(os.path.join(__location__, 'Version.py'), "w+") as f:
+    f.writelines(Version)
 
 
 # What packages are required for this module to be executed?

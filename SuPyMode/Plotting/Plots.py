@@ -12,6 +12,9 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from SuPyMode.Plotting.PlotsUtils  import FieldMap, MidPointNorm
 from SuPyMode.Tools.utils import ToList
+from dataclasses import dataclass
+
+
 
 
 try:
@@ -24,13 +27,18 @@ import matplotlib
 matplotlib.style.use('ggplot')
 
 
+@dataclass
+class ColorBar:
+    Color: str = 'viridis'
+    Discreet: bool = False
+    Position: str = 'left'
+    Orientation   = "vertical"
 
 
-
+@dataclass
 class AddShapely:
-    def __init__(self, Object, Text=None):
-        self.Object = Object
-        self.Text   = Text
+    Object: list
+    Text: str = None
 
     def Render(self, Ax):
         if isinstance(Object, Point):
@@ -45,16 +53,15 @@ class AddShapely:
 
 
 
-
+@dataclass
 class Contour:
-    def __init__(self, X, Y, Scalar, ColorMap='viridis', Title=None, xLabel=None, yLabel=None, IsoLines=None):
-        self.X = X
-        self.Y = Y
-        self.Scalar = Scalar
-        self.ColorMap = ColorMap
-        self.Label = Label
-        self.IsoLines = IsoLines
-
+    X: np.ndarray
+    Y: np.ndarray
+    Scalar: np.ndarray
+    ColorMap: str = 'viridis'
+    xLabel: str = ''
+    yLabel: str = ''
+    IsoLines: list = None
 
     def Render(self, Ax):
         Image = Ax.contour(self.X,
@@ -72,18 +79,16 @@ class Contour:
                             norm=colors.LogNorm() )
 
 
-
+@dataclass
 class Mesh:
-    def __init__(self, X, Y, Scalar, ColorMap='viridis', Label=''):
-        self.X = X
-        self.Y = Y
-        self.Scalar = Scalar
-        self.ColorMap=ColorMap
-        self.Label = Label
+    X: np.ndarray
+    Y: np.ndarray
+    Scalar: np.ndarray
+    ColorMap: str = 'viridis'
+    Label: str = ''
 
-
-    def Render(self, Ax, ColorBarDict):
-        self.Norm = colors.BoundaryNorm(np.unique(self.Scalar), 200, extend='both') if ColorBarDict['Discreet'] else None
+    def Render(self, Ax):
+        self.Norm = colors.BoundaryNorm(np.unique(self.Scalar), 200, extend='both') if Ax.Colorbar.Discreet else None
 
         Image = Ax._ax.pcolormesh(self.X,
                               self.Y,
@@ -93,65 +98,61 @@ class Mesh:
                               norm = self.Norm
                               )
 
-        if ColorBarDict['Create']:
+        if Ax.Colorbar is not None:
             divider = make_axes_locatable(Ax._ax)
-            cax = divider.append_axes(ColorBarDict['Position'], size="10%", pad=0.15)
+            cax = divider.append_axes(Ax.Colorbar.Position, size="10%", pad=0.15)
 
-            if ColorBarDict['Discreet']:
+            if Ax.Colorbar.Discreet:
                 ticks = np.unique(self.Scalar)
-                plt.colorbar(mappable=Image, norm=self.Norm, boundaries=ticks, ticks=ticks, cax=cax)
+                plt.colorbar(mappable=Image, norm=self.Norm, boundaries=ticks, ticks=ticks, cax=cax, orientation=Ax.Colorbar.Orientation)
             else:
-                plt.colorbar(mappable=Image, norm=self.Norm, cax=cax)
+                plt.colorbar(mappable=Image, norm=self.Norm, cax=cax, orientation=Ax.Colorbar.Orientation)
 
 
         return Image
 
 
-
+@dataclass
 class Line:
-    def __init__(self, X, Y, Label=None, Fill=False, Color=None):
-        self.X = X
-        self.Y = Y
-        self.Fill = Fill
-        self.Label = Label
-        self.Color = Color
+    X: np.ndarray
+    Y: np.ndarray
+    Label: str = None
+    Fill: bool = False
+    Color: str = None
 
     def Render(self, Ax):
 
-        Ax.plot(self.X, self.Y, label=self.Label)
+        Ax._ax.plot(self.X, self.Y, label=self.Label)
 
         if self.Fill:
-            Ax.fill_between(self.X, self.Y.min(), self.Y, color=self.Color, alpha=0.7)
+            Ax._ax.fill_between(self.X, self.Y.min(), self.Y, color=self.Color, alpha=0.7)
 
 
 
+@dataclass
 class Axis:
-    def __init__(self,
-                 Row, Col,
-                 xLabel='', yLabel='', Title='',
-                 Grid=True, Legend=True,
-                 xScale='linear', yScale='linear',
-                 xLimits=None, yLimits=None, Equal=False,
-                 ColorBar=False, ColorbarPosition='bottom', DiscreetColorbar=False, ):
-        self.Row     = Row
-        self.Col     = Col
-        self.Legend  = Legend
+    Row: int
+    Col: int
+    xLabel: str = ''
+    yLabel: str = ''
+    Title: str = ''
+    Grid: bool = True
+    Legend: bool = True
+    xScale: str = 'linear'
+    yScale: str = 'linear'
+    xLimits: list = None
+    yLimits: list = None
+    Equal: bool = False
+    Colorbar: ColorBar = None
+
+    def __post_init__(self):
+
+        self._ax = None
         self.Artist  = []
-        self._ax     = None
-        self.Grid    = Grid
-        self.xScale  = xScale
-        self.yScale  = yScale
-        self.xLimits = xLimits
-        self.yLimits = yLimits
-        self.Equal   = Equal
 
-        self.Labels  = {'x': xLabel,
-                        'y': yLabel,
-                        'Title': Title}
-
-        self.ColorBarDict = {'Create': ColorBar,
-                             'Position': ColorbarPosition,
-                             'Discreet': DiscreetColorbar}
+        self.Labels  = {'x': self.xLabel,
+                        'y': self.yLabel,
+                        'Title': self.Title}
 
 
     def AddArtist(self, *Artist):
@@ -160,7 +161,7 @@ class Axis:
 
     def Render(self):
         for art in self.Artist:
-            Image = art.Render(self, ColorBarDict=self.ColorBarDict)
+            Image = art.Render(self)
 
         if self.Legend:
             self._ax.legend()

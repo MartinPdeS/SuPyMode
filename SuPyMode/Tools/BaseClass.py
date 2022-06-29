@@ -14,7 +14,101 @@ plt.rc('axes', prop_cycle=(
 from SuPyMode.Tools.Directories   import ZeroPath
 from SuPyMode.Tools.utils         import Multipage, ToList
 from SuPyMode.Plotting.PlotsUtils import FieldMap
-from SuPyMode.Plotting.Plots      import Scene, Axis, Line, Mesh
+from SuPyMode.Plotting.Plots      import Scene, Axis, Line, Mesh, ColorBar
+
+
+
+class ReprBase:
+    Description = ''
+    ReprVar     = []
+    HLine       = "\n" + "--"*20 + "\n"
+    Methods     = []
+
+    def __repr__(self):
+        String = []
+        String.append(f"{self.Description}")
+        String.append(self.HLine)
+        String.append("Attributes:")
+
+        for element in self.ReprVar:
+            String += f"\n\t {element:20s}:\t {getattr(self, element)}"
+
+        String.append("\n\nMethods:\n\t")
+        String.append( f"\n\t".join(self.Methods) )
+        String.append(self.HLine)
+        return "".join(String)
+
+
+
+class ExtendField:
+    _FullxAxis = None
+    _FullyAxis = None
+    _FullFields = None
+
+
+    def ExtendAxis(self, Axis: np.ndarray, sign: str):
+        d     = Axis[1] - Axis[0]
+
+        if sign == "Plus":
+            start = Axis[-1] + d
+            Next  = np.arange(0, Axis.size) * d + start
+            Next  = [Axis, Next]
+
+        if sign == "Minus":
+            stop = Axis[0]
+            Next  = np.arange(-Axis.size, 0) * d + stop
+            Next  = [Next, Axis]
+
+        return np.concatenate(Next)
+
+
+    def GetFullAxis(self, X, Y):
+        FullxAxis = X
+        FullyAxis = Y
+
+        if self.BottomSymmetry in [-1, 1]:
+            FullyAxis = self.ExtendAxis(Axis=FullyAxis, sign="Minus")
+
+        if self.TopSymmetry in [-1,1]:
+            FullyAxis = self.ExtendAxis(Axis=FullyAxis, sign="Plus")
+
+        if self.RightSymmetry in [-1,1]:
+            FullxAxis = self.ExtendAxis(Axis=FullxAxis, sign="Plus")
+
+        if self.LeftSymmetry in [-1, 1]:
+            FullxAxis = self.ExtendAxis(Axis=FullxAxis, sign="Minus")
+
+        return FullxAxis, FullyAxis
+
+
+    def ComputeFullFields(self):
+        self._FullFields = self.Fields
+
+        if self.BottomSymmetry == 1:
+            self._FullFields = np.concatenate((self._FullFields[:, :, ::-1], self._FullFields), axis=2)
+
+        elif self.BottomSymmetry == -1:
+            self._FullFields = np.concatenate((-self._FullFields[:, :, ::-1], self._FullFields), axis=2)
+
+        if self.TopSymmetry == 1:
+            self._FullFields = np.concatenate((self._FullFields, self._FullFields[:, :, ::-1]), axis=2)
+
+        elif self.TopSymmetry == -1:
+            self._FullFields = np.concatenate((self._FullFields, -self._FullFields[:, :, ::-1]), axis=2)
+
+
+        if self.RightSymmetry == 1:
+            self._FullFields = np.concatenate((self._FullFields[...], self._FullFields[:, ::-1, :]), axis=1) #Here
+
+        elif self.RightSymmetry == -1:
+            self._FullFields = np.concatenate((self._FullFields[...], -self._FullFields[:, ::-1, :]), axis=1) #Here
+
+        if self.LeftSymmetry == 1:
+            self._FullFields = np.concatenate((self._FullFields[:, ::-1, :], self._FullFields[...]), axis=1) #Here
+
+        elif self.LeftSymmetry == -1:
+            self._FullFields = np.concatenate((-self._FullFields[:, ::-1, :], self._FullFields[...]), axis=1) #Here
+
 
 
 class SetProperties(object):
@@ -23,6 +117,7 @@ class SetProperties(object):
     _Index        = None
     _Beta         = None
     _M            = None
+    _Matrix       = None
     SuperModes    = []
 
     @property
@@ -120,7 +215,7 @@ class SetPlottings():
                           xScale = 'linear',
                           yScale = 'linear')
 
-                artist = Line(X=self.ITRList, Y=Mode0.GetCoupling(Mode1), Label=f'{Mode0.Name} - {Mode1.Name}')
+                artist = Line(X=self.ITRList, Y=Mode0.Binded.GetCouplingSpecific(Mode1.Binded), Label=f'{Mode0.Name} - {Mode1.Name}')
 
                 ax.AddArtist(artist)
 
@@ -165,6 +260,7 @@ class SetPlottings():
     def PlotFields(self, Slices=[0], ReturnFig=False):
 
         Fig = Scene('SuPyMode Figure', UnitSize=(3,3))
+        Colorbar = ColorBar(Discreet=False, Position='right')
 
         for m, Mode in enumerate(self.SuperModes):
             for n, slice in enumerate(Slices):
@@ -174,8 +270,7 @@ class SetPlottings():
                           yLabel           = r'',
                           Title            = f'{self[m].Name}  [ITR: {self.ITRList[slice]:.2f}]',
                           Legend           = False,
-                          ColorBar         = True,
-                          ColorbarPosition = 'right',
+                          Colorbar         = Colorbar,
                           Grid             = True,
                           Equal            = True,
                           xScale           = 'linear',

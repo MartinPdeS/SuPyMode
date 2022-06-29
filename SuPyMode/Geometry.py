@@ -3,6 +3,7 @@
 import os
 import numpy as np
 import logging
+from dataclasses import dataclass
 
 from matplotlib.path             import Path
 from itertools                   import combinations
@@ -10,45 +11,19 @@ from shapely.geometry            import Point, box
 from shapely                     import affinity
 from scipy.ndimage.filters       import gaussian_filter
 from shapely.geometry            import Point, MultiPolygon, Polygon
-from shapely.ops                 import nearest_points, unary_union
 from shapely.geometry.collection import GeometryCollection
 from scipy.optimize              import minimize_scalar
 
 """ package imports """
-from SuPyMode.Tools.Directories       import RootPath
 from SuPyMode.Tools.Special           import gradientO4
 from SuPyMode.Tools.utils             import ToList, Axes
-from SuPyMode.Plotting.Plots          import Scene, Axis, Mesh, Contour
+from SuPyMode.Plotting.Plots          import Scene, Axis, Mesh, Contour, ColorBar
 from SuPyMode.Tools.utils             import ObjectUnion
+from SuPyMode.Tools.ShapelyUtils      import NearestPoints, GetBoundaries, ObjectIntersection, Rotate
 
 Mlogger = logging.getLogger(__name__)
 
-def NearestPoints(object0, object1):
-     return list( nearest_points(object0.exterior, object1.exterior) )
 
-def GetBoundaries(Objects):
-    Objects = ToList(Objects)
-    return unary_union(Objects).bounds
-
-def ObjectIntersection(Objects):
-    Objects = ToList(Objects)
-    object0 = Objects[0]
-
-    for object in Objects:
-        object0 = object0.intersection(object)
-
-    return object0
-
-
-def Rotate(Coord = None, Object=None, Angle=0):
-
-    Angle = ToList(Angle)
-    rotated = tuple( affinity.rotate(Object, angle, origin = (0,0) ) for angle in Angle )
-
-    if len(rotated) == 1:
-        return rotated[0]
-    else:
-        return rotated
 
 class Gradient:
     def __init__(self, Center, Nin, Nout, Rout):
@@ -71,6 +46,8 @@ class Namespace:
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
 
+
+@dataclass
 class Geometry(object):
     """ Class represent the refractive index (RI) geometrique profile which
     can be used to retrieve the supermodes.
@@ -89,25 +66,25 @@ class Geometry(object):
         Number of point for Y dimensions discretization.
     """
 
-    def __init__(self, Clad, Objects, Xbound, Ybound, Nx, Ny, GConv=0, BackGroundIndex=1.):
-        self.Clad       = Clad
+    Clad: object
+    Objects: list
+    Xbound: list
+    Ybound: list
+    Nx: int = 100
+    Ny: int = 10
+    GConv: float = 0
+    BackGroundIndex: float = 1.
 
-        self.Objects    = ToList(Objects)
-
-        self.Boundaries = [Xbound, Ybound]
-
-        self.Shape      = [Nx, Ny]
-
-        self.GConv      = GConv
-        self._Mesh      = None
-
-        self.BackGroundIndex = BackGroundIndex
+    def __post_init__(self):
+        self.Objects    = ToList(self.Objects)
+        self.Boundaries = [self.Xbound, self.Ybound]
+        self.Shape      = [self.Nx, self.Ny]
 
         self.Axes  = Axes( {'wavelength': 1.0,
-                            'Xbound'    : Xbound,
-                            'Ybound'    : Ybound,
-                            'Nx'        : Nx,
-                            'Ny'        : Ny } )
+                            'Xbound'    : self.Xbound,
+                            'Ybound'    : self.Ybound,
+                            'Nx'        : self.Nx,
+                            'Ny'        : self.Ny } )
 
         self.CreateBackGround()
         self.GetAllIndex()
@@ -282,6 +259,7 @@ class Geometry(object):
         self.CreateMesh()
 
         Fig = Scene('SuPyMode Figure', UnitSize=(4,4))
+        Colorbar = ColorBar(Discreet=True, Position='right')
 
         ax = Axis(Row              = 0,
                   Col              = 0,
@@ -289,11 +267,9 @@ class Geometry(object):
                   yLabel           = r'y [$\mu m$]',
                   Title            = f'Refractive index structure',
                   Legend           = False,
-                  ColorBar         = True,
                   Grid             = False,
                   Equal            = True,
-                  DiscreetColorbar = True,
-                  ColorbarPosition = 'right',
+                  Colorbar         = Colorbar,
                   xScale           = 'linear',
                   yScale           = 'linear')
 
@@ -337,22 +313,21 @@ class Geometry(object):
 
 
 
-
+@dataclass
 class BaseFused():
-    def __init__(self, Radius, Fusion, Angle, Theta, Index, debug, Gradient=None):
-
-        assert not all([Index, Gradient]), "Error, you must either define an Index or a Gradient but not both."
-        assert any([Index, Gradient]), "Error, you must at least define an Index or a Gradient."
-        Mlogger.setLevel(getattr(logging, debug))
-
-        self.Index   = Index
-        self.Radius  = Radius
-        self.Fusion  = Fusion
-        self.Angle   = Angle
+    Radius: float
+    Fusion: float
+    Angle: float
+    Theta: float
+    Index: float
+    debug: bool
+    Gradient: object = None
+    
+    def __post_init__(self):
         self.hole    = None
         self.N       = len(self.Angle)
-        self.Theta   = np.deg2rad(Theta)
-        self.Gradient = Gradient
+        self.Theta   = np.deg2rad(self.Theta)
+
         self.GetFibers()
         self.GetTopology()
 

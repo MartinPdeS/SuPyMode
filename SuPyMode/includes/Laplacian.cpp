@@ -1,3 +1,55 @@
+#pragma once
+
+#include "Definitions.cpp"
+
+class BaseLaplacian{
+  public:
+    int        TopSymmetry, BottomSymmetry, LeftSymmetry, RightSymmetry, Order;
+    ndarray    Mesh;
+    size_t     Nx, Ny, size;
+    ScalarType dx, dy, D0xy, D1y, D2y, D1x, D2x;
+    MSparse    Laplacian;
+    bool       Debug;
+
+    BaseLaplacian(ndarray&  Mesh, ScalarType dx, ScalarType dy){
+      this->Nx                = Mesh.request().shape[0];
+      this->Ny                = Mesh.request().shape[1];
+      this->size              = Mesh.request().size;
+      this->dx                = dx;
+      this->dy                = dy;
+      this->Mesh              = Mesh;
+    }
+
+    void SetLeftSymmetry();
+    void SetRightSymmetry();
+    void SetTopSymmetry();
+    void SetBottomSymmetry();
+
+    void SetLeftSymmetry3();
+    void SetRightSymmetry3();
+    void SetTopSymmetry3();
+    void SetBottomSymmetry3();
+
+    void SetLeftSymmetry5();
+    void SetRightSymmetry5();
+    void SetTopSymmetry5();
+    void SetBottomSymmetry5();
+
+    void Points3Laplacian();
+
+    void Laplacian3Boundary();
+
+    void Laplacian5Boundary();
+
+    MSparse Points5Laplacian();
+};
+
+
+
+
+
+
+
 void
 BaseLaplacian::Laplacian3Boundary(){
 

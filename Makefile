@@ -174,6 +174,32 @@ EigenSolver/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/EigenSolver.dir/build.make CMakeFiles/EigenSolver.dir/build
 .PHONY : EigenSolver/fast
 
+#=============================================================================
+# Target rules for targets named Upload
+
+# Build rule for target.
+Upload: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Upload
+.PHONY : Upload
+
+# fast build rule for target.
+Upload/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Upload.dir/build.make CMakeFiles/Upload.dir/build
+.PHONY : Upload/fast
+
+#=============================================================================
+# Target rules for targets named Clean
+
+# Build rule for target.
+Clean: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Clean
+.PHONY : Clean
+
+# fast build rule for target.
+Clean/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Clean.dir/build.make CMakeFiles/Clean.dir/build
+.PHONY : Clean/fast
+
 SuPyMode/includes/interface.o: SuPyMode/includes/interface.cpp.o
 .PHONY : SuPyMode/includes/interface.o
 
@@ -210,6 +236,8 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... Clean"
+	@echo "... Upload"
 	@echo "... EigenSolver"
 	@echo "... SuPyMode/includes/interface.o"
 	@echo "... SuPyMode/includes/interface.i"

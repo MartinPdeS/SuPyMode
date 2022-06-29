@@ -1,6 +1,6 @@
 import numpy as np
 
-from SuPyMode.SuperMode             import SuperSet, SuperMode
+from SuPyMode                       import SuperMode, SuperSet
 from SuPyMode.bin.EigenSolver       import EigenSolving
 from SuPyMode.Tools.utils           import Axes
 
@@ -61,20 +61,15 @@ class SuPySolver(object):
         self.Set        = SuperSet(ParentSolver=self)
 
 
-    def AddModes(self,
-                    nMode:          int,
-                    sMode:          int,
-                    Symmetries:     dict = 0,
-                    Sorting:        str   = 'Index',
-                    ):
+    def AddModes(self, nMode: int, sMode: int, Symmetries: dict, Sorting: str = 'Index'):
 
         CppSolver  = self.InitBinding(Symmetries, self.Wavelength, nMode, sMode)
 
         CppSolver.LoopOverITR(ITR=self.ITRList, ExtrapolationOrder=3)
 
-        CppSolver.SortModes(Sorting='Field')
+        CppSolver.SortModes(Sorting=Sorting)
 
-        #CppSolver.ComputeCouplingAdiabatic()
+        CppSolver.ComputeCouplingAdiabatic()
 
 
         for BindingNumber in range(CppSolver.sMode):
@@ -86,7 +81,6 @@ class SuPySolver(object):
 
 
     def GetSet(self):
-
         return self.Set
 
 

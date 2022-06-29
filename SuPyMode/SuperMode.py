@@ -1,362 +1,19 @@
 import logging
-import os
 import numpy               as np
-import copy                as cp
 from scipy.integrate       import solve_ivp
 from scipy.interpolate     import interp1d
 from mayavi                import mlab
 
-from SuPyMode.Tools.BaseClass   import SetProperties, SetPlottings
-from SuPyMode.Plotting.Plots      import Scene, Axis, Line, Mesh
-from SuPyMode.Plotting.PlotsUtils  import FieldMap, MidPointNorm
-from SuPyMode.Tools.Directories import RootPath
+
+from SuPyMode.Plotting.Plots      import Scene, Axis, Line, Mesh, ColorBar
+from SuPyMode.Plotting.PlotsUtils import FieldMap
+from SuPyMode.Tools.Directories   import RootPath
+from SuPyMode.Tools.BaseClass     import ReprBase, ExtendField
 
 Mlogger = logging.getLogger(__name__)
 
 
-class ReprBase:
-    Description = ''
-    ReprVar     = []
-    HLine       = "\n" + "--"*20 + "\n"
-    Methods     = []
-
-    def __repr__(self):
-        String = []
-        String.append(f"{self.Description}")
-        String.append(self.HLine)
-        String.append("Attributes:")
-
-        for element in self.ReprVar:
-            String += f"\n\t {element:20s}:\t {getattr(self, element)}"
-
-        String.append("\n\nMethods:\n\t")
-        String.append( f"\n\t".join(self.Methods) )
-        String.append(self.HLine)
-        return "".join(String)
-
-
-
-class SuperPosition(ReprBase):
-    Description = 'Mode superposition class'
-    ReprVar     = ["Amplitudes"]
-
-    def __init__(self, SuperSet, InitialAmplitudes: list):
-        self.SuperSet   = SuperSet
-        self.InitialAmplitudes = np.asarray(InitialAmplitudes).astype(complex)
-        self._CouplerLength    = None
-        self._Amplitudes       = None
-        self.Init()
-
-
-
-    def Init(self):
-        shape = [len(self.InitialAmplitudes)] + list(self.SuperSet[0].FullFields.shape)
-
-        self.Fields = np.zeros(shape)
-        for n, mode in enumerate(self.SuperSet.SuperModes):
-            self.Fields[n] = mode.FullFields
-
-
-    def ComputeAmpltiudes(self, rTol=1e-8, aTol=1e-7, MaxStep=np.inf):
-        self.MatrixInterp = interp1d(self.Distance, self.SuperSet.Matrix, axis=-1)
-
-        def foo(t, y):
-            return 1j * self.MatrixInterp(t).dot(y)
-
-        sol = solve_ivp(foo,
-                        y0       = self.InitialAmplitudes,
-                        t_span   = [0, self._CouplerLength],
-                        method   = 'RK45',
-                        rtol     = rTol,
-                        atol     = aTol,
-                        max_step = MaxStep)
-
-        self.Amplitudes = sol.y
-        self.Distances  = sol.t
-        self.AmplitudeInterpolation = interp1d(self.Distances, self.Amplitudes, axis=-1)
-
-    @property
-    def ITRList(self):
-        return self.SuperSet.ITRList
-
-    @property
-    def CouplerLength(self):
-        assert self._CouplerLength is not None, "CouplerLength attribute has to be defined before computing propagation."
-        return self._CouplerLength
-
-    @CouplerLength.setter
-    def CouplerLength(self, Value: float):
-        self._CouplerLength = Value
-        self.Distance = np.linspace(0, self._CouplerLength, self.ITRList.size)
-
-
-    @property
-    def Amplitudes(self):
-        if self._Amplitudes is None:
-            self.ComputeAmpltiudes()
-
-        return self._Amplitudes
-
-
-    @Amplitudes.setter
-    def Amplitudes(self, Value):
-        self._Amplitudes = Value
-
-
-    def PlotAmplitudes(self):
-
-        Fig = Scene('SuPyMode Figure', UnitSize=(10,4))
-
-        A = self.InitialAmplitudes.dot(self.Amplitudes)
-        z = self.Distances
-
-        Fig.AddLine(Row      = 0,
-                      Col      = 0,
-                      x        = z,
-                      y        = A.real,
-                      Fill     = False,
-                      Legend   = r"$\Re${A}",
-                      xLabel   = r'Z-Distance [$\mu m$]',
-                      yLabel   = r'Mode complex ampltiude [normalized]')
-
-        scene.AddLine(Row      = 0,
-                      Col      = 0,
-                      x        = z,
-                      y        = np.abs(A),
-                      Fill     = False,
-                      Legend   = r"|A|",
-                      xLabel   = r'Z-Distance [$\mu m$]',
-                      yLabel   = r'Mode complex ampltiude [normalized]')
-
-
-        scene.SetAxes(0, 0, Equal=False, Legend=True)
-        scene.Show()
-
-
-    def PlotField(self, Slices: list=[0]):
-        Fig = Scene('SuPyMode Figure', UnitSize=(4,4))
-
-        Field =
-
-        for n, slice in enumerate(Slices):
-
-            ax = Axis(Row              = 0,
-                      Col              = n,
-                      xLabel           = r'x [$\mu m$]',
-                      yLabel           = r'y [$\mu m$]',
-                      Title            = f'Mode field  [ITR: {self.ITRList[slice]:.2f}]',
-                      Legend           = False,
-                      ColorBar         = True,
-                      Grid             = False,
-                      Equal            = True,
-                      DiscreetColorbar = False,
-                      ColorbarPosition = 'right',
-                      xScale           = 'linear',
-                      yScale           = 'linear')
-
-
-            artist = Mesh(X           = self.SuperSet.FullxAxis,
-                          Y           = self.SuperSet.FullyAxis,
-                          Scalar      = self.Fields[0,slice,...],
-                          ColorMap    = FieldMap,
-                          )
-
-            ax.AddArtist(artist)
-
-            Fig.AddAxes(ax)
-
-        Fig.Show()
-
-
-
-    def PlotPropagation(self):
-        if self._Amplitudes is None: self.ComputeAmpltiudes()
-
-        y = self.AmplitudeInterpolation(self.Distance)
-
-        z = self.Distance
-
-        Field = self.SuperSet[0].FullFields.astype(complex)*0.
-
-        for mode, _ in enumerate(self.InitialAmplitudes):
-            a = y[mode].astype(complex)
-            field = self.SuperSet[mode].FullFields.astype(complex)
-            Field += np.einsum('i, ijk->ijk', a, field)
-
-        surface = mlab.surf( np.abs( Field[0] ) , warp_scale="auto" )
-
-        @mlab.animate(delay=100)
-        def anim_loc():
-            for n, _ in enumerate(self.Distance):
-                surface.mlab_source.scalars = np.abs(np.abs( Field[n] ) )
-
-                yield
-
-        anim_loc()
-        mlab.show()
-
-
-
-
-
-class SuperSet(SetProperties, SetPlottings, ReprBase):
-
-    Description = 'SuperSet class'
-
-    ReprVar     = ["ParentSolver", "Size", "Geometry"]
-
-    Methods     = ["GetSuperposition", "Matrix"]
-
-    def __init__(self, ParentSolver):
-        self.ParentSolver   = ParentSolver
-        self.SuperModes     = []
-        self._NextMode      = 0
-        self._Matrix = None
-
-
-    def ComputePropagationMatrix(self):
-        M = np.zeros([self.Size, self.Size, len(self.ITRList)])
-        for mode in self.SuperModes:
-            M[mode.ModeNumber, mode.ModeNumber, :] = mode.Betas
-
-        return M
-
-
-    @property
-    def Matrix(self):
-        if self._Matrix is None:
-            self._Matrix = self.ComputePropagationMatrix()
-        return self._Matrix
-
-    @property
-    def FullxAxis(self):
-        return self[0].FullxAxis
-
-    @property
-    def FullyAxis(self):
-        return self[0].FullyAxis
-
-
-    @property
-    def NextMode(self):
-        self._NextMode += 1
-        return self._NextMode - 1
-
-    def IterateSuperMode(self):
-        for n, supermode in enumerate(self.SuperModes):
-            yield supermode
-
-
-    def ComputeM(self, CouplingFactor):
-        shape = self.Beta.shape
-        M     = np.zeros( [shape[0], shape[1], shape[1]] )
-        for iter in range(shape[0]):
-            beta = self.Beta[iter]
-            M[iter] = CouplingFactor[iter] * self.Coupling[iter] + beta * np.identity(shape[1])
-
-        return M
-
-
-    def ComputeCouplingFactor(self, Length):
-        dx =  Length/(self.Geometry.ITRList.size)
-
-        dITR = np.gradient(np.log(self.Geometry.ITRList), 1)
-
-        return dITR/dx
-
-
-    def GetSuperposition(self, Amplitudes):
-        return SuperPosition(SuperSet=self, InitialAmplitudes=Amplitudes)
-
-
-    def Propagate(self, Amplitude=[1,1, 0, 0, 0], Length=1000):
-        Amplitude = np.asarray(Amplitude)
-
-        Distance = np.linspace(0, Length, self.ITRList.size)
-
-        #Factor = self.ComputeCouplingFactor(Length)
-
-        #M = self.ComputeM(CouplingFactor=Factor)
-
-
-
-        Minterp = interp1d(Distance, self.Matrix, axis=-1)
-
-        def foo(t, y):
-            return 1j * Minterp(t).dot(y)
-
-        sol = solve_ivp(foo,
-                        y0       = Amplitude.astype(complex),
-                        t_span   = [0, Length],
-                        method   = 'RK45')
-
-        return sol.y
-
-
-    def Propagate_(self, Amplitude, Length, **kwargs):
-        Amplitude = np.asarray(Amplitude)
-
-        Distance = np.linspace(0, Length, self.Geometry.ITRList.size)
-
-        Factor = self.ComputeCouplingFactor(Length)
-
-
-        M = self.ComputeM(CouplingFactor=Factor)
-
-        Minterp = interp1d(Distance, M, axis=0)
-
-        def foo(t, y):
-            return 1j * Minterp(t).dot(y)
-
-        sol = solve_ivp(foo,
-                        y0       = Amplitude.astype(complex),
-                        t_span   = [0, Length],
-                        method   = 'RK45',
-                        **kwargs)
-
-        return sol
-
-    @property
-    def Size(self):
-        return len(self.SuperModes)
-
-    @property
-    def Geometry(self):
-        return self.ParentSolver.Geometry
-
-    @property
-    def ITRList(self):
-        return self.ParentSolver.ITRList
-
-    @property
-    def Axes(self):
-        return self.ParentSolver.Geometry.Axes
-
-
-    def AppendSuperMode(self, CppSolver, BindingNumber, SolverNumber):
-        superMode = SuperMode(ParentSet=self, ModeNumber=self.NextMode, CppSolver=CppSolver, BindingNumber=BindingNumber, SolverNumber=SolverNumber )
-
-        self.SuperModes.append( superMode )
-
-
-    def __getitem__(self, N):
-        return self.SuperModes[N]
-
-
-    def __setitem__(self, N, val):
-        self.SuperModes[N] = val
-
-
-
-
-
-
-
-
-
-
-
-class SuperMode(ReprBase):
+class SuperMode(ReprBase, ExtendField):
     Description = 'Supermode class'
     ReprVar     = ["ModeNumber",
                    "BindingNumber",
@@ -379,20 +36,35 @@ class SuperMode(ReprBase):
         self.ModeNumber     = ModeNumber
         self.SolverNumber   = SolverNumber
         self.ID             = [SolverNumber, BindingNumber]
-        self.Name           = f"Mode {self.ID[0]}:{self.ID[1]}"
+        self.Name           = f"Mode {SolverNumber}:{BindingNumber}"
 
         self.CppSolver      = CppSolver
         self.ParentSet      = ParentSet
 
         self._Fields        = None
-        self._FullFields    = None
-        self._FullxAxis     = None
-        self._FullxAxis     = None
         self._Index         = None
         self._Betas         = None
         self._Adiabatic     = None
         self._Coupling      = None
 
+    @property
+    def FullFields(self):
+        if self._FullFields is None:
+            self.ComputeFullFields()
+        return self._FullFields
+
+
+    @property
+    def FullxAxis(self):
+        if self._FullxAxis is None:
+            self._FullxAxis, self._FullyAxis = self.GetFullAxis(self.Axes.X, self.Axes.Y)
+        return self._FullxAxis
+
+    @property
+    def FullyAxis(self):
+        if self._FullyAxis is None:
+            self._FullxAxis, self._FullyAxis = self.GetFullAxis(self.Axes.X, self.Axes.Y)
+        return self._FullyAxis
 
     @property
     def BindingNumber(self):
@@ -419,26 +91,6 @@ class SuperMode(ReprBase):
         if self._Fields is None:
             self._Fields = self.Binded.GetFields()
         return self._Fields
-
-    @property
-    def FullFields(self):
-        if self._FullFields is None:
-            self.ComputeFullFields()
-        return self._FullFields
-
-
-    @property
-    def FullxAxis(self):
-        if self._FullxAxis is None:
-            self.ComputeFullFields()
-        return self._FullxAxis
-
-
-    @property
-    def FullyAxis(self):
-        if self._FullyAxis is None:
-            self.ComputeFullFields()
-        return self._FullyAxis
 
 
     @property
@@ -518,19 +170,20 @@ class SuperMode(ReprBase):
     def PlotFields(self, Slice: list):
         Fig = Scene('SuPyMode Figure', UnitSize=(10,4))
 
+        Colorbar = ColorBar(Discreet=False, Position='right')
+
         for n, slice in enumerate(Slice):
-            ax = Axis(Row    = 0,
-                      Col    = n,
-                      xLabel = r'X-Direction [$\mu m$]',
-                      yLabel = r'Y-direction [$\mu m$]',
-                      Title  = f'{self.Name}  [ITR: {self.ITRList[slice]:.2f}]',
-                      Legend = False,
-                      ColorBar=True,
-                      ColorbarPosition = 'right',
-                      Grid   = True,
-                      Equal  = True,
-                      xScale = 'linear',
-                      yScale = 'linear')
+            ax = Axis(Row      = 0,
+                      Col      = n,
+                      xLabel   = r'X-Direction [$\mu m$]',
+                      yLabel   = r'Y-direction [$\mu m$]',
+                      Title    = f'{self.Name}  [ITR: {self.ITRList[slice]:.2f}]',
+                      Legend   = False,
+                      Colorbar = Colorbar,
+                      Grid     = True,
+                      Equal    = True,
+                      xScale   = 'linear',
+                      yScale   = 'linear')
 
             self._PlotFields(ax, slice)
 
@@ -555,7 +208,6 @@ class SuperMode(ReprBase):
     def BottomSymmetry(self):
         return self.Binded.BottomSymmetry
 
-
     @property
     def Size(self):
         return len(self.ParentSet.ITRList)
@@ -564,72 +216,13 @@ class SuperMode(ReprBase):
     def Geometry(self):
         return self.ParentSet.Geometry
 
-
     @property
     def ITRList(self):
         return self.ParentSet.ITRList
 
-
     @property
     def Axes(self):
         return self.ParentSet.Axes
-
-
-
-    def ExtendAxis(self, Axis: np.ndarray, sign: str):
-        d     = Axis[1] - Axis[0]
-
-        if sign == "Plus":
-            start = Axis[-1] + d
-            Next  = np.arange(0, Axis.size) * d + start
-            Next  = [Axis, Next]
-
-        if sign == "Minus":
-            stop = Axis[0]
-            Next  = np.arange(-Axis.size, 0) * d + stop
-            Next  = [Next, Axis]
-
-        return np.concatenate(Next)
-
-
-
-    def ComputeFullFields(self):
-        self._FullxAxis = self.Axes.X
-        self._FullyAxis = self.Axes.Y
-        self._FullFields = self.Fields
-
-        if self.BottomSymmetry == 1:
-            self._FullFields = np.concatenate((self._FullFields[:, :, ::-1], self._FullFields), axis=2)
-            self._FullyAxis = self.ExtendAxis(Axis=self._FullyAxis, sign="Minus")
-
-        elif self.BottomSymmetry == -1:
-            self._FullFields = np.concatenate((-self._FullFields[:, :, ::-1], self._FullFields), axis=2)
-            self._FullyAxis = self.ExtendAxis(Axis=self._FullyAxis, sign="Minus")
-
-        if self.TopSymmetry == 1:
-            self._FullFields = np.concatenate((self._FullFields, self._FullFields[:, :, ::-1]), axis=2)
-            self._FullyAxis = self.ExtendAxis(Axis=self._FullyAxis, sign="Plus")
-
-        elif self.TopSymmetry == -1:
-            self._FullFields = np.concatenate((self._FullFields, -self._FullFields[:, :, ::-1]), axis=2)
-            self._FullyAxis = self.ExtendAxis(Axis=self._FullyAxis, sign="Plus")
-
-
-        if self.RightSymmetry == 1:
-            self._FullFields = np.concatenate((self._FullFields[...], self._FullFields[:, ::-1, :]), axis=1) #Here
-            self._FullxAxis = self.ExtendAxis(Axis=self._FullxAxis, sign="Plus")
-
-        elif self.RightSymmetry == -1:
-            self._FullFields = np.concatenate((self._FullFields[...], -self._FullFields[:, ::-1, :]), axis=1) #Here
-            self._FullxAxis = self.ExtendAxis(Axis=self._FullxAxis, sign="Plus")
-
-        if self.LeftSymmetry == 1:
-            self._FullFields = np.concatenate((self._FullFields[:, ::-1, :], self._FullFields[...]), axis=1) #Here
-            self._FullxAxis = self.ExtendAxis(Axis=self._FullxAxis, sign="Minus")
-
-        elif self.LeftSymmetry == -1:
-            self._FullFields = np.concatenate((-self._FullFields[:, ::-1, :], self._FullFields[...]), axis=1) #Here
-            self._FullxAxis = self.ExtendAxis(Axis=self._FullxAxis, sign="Minus")
 
 
     def GetSlice(self, Slice: int, Full: bool=True):
@@ -637,6 +230,7 @@ class SuperMode(ReprBase):
             return self.Betas[Slice], self.FullFields[Slice], self._FullxAxis, self._FullyAxis
         else:
             return self.Betas[Slice], self.Fields[Slice], self.Axis.X, self.Axis.Y
+
 
     def __getitem__(self, N):
         return self.Slice[N]
@@ -659,6 +253,7 @@ class SuperMode(ReprBase):
                 FullFields.append(-field/np.max(np.abs(field)))
 
         return FullFields
+
 
     def PlotPropagation(self, SaveName=None):
 

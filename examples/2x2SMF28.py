@@ -16,11 +16,11 @@ Geo = Geometry(Clad    = Clad,
                Objects = [Core0, Core1],
                Xbound  = [-100, 0],
                Ybound  = [-100, 100],
-               Nx      = 50,
-               Ny      = 100)
+               Nx      = 20,
+               Ny      = 40)
 Geo.Rotate(90)
 
-Geo.Plot()
+#Geo.Plot()
 
 Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000)
 
@@ -32,13 +32,13 @@ Sol.AddModes(Sorting         = 'Index',
              nMode           = 4,
              sMode           = 2 )
 
-Sol.AddModes(Sorting         = 'Index',
-             Symmetries      = {'Right': -1, 'Left': 0, 'Top': 0, 'Bottom': 0},
-             nMode           = 4,
-             sMode           = 2 )
+# Sol.AddModes(Sorting         = 'Index',
+#              Symmetries      = {'Right': -1, 'Left': 0, 'Top': 0, 'Bottom': 0},
+#              nMode           = 4,
+#              sMode           = 2 )
 
 Set = Sol.GetSet()
 
-Set.PlotFields([0, -1])
+# Set.PlotFields([0, -1])
 
-Set.PlotAdiabatic()
+Set.PlotCoupling()
