@@ -164,7 +164,7 @@ class Axis:
             Image = art.Render(self)
 
         if self.Legend:
-            self._ax.legend()
+            self._ax.legend(fancybox=True, facecolor='white', edgecolor='k')
 
         self._ax.grid(self.Grid)
 
@@ -178,6 +178,10 @@ class Axis:
         self._ax.set_xscale(self.xScale)
         self._ax.set_yscale(self.yScale)
 
+        self._ax.text(0.5, 0.1, 'SuPyMode', transform=self._ax.transAxes,
+                fontsize=30, color='white', alpha=0.2,
+                ha='center', va='baseline', rotation='0')
+
         if self.Equal:
             self._ax.set_aspect("equal")
 
@@ -188,12 +192,12 @@ class Axis:
 
 class Scene:
     UnitSize = (10, 3)
-    plt.rcParams['ytick.labelsize'] = 8
-    plt.rcParams['xtick.labelsize'] = 8
-    plt.rcParams["font.size"]       = 8
+    plt.rcParams['ytick.labelsize'] = 10
+    plt.rcParams['xtick.labelsize'] = 10
+    plt.rcParams["font.size"]       = 12
     plt.rcParams["font.family"]     = "serif"
-    plt.rcParams['axes.edgecolor'] = 'black'
-    plt.rcParams['axes.linewidth'] = 1.5
+    plt.rcParams['axes.edgecolor']  = 'black'
+    plt.rcParams['axes.linewidth']  = 1.5
 
     def __init__(self, Title='', UnitSize=None):
         self.Axis = []
@@ -230,9 +234,9 @@ class Scene:
         if Ax.ndim == 1: Ax = np.asarray([Ax])
 
         self.Figure.suptitle(self.Title)
-
+        print(Ax.shape)
         for ax in self.Axis:
-            ax._ax = Ax[ax.Row, ax.Col]
+            ax._ax = Ax[ax.Col, ax.Row]
 
 
     def Render(self):

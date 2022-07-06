@@ -258,7 +258,7 @@ class Geometry(object):
 
         self.CreateMesh()
 
-        Fig = Scene('SuPyMode Figure', UnitSize=(4,4))
+        Fig = Scene('SuPyMode Figure', UnitSize=(6,6))
         Colorbar = ColorBar(Discreet=True, Position='right')
 
         ax = Axis(Row              = 0,
@@ -322,7 +322,7 @@ class BaseFused():
     Index: float
     debug: bool
     Gradient: object = None
-    
+
     def __post_init__(self):
         self.hole    = None
         self.N       = len(self.Angle)

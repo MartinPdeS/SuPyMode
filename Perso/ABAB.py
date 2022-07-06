@@ -1,4 +1,4 @@
-from SuPyMode.Geometry          import Geometry, Fused4, Circle
+from SuPyMode.Geometry          import Geometry, Fused3, Circle
 from SuPyMode.Solver            import SuPySolver
 from SuPyMode.fibers            import *
 from PyOptik                    import ExpData
@@ -7,49 +7,46 @@ import numpy as np
 
 FiberA = Fiber_DCF1300S_20(Wavelength=1.55)
 FiberB = Fiber_DCF1300S_33(Wavelength=1.55)
+FiberC = Fiber_New(Wavelength=1.55)
 
-nMode   = 6
-Xbound  = [-150, 0]
-Ybound  = [-150, 0]
-Nx      = 100
-Ny      = 100
+Xbound  = [-130, 130]
+Ybound  = [-130, 130]
+Nx      = 130
+Ny      = 130
 
 Index = ExpData('FusedSilica').GetRI(1.55e-6)
 
-Clad = Fused4(Radius =  62.5, Fusion  = 0.95, Index   = Index)
+Clad = Fused3(Radius = 62.5, Fusion = 0.95, Index   = Index)
 
 
 Core0 = FiberA.Get(Clad.C[0])
 Core1 = FiberB.Get(Clad.C[1])
-Core2 = FiberA.Get(Clad.C[2])
-Core3 = FiberB.Get(Clad.C[3])
+Core2 = FiberC.Get(Clad.C[2])
+
 
 Geo = Geometry(Clad    = Clad,
-               Objects = [*Core0, *Core1, *Core2, *Core3],
+               Objects = [*Core0, *Core1, *Core2],
                Xbound  = Xbound,
                Ybound  = Ybound,
                Nx      = Nx,
                Ny      = Ny)
 
-#Geo.Rotate(45)
+Geo.Rotate(45)
 
-#Geo.Plot()
+Geo.Plot()
 
 
+Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000)
+Sol.CreateSuperSet(Wavelength=1.55, NStep=300, ITRi=1, ITRf=0.05)
 
-Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000, nMode=8, sMode=5)
+Sol.AddModes(Sorting    = 'Field',
+             Symmetries = {'Right': 0, 'Left': 0, 'Top': 0, 'Bottom': 0},
+             nMode      = 8,
+             sMode      = 4 )
 
-SuperSet = Sol.GetModes(wavelength        = 1.55,
-                          Nstep           = 300,
-                          ITRi            = 1,
-                          ITRf            = 0.05,
-                          Sorting         = 'Index',
-                          RightSymmetry   = 1,
-                          LeftSymmetry    = 0,
-                          TopSymmetry     = -1,
-                          BottomSymmetry  = 0
-                          )
 
-#SuperSet.PlotFields(iter=-1)
-#SuperSet.Plot(Input=['Index', 'Adiabatic'], iter=[-1])
-SuperSet.ExportPDF(Directory='ABAB_xS_yA', iter=[0, 200, 290])
+Set = Sol.GetSet()
+
+Set.PlotAdiabatic()
+
+# SuperSet.ExportPDF(Directory='ABAB_xS_yA', iter=[0, 200, 290])

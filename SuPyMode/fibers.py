@@ -37,6 +37,23 @@ class Fiber_DCF1300S_33():
         return self.Fiber
 
 
+class Fiber_New():
+    def __init__(self, Wavelength):
+        Index = ExpData('FusedSilica').GetRI(Wavelength*1e-6)
+        self.nClad = NA2nCore( 0.11, Index  )
+        self.nCore = NA2nCore( 0.15, self.nClad )
+        self.rClad = 33/2
+        self.rCore = 4.5
+
+    def Get(self, Position):
+        self.Fiber = [
+                       Circle( Position=Position, Radius=self.rClad, Index=self.nClad ),
+                       Circle( Position=Position, Radius=self.rCore, Index=self.nCore ),
+                       ]
+        return self.Fiber
+
+
+
 class Fiber_2028M24():
     def __init__(self, wavelength):
         self.nClad = NA2nCore( 0.19, Fused_silica(wavelength)  )

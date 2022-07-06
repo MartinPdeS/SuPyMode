@@ -11,9 +11,8 @@ class SuPySolver(object):
     It solves the eigenvalues problems for a given geometry.
 
     """
-    _Sorting = None
 
-    def __init__(self, Coupler, Tolerance, MaxIter, Error=2,  Debug=True):
+    def __init__(self, Coupler, Tolerance: float=1e-5, MaxIter: int=10000, Error: int=2,  Debug: bool=True):
 
         Coupler.CreateMesh()
         self.Geometry     = Coupler
@@ -45,9 +44,7 @@ class SuPySolver(object):
         CppSolver.LeftSymmetry   = Symmetries['Left']
         CppSolver.RightSymmetry  = Symmetries['Right']
 
-
         CppSolver.ComputeLaplacian(self.Error)
-
 
         return CppSolver
 
@@ -78,12 +75,8 @@ class SuPySolver(object):
         self.SolverNumber += 1
 
 
-
-
     def GetSet(self):
         return self.Set
-
-
 
 
     @property

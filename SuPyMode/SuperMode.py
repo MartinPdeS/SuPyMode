@@ -1,7 +1,4 @@
-import logging
 import numpy               as np
-from scipy.integrate       import solve_ivp
-from scipy.interpolate     import interp1d
 from mayavi                import mlab
 
 
@@ -9,8 +6,6 @@ from SuPyMode.Plotting.Plots      import Scene, Axis, Line, Mesh, ColorBar
 from SuPyMode.Plotting.PlotsUtils import FieldMap
 from SuPyMode.Tools.Directories   import RootPath
 from SuPyMode.Tools.BaseClass     import ReprBase, ExtendField
-
-Mlogger = logging.getLogger(__name__)
 
 
 class SuperMode(ReprBase, ExtendField):
