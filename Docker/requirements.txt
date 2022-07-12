@@ -6,7 +6,6 @@ apptools
 vtk==9.0.1
 shapely
 descartes
-progressbar
 envisage
 twine
 setuptools_rust

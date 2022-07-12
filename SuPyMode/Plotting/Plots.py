@@ -32,8 +32,27 @@ class ColorBar:
     Color: str = 'viridis'
     Discreet: bool = False
     Position: str = 'left'
-    Orientation   = "vertical"
-    Symmetric: bool = True
+    Orientation: str = "vertical"
+    Symmetric: bool = False
+
+    def Render(self, Ax, Scalar, Image):
+        divider = make_axes_locatable(Ax._ax)
+        cax = divider.append_axes(self.Position, size="10%", pad=0.15)
+
+        if self.Discreet:
+            Norm = colors.BoundaryNorm(np.unique(Scalar), 200, extend='both')
+            Image.set_norm(Norm)
+            ticks = np.unique(Scalar)
+            plt.colorbar(mappable=Image, norm=Norm, boundaries=ticks, ticks=ticks, cax=cax, orientation=Ax.Colorbar.Orientation)
+
+        if self.Symmetric:
+            Norm = colors.CenteredNorm()
+            Image.set_norm(Norm)
+            plt.colorbar(mappable=Image, norm=Norm, cax=cax, orientation=self.Orientation)
+
+        else:
+            plt.colorbar(mappable=Image, norm=None, cax=cax, orientation=self.Orientation)
+
 
 
 @dataclass
@@ -89,26 +108,16 @@ class Mesh:
     Label: str = ''
 
     def Render(self, Ax):
-        self.Norm = colors.BoundaryNorm(np.unique(self.Scalar), 200, extend='both') if Ax.Colorbar.Discreet else None
 
         Image = Ax._ax.pcolormesh(self.X,
                               self.Y,
                               self.Scalar,
                               cmap    = self.ColorMap,
-                              shading = 'auto',
-                              norm = self.Norm
+                              shading = 'auto'
                               )
 
         if Ax.Colorbar is not None:
-            divider = make_axes_locatable(Ax._ax)
-            cax = divider.append_axes(Ax.Colorbar.Position, size="10%", pad=0.15)
-
-            if Ax.Colorbar.Discreet:
-                ticks = np.unique(self.Scalar)
-                plt.colorbar(mappable=Image, norm=self.Norm, boundaries=ticks, ticks=ticks, cax=cax, orientation=Ax.Colorbar.Orientation)
-            else:
-                plt.colorbar(mappable=Image, norm=self.Norm, cax=cax, orientation=Ax.Colorbar.Orientation)
-
+            Ax.Colorbar.Render(Ax=Ax, Scalar=self.Scalar, Image=Image)
 
         return Image
 

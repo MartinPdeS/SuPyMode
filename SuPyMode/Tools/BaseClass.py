@@ -262,7 +262,7 @@ class SetPlottings():
         Slices = [ self.ITR2Slice(itr) for itr in ToList(ITR) ]
 
         Fig = Scene('SuPyMode Figure', UnitSize=(3,3))
-        Colorbar = ColorBar(Discreet=False, Position='right')
+        Colorbar = ColorBar(Symmetric=True, Position='right')
 
         for m, Mode in enumerate(self.SuperModes):
             for n, slice in enumerate(Slices):

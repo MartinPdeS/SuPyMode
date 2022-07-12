@@ -174,7 +174,7 @@ class SuperMode(ReprBase, ExtendField):
 
         Fig = Scene('SuPyMode Figure', UnitSize=(10,4))
 
-        Colorbar = ColorBar(Discreet=False, Position='right')
+        Colorbar = ColorBar(Symmetric=True, Position='right')
 
         for n, slice in enumerate(Slice):
             ax = Axis(Row      = 0,
