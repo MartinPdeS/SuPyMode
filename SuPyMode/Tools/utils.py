@@ -20,8 +20,6 @@ import numpy as np
 class Axes(object):
     def __init__(self, Meta):
 
-        self.ITR = 1
-
         self.Nx = Meta['Nx']
         self.Ny = Meta['Ny']
 
