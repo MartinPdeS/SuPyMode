@@ -175,7 +175,7 @@ class SuperMode(ReprBase, ExtendField):
         Ax.AddArtist(artist)
 
 
-    def PlotFields(self, ITR: list[float]):
+    def PlotFields(self, ITR: list):
         Slice = [ self.ITR2Slice(itr) for itr in ToList(ITR) ]
 
         Fig = Scene('SuPyMode Figure', UnitSize=(10,4))
