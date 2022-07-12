@@ -3,6 +3,7 @@ SuPyMode
 
 |python|
 |docs|
+|Citation|
 
 This project aims to produce an useful tool (python library) to simulate propagation mode in a very wide range of parameters and form.
 It also offer the possiblity to compute the coupling coefficient between those mode and hence is a pratical tool to simulate couplers.
@@ -105,3 +106,7 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
 
 .. |docs| image:: https://readthedocs.org/projects/supymode/badge/?version=latest
    :target: https://supymode.readthedocs.io/en/latest/?badge=latest
+
+
+.. |Citation| image:: https://zenodo.org/badge/366930899.svg
+   :target: https://zenodo.org/badge/latestdoi/366930899
