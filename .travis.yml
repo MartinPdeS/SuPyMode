@@ -17,6 +17,8 @@ install:
   - sudo apt-get install cmake
 
   - pip3 install -r Docker/requirements.txt
+  - cmake .
+  - make install
   - python3 setup.py install
   - pip3 install codecov
 
