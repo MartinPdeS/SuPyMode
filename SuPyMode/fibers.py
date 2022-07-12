@@ -4,6 +4,7 @@ from SuPyMode.Geometry          import Geometry, Circle, Fused3
 from SuPyMode.Solver            import SuPySolver
 from PyOptik                    import ExpData
 from SuPyMode.Geometry          import Circle
+from SuPyMode.Materials         import FusedSilica
 
 class Fiber_DCF1300S_20():
     def __init__(self, Wavelength):
@@ -55,31 +56,31 @@ class Fiber_New():
 
 
 class Fiber_2028M24():
-    def __init__(self, wavelength):
-        self.nClad = NA2nCore( 0.19, Fused_silica(wavelength)  )
+    def __init__(self, Wavelength):
+        self.nClad = NA2nCore( 0.19, ExpData('FusedSilica').GetRI(Wavelength*1e-6)  )
         self.nCore = NA2nCore( 0.11, self.nClad )
         self.rClad = 14.1/2
         self.rCore = 2.3/2
 
 class Fiber_2028M21():
-    def __init__(self, wavelength):
-        self.nClad = NA2nCore( 0.19, Fused_silica(wavelength)  )
+    def __init__(self, Wavelength):
+        self.nClad = NA2nCore( 0.19, ExpData('FusedSilica').GetRI(Wavelength*1e-6)  )
         self.nCore = NA2nCore( 0.11, self.nClad )
         self.rClad = 17.6/2
         self.rCore = 2.8/2
 
 
 class Fiber_2028M12():
-    def __init__(self, wavelength):
-        self.nClad = NA2nCore( 0.19, Fused_silica(wavelength)  )
+    def __init__(self, Wavelength):
+        self.nClad = NA2nCore( 0.19, ExpData('FusedSilica').GetRI(Wavelength*1e-6)  )
         self.nCore = NA2nCore( 0.11, self.nClad )
         self.rClad = 25.8/2
         self.rCore = 4.1/2
 
 
 class Fiber_SMF28():
-    def __init__(self, wavelength):
-        self.nClad = Fused_silica(wavelength)
-        self.nCore = Fused_silica(wavelength)+0.005#NA2nCore( 0.14, self.nClad )
-        self.rClad = 19.9/2
+    def __init__(self, Wavelength):
+        self.nClad = ExpData('FusedSilica').GetRI(Wavelength*1e-6)
+        self.nCore = ExpData('FusedSilica').GetRI(Wavelength*1e-6)+0.005#NA2nCore( 0.14, self.nClad )
+        self.rClad = 62.5
         self.rCore = 4.1

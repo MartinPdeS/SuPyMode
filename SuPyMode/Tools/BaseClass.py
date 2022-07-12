@@ -257,7 +257,9 @@ class SetPlottings():
         Fig.Show()
 
 
-    def PlotFields(self, Slices=[0], ReturnFig=False):
+    def PlotFields(self, ITR: list=[0], ReturnFig: bool=False):
+
+        Slices = [ self.ITR2Slice(itr) for itr in ToList(ITR) ]
 
         Fig = Scene('SuPyMode Figure', UnitSize=(3,3))
         Colorbar = ColorBar(Discreet=False, Position='right')
@@ -288,14 +290,15 @@ class SetPlottings():
         Fig.Show()
 
 
-    def ExportPDF(self, Directory='ExportedPDF', Slices=[0, -1], dpi=100):
+    def ExportPDF(self, ITR, Directory='ExportedPDF', dpi=100):
+        Fig00 = self.Geometry.Plot(ReturnFig=True)
         Fig0 = self.PlotIndex(ReturnFig=True)
         Fig1 = self.PlotAdiabatic(ReturnFig=True)
-        Fig2 = self.PlotFields(Slices=Slices, ReturnFig=True)
+        Fig2 = self.PlotFields(ITR=ITR, ReturnFig=True)
 
         dir = os.path.join(ZeroPath, Directory) + '.pdf'
 
-        Multipage(dir, figs=[Fig0, Fig1, Fig2], dpi=dpi)
+        Multipage(dir, figs=[Fig00, Fig0, Fig1, Fig2], dpi=dpi)
 
 
 

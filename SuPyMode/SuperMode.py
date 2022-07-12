@@ -6,6 +6,7 @@ from SuPyMode.Plotting.Plots      import Scene, Axis, Line, Mesh, ColorBar
 from SuPyMode.Plotting.PlotsUtils import FieldMap
 from SuPyMode.Tools.Directories   import RootPath
 from SuPyMode.Tools.BaseClass     import ReprBase, ExtendField
+from SuPyMode.Tools.utils         import ToList
 
 
 class SuperMode(ReprBase, ExtendField):
@@ -41,6 +42,12 @@ class SuperMode(ReprBase, ExtendField):
         self._Betas         = None
         self._Adiabatic     = None
         self._Coupling      = None
+
+
+    @property
+    def ITR2Slice(self):
+        return self.ParentSet.ITR2Slice
+
 
     @property
     def FullFields(self):
@@ -162,7 +169,9 @@ class SuperMode(ReprBase, ExtendField):
         Ax.AddArtist(artist)
 
 
-    def PlotFields(self, Slice: list):
+    def PlotFields(self, ITR: list[float]):
+        Slice = [ self.ITR2Slice(itr) for itr in ToList(ITR) ]
+
         Fig = Scene('SuPyMode Figure', UnitSize=(10,4))
 
         Colorbar = ColorBar(Discreet=False, Position='right')

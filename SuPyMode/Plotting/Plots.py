@@ -33,6 +33,7 @@ class ColorBar:
     Discreet: bool = False
     Position: str = 'left'
     Orientation   = "vertical"
+    Symmetric: bool = True
 
 
 @dataclass
@@ -144,6 +145,7 @@ class Axis:
     yLimits: list = None
     Equal: bool = False
     Colorbar: ColorBar = None
+    WaterMark: str = ''
 
     def __post_init__(self):
 
@@ -178,7 +180,7 @@ class Axis:
         self._ax.set_xscale(self.xScale)
         self._ax.set_yscale(self.yScale)
 
-        self._ax.text(0.5, 0.1, 'SuPyMode', transform=self._ax.transAxes,
+        self._ax.text(0.5, 0.1, self.WaterMark, transform=self._ax.transAxes,
                 fontsize=30, color='white', alpha=0.2,
                 ha='center', va='baseline', rotation='0')
 
@@ -194,10 +196,11 @@ class Scene:
     UnitSize = (10, 3)
     plt.rcParams['ytick.labelsize'] = 10
     plt.rcParams['xtick.labelsize'] = 10
-    plt.rcParams["font.size"]       = 12
+    plt.rcParams["font.size"]       = 10
     plt.rcParams["font.family"]     = "serif"
     plt.rcParams['axes.edgecolor']  = 'black'
     plt.rcParams['axes.linewidth']  = 1.5
+    plt.rcParams['legend.fontsize'] = 'small'
 
     def __init__(self, Title='', UnitSize=None):
         self.Axis = []
@@ -234,9 +237,9 @@ class Scene:
         if Ax.ndim == 1: Ax = np.asarray([Ax])
 
         self.Figure.suptitle(self.Title)
-        print(Ax.shape)
+
         for ax in self.Axis:
-            ax._ax = Ax[ax.Col, ax.Row]
+            ax._ax = Ax[ax.Row, ax.Col]
 
 
     def Render(self):

@@ -26,7 +26,7 @@ REQUIRES_PYTHON = '>3.8.0'
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-with open(os.path.join(__location__, 'Version.py'), "r+") as f:
+with open(os.path.join(__location__, 'Version'), "r+") as f:
     Version = f.read().rstrip("\n").split(".")
     Major, Mid, Minor = int(Version[0]), int(Version[1]), int(Version[2])
 

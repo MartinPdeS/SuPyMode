@@ -251,7 +251,7 @@ class Geometry(object):
         self._Mesh = gaussian_filter(self._Mesh, sigma=self.GConv)
 
 
-    def Plot(self):
+    def Plot(self, ReturnFig: bool=False):
         """ The methode plot the rasterized RI profile.
 
         """
@@ -282,6 +282,10 @@ class Geometry(object):
         ax.AddArtist(artist)
 
         Fig.AddAxes(ax)
+
+        if ReturnFig:
+            Fig.Render()
+            return Fig.Figure
 
         Fig.Show()
 
