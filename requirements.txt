@@ -1,6 +1,6 @@
+PyOptik
 numpy
 scipy
 matplotlib
 shapely
 descartes
-PyOptik

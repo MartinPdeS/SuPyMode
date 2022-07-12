@@ -59,7 +59,7 @@ class CouplerTestCase(unittest.TestCase, BaseStepTest):
     @TestFactory('Plottings Fields')
     def step05(self):
         GUI.invoke_after(PLOTTIME, Close)
-        self.Set.PlotFields([0, -1])
+        self.Set.PlotFields(ITR=[1, 0.5])
 
 
     @TestFactory('Plottings Coupling')

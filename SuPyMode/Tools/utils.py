@@ -1,17 +1,11 @@
 import logging
 import numpy             as np
-import copy              as cp
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
-from descartes           import PolygonPatch
-from shapely.geometry    import Point, LineString, MultiPolygon, Polygon
-from shapely.geometry.collection import GeometryCollection
+from shapely.geometry    import Point
 from shapely.ops         import nearest_points, unary_union
-from numpy               import pi, cos, sin, sqrt, abs, exp, array, ndarray
 from shapely.affinity    import rotate
 
-
-from SuPyMode.Tools.Config    import *
 import numpy as np
 
 
@@ -54,7 +48,7 @@ def Overlap(Objects):
 
 
 def Deg2Rad(input):
-    return input/180*pi
+    return input/180*np.pi
 
 
 def ObjectUnion(Objects):
@@ -83,7 +77,7 @@ def Rotate(Coord = None, Object=None, Angle=0):
         y = Coord[1]
         z = x + 1j*y
 
-        rot = exp(1j*Deg2Rad(Angle))
+        rot = np.exp(1j*Deg2Rad(Angle))
 
         z = z * rot
         x = z.real
@@ -102,7 +96,7 @@ def Rotate(Coord = None, Object=None, Angle=0):
 def ToList(*args):
     out = []
     for arg in args:
-        if not isinstance(arg, (list, ndarray, tuple)): out.append( [arg] )
+        if not isinstance(arg, (list, np.ndarray, tuple)): out.append( [arg] )
         else: out.append(arg)
 
     if len(out) == 1: return out[0]

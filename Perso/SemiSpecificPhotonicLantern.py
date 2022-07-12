@@ -8,33 +8,50 @@ Wavelength = 1.55e-6
 Index = FusedSilica.GetRI(Wavelength)
 
 
-Angle = [0, 120, 240, 300, 360]
+AngleFiberA = [60, 120, 240, 300, 360]
+AngleFiberB = [0, 180]
+AngleFiberC = [None]
+A, B, C = Fiber_DCF1300S_20, Fiber_DCF1300S_33, Fiber_New
 
 
-FiberA = Fiber_DCF1300S_20(Wavelength=1.55)
-FiberB = Fiber_DCF1300S_33(Wavelength=1.55)
-FiberC = Fiber_New(Wavelength=1.55)
-#FiberA, FiberB = FiberB, FiberA
+Config = [(0, A, B, C),
+          (1, A, C, B),
+          (2, C, B, A),
+          (3, C, A, B),
+          (4, B, A, C),
+          (5, B, C, A)]
+
+
+confNumber, FiberA, FiberB, FiberC = Config[5]
+
+
 
 
 Clad = Circle(Position=(0,0), Radius = 100, Index = Index)
 
 Cores = []
 
-Cores += FiberA.Get(Position=(0,0))
 
-for angle in Angle:
-    P = (50*np.cos(angle*np.pi/180), 50*np.sin(angle*np.pi/180))
-    Cores += FiberA.Get(Position=P)
+for angle in AngleFiberA:
+    if angle is None:
+        P = (0,0)
+    else:
+        P = (50*np.cos(angle*np.pi/180), 50*np.sin(angle*np.pi/180))
+    Cores += FiberA(Wavelength=1.55).Get(Position=P)
 
+for angle in AngleFiberB:
+    if angle is None:
+        P = (0,0)
+    else:
+        P = (50*np.cos(angle*np.pi/180), 50*np.sin(angle*np.pi/180))
+    Cores += FiberB(Wavelength=1.55).Get(Position=P)
 
-for angle in [60]:
-    P = (50*np.cos(angle*np.pi/180), 50*np.sin(angle*np.pi/180))
-    Cores += FiberB.Get(Position=P)
-
-for angle in [180]:
-    P = (50*np.cos(angle*np.pi/180), 50*np.sin(angle*np.pi/180))
-    Cores += FiberC.Get(Position=P)
+for angle in AngleFiberC:
+    if angle is None:
+        P = (0,0)
+    else:
+        P = (50*np.cos(angle*np.pi/180), 50*np.sin(angle*np.pi/180))
+    Cores += FiberC(Wavelength=1.55).Get(Position=P)
 
 Geo = Geometry(Clad    = Clad,
                Objects = Cores,
@@ -43,9 +60,9 @@ Geo = Geometry(Clad    = Clad,
                Nx      = 120,
                Ny      = 120)
 
-Geo.Rotate(90)
+# Geo.Rotate(0)
 
-Geo.Plot()
+# Geo.Plot()
 
 Sol = SuPySolver(Coupler=Geo, Tolerance=1e-8, MaxIter = 10000)
 
@@ -54,9 +71,9 @@ Sol.CreateSuperSet(Wavelength=1.55, NStep=300, ITRi=1, ITRf=0.05)
 
 Sol.AddModes(Sorting         = 'Index',
              Symmetries      = {'Right': 0, 'Left': 0, 'Top': 0, 'Bottom': 0},
-             nMode           = 10,
-             sMode           = 8 )
-#
+             nMode           = 20,
+             sMode           = 17 )
+
 # Sol.AddModes(Sorting         = 'Index',
 #              Symmetries      = {'Right': -1, 'Left': 0, 'Top': 1, 'Bottom': 0},
 #              nMode           = 7,
@@ -76,10 +93,10 @@ Sol.AddModes(Sorting         = 'Index',
 
 Set = Sol.GetSet()
 #
-Set.PlotFields(ITR=[0.9, 0.08])
+# Set.PlotFields(ITR=[0.9, 0.08])
 #
 # Set.PlotAdiabatic()
 
 
 
-# Set.ExportPDF(Directory='TestNewNew', ITR=[0.9, 0.06])
+Set.ExportPDF(Directory=f'Perso/17ModesHybridMSPL_config_{confNumber}', ITR=[0.9, 0.06])

@@ -48,7 +48,7 @@ with open(os.path.join(__location__, 'Version'), "w+") as f:
     f.writelines(Version)
 
 
-# What packages are required for this module to be executed?
+
 requirementPath = os.path.join(os.path.dirname(__file__), 'requirements.txt')
 
 with open(requirementPath,'r') as requirements_txt:
