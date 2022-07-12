@@ -135,7 +135,7 @@ class SuperPosition(ReprBase):
         Fig.Show()
 
 
-    def PlotField(self, ITR: list[float]):
+    def PlotField(self, ITR: list):
 
         Slices = [ self.ITR2Slice(itr) for itr in ToList(ITR) ]
 
