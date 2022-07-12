@@ -9,7 +9,7 @@ from shapely.geometry.collection import GeometryCollection
 from shapely.ops         import nearest_points, unary_union
 from numpy               import pi, cos, sin, sqrt, abs, exp, array, ndarray
 from shapely.affinity    import rotate
-from progressbar         import Bar, Percentage, ETA, ProgressBar
+
 
 from SuPyMode.Tools.Config    import *
 import numpy as np
@@ -19,7 +19,6 @@ import numpy as np
 
 class Axes(object):
     def __init__(self, Meta):
-        self._k = None
 
         self.ITR = 1
 
@@ -36,33 +35,9 @@ class Axes(object):
         self.dx  = np.abs( self.X[0] - self.X[1] )
         self.dy  = np.abs( self.Y[0] - self.Y[1] )
 
-        self._wavelength  = Meta['wavelength']
-        self._k           = 2 * np.pi / self._wavelength
-
         self.dA  = self.dx * self.dy
 
-        self.LeftSymmetry   = None
-        self.RightSymmetry  = None
-        self.TopSymmetry    = None
-        self.BottomSymmetry = None
 
-    @property
-    def wavelength(self):
-        return self._wavelength
-
-    @wavelength.setter
-    def wavelength(self, value):
-        self._wavelength = value
-        self._k          = 2*np.pi / value
-
-    @property
-    def k(self):
-        return self._k
-
-    @k.setter
-    def k(self, value):
-        self._k          = value
-        self._wavelength = 2*np.pi / value
 
 
 def GetBoundaries(Objects):
@@ -126,67 +101,10 @@ def Rotate(Coord = None, Object=None, Angle=0):
         else: return rotated
 
 
-def PlotGeo(Exterior, Full, ax):
-    n = 0
-    for object in Exterior:
-        if isinstance(object, Point):
-            n = PlotPoint(ax, object, n)
-
-        if isinstance(object, LineString):
-            ax.plot(*object.coords, linewidth=3)
-
-        if isinstance(object, (Polygon, MultiPolygon) ):
-            ax.plot( *object.exterior.xy )
-
-        if isinstance(object, GeometryCollection ):
-            for geo in object:
-                PlotGeo(Exterior=[geo], Full=[geo], ax=ax)
-
-    for object in Full:
-        if isinstance(object, Point):
-            n = PlotPoint(ax, object, n)
-
-        if isinstance(object, LineString):
-            ax.plot(*object.coords, linewidth=3)
-
-        if isinstance(object, (Polygon, MultiPolygon) ):
-            ax.add_patch( PolygonPatch(object, alpha=0.5) )
-
-        if isinstance(object, GeometryCollection ):
-            for geo in object:
-                PlotGeo(Exterior=[], Full=[geo], ax=ax)
-
-
-def PlotPoint(ax, point, n):
-        ax.scatter(point.x, point.y, linewidth=10)
-        ax.text(point.x, point.y, f'P{n}', fontsize=15)
-        return n + 1
-
-
-def PlotObject(Full=[], Exterior=[]):
-    Exterior = ToList(Exterior)
-    Full     = ToList(Full)
-
-    fig = plt.figure(figsize=(10,10))
-    ax = fig.add_subplot(111)
-    ax.grid()
-    PlotGeo(Exterior, Full, ax)
-
-    factor = 1.3
-    minx, miny, maxx, maxy = GetBoundaries(Exterior+Full)
-    ax.set_xlim([minx*factor, maxx*factor])
-    ax.set_ylim([miny*factor, maxy*factor])
-    ax.set_aspect('equal')
-    ax.set_ylabel(r'Y-distance [$\mu$m]')
-    ax.set_xlabel(r'X-distance [$\mu$m]')
-    plt.show()
-
-
-UlistLike = (list, ndarray, tuple)
 def ToList(*args):
     out = []
     for arg in args:
-        if not isinstance(arg, UlistLike): out.append( [arg] )
+        if not isinstance(arg, (list, ndarray, tuple)): out.append( [arg] )
         else: out.append(arg)
 
     if len(out) == 1: return out[0]
@@ -201,39 +119,6 @@ def MakeCircles(Points, Radi):
     return C
 
 
-def prePlot(func):
-    def inner(*args, **kwargs):
-        fig = plt.figure(figsize=(8,4))
-        ax = fig.add_subplot(111)
-        ax.grid()
-        kwargs, ybound = func(*args, **kwargs, fig=fig)
-
-        ax.set_ylabel(kwargs['name'] + kwargs['unit'])
-        ax.set_xlabel('ITR')
-
-        if kwargs['xlim'] is not None:
-            ax.set_xlim(left  = kwargs['xlim'][0],  right = kwargs['xlim'][1])
-
-        if kwargs['ylim'] is not None:
-            if kwargs['ylim'][0] is None: ymin = ybound[0]
-            else: ymin = kwargs['ylim'][0]
-
-            ymin = max(1e-8, ymin)
-
-            if kwargs['ylim'][1] is None: ymax = ybound[1]
-            else: ymax = kwargs['ylim'][1]
-
-            ax.set_ylim( ymin = ymin, ymax = ymax )
-
-        if kwargs['yscale'] == 'log': ax.set_yscale('log')
-
-        if kwargs['xscale'] == 'log': ax.set_xscale('log')
-
-        plt.legend(fontsize=6, title="Modes", fancybox=True)
-
-        return fig
-
-    return inner
 
 
 def Multipage(filename, figs=None, dpi=200):
@@ -272,25 +157,6 @@ def Index2NA(nCore, nClad):
 
 def NA2nCore(NA, nClad):
     return np.sqrt(NA**2+nClad**2)
-
-
-
-def GetWidgetBar(msg):
-    return [msg, Bar('=', '[',  ']'), ' ', Percentage(),  ' ', ETA()]
-
-
-def Enumerate(iterator, msg=''):
-    WidgetBar = [msg, Bar('=', '[',  ']'), ' ', Percentage(),  ' ', ETA()]
-
-    bar = ProgressBar(maxval=len(iterator), widgets=WidgetBar)
-
-    bar.start()
-
-    for n, iteration in enumerate(iterator):
-        bar.update(n)
-        if n == len(iterator)-1:
-            bar.finish()
-        yield n, iteration
 
 
 

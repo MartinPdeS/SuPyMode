@@ -80,8 +80,7 @@ class Geometry(object):
         self.Boundaries = [self.Xbound, self.Ybound]
         self.Shape      = [self.Nx, self.Ny]
 
-        self.Axes  = Axes( {'wavelength': 1.0,
-                            'Xbound'    : self.Xbound,
+        self.Axes  = Axes( {'Xbound'    : self.Xbound,
                             'Ybound'    : self.Ybound,
                             'Nx'        : self.Nx,
                             'Ny'        : self.Ny } )
