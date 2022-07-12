@@ -1,5 +1,10 @@
-import numpy               as np
-from mayavi                import mlab
+import numpy as np
+
+try:
+    from mayavi     import mlab
+    from tvtk.tools import visual
+except ImportError:
+    logging.warning('Mayavi package could not be loaded! Not 3D rendering available.')
 
 
 from SuPyMode.Plotting.Plots      import Scene, Axis, Line, Mesh, ColorBar

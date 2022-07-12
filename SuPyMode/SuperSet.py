@@ -1,5 +1,5 @@
-import numpy               as np
-from scipy.interpolate     import interp1d
+import numpy as np
+from scipy.interpolate import interp1d
 
 from SuPyMode.Tools.BaseClass import SetProperties, SetPlottings, ReprBase, ExtendField
 from SuPyMode                 import SuperMode

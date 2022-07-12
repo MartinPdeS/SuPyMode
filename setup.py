@@ -44,7 +44,7 @@ Version = f'{Major}.{Mid}.{Minor}'
 
 print(f"SuPyMode Version: {Version}")
 
-with open(os.path.join(__location__, 'Version.py'), "w+") as f:
+with open(os.path.join(__location__, 'Version'), "w+") as f:
     f.writelines(Version)
 
 
