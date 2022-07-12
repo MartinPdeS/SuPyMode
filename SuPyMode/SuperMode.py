@@ -1,4 +1,5 @@
 import numpy as np
+import logging
 
 try:
     from mayavi     import mlab

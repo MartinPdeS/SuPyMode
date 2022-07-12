@@ -5,7 +5,7 @@ add_custom_command(
   COMMAND python3 setup.py bdist_wheel --NewMinor
   COMMAND python3 -m twine upload --password $ENV{PyPiPassword} --username $ENV{PyPiToken} --repository pypi dist/*
   COMMENT "Upload on Pypi"
-  COMMAND rm -rf dist *.egg* CMakeCache.txt CMakeFiles)
+  COMMAND rm -rf dist *.egg* CMakeCache.txt CMakeFiles *.cmake build)
 add_custom_target(Upload DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Upload.txt)
 
 
