@@ -1,0 +1,23 @@
+.. _references:
+
+References
+===========
+
+
+Here is a list of useful references:
+
+
+
+.. raw:: html
+
+	<hr>
+
+
+1. ref[1]: `Fiber coupler structure <https://opg.optica.org/josab/abstract.cfm?uri=josab-38-7-a7>`_
+
+
+.. raw:: html
+
+	<hr>
+
+2. ref[2] `Fusion geometry <https://opg.optica.org/ao/abstract.cfm?uri=ao-33-36-8361>`_

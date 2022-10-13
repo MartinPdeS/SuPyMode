@@ -1,0 +1,29 @@
+Source code
+===========
+
+
+SuPySolver
+----------
+
+ .. autoclass:: SuPyMode.Solver.SuPySolver
+     :members:
+     :inherited-members:
+     :member-order: bysource
+
+
+SuperSet
+--------
+
+ .. autoclass:: SuPyMode.SuperSet.SuperSet
+     :members:
+     :inherited-members:
+     :member-order: bysource
+
+
+SuperMode
+---------
+
+ .. autoclass:: SuPyMode.SuperMode.SuperMode
+     :members:
+     :inherited-members:
+     :member-order: bysource

@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>7x7 Coupler &#8212; SuPyMode 4.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="/github/workspace/docs/_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/default.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Source code" href="../Code.html" />
+    <link rel="prev" title="2x2 Coupler" href="Example2.html" /> 
+  </head><body>
+        <div style="background-color: #00008B; text-align: left; padding: 10px 10px 15px 15px">
+        <a href="../index.html"><h1 style="font-size: 3em; color: white">SuPyMode</h1></a>
+        </div>
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../Code.html" title="Source code"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Example2.html" title="2x2 Coupler"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../Theory.html">Theory</a>|&nbsp;</li>
+        <li><a href="../Code.html">Code</a>|&nbsp;</li>
+        <li><a href="../Examples.html">Examples</a>|&nbsp;</li>
+        <li><a href="../References.html">References</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li class="nav-item nav-item-1"><a href="../Examples.html" accesskey="U">Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">7x7 Coupler</a></li> 
+      </ul>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p>Click <a class="reference internal" href="#sphx-glr-download-examplesgallery-example5-py"><span class="std std-ref">here</span></a>
+to download the full example code</p>
+</div>
+<div class="sphx-glr-example-title section" id="x7-coupler">
+<span id="sphx-glr-examplesgallery-example5-py"></span><h1>7x7 Coupler<a class="headerlink" href="#x7-coupler" title="Permalink to this heading">¶</a></h1>
+<a class="reference internal image-reference" href="../_images/Geometry4.png"><img alt="../_images/Geometry4.png" class="align-center" src="../_images/Geometry4.png" style="width: 400px;" /></a>
+<a class="reference internal image-reference" href="../_images/Fields3.png"><img alt="../_images/Fields3.png" class="align-center" src="../_images/Fields3.png" style="width: 800px;" /></a>
+<a class="reference internal image-reference" href="../_images/Index3.png"><img alt="../_images/Index3.png" class="align-center" src="../_images/Index3.png" style="width: 600px;" /></a>
+<a class="reference internal image-reference" href="../_images/Adiabatic3.png"><img alt="../_images/Adiabatic3.png" class="align-center" src="../_images/Adiabatic3.png" style="width: 600px;" /></a>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="lineno">27 </span> <span class="kn">from</span> <span class="nn">FiberFusing</span>                <span class="kn">import</span> <span class="n">Geometry</span><span class="p">,</span> <span class="n">Fused7</span><span class="p">,</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">BackGround</span>
+<span class="lineno">28 </span> <span class="kn">from</span> <span class="nn">SuPyMode.Solver</span>            <span class="kn">import</span> <span class="n">SuPySolver</span>
+<span class="lineno">29 </span> <span class="kn">from</span> <span class="nn">SuPyMode.Materials</span>         <span class="kn">import</span> <span class="n">FusedSilica</span>
+<span class="lineno">30 </span>
+<span class="lineno">31 </span> <span class="n">Air</span> <span class="o">=</span> <span class="n">BackGround</span><span class="p">(</span><span class="n">Index</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="lineno">32 </span>
+<span class="lineno">33 </span> <span class="n">Wavelength</span> <span class="o">=</span> <span class="mf">1.55e-6</span>
+<span class="lineno">34 </span> <span class="n">Index</span> <span class="o">=</span> <span class="n">FusedSilica</span><span class="o">.</span><span class="n">GetRI</span><span class="p">(</span><span class="n">Wavelength</span><span class="p">)</span>
+<span class="lineno">35 </span>
+<span class="lineno">36 </span> <span class="n">Clad</span> <span class="o">=</span> <span class="n">Fused7</span><span class="p">(</span><span class="n">FiberRadius</span><span class="o">=</span><span class="mf">62.5</span><span class="p">,</span> <span class="n">Fusion</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">Index</span><span class="o">=</span><span class="n">Index</span><span class="p">)</span>
+<span class="lineno">37 </span>
+<span class="lineno">38 </span> <span class="n">Cores</span> <span class="o">=</span> <span class="p">[</span> <span class="n">Circle</span><span class="p">(</span><span class="n">Position</span><span class="o">=</span><span class="n">Core</span><span class="p">,</span> <span class="n">Radius</span><span class="o">=</span><span class="mf">4.1</span><span class="p">,</span> <span class="n">Index</span><span class="o">=</span><span class="n">Index</span><span class="o">+</span><span class="mf">0.005</span><span class="p">)</span> <span class="k">for</span> <span class="n">Core</span> <span class="ow">in</span> <span class="n">Clad</span><span class="o">.</span><span class="n">Cores</span><span class="p">]</span>
+<span class="lineno">39 </span>
+<span class="lineno">40 </span> <span class="n">Geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="p">(</span><span class="n">Objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">Air</span><span class="p">,</span> <span class="n">Clad</span><span class="p">]</span> <span class="o">+</span> <span class="n">Cores</span><span class="p">,</span>
+<span class="lineno">41 </span>                <span class="n">Xbound</span>  <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">190</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="lineno">42 </span>                <span class="n">Ybound</span>  <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">190</span><span class="p">,</span> <span class="mi">190</span><span class="p">],</span>
+<span class="lineno">43 </span>                <span class="n">Nx</span>      <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+<span class="lineno">44 </span>                <span class="n">Ny</span>      <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+<span class="lineno">45 </span>
+<span class="lineno">46 </span> <span class="c1"># Geo.Plot().Show()</span>
+<span class="lineno">47 </span>
+<span class="lineno">48 </span> <span class="n">Sol</span> <span class="o">=</span> <span class="n">SuPySolver</span><span class="p">(</span><span class="n">Geometry</span><span class="o">=</span><span class="n">Geo</span><span class="p">,</span> <span class="n">Tolerance</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">MaxIter</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="lineno">49 </span>
+<span class="lineno">50 </span> <span class="n">Sol</span><span class="o">.</span><span class="n">CreateSuperSet</span><span class="p">(</span><span class="n">Wavelength</span><span class="o">=</span><span class="mf">1.55</span><span class="p">,</span> <span class="n">NStep</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">ITRi</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ITRf</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="lineno">51 </span>
+<span class="lineno">52 </span>
+<span class="lineno">53 </span> <span class="n">Sol</span><span class="o">.</span><span class="n">AddModes</span><span class="p">(</span><span class="n">Sorting</span>         <span class="o">=</span> <span class="s1">&#39;Field&#39;</span><span class="p">,</span>
+<span class="lineno">54 </span>              <span class="n">Symmetries</span>      <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Right&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Left&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Top&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Bottom&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+<span class="lineno">55 </span>              <span class="n">nComputedMode</span>   <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+<span class="lineno">56 </span>              <span class="n">nSortedMode</span>     <span class="o">=</span> <span class="mi">2</span> <span class="p">)</span>
+<span class="lineno">57 </span>
+<span class="lineno">58 </span> <span class="c1"># Sol.AddModes(Sorting         = &#39;Field&#39;,</span>
+<span class="lineno">59 </span> <span class="c1">#              Symmetries      = {&#39;Right&#39;: -1, &#39;Left&#39;: 0, &#39;Top&#39;: 0, &#39;Bottom&#39;: 0},</span>
+<span class="lineno">60 </span> <span class="c1">#              nComputedMode   = 6,</span>
+<span class="lineno">61 </span> <span class="c1">#              nSortedMode     = 2 )</span>
+<span class="lineno">62 </span>
+<span class="lineno">63 </span> <span class="n">Set</span> <span class="o">=</span> <span class="n">Sol</span><span class="o">.</span><span class="n">GetSet</span><span class="p">()</span>
+<span class="lineno">64 </span>
+<span class="lineno">65 </span>
+<span class="lineno">66 </span> <span class="n">Set</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="n">Type</span><span class="o">=</span><span class="s1">&#39;field&#39;</span><span class="p">,</span> <span class="n">Slice</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span><span class="o">.</span><span class="n">Show</span><span class="p">()</span>
+<span class="lineno">67 </span>
+<span class="lineno">68 </span> <span class="n">Set</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="n">Type</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Show</span><span class="p">()</span>
+<span class="lineno">69 </span>
+<span class="lineno">70 </span> <span class="n">Set</span><span class="o">.</span><span class="n">Plot</span><span class="p">(</span><span class="n">Type</span><span class="o">=</span><span class="s1">&#39;adiabatic&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> ( 0 minutes  0.000 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examplesgallery-example5-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/ae6612dfebf466158440543183a685cd/Example5.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">Example5.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/a3cb885208d9397a04ca56f8d9f47292/Example5.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">Example5.ipynb</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="Example2.html"
+                          title="previous chapter">2x2 Coupler</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../Code.html"
+                          title="next chapter">Source code</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/ExamplesGallery/Example5.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../Code.html" title="Source code"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Example2.html" title="2x2 Coupler"
+             >previous</a> |</li>
+        <li><a href="../Theory.html">Theory</a>|&nbsp;</li>
+        <li><a href="../Code.html">Code</a>|&nbsp;</li>
+        <li><a href="../Examples.html">Examples</a>|&nbsp;</li>
+        <li><a href="../References.html">References</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li class="nav-item nav-item-1"><a href="../Examples.html" >Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">7x7 Coupler</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Martin Poinsinet de Sivry-Houle.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
+    </div>
+  </body>
+</html>

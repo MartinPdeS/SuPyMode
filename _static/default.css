@@ -1,0 +1,26 @@
+/**
+ * Alternate Sphinx design
+ * Originally created by Armin Ronacher for Werkzeug, adapted by Georg Brandl.
+ */
+/*.hidden { display: none }*/
+
+
+body {
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', sans-serif;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    line-height: 150%;
+    text-align: center;
+    background-color: black;
+    color: black;
+    border-color: #c8c8c8 ;
+    padding: 0;
+    border: 1px solid #aaa;
+    margin: 0px 20px 0px 20px;
+    /*min-width: 740px;*/
+    max-width: 100% !important;
+}
+
+.wy-nav-content {
+    max-width: 100% !important;
+}

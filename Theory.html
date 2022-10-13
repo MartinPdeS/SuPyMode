@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Theoretical background &#8212; SuPyMode 4.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="/github/workspace/docs/_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="_static/default.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="Examples.html" />
+    <link rel="prev" title="Documentation" href="index.html" /> 
+  </head><body>
+        <div style="background-color: #00008B; text-align: left; padding: 10px 10px 15px 15px">
+        <a href="index.html"><h1 style="font-size: 3em; color: white">SuPyMode</h1></a>
+        </div>
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="Examples.html" title="Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="#">Theory</a>|&nbsp;</li>
+        <li><a href="Code.html">Code</a>|&nbsp;</li>
+        <li><a href="Examples.html">Examples</a>|&nbsp;</li>
+        <li><a href="References.html">References</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Theoretical background</a></li> 
+      </ul>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="theoretical-background">
+<h1>Theoretical background<a class="headerlink" href="#theoretical-background" title="Permalink to this heading">¶</a></h1>
+<div class="section" id="super-modes">
+<h2>Super-modes<a class="headerlink" href="#super-modes" title="Permalink to this heading">¶</a></h2>
+<p>The 6-equation system for the electric field in a bounded environment can be reduced to
+the Helmholtz equation as follows,</p>
+<div class="math notranslate nohighlight">
+\[H(z)\psi(x,y,z) = \lambda^2\psi(x,y,z)\]</div>
+<div class="line-block">
+<div class="line">Here we have:</div>
+<div class="line-block">
+<div class="line"><span class="math notranslate nohighlight">\(H\)</span> the Hamiltonian of the system</div>
+<div class="line"><span class="math notranslate nohighlight">\(\psi\)</span> the amplitude of the electric field</div>
+<div class="line"><span class="math notranslate nohighlight">\(\lambda\)</span> the eigenvalue of the problem</div>
+</div>
+</div>
+<p>Applied to the optical mode propagation problem we retrieve the following relation:</p>
+<div class="math notranslate nohighlight">
+\[\left( \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + k^2n^2(x,y) \right) \psi(x,y,z) = \lambda^2\psi(x,y,z)\]</div>
+<div class="line-block">
+<div class="line">Here we have:</div>
+<div class="line-block">
+<div class="line"><span class="math notranslate nohighlight">\(k\)</span> the wave-number in of the light field</div>
+<div class="line"><span class="math notranslate nohighlight">\(n(x,y)\)</span> the refractive index (RI) profile of the optical component</div>
+<div class="line"><span class="math notranslate nohighlight">\(\psi\)</span> the amplitude of the electric field</div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="couple-mode-theory">
+<h2>Couple mode theory<a class="headerlink" href="#couple-mode-theory" title="Permalink to this heading">¶</a></h2>
+<p>In order to study the behavior of the solutions (super-modes) we need to know,
+how they couple together.</p>
+<p>In the same RI configuration the modes or orthogonal, i.e:</p>
+<div class="math notranslate nohighlight">
+\[\left&lt; \psi_{l,m} \, |  \psi_{l',m'} \, \right&gt; = \delta_{l,l'} \,\, \delta_{m,m'}\]</div>
+<p>However if the RI configuration is varying in the z-direction coupling can occur between modes.
+This coupling is defined as follows:</p>
+<div class="math notranslate nohighlight">
+\[C_{ij} = \frac{-i}{2}
+         \frac{k^2}{\sqrt{\lambda_i \lambda_2}}
+         \frac{1}{\Delta \lambda_{ij}}
+         \int_A \psi_i(r, \theta) \psi_j(r, \theta) \frac{d}{dz}n^2(r, \theta, z) dr d\theta\]</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="mode-propagation">
+<h2>Mode propagation<a class="headerlink" href="#mode-propagation" title="Permalink to this heading">¶</a></h2>
+<p>Knowing all the coupling factors and propagation constant for each supermodes
+at each z-axis slices we can compute the mode-propagation.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\frac{dU}{dz} = i \begin{bmatrix}
+                      \lambda_1 &amp; C_{12} &amp; C_{13} \\
+                      C_{21} &amp; \lambda_2 &amp; C_{23} \\
+                      C_{31} &amp; C_{32} &amp; \lambda_3
+                  \end{bmatrix} U\end{split}\]</div>
+<p>Where U is a vector array containing all the super-modes amplitudes.</p>
+</div>
+<div class="section" id="adiabatic-criterion">
+<h2>Adiabatic criterion<a class="headerlink" href="#adiabatic-criterion" title="Permalink to this heading">¶</a></h2>
+<div class="math notranslate nohighlight">
+\[\widetilde{C}_{ij} (z) = C_{ij} . \left( \frac{1}{\rho} \frac{d\rho}{dz} \right)^{-1}\]</div>
+<p>The respect of the adiabatic criterion ensure that modes wont be coupling together.</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/Logo.png" alt="Logo"/>
+            </a></p>
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Theoretical background</a><ul>
+<li><a class="reference internal" href="#super-modes">Super-modes</a></li>
+<li><a class="reference internal" href="#couple-mode-theory">Couple mode theory</a></li>
+<li><a class="reference internal" href="#mode-propagation">Mode propagation</a></li>
+<li><a class="reference internal" href="#adiabatic-criterion">Adiabatic criterion</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">Documentation</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="Examples.html"
+                          title="next chapter">Examples</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Theory.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="Examples.html" title="Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Documentation"
+             >previous</a> |</li>
+        <li><a href="#">Theory</a>|&nbsp;</li>
+        <li><a href="Code.html">Code</a>|&nbsp;</li>
+        <li><a href="Examples.html">Examples</a>|&nbsp;</li>
+        <li><a href="References.html">References</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Theoretical background</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Martin Poinsinet de Sivry-Houle.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
+    </div>
+  </body>
+</html>
