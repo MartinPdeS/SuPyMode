@@ -1,0 +1,22 @@
+graft SuPyMode
+
+include SuPyMode/binary/*
+include MANIFEST.in
+include LICENSE
+include VERSION
+include Reports
+include README.rst
+include setup.py
+include setup.cfg
+include pyproject.toml
+graft tests
+
+global-exclude __pycache__
+global-exclude .DS_Store
+
+exclude *.ipynb
+exclude *.txt
+exclude *.yaml
+exclude *.yml
+
+exclude .git*
