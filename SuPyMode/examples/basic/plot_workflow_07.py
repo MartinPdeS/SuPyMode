@@ -39,7 +39,7 @@ workflow = Workflow(
         Boundaries2D(bottom='symmetric'),
         Boundaries2D(bottom='anti-symmetric')
     ],
-    n_sorted_mode=7,                # Total computed and sorted mode.
+    n_sorted_mode=3,                # Total computed and sorted mode.
     n_added_mode=5,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
     plot_geometry=True,             # Plot the geometry mesh before computation.
     debug_mode=False,               # Print the iteration step for the solver plus some other important steps.

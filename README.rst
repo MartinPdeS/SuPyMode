@@ -29,7 +29,7 @@ To this day, SuPyMode as been proven a useful tool to develop very-short 2x1 and
 
 Documentation
 **************
-All the latest available documentation is available `here <https://supymode.readthedocs.io/en/latest/>`_ or you can click the following badge:
+All the latest available documentation is available `here <https://supymodes.readthedocs.io/en/latest/>`_ or you can click the following badge:
 
 |docs|
 

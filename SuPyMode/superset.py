@@ -416,7 +416,11 @@ class SuperSet(object):
 
         return sol.t, sol.y, z_to_itr(sol.t)
 
-    def interpret_initial_input(self, initial_amplitude):
+    def interpret_initial_input(self, initial_amplitude: list) -> numpy.ndarray:
+        amplitude_size = len(initial_amplitude)
+        number_of_supermodes = len(self.supermodes)
+        assert len(initial_amplitude) == len(self.supermodes), f'Amplitudes size: {amplitude_size} do not match with the number of supermodes: {number_of_supermodes}'
+
         if isinstance(initial_amplitude, SuperMode):
             return initial_amplitude.amplitudes
         else:
@@ -431,7 +435,7 @@ class SuperSet(object):
             sub_sampling: int = 5,
             save_directory: str = 'propagation.png',
             show_energy: bool = True,
-            show_amplitude: bool = True,
+            show_amplitudes: bool = True,
             **kwargs) -> tuple:
 
         initial_amplitude = self.interpret_initial_input(
@@ -467,7 +471,7 @@ class SuperSet(object):
                     color=color
                 )
 
-            if show_amplitude:
+            if show_amplitudes:
                 ax.add_line(
                     x=z[::sub_sampling],
                     y=amplitudes[idx, ::sub_sampling].real,
@@ -710,15 +714,49 @@ class SuperSet(object):
         return wrapper
 
     @single_plot
-    def plot_index(self, ax: Axis, show_crossings: bool = False, mode_of_interest: list[SuperMode] = 'all') -> SceneList:
+    def plot_index(self,
+            ax: Axis,
+            show_crossings: bool = False,
+            mode_of_interest: list[SuperMode] = 'all',
+            **artist_kwargs) -> SceneList:
         """
-         Plot effective index for each mode as a function of itr
+        Plot effective index for each mode as a function of itr
+
+        :param      mode_of_interest:  The mode of interest
+        :type       mode_of_interest:  str
+        :param      artist_kwargs:     The keywords arguments
+        :type       artist_kwargs:     dictionary
 
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
         ax.set_style(**plot_style.index)
 
+        self._render_index_vs_itr_on_ax_(
+            ax=ax,
+            show_crossings=show_crossings,
+            mode_of_interest=mode_of_interest,
+            **artist_kwargs
+        )
+
+    def _render_index_vs_itr_on_ax_(self,
+            ax: Axis,
+            show_crossings: bool = False,
+            mode_of_interest: list[SuperMode] = 'all',
+            **artist_kwargs) -> None:
+        """
+        Render the propagation constant of the modes vs ITR on a specific user given axis.
+
+        :param      ax:                The ax to which add the artists
+        :type       ax:                Axis
+        :param      mode_of_interest:  The mode of interest
+        :type       mode_of_interest:  str
+        :param      artist_kwargs:     The keywords arguments
+        :type       artist_kwargs:     dictionary
+
+        :returns:   No returns
+        :rtype:     None
+        """
         mode_of_interest = self.interpret_mode_of_interest(mode_of_interest)
 
         for mode in mode_of_interest:
@@ -743,15 +781,49 @@ class SuperSet(object):
                 )
 
     @single_plot
-    def plot_beta(self, ax: Axis, show_crossings: bool = False, mode_of_interest: list[SuperMode] = 'all') -> SceneList:
+    def plot_beta(self,
+            ax: Axis,
+            show_crossings: bool = False,
+            mode_of_interest: list[SuperMode] = 'all',
+            **artist_kwargs) -> SceneList:
         """
-         Plot propagation constant for each mode as a function of itr
+        Plot propagation constant for each mode as a function of itr
+
+        :param      mode_of_interest:  The mode of interest
+        :type       mode_of_interest:  str
+        :param      artist_kwargs:     The keywords arguments
+        :type       artist_kwargs:     dictionary
 
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
         ax.set_style(**plot_style.beta)
 
+        self._render_beta_vs_itr_on_ax_(
+            ax=ax,
+            show_crossings=show_crossings,
+            mode_of_interest=mode_of_interest,
+            **artist_kwargs
+        )
+
+    def _render_beta_vs_itr_on_ax_(self,
+            ax: Axis,
+            show_crossings: bool = False,
+            mode_of_interest: list[SuperMode] = 'all',
+            **artist_kwargs) -> None:
+        """
+        Render the propagation constant of the modes vs ITR on a specific user given axis.
+
+        :param      ax:                The ax to which add the artists
+        :type       ax:                Axis
+        :param      mode_of_interest:  The mode of interest
+        :type       mode_of_interest:  str
+        :param      artist_kwargs:     The keywords arguments
+        :type       artist_kwargs:     dictionary
+
+        :returns:   No returns
+        :rtype:     None
+        """
         mode_of_interest = self.interpret_mode_of_interest(mode_of_interest)
 
         for mode in mode_of_interest:
@@ -760,7 +832,8 @@ class SuperSet(object):
             ax.add_line(
                 x=self.itr_list,
                 y=y,
-                label=f'{mode.stylized_label}'
+                label=f'{mode.stylized_label}',
+                **artist_kwargs
             )
 
         if show_crossings:
@@ -775,15 +848,46 @@ class SuperSet(object):
                 )
 
     @single_plot
-    def plot_eigen_value(self, ax: Axis, mode_of_interest: list[SuperMode] = 'all') -> SceneList:
+    def plot_eigen_value(self,
+            ax: Axis,
+            mode_of_interest: list[SuperMode] = 'all',
+            **artist_kwargs) -> SceneList:
         """
-         Plot propagation constant for each mode as a function of itr
+        Plot propagation constant for each mode as a function of itr
+
+        :param      mode_of_interest:  The mode of interest
+        :type       mode_of_interest:  str
+        :param      artist_kwargs:     The keywords arguments
+        :type       artist_kwargs:     dictionary
 
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
         ax.set_style(**plot_style.eigen_value)
 
+        self._render_eigen_values_vs_itr_on_ax_(
+            ax=ax,
+            mode_of_interest=mode_of_interest,
+            **artist_kwargs
+        )
+
+    def _render_eigen_values_vs_itr_on_ax_(self,
+            ax: Axis,
+            mode_of_interest: list[SuperMode] = 'all',
+            **artist_kwargs) -> None:
+        """
+        Render the eigen values of the modes vs ITR on a specific user given axis.
+
+        :param      ax:                The ax to which add the artists
+        :type       ax:                Axis
+        :param      mode_of_interest:  The mode of interest
+        :type       mode_of_interest:  str
+        :param      artist_kwargs:     The keywords arguments
+        :type       artist_kwargs:     dictionary
+
+        :returns:   No returns
+        :rtype:     None
+        """
         mode_of_interest = self.interpret_mode_of_interest(mode_of_interest)
 
         for mode in mode_of_interest:
@@ -792,25 +896,58 @@ class SuperSet(object):
             ax.add_line(
                 x=self.itr_list,
                 y=y,
-                label=f'{mode.stylized_label}'
+                label=f'{mode.stylized_label}',
+                **artist_kwargs
             )
 
     @single_plot
     def plot_normalized_coupling(self,
             ax: Axis,
             mode_of_interest: list = 'all',
-            mode_selection='pairs') -> SceneList:
+            mode_selection='pairs',
+            **artist_kwargs) -> SceneList:
         """
-         Plot coupling value for each mode as a function of itr
+        Plot coupling value for each mode as a function of itr
 
-        :param      mode_of_interest:  List of the mode that are to be considered in the adiabatic criterion plotting.
-        :type       mode_of_interest:  list
+        :param      mode_of_interest:  The mode of interest
+        :type       mode_of_interest:  str
+        :param      mode_selection:    The mode selection
+        :type       mode_selection:    str
+        :param      artist_kwargs:     The keywords arguments
+        :type       artist_kwargs:     dictionary
 
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
         ax.set_style(**plot_style.normalized_coupling)
 
+        self._render_normalized_coupling_vs_itr_on_ax_(
+            ax=ax,
+            mode_of_interest=mode_of_interest,
+            mode_selection=mode_selection,
+            **artist_kwargs
+        )
+
+    def _render_normalized_coupling_vs_itr_on_ax_(self,
+            ax: Axis,
+            mode_of_interest: list[SuperMode] = 'all',
+            mode_selection: str = 'pairs',
+            **artist_kwargs) -> None:
+        """
+        Render the beating length vs ITR on a specific user given axis.
+
+        :param      ax:                The ax to which add the artists
+        :type       ax:                Axis
+        :param      mode_of_interest:  The mode of interest
+        :type       mode_of_interest:  str
+        :param      mode_selection:    The mode selection
+        :type       mode_selection:    str
+        :param      artist_kwargs:     The keywords arguments
+        :type       artist_kwargs:     dictionary
+
+        :returns:   No returns
+        :rtype:     None
+        """
         combination = self.interpret_combinations(
             mode_of_interest=mode_of_interest,
             mode_selection=mode_selection
@@ -823,25 +960,58 @@ class SuperSet(object):
                 ax.add_line(
                     x=self.itr_list,
                     y=y,
-                    label=f'{mode_0.stylized_label} - {mode_1.stylized_label}'
+                    label=f'{mode_0.stylized_label} - {mode_1.stylized_label}',
+                    **artist_kwargs
                 )
 
     @single_plot
     def plot_overlap(self,
             ax: Axis,
             mode_of_interest: list = 'all',
-            mode_selection='pairs') -> SceneList:
+            mode_selection='pairs',
+            **artist_kwargs) -> SceneList:
         """
-         Plot overlap value for each mode as a function of itr
+        Plot overlap value for each mode as a function of itr
 
-        :param      mode_of_interest:  List of the mode that are to be considered in the adiabatic criterion plotting.
-        :type       mode_of_interest:  list
+        :param      mode_of_interest:  The mode of interest
+        :type       mode_of_interest:  str
+        :param      mode_selection:    The mode selection
+        :type       mode_selection:    str
+        :param      artist_kwargs:     The keywords arguments
+        :type       artist_kwargs:     dictionary
 
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
         ax.set_style(**plot_style.overlap)
 
+        self._render_overlap_vs_itr_on_ax_(
+            ax=ax,
+            mode_of_interest=mode_of_interest,
+            mode_selection=mode_selection,
+            **artist_kwargs
+        )
+
+    def _render_overlap_vs_itr_on_ax_(self,
+            ax: Axis,
+            mode_of_interest: list[SuperMode] = 'all',
+            mode_selection: str = 'pairs',
+            **artist_kwargs) -> None:
+        """
+        Render the beating length vs ITR on a specific user given axis.
+
+        :param      ax:                The ax to which add the artists
+        :type       ax:                Axis
+        :param      mode_of_interest:  The mode of interest
+        :type       mode_of_interest:  str
+        :param      mode_selection:    The mode selection
+        :type       mode_selection:    str
+        :param      artist_kwargs:     The keywords arguments
+        :type       artist_kwargs:     dictionary
+
+        :returns:   No returns
+        :rtype:     None
+        """
         combination = self.interpret_combinations(
             mode_of_interest=mode_of_interest,
             mode_selection=mode_selection
@@ -854,7 +1024,8 @@ class SuperSet(object):
                 ax.add_line(
                     x=self.itr_list,
                     y=y,
-                    label=f'{mode_0.stylized_label} - {mode_1.stylized_label}'
+                    label=f'{mode_0.stylized_label} - {mode_1.stylized_label}',
+                    **artist_kwargs
                 )
 
     @single_plot
@@ -863,9 +1034,10 @@ class SuperSet(object):
             mode_of_interest: list = 'all',
             mode_selection='pairs',
             add_profile: list[AlphaProfile] = [],
-            core_radius: float = None) -> SceneList:
+            core_radius: float = None,
+            **artist_kwargs) -> SceneList:
         """
-         Plot coupling value for each mode as a function of itr
+        Plot coupling value for each mode as a function of itr
 
         :param      mode_of_interest:  List of the mode that are to be considered in the adiabatic criterion plotting.
         :type       mode_of_interest:  list
@@ -875,6 +1047,41 @@ class SuperSet(object):
         """
         ax.set_style(**plot_style.beating_length)
 
+        self._render_beating_length_vs_itr_on_ax_(
+            ax=ax,
+            mode_of_interest=mode_of_interest,
+            mode_selection=mode_selection,
+            add_profile=add_profile,
+            core_radius=core_radius,
+            **artist_kwargs
+        )
+
+        for profile in numpy.atleast_1d(add_profile):
+            profile._render_taper_length_scale_vs_itr_on_ax_(ax=ax, core_radius=core_radius)
+
+    def _render_beating_length_vs_itr_on_ax_(self,
+            ax: Axis,
+            mode_of_interest: list[SuperMode] = 'all',
+            mode_selection: str = 'pairs',
+            add_profile: list[AlphaProfile] = [],
+            **artist_kwargs) -> None:
+        """
+        Render the beating length vs ITR on a specific user given axis.
+
+        :param      ax:                The ax to which add the artists
+        :type       ax:                Axis
+        :param      mode_of_interest:  The mode of interest
+        :type       mode_of_interest:  str
+        :param      mode_selection:    The mode selection
+        :type       mode_selection:    str
+        :param      add_profile:       The add profile
+        :type       add_profile:       Array
+        :param      artist_kwargs:     The keywords arguments
+        :type       artist_kwargs:     dictionary
+
+        :returns:   No returns
+        :rtype:     None
+        """
         combination = self.interpret_combinations(
             mode_of_interest=mode_of_interest,
             mode_selection=mode_selection
@@ -887,31 +1094,66 @@ class SuperSet(object):
                 ax.add_line(
                     x=self.itr_list,
                     y=y,
-                    label=f'{mode_0.stylized_label} - {mode_1.stylized_label}'
+                    label=f'{mode_0.stylized_label} - {mode_1.stylized_label}',
+                    **artist_kwargs
                 )
-
-        for profile in numpy.atleast_1d(add_profile):
-            profile._render_taper_length_scale_vs_itr_on_ax_(ax=ax, core_radius=core_radius)
 
     @single_plot
     def plot_adiabatic(self,
             ax: Axis,
             mode_of_interest: list[SuperMode] = 'all',
             mode_selection: str = 'pairs',
-            add_profile: list[AlphaProfile] = []) -> SceneList:
+            add_profile: list[AlphaProfile] = [],
+            **artist_kwargs) -> SceneList:
         """
-         Plot adiabatic criterion for each mode as a function of itr
+        Plot adiabatic criterion for each mode as a function of itr
 
         :param      pair_of_interest:  List of the mode that are to be considered in the adiabatic criterion plotting.
         :type       pair_of_interest:  list
         :param      mode_selection:    The type of combination to be plotted, either 'specific/all/pairs'
         :type       mode_selection:    str
+        :param      artist_kwargs:     The keywords arguments
+        :type       artist_kwargs:     dictionary
 
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
         ax.set_style(**plot_style.adiabatic)
 
+        self._render_adiabatic_vs_itr_on_ax_(
+            ax=ax,
+            mode_of_interest=mode_of_interest,
+            mode_selection=mode_selection,
+            add_profile=add_profile,
+            **artist_kwargs
+        )
+
+        for profile in numpy.atleast_1d(add_profile):
+            profile._render_adiabatic_factor_vs_itr_on_ax_(ax, line_style='--', color='black')
+
+    def _render_adiabatic_vs_itr_on_ax_(self,
+            ax: Axis,
+            mode_of_interest: list[SuperMode] = 'all',
+            mode_selection: str = 'pairs',
+            add_profile: list[AlphaProfile] = [],
+            **artist_kwargs) -> None:
+        """
+        Render the adiabatic criterion vs ITR on a specific user given axis.
+
+        :param      ax:                The ax to which add the artists
+        :type       ax:                Axis
+        :param      mode_of_interest:  The mode of interest
+        :type       mode_of_interest:  str
+        :param      mode_selection:    The mode selection
+        :type       mode_selection:    str
+        :param      add_profile:       The add profile
+        :type       add_profile:       Array
+        :param      artist_kwargs:     The keywords arguments
+        :type       artist_kwargs:     dictionary
+
+        :returns:   No returns
+        :rtype:     None
+        """
         combination = self.interpret_combinations(
             mode_of_interest=mode_of_interest,
             mode_selection=mode_selection
@@ -924,11 +1166,12 @@ class SuperSet(object):
                 ax.add_line(
                     x=self.itr_list,
                     y=y,
-                    label=f'{mode_0.stylized_label} - {mode_1.stylized_label}'
+                    label=f'{mode_0.stylized_label} - {mode_1.stylized_label}',
+                    **artist_kwargs
                 )
 
         for profile in numpy.atleast_1d(add_profile):
-            profile._render_adiabatic_factor_vs_itr_on_ax_(ax)
+            profile._render_adiabatic_factor_vs_itr_on_ax_(ax, line_style='--', color='black')
 
     @single_plot
     def plot_normalized_adiabatic(self,
@@ -1057,7 +1300,8 @@ class SuperSet(object):
 
         return mode_of_interest
 
-    def plot_field(self, mode_of_interest: list = 'all',
+    def plot_field(self,
+            mode_of_interest: list = 'all',
             itr_list: list[float] = [],
             slice_list: list[int] = [],
             show_mode_label: bool = True,
@@ -1101,7 +1345,13 @@ class SuperSet(object):
 
                 x, y = mode.field.get_axis(slice_number=slice_number)
 
-                artist = ax.add_mesh(x=x, y=y, scalar=field, colormap=colormaps.blue_black_red, show_colorbar=True)
+                artist = ax.add_mesh(
+                    x=x,
+                    y=y,
+                    scalar=field,
+                    colormap=colormaps.blue_black_red,
+                    show_colorbar=False
+                )
 
                 artist.colorbar.symmetric = True
                 artist.colorbar.position = 'right'
@@ -1156,7 +1406,7 @@ class SuperSet(object):
         test_valid_input(
             variable_name='plot_type',
             user_input=plot_type,
-            valid_inputs=['index', 'beta', 'eigen_value', 'adiabatic', 'overlap', 'normalized-adiabatic', 'normalized-coupling', 'field', 'beating-length']
+            valid_inputs=['index', 'beta', 'eigen-value', 'adiabatic', 'overlap', 'normalized-adiabatic', 'normalized-coupling', 'field', 'beating-length']
         )
 
         match plot_type.lower():

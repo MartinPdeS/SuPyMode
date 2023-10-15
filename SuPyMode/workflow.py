@@ -48,6 +48,15 @@ class Workflow():
     """ Scrambling of the clad core position """
     index_scrambling: float = 0
     """ Scrambling of the structure refractive index """
+    boundaries: list = (Boundaries2D(),)
+    """ List of boundaries cndition to which evaluate to modes """
+    accuracy: int = 2
+    """ Accuracy of the finit-difference set of value """
+    x_bounds: str = 'centering'
+    """ X-boundaries """
+    y_bounds: str = 'centering'
+    """ Y-boundaries """
+
     plot_geometry: bool = False
     """ Plot the computed geometry mesh prior computation """
     plot_cladding: bool = False
@@ -58,18 +67,20 @@ class Workflow():
     """ Plot the adiabatic criterion after computation """
     plot_coupling: bool = False
     """ Plot the mode coupling after computation """
+    plot_beating_length: bool = False
+    """ Plot the mode beating length after computation """
+    plot_eigen_values: bool = False
+    """ Plot the computed eigen_values after computation """
+    plot_index: bool = False
+    """ Plot the computed effective index after computation """
+    plot_beta: bool = False
+    """ Plot the computed propagation constant after computation """
+
     debug_mode: bool = False
     """ Enable debug mode printing """
     auto_label: bool = False
     """ Enable auto labeling of the supermodes """
-    boundaries: list = (Boundaries2D(),)
-    """ List of boundaries cndition to which evaluate to modes """
-    accuracy: int = 2
-    """ Accuracy of the finit-difference set of value """
-    x_bounds: str = 'centering'
-    """ X-boundaries """
-    y_bounds: str = 'centering'
-    """ Y-boundaries """
+
     generate_report: bool = False
     """ Generate final pdf reports containing geometry, fields, coupling, adiabatic criterions """
     save_superset: bool = False
@@ -85,13 +96,25 @@ class Workflow():
         self._initialize_solver_()
 
         if self.plot_field:
-            self.plot(plot_type='field')
+            self.plot(plot_type='field').show()
 
         if self.plot_adiabatic:
-            self.plot(plot_type='adiabatic')
+            self.plot(plot_type='adiabatic').show()
 
         if self.plot_coupling:
-            self.plot(plot_type='normalized-coupling')
+            self.plot(plot_type='normalized-coupling').show()
+
+        if self.plot_beating_length:
+            self.plot(plot_type='beating-length').show()
+
+        if self.plot_eigen_values:
+            self.plot(plot_type='eigen-value').show()
+
+        if self.plot_index:
+            self.plot(plot_type='index').show()
+
+        if self.plot_beta:
+            self.plot(plot_type='beta').show()
 
         if self.generate_report:
             self.generate_pdf_report()

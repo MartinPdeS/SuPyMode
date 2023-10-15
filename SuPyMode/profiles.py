@@ -255,7 +255,7 @@ class AlphaProfile():
     def radius(self) -> numpy.ndarray:
         """
         Returns the array of radius [vs z-distance] for the taper structure
-        
+
         :returns:   The ITR array
         :rtype:     numpy.ndarray
         """
@@ -268,7 +268,7 @@ class AlphaProfile():
     def itr_list(self) -> numpy.ndarray:
         """
         Returns the array of ITR value [vs z-distance] for the taper structure
-        
+
         :returns:   The ITR array
         :rtype:     numpy.ndarray
         """
@@ -281,7 +281,7 @@ class AlphaProfile():
     def adiabatic(self) -> numpy.ndarray:
         """
         Returns the array of adiabatc factor [vs ITR] for the taper structure
-        
+
         :returns:   The adiabatic factor
         :rtype:     numpy.ndarray
         """
@@ -294,7 +294,7 @@ class AlphaProfile():
     def taper_angle(self) -> numpy.ndarray:
         """
         Returns the array of taper angle for the taper structure
-        
+
         :returns:   The taper angle array
         :rtype:     numpy.ndarray
         """
@@ -307,7 +307,7 @@ class AlphaProfile():
     def smallest_itr(self) -> float:
         """
         Returns the smallest itr of the taper structure
-        
+
         :returns:   Smallest itr value
         :rtype:     float
         """
@@ -317,7 +317,7 @@ class AlphaProfile():
     def last_z(self) -> float:
         """
         Retunrs the last, or equavalently the largest propagation distance computed
-        
+
         :returns:   The z-distance
         :rtype:     float
         """
@@ -330,7 +330,7 @@ class AlphaProfile():
     def last_radius(self) -> float:
         """
         Retunrs the radius value of the last z-position
-        
+
         :returns:   The radius value
         :rtype:     float
         """
@@ -343,7 +343,7 @@ class AlphaProfile():
     def last_heating_length(self) -> float:
         """
         Retunrs the heating lenght of the last z-position.
-        
+
         :returns:   THe heating length
         :rtype:     float
         """
@@ -459,7 +459,7 @@ class AlphaProfile():
         """
         return core_radius / self.get_taper_angle()
 
-    def _render_itr_vs_z_on_ax_(self, ax: Axis) -> None:
+    def _render_itr_vs_z_on_ax_(self, ax: Axis, **artist_kwargs) -> None:
         """
         Add plot onto axis, the plots is ITR vs Z-distance
 
@@ -469,14 +469,13 @@ class AlphaProfile():
         ax.set_style(**plot_style.z_profile)
 
         ax.add_line(
-            x=self.distance, 
-            y=self.radius / self.initial_radius, 
+            x=self.distance,
+            y=self.radius / self.initial_radius,
             label=self.label,
-            color=self.line_color,
-            line_style=self.line_style
+            **artist_kwargs
         )
 
-    def _render_taper_angle_vs_z_on_ax_(self, ax: Axis) -> None:
+    def _render_taper_angle_vs_z_on_ax_(self, ax: Axis, **artist_kwargs) -> None:
         """
         Add plot onto axis, the plots is ITR vs Z-distance
 
@@ -489,18 +488,17 @@ class AlphaProfile():
             x=self.distance,
             y=self.taper_angle,
             label=self.label,
-            color=self.line_color,
-            line_style=self.line_style
+            **artist_kwargs
         )
 
-    def _render_taper_length_scale_vs_itr_on_ax_(self, ax: Axis, core_radius: float) -> None:
+    def _render_taper_length_scale_vs_itr_on_ax_(self, ax: Axis, core_radius: float, **artist_kwargs) -> None:
         """
         Add ITR vs Z-distance plot to axis
 
         :param      ax:   The axis on which to add the plot
         :type       ax:   Axis
         """
-        # ax.set_style(**plot_style.taper_angle)
+        ax.set_style(**plot_style.taper_angle)
 
         length_scale = self.get_length_scale(core_radius=core_radius)
 
@@ -508,11 +506,10 @@ class AlphaProfile():
             x=self.itr_list,
             y=length_scale,
             label='Coupler length-scale',
-            color=self.line_color,
-            line_style=self.line_style
+            **artist_kwargs
         )
 
-    def _render_adiabatic_factor_vs_z_on_ax_(self, ax: Axis) -> None:
+    def _render_adiabatic_factor_vs_z_on_ax_(self, ax: Axis, **artist_kwargs) -> None:
         """
         Add plot onto axis, the plots is adiabatic criterion vs Z-distance
 
@@ -527,11 +524,10 @@ class AlphaProfile():
             x=self._distance_array,
             y=self._adiabatic_factor,
             label=self.label,
-            color=self.line_color,
-            line_style=self.line_style
+            **artist_kwargs
         )
 
-    def _render_adiabatic_factor_vs_itr_on_ax_(self, ax: Axis) -> None:
+    def _render_adiabatic_factor_vs_itr_on_ax_(self, ax: Axis, **artist_kwargs) -> None:
         """
         Add adiabatic criterion vs ITR plot to axis
 
@@ -544,24 +540,23 @@ class AlphaProfile():
             x=self.itr_list,
             y=self.adiabatic,
             label=self.label,
-            color=self.line_color,
-            line_style=self.line_style
+            **artist_kwargs
         )
 
-    def plot(self, 
-            show_radius: bool = True, 
-            show_adiabatic: bool = True, 
+    def plot(self,
+            show_radius: bool = True,
+            show_adiabatic: bool = True,
             show_taper_angle: bool = True) -> SceneList:
         """
         Generate two plots: ITR vs z distance and adiabatic criterion vs ITR
-        
+
         :param      show_radius:       If True, plot shows radius as function of ITR
         :type       show_radius:       bool
         :param      show_adiabatic:    If True, plot shows adiabatic criterion as function of ITR
         :type       show_adiabatic:    bool
         :param      show_taper_angle:  If True, plot shows taper angle as function of ITR
         :type       show_taper_angle:  bool
-        
+
         :returns:   The scene list.
         :rtype:     SceneList
         """
@@ -595,7 +590,7 @@ class AlphaProfile():
             dark_background: bool = True) -> None:
         """
         Genrates gif of the propagation of light into the taper structure
-        
+
         :param      output_directory:  The output directory
         :type       output_directory:  str
         :param      dpi:               The dpi
@@ -606,7 +601,7 @@ class AlphaProfile():
         :type       number_of_frames:  int
         :param      dark_background:   If True the background is black
         :type       dark_background:   bool
-        
+
         :returns:   No returns
         :rtype:     None
         """
@@ -624,10 +619,10 @@ class AlphaProfile():
         ax.plot(sub_distance, -sub_radius, color='black')
 
         ax.fill_between(
-            sub_distance, 
-            sub_radius, 
-            -sub_radius, 
-            color='lightblue', 
+            sub_distance,
+            sub_radius,
+            -sub_radius,
+            color='lightblue',
             alpha=0.8
         )
 
