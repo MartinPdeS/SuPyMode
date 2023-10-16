@@ -30,7 +30,7 @@ public:
             else if (i == pos) std::cout << ">";
             else std::cout << " ";
         }
-        std::cout << "] " << "iteration: " <<value << "\n";
+        std::cout << "] " << "iteration: " <<value << "\n"<<std::endl;
 
         if (flush)
             std::cout.flush();
