@@ -3,6 +3,8 @@
 
 import sys
 from sphinx_gallery.sorting import FileNameSortKey
+from packaging.version import parse
+
 
 from SuPyMode.tools.directories import (
     logo_path,
@@ -70,8 +72,6 @@ sphinx_gallery_conf = {
     'download_all_examples': False,
     'line_numbers': True,
     'remove_config_comments': True,
-    'default_thumb_file': logo_path,
-    'notebook_images': logo_path,
     'within_subsection_order': FileNameSortKey,
     'capture_repr': ('_repr_html_', '__repr__'),
     'nested_sections': True,
@@ -93,15 +93,59 @@ master_doc = 'index'
 
 language = 'en'
 
-exclude_patterns = []
-
-pygments_style = 'monokai'
-
 highlight_language = 'python3'
 
-html_theme = 'sphinxdoc'
+html_theme = "pydata_sphinx_theme"
 
-html_theme_options = {"sidebarwidth": 400}
+# -- Options for HTML output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
+
+exclude_trees = []
+default_role = "autolink"
+pygments_style = "sphinx"
+
+# -- Sphinx-gallery configuration --------------------------------------------
+
+v = parse(release)
+if v.release is None:
+    raise ValueError(f"Ill-formed version: {version!r}. Version should follow PEP440")
+
+if v.is_devrelease:
+    binder_branch = "main"
+else:
+    major, minor = v.release[:2]
+    binder_branch = f"v{major}.{minor}.x"
+
+html_theme_options = {
+    # Navigation bar
+    "logo": {
+        "alt_text": "SuPyMode's logo",
+        "text": "SuPyMode",
+        "link": "https://github.com/MartinPdeS/SuPyMode",
+    },
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/MartinPdeS/SuPyMode",
+            "icon": "fa-brands fa-github",
+        },
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/pymiesim/",
+            "icon": "fa-solid fa-box",
+        },
+    ],
+    "navbar_align": "left",
+    "navbar_end": ["version-switcher", "navbar-icon-links"],
+    "show_prev_next": False,
+    "show_version_warning_banner": True,
+    # Footer
+    "footer_start": ["copyright"],
+    "footer_end": ["sphinx-version", "theme-version"],
+    # Other
+    "pygment_light_style": "default",
+    "pygment_dark_style": "github-dark",
+}
 
 
 html_static_path = ['_static']

@@ -495,16 +495,16 @@ class SuperSet(object):
         return figure, (z, amplitudes, itr_list)
 
     def generate_propagation_gif(self, *,
-                                 profile: AlphaProfile,
-                                 initial_amplitude,
-                                 max_step: float = None,
-                                 coupling: str = 'normalized',
-                                 method: str = 'RK45',
-                                 sub_sampling: int = 5,
-                                 mutliplicative_factor: float = 1,
-                                 save_directory: str = 'new_figure.gif',
-                                 delta_azimuth: float = 0,
-                                 **kwargs) -> tuple:
+            profile: AlphaProfile,
+            initial_amplitude,
+            max_step: float = None,
+            coupling: str = 'normalized',
+            method: str = 'RK45',
+            sub_sampling: int = 5,
+            mutliplicative_factor: float = 1,
+            save_directory: str = 'new_figure.gif',
+            delta_azimuth: float = 0,
+            **kwargs) -> tuple:
         """
         Generates a gif video of the mode propagation.
 
@@ -545,15 +545,15 @@ class SuperSet(object):
         return z_list, amplitudes_list, itr_list
 
     def generate_propagation_gif_from_values(self, *,
-                                             amplitudes_list: numpy.ndarray,
-                                             itr_list: numpy.ndarray,
-                                             z_list: numpy.ndarray,
-                                             sub_sampling: int = 10000,
-                                             mutliplicative_factor: float = -100,
-                                             delta_azimuth: float = 0,
-                                             save_directory: str = 'new_figure.gif',
-                                             colormap: str = 'bwr',
-                                             **kwargs) -> None:
+            amplitudes_list: numpy.ndarray,
+            itr_list: numpy.ndarray,
+            z_list: numpy.ndarray,
+            sub_sampling: int = 10000,
+            mutliplicative_factor: float = -100,
+            delta_azimuth: float = 0,
+            save_directory: str = 'new_figure.gif',
+            colormap: str = 'bwr',
+            **kwargs) -> None:
         """
         Generates a gif video of the mode propagation.
 
