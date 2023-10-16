@@ -3,15 +3,14 @@
 
 import sys
 from sphinx_gallery.sorting import FileNameSortKey
+from sphinx_gallery.sorting import ExplicitOrder
 from packaging.version import parse
 
 
 from SuPyMode.tools.directories import (
-    logo_path,
     project_path,
     doc_css_path,
     version_path,
-    examples_path
 )
 
 
@@ -64,7 +63,13 @@ except ImportError:
 
 sphinx_gallery_conf = {
     'examples_dirs': '../examples',
-    'gallery_dirs': ["gallery/basic", "gallery/validation"],
+    'gallery_dirs': "gallery",
+    "subsection_order": ExplicitOrder(
+        [
+            "../examples/basic",
+            "../examples/validation"
+        ]
+    ),
     "backreferences_dir": "api",
     'image_scrapers': ('matplotlib', 'pyvista'),
     'ignore_pattern': '/__',
