@@ -65,6 +65,7 @@ except ImportError:
 sphinx_gallery_conf = {
     'examples_dirs': '../examples',
     'gallery_dirs': ["gallery/basic", "gallery/validation"],
+    "backreferences_dir": "api",
     'image_scrapers': ('matplotlib', 'pyvista'),
     'ignore_pattern': '/__',
     'plot_gallery': True,
@@ -131,7 +132,7 @@ html_theme_options = {
         },
         {
             "name": "PyPI",
-            "url": "https://pypi.org/project/pymiesim/",
+            "url": "https://pypi.org/project/supymode/",
             "icon": "fa-solid fa-box",
         },
     ],

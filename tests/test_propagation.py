@@ -21,7 +21,7 @@ def test_propagation():
     profile.add_taper_segment(
         alpha=0,
         initial_heating_length=5e-3,
-        stretching_length=2e-3,
+        stretching_length=2e-3/100,
         n_point=200
     )
 
@@ -53,7 +53,7 @@ def test_propagation():
         max_step=1550e-9 / 5000
     )
 
-    # figure.show()
+    figure.show()
 
 
 if __name__ == '__main__':
