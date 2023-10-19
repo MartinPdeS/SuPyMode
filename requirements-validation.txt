@@ -22,3 +22,4 @@ coverage
 PyQt5
 fibermodes @ git+https://github.com/cbrunet/fibermodes
 pydata_sphinx_theme
+pathvalidate

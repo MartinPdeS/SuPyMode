@@ -20,8 +20,9 @@ build
 *.whl
 .pdf
 Perso/
-Reports/*.pdf
-docs/source/ExampleGallery
+
+docs/source/gallery
+docs/source/api
 
 CMakeCache.txt
 CMakeFiles

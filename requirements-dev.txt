@@ -21,3 +21,4 @@ tox>=3.24
 coverage
 numpydoc
 pydata-sphinx-theme
+pathvalidate

@@ -33,8 +33,8 @@ autodoc_mock_imports = [
     'numpydoc',
     'MPSPlots',
     'FiberFusing',
-    'SuPyMode.Binary',
-    'SuPyMode.Tools'
+    'SuPyMode.binary',
+    'SuPyMode.tools'
 ]
 
 
@@ -153,11 +153,6 @@ html_theme_options = {
     "pygment_dark_style": "github-dark",
 }
 
-
-html_static_path = ['_static']
-templates_path = ['_templates']
-html_css_files = ['default.css']
-
 htmlhelp_basename = 'SuPyModedoc'
 
 latex_elements = {}
@@ -181,4 +176,7 @@ texinfo_documents = [
 
 epub_title = project
 
+html_static_path = ['_static']
+templates_path = ['_templates']
+html_css_files = ['default.css']
 epub_exclude_files = ['search.html']

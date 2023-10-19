@@ -4,3 +4,4 @@ FiberFusing
 numpy
 scipy
 matplotlib
+pathvalidate

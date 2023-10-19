@@ -8,6 +8,7 @@ import logging
 from dataclasses import dataclass
 from pathlib import Path
 from itertools import combinations, product
+from pathvalidate import sanitize_filepath
 
 # Third-party imports
 from scipy.interpolate import interp1d
@@ -1479,7 +1480,7 @@ class SuperSet(object):
         for figure in figures:
             figure.close()
 
-    def save_instance(self, filename: str, directory: str = '.'):
+    def save_instance(self, filename: str, directory: str = '.') -> Path:
         """
         Saves the superset instance as a serialized pickle file.
 
@@ -1487,16 +1488,25 @@ class SuperSet(object):
         :type       filename:  str
         :param      filename:  The filename
         :type       filename:  str
+
+        :returns:   The path directory of the saved instance
+        :rtype:     Path
         """
         if directory == 'auto':
             directory = directories.instance_directory
 
-        filename = Path(directory).joinpath(filename).with_suffix('.pickle')
+        filename = Path(filename).with_suffix('.pickle')
+
+        filename = sanitize_filepath(filename)
+
+        filename = Path(directory).joinpath(filename)
 
         logging.info(f"Saving pickled superset into: {filename}")
 
         with open(filename, 'wb') as output_file:
             pickle.dump(self, output_file, pickle.HIGHEST_PROTOCOL)
+
+        return filename
 
     def get_beta_crossing(self, mode_of_interest: list) -> dict:
         """

@@ -1,5 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from FiberFusing import Geometry, BackGround
 from SuPyMode.solver import SuPySolver
@@ -8,6 +11,7 @@ from SuPyMode.profiles import AlphaProfile
 from FiberFusing import configuration
 
 from PyFinitDiff.boundaries import Boundaries2D
+from pathvalidate import sanitize_filepath
 
 
 @dataclass
@@ -180,8 +184,10 @@ class Workflow():
         :returns:   No returns
         :rtype:     None
         """
+        background = BackGround(index=1)
+
         self.geometry = Geometry(
-            background=BackGround(index=1),
+            background=background,
             x_bounds=self.x_bounds,
             y_bounds=self.y_bounds,
             resolution=self.resolution,
@@ -257,7 +263,7 @@ class Workflow():
 
         return filename.replace('.', '_')
 
-    def save_superset_instance(self, filename: str = 'auto', directory: str = 'auto') -> None:
+    def save_superset_instance(self, filename: str = 'auto', directory: str = 'auto') -> Path:
         """
         Saves a superset instance in the form of a serialized files using the picles library.
 
@@ -266,18 +272,24 @@ class Workflow():
         :param      directory:  The directory
         :type       directory:  str
 
-        :returns:   No returns
-        :rtype:     None
+        :returns:   The path directory of the saved instance
+        :rtype:     Path
         """
         if filename == 'auto':
             filename = self._get_auto_generated_filename_()
+
+        filename = Path(filename + '.pdf')
+
+        filename = sanitize_filepath(filename)
 
         self.solver.superset.save_instance(
             filename=filename,
             directory=directory
         )
 
-    def generate_pdf_report(self, filename: str = 'auto', **kwargs) -> None:
+        return filename
+
+    def generate_pdf_report(self, filename: str = 'auto', **kwargs) -> Path:
         """
         Generate a pdf file compiling the essential computed components.
 
@@ -286,16 +298,22 @@ class Workflow():
         :param      kwargs:    The keywords arguments
         :type       kwargs:    dictionary
 
-        :returns:   No returns
-        :rtype:     None
+        :returns:   The path directory of the report
+        :rtype:     Path
         """
         if filename == 'auto':
             filename = self._get_auto_generated_filename_()
 
+        filename = Path(filename).with_suffix('.pdf')
+
+        filename = sanitize_filepath(filename)
+
         self.solver.superset.generate_pdf_report(
-            filename=filename + ".pdf",
+            filename=filename,
             **kwargs
         )
+
+        return filename
 
     def plot(self, *args, **kwargs):
         return self.solver.superset.plot(*args, **kwargs)
