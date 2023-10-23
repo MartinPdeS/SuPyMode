@@ -70,7 +70,6 @@ sphinx_gallery_conf = {
             "../examples/validation"
         ]
     ),
-    "backreferences_dir": "api",
     'image_scrapers': ('matplotlib', 'pyvista'),
     'ignore_pattern': '/__',
     'plot_gallery': True,

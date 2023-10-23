@@ -276,14 +276,15 @@ class SuperSet(object):
         :returns:   The transmission matrix.
         :rtype:     numpy.ndarray
         """
-        if adiabatic_factor is None:
-            adiabatic_factor = 1
-
         size = t_matrix.shape[-1]
 
         t_matrix = t_matrix.astype(complex)
+
         for mode_0, mode_1 in combinations(self.supermodes, 2):
-            coupling = mode_0.normalized_coupling.get_values(mode_1)[:size] * adiabatic_factor
+
+            coupling = mode_0.normalized_coupling.get_values(mode_1)[:size]
+
+            coupling *= adiabatic_factor
 
             t_matrix[mode_0.mode_number, mode_1.mode_number, :] = - coupling
             t_matrix[mode_1.mode_number, mode_0.mode_number, :] = + coupling
@@ -309,14 +310,14 @@ class SuperSet(object):
 
         return ditr / dx
 
-    def get_transmision_matrix_from_profile(self, *, profile: AlphaProfile, coupling: str = 'normalized') -> tuple:
+    def get_transmision_matrix_from_profile(self, *, profile: AlphaProfile, add_coupling: bool = True) -> tuple:
         """
         Gets the transmision matrix from profile.
 
         :param      profile:          The z-profile of the coupler
         :type       profile:          object
-        :param      coupling:         Defines how the coupling is added to the transmission matrix, either 'none', 'normalized', 'unnormalized'
-        :type       coupling:         str
+        :param      add_coupling:     Add coupling to the transmission matrix
+        :type       add_coupling:     bool
         """
         final_slice = self.itr_to_slice(itr_list=profile.smallest_itr)
 
@@ -324,22 +325,11 @@ class SuperSet(object):
 
         sub_itr_vector = self.itr_list[: final_slice]
 
-        match coupling.lower():
-            case 'none':
-                sub_t_matrix = self.add_coupling_to_t_matrix(
-                    t_matrix=sub_t_matrix,
-                    adiabatic_factor=0
-                )
-            case 'normalized':
-                sub_t_matrix = self.add_coupling_to_t_matrix(
-                    t_matrix=sub_t_matrix,
-                    adiabatic_factor=profile.evaluate_adiabatic_factor(itr=sub_itr_vector)
-                )
-            case 'unnormalized':
-                sub_t_matrix = self.add_coupling_to_t_matrix(
-                    t_matrix=sub_t_matrix,
-                    adiabatic_factor=1
-                )
+        if add_coupling:
+            sub_t_matrix = self.add_coupling_to_t_matrix(
+                t_matrix=sub_t_matrix,
+                adiabatic_factor=profile.evaluate_adiabatic_factor(itr=sub_itr_vector)
+            )
 
         sub_distance = profile.evaluate_distance_vs_itr(sub_itr_vector)
 
@@ -350,7 +340,7 @@ class SuperSet(object):
             initial_amplitude: list,
             max_step: float = None,
             n_step: int = None,
-            coupling: str = 'normalized',
+            add_coupling: bool = True,
             method: str = 'RK45',
             **kwargs) -> numpy.ndarray:
         """
@@ -362,8 +352,8 @@ class SuperSet(object):
         :type       profile:            object
         :param      max_step:           The maximum stride to use in the solver
         :type       max_step:           float
-        :param      coupling:           Defines how the coupling is added to the transmission matrix, either 'none', 'normalized', 'unnormalized'
-        :type       coupling:           str
+        :param      add_coupling:       Add coupling to the transmission matrix
+        :type       add_coupling:       bool
         :param      kwargs:             The keywords arguments to be passed to the solver
         :type       kwargs:             dictionary
 
@@ -377,7 +367,7 @@ class SuperSet(object):
 
         sub_distance, sub_itr_vector, sub_t_matrix = self.get_transmision_matrix_from_profile(
             profile=profile,
-            coupling=coupling,
+            add_coupling=add_coupling,
         )
 
         z_to_itr = interp1d(
@@ -431,10 +421,9 @@ class SuperSet(object):
             profile: AlphaProfile,
             initial_amplitude,
             max_step: float = None,
-            coupling: str = 'normalized',
+            add_coupling: bool = True,
             method: str = 'RK45',
             sub_sampling: int = 5,
-            save_directory: str = 'propagation.png',
             show_energy: bool = True,
             show_amplitudes: bool = True,
             **kwargs) -> tuple:
@@ -446,7 +435,7 @@ class SuperSet(object):
         z, amplitudes, itr_list = self.propagate(
             initial_amplitude=initial_amplitude,
             profile=profile,
-            coupling=coupling,
+            add_coupling=add_coupling,
             max_step=max_step,
             method=method
         )
@@ -483,7 +472,10 @@ class SuperSet(object):
                 )
 
         if show_energy:
-            total_energy = abs(amplitudes.sum(axis=0))**2
+            total_energy = abs(amplitudes)**2
+            total_energy = total_energy.sum(axis=0)
+            total_energy = numpy.sqrt(total_energy)
+
             ax.add_line(
                 x=z[::sub_sampling],
                 y=total_energy[::sub_sampling],

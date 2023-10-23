@@ -21,7 +21,7 @@ def test_propagation():
     profile.add_taper_segment(
         alpha=0,
         initial_heating_length=5e-3,
-        stretching_length=2e-3/100,
+        stretching_length=2e-3 / 100,
         n_point=200
     )
 

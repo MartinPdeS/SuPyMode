@@ -28,8 +28,8 @@ eigen_value = {
 
 field = {
     "show_legend": False,
-    # "x_label": r'X-Direction [$\mu m$]',
-    # "y_label": r'Y-direction [$\mu m$]',
+    "x_label": r'X-Direction [$\mu m$]',
+    "y_label": r'Y-direction [$\mu m$]',
     'x_scale_factor': 1e6,
     'y_scale_factor': 1e6,
     "equal": True
@@ -60,7 +60,7 @@ beating_length = {
 }
 
 adiabatic = {
-    "show_legend": False,
+    "show_legend": True,
     "x_label": 'Inverse taper ratio',
     "y_label": r'Adiabatic criterion [$\mu$m$^{-1}$]',
     "y_scale": 'log',

@@ -580,6 +580,7 @@ class AlphaProfile():
             ax = figure.append_ax()
             self._render_adiabatic_factor_vs_itr_on_ax_(ax)
 
+        figure.annotate_axis(position=(-0.15, 1.15))
         return figure
 
     def generate_propagation_gif(self,

@@ -12,6 +12,8 @@ class BaseMultiModePlot():
     def _render_on_ax_(self, ax: Axis, other_supermode: 'SuperMode' = None):
         if other_supermode is None:
             other_supermode = self.parent_supermode.parent_set.supermodes
+        else:
+            other_supermode = numpy.atleast_1d(other_supermode)
 
         for mode in other_supermode:
             if mode.ID == self.ID or mode.solver_number != self.solver_number:
@@ -23,7 +25,7 @@ class BaseMultiModePlot():
                 label=f'{self.stylized_label} - {mode.stylized_label}'
             )
 
-            ax.set_style(self.plot_style)
+            ax.set_style(**self.plot_style)
 
     def plot(self, other_supermode=None, row: int = 0, col: int = 0) -> None:
         """
