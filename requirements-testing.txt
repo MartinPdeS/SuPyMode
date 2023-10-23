@@ -1,0 +1,7 @@
+pytest>=0.6
+pytest-cov>=2.0
+pytest-json-report
+mypy>=0.910
+flake8>=3.9
+tox>=3.24
+coverage
