@@ -20,7 +20,7 @@ jobs:
 
       - uses: Bhacaz/checkout-files@v2
         with:
-          files: tests .github requirements-validation.txt
+          files: tests .github requirements*.txt
 
       - uses: ./.github/actions/install_package_ubuntu
         with:
