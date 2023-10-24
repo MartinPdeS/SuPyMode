@@ -5,6 +5,7 @@ import sys
 from sphinx_gallery.sorting import FileNameSortKey
 from sphinx_gallery.sorting import ExplicitOrder
 from packaging.version import parse
+from MPSPlots.styles import use_mpsplots_style
 
 
 from SuPyMode.tools.directories import (
@@ -54,6 +55,11 @@ extensions = [
     'pyvista.ext.plot_directive',
 ]
 
+
+def reset_mpl(gallery_conf, fname):
+    use_mpsplots_style()
+
+
 try:
     import pyvista
     if sys.platform in ["linux", "linux2"]:
@@ -75,6 +81,7 @@ sphinx_gallery_conf = {
     'plot_gallery': True,
     'thumbnail_size': [600, 600],
     'download_all_examples': False,
+    'reset_modules': reset_mpl,
     'line_numbers': False,
     'remove_config_comments': True,
     'within_subsection_order': FileNameSortKey,

@@ -45,6 +45,7 @@ workflow = Workflow(
 superset = workflow.get_superset()
 
 # %%
+# Computing the analytical values using FiberModes solver.
 fibermode_solver = FiberModeSolver(wavelength=wavelength)
 
 fibermodes_data_sets = fibermode_solver.get_beta_vs_itr(
@@ -53,6 +54,9 @@ fibermodes_data_sets = fibermode_solver.get_beta_vs_itr(
     debug_mode=False
 )
 
+
+# %%
+# Preparing the figure
 figure = SceneList(unit_size=(12, 4))
 
 ax = figure.append_ax(
