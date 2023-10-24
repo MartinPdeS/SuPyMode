@@ -50,6 +50,9 @@ workflow = Workflow(
 
 superset = workflow.get_superset()
 
+
+# %%
+# Computing the analytical values using FiberModes solver.
 fibermode_solver = FiberModeSolver(wavelength=1550e-9)
 
 fibermodes_data_sets = fibermode_solver.get_normalized_coupling(
@@ -58,6 +61,9 @@ fibermodes_data_sets = fibermode_solver.get_normalized_coupling(
     itr_list=numpy.linspace(1.0, 0.05, 100)
 )
 
+
+# %%
+# Preparing the figure
 figure = SceneList(unit_size=(12, 4))
 
 ax = figure.append_ax(
@@ -102,5 +108,3 @@ for idx, (mode_couple, data_set) in enumerate(zip(mode_couples, fibermodes_data_
     )
 
 _ = figure.show()
-
-# -

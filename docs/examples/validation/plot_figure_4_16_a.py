@@ -42,8 +42,8 @@ workflow = Workflow(
 # Field plotting
 workflow.superset.plot(plot_type='field').show()
 
-workflow.superset.save_instance("figure4_16")
-
+# %%
+# Preparing the figure
 figure = SceneList(unit_size=(12, 5), title='SBB figure 4.16')
 
 ax = figure.append_ax(

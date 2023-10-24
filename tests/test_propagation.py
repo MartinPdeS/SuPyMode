@@ -43,17 +43,13 @@ def test_propagation():
 
     superset = workflow.get_superset()
 
-    figure, _ = superset.plot_propagation(
+    _ = superset.propagate(
         profile=profile,
         initial_amplitude=[0, 1],
-        coupling='normalized',
+        add_coupling=True,
         method='RK45',
-        show_energy=True,
-        show_amplitude=False,
         max_step=1550e-9 / 5000
     )
-
-    figure.show()
 
 
 if __name__ == '__main__':
