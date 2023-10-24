@@ -20,12 +20,14 @@ def test_propagation():
 
     profile.add_taper_segment(
         alpha=0,
-        initial_heating_length=5e-3,
-        stretching_length=2e-3 / 100,
+        initial_heating_length=1e-3,
+        stretching_length=5e-3,
         n_point=200
     )
 
     profile.initialize()
+
+    profile.plot().show()
 
     workflow = Workflow(
         fiber_list=fiber,
@@ -46,7 +48,7 @@ def test_propagation():
     _ = superset.propagate(
         profile=profile,
         initial_amplitude=[0, 1],
-        add_coupling=False,
+        add_coupling=True,
         method='RK45',
         max_step=1550e-9 / 400
     )
