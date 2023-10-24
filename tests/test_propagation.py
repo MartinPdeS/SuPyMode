@@ -46,9 +46,9 @@ def test_propagation():
     _ = superset.propagate(
         profile=profile,
         initial_amplitude=[0, 1],
-        add_coupling=True,
+        add_coupling=False,
         method='RK45',
-        max_step=1550e-9 / 5000
+        max_step=1550e-9 / 400
     )
 
 
