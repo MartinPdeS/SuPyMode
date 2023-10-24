@@ -289,7 +289,7 @@ class SuperSet(object):
             t_matrix[mode_0.mode_number, mode_1.mode_number, :] = - coupling
             t_matrix[mode_1.mode_number, mode_0.mode_number, :] = + coupling
 
-        if t_matrix.isnan().any() or t_matrix.isinf().any():
+        if numpy.isnan(t_matrix).any() or numpy.isinf(t_matrix).any():
             raise ValueError('Nan or inf values detected in transmission matrix')
 
         return t_matrix
