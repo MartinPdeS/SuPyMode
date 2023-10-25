@@ -20,7 +20,7 @@ jobs:
 
       - uses: Bhacaz/checkout-files@v2
         with:
-          sparse-checkout: |
+          files: |
             tests
             .github
             requirements-development.txt
