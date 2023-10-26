@@ -24,6 +24,7 @@ jobs:
             tests
             .github
             requirements-development.txt
+            requirements-documentation.txt
             requirements-validation.txt
             requirements-testing.txt
             requirements.txt

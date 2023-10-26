@@ -20,7 +20,14 @@ jobs:
 
       - uses: Bhacaz/checkout-files@v2
         with:
-          files: tests .github requirements-development.txt requirements-validation.txt requirements-testing.txt requirements.txt
+          files: >
+            tests
+            .github
+            requirements-development.txt
+            requirements-documentation.txt
+            requirements-validation.txt
+            requirements-testing.txt
+            requirements.txt
 
       - uses: ./.github/actions/install_package_ubuntu
         with:
