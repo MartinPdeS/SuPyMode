@@ -23,6 +23,7 @@ jobs:
           files: >
             tests
             .github
+            docs
             requirements-development.txt
             requirements-documentation.txt
             requirements-validation.txt
