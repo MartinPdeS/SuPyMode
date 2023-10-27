@@ -21,7 +21,7 @@ def get_superset_from_preset(
     :param      wavelength:  The wavelength
     :type       wavelength:  float
     :param      resolution:  The resolution
-    :type       resolution:  int
+    :type       resolution:  int 
     :param      n_step:      The n step
     :type       n_step:      int
 
