@@ -26,7 +26,7 @@ jobs:
             requirements
 
       # - uses: ./.github/actions/install_package_ubuntu
-      - uses: MartinPdeS/MPSActions/install_package_ubuntu
+      - uses: MartinPdeS/MPSActions/install_package_ubuntu@master
         with:
           python_version: ${{ inputs.python_version }}
 
