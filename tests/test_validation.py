@@ -11,7 +11,7 @@ from SuPyMode.superset import SuperSet
 def get_superset_from_preset(
         fiber_type,
         wavelength: float = 1550e-9,
-        resolution: int = 60,
+        resolution: int = 100,
         n_step: int = 100) -> SuperSet:
     """
     Gets the superset from preset.
@@ -112,5 +112,14 @@ def test_propagation_constant(
         if not discrepency.mean() > 0.9:
             raise ValueError(f'Discrepencies detected from analytical and simulated predictions [mean error: {discrepency.mean()}]')
 
+
+if __name__ == '__main__':
+    test_propagation_constant(
+        fiber_type=fiber_catalogue.SMF28,
+        mode_numbers=['LP01', 'LP11_b', 'LP02'],
+        wavelength=1550e-9,
+        resolution=60,
+        n_step=100
+    )
 
 # -

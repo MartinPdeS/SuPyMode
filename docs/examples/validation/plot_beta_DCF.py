@@ -1,6 +1,6 @@
 """
-Validation: 4 for circular symmetric structure
-==============================================
+Validation: 4 for circular symmetric structure [DCF1300S_33]
+============================================================
 """
 
 # %%
@@ -13,7 +13,7 @@ from MPSPlots.render2D import SceneList
 
 wavelength = 1550e-9
 mode_numbers = ['LP01', 'LP02', 'LP03', 'LP41_a']
-fiber_list = [fiber_catalogue.SMF28(wavelength=wavelength)]
+fiber_list = [fiber_catalogue.DCF1300S_33(wavelength=wavelength)]
 
 clad_structure = configuration.ring.FusedProfile_01x01
 
