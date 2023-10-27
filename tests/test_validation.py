@@ -56,8 +56,9 @@ def get_superset_from_preset(
 
 
 def test_propagation_constant(
-        fiber_type,
-        mode_numbers: list,
+        patch,
+        fiber_type: object = fiber_catalogue.SMF28,
+        mode_numbers: list = ['LP01', 'LP11_b', 'LP02'],
         wavelength: float = 1550e-9,
         resolution: int = 60,
         n_step: int = 100) -> None:
@@ -112,13 +113,5 @@ def test_propagation_constant(
         if not discrepency.mean() > 0.9:
             raise ValueError(f'Discrepencies detected from analytical and simulated predictions [mean error: {discrepency.mean()}]')
 
-
-test_propagation_constant(
-    fiber_type=fiber_catalogue.SMF28,
-    wavelength=1550e-9,
-    mode_numbers=['LP01', 'LP11_b', 'LP02'],
-    n_step=100,
-    resolution=100
-)
 
 # -
