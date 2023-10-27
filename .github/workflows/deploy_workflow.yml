@@ -11,7 +11,8 @@ permissions:
 
 jobs:
   ManyLinux_x86_64:
-    uses: ./build_manylinux_x86_64.yml@master
+    uses: actions/checkout@v1
+    uses: ./build_manylinux_x86_64.yml
     secrets: inherit
     with:
       python_version_list: "['3.10']"
