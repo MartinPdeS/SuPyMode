@@ -49,6 +49,9 @@ class BaseMultiModePlot():
 
 
 class BaseSingleModePlot():
+    def __getitem__(self, idx):
+        return self._data[idx]
+
     def _render_on_ax_(self, ax: Axis) -> None:
         self._set_axis_(ax)
 

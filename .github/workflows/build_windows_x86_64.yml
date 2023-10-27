@@ -47,7 +47,7 @@ jobs:
           # CC: /usr/bin/gcc
           # CXX: /usr/bin/g++
           CIBW_BUILD: "${{ matrix.python-version[1] }}-win_amd64"
-          CIBW_TEST_REQUIRES: ".[devs_all]"
+          CIBW_TEST_REQUIRES: ".[development]"
           CIBW_BUILD_VERBOSITY: 1
           CIBW_ARCHS: "auto"
           CIBW_TEST_COMMAND: 'pytest -s {project}/tests'

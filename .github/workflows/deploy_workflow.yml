@@ -40,29 +40,10 @@ jobs:
 
 
   job_publish_wheel:
-    needs: [ManyLinux_x86_64]
+    needs: [ManyLinux_x86_64, macos_x86_64]
     uses: MartinPdeS/SuPyMode/.github/workflows/sub_deploy_pypi.yml@master
     secrets: inherit
     with:
       python_version: "3.10"
-
-
-
-
-  # macos_arm64:
-  #   uses: MartinPdeS/SuPyMode/.github/workflows/build_wheel/macos_arm64.yml@master
-  #   secrets: inherit
-  #   with:
-  #     python_wheel: "[['3.8', 'cp38'], ['3.9', 'cp39'], ['3.10', 'cp310']]"
-  #     python_twine: '3.9'
-  #     python_documentation: "3.9"
-
-  # Windows_x86_64:
-  #   uses: MartinPdeS/SuPyMode/.github/workflows/build_wheel/windows_x86_64.yml@master
-  #   secrets: inherit
-  #   with:
-  #     python_wheel: "[['3.7', 'cp37'], ['3.8', 'cp38'], ['3.9', 'cp39'], ['3.10', 'cp310']]"
-  #     python_twine: '3.9'
-  #     python_documentation: "3.9"
 
 # -

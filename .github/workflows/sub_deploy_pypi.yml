@@ -13,7 +13,7 @@ on:
         default: "3.9"
 
 jobs:
-  deploy_badge:
+  deploy_pypi:
     name: "Publish wheel to PyPi"
     runs-on: ubuntu-latest
     steps:

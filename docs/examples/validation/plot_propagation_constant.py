@@ -7,7 +7,7 @@ Validation: 4 for circular symmetric structure
 # Imports
 # ~~~~~~~
 import numpy
-from SuPyMode.tools.fibermodes_validation import FiberModeSolver
+from SuPyMode.tools.analytics.data_visualizer import DataVisualizer
 from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries2D, configuration
 from MPSPlots.render2D import SceneList
 
@@ -46,7 +46,7 @@ superset = workflow.get_superset()
 
 # %%
 # Computing the analytical values using FiberModes solver.
-fibermode_solver = FiberModeSolver(wavelength=wavelength)
+fibermode_solver = DataVisualizer(wavelength=wavelength)
 
 fibermodes_data_sets = fibermode_solver.get_beta_vs_itr(
     mode_numbers=[m[:4] for m in mode_numbers],

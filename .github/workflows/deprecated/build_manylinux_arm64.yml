@@ -132,7 +132,7 @@ jobs:
 
       - name: "Build: documentation"
         run: |
-          python -m pip install -r requirements-dev.txt
+          python -m pip install -r requirements/requirements-development.txt
           mkdir build
           cd build
           cmake -G"Unix Makefiles" -DPYBIND11_PYTHON_VERSION="${{ inputs.python_documentation }}"  ./..

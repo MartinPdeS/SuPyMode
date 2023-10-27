@@ -42,7 +42,7 @@ build:
 
 python:
   install:
-    - requirements: requirements-development.txt
+    - requirements: requirements/requirements-development.txt
     - method: pip
       path: .
 

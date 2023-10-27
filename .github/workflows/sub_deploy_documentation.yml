@@ -24,11 +24,7 @@ jobs:
             tests
             .github
             docs
-            requirements-development.txt
-            requirements-documentation.txt
-            requirements-validation.txt
-            requirements-testing.txt
-            requirements.txt
+            requirements
 
       - uses: ./.github/actions/install_package_ubuntu
         with:
