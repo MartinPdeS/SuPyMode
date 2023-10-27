@@ -11,8 +11,8 @@ permissions:
 
 jobs:
   ManyLinux_x86_64:
-    uses: actions/checkout@v1
-    uses: ./build_manylinux_x86_64.yml
+    - name: "test name"
+    uses: MartinPdeS/SuPyMode/.github/workflows/build_manylinux_x86_64.yml@master
     secrets: inherit
     with:
       python_version_list: "['3.10']"
