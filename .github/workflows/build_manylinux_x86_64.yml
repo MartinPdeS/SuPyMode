@@ -29,7 +29,7 @@ jobs:
 
           - uses: MartinPdeS/MPSActions/interpret_python_version@master
             with:
-              python_version: ${{ inputs.python_version }}
+              python_version: ${{ matrix.python_version }}
 
           - name: "Build: Wheels"
             uses: pypa/cibuildwheel@v2.11.2
