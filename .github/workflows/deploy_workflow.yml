@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   ManyLinux_x86_64:
-    - name: "test name"
+    name: "test name"
     uses: MartinPdeS/SuPyMode/.github/workflows/build_manylinux_x86_64.yml@master
     secrets: inherit
     with:
