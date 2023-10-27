@@ -1,21 +1,19 @@
 name: Deploy
-
-on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  on:
+    push:
+      branches: [ "master" ]
+    pull_request:
+      branches: [ "master" ]
 
 permissions:
   contents: write
 
 jobs:
   ManyLinux_x86_64:
-    steps:
-      - uses: MartinPdeS/SuPyMode/.github/workflows/build_manylinux_x86_64.yml@master
-        secrets: inherit
-        with:
-          python_version_list: "['3.10']"
+    uses: ./.github/workflows/build_manylinux_x86_64.yml@master
+    secrets: inherit
+    with:
+      python_version_list: "['3.10']"
 
 
   macos_x86_64:
@@ -25,6 +23,7 @@ jobs:
       python_version_list: "['3.10']"
 
   job_post_coverage:
+    if: "contains(github.event.head_commit.message, '[publish documentation]')"
     needs: [ManyLinux_x86_64]
     uses: MartinPdeS/SuPyMode/.github/workflows/sub_deploy_coverage_badge.yml@master
     secrets: inherit
@@ -33,16 +32,17 @@ jobs:
 
 
   job_build_documentation:
+    if: "contains(github.event.head_commit.message, '[publish documentation]')"
     needs: [ManyLinux_x86_64]
     uses: MartinPdeS/SuPyMode/.github/workflows/sub_deploy_documentation.yml@master
     secrets: inherit
     with:
-      python_version: "3.10" #no documentation for python 3.7 (pickle5 not present˘)
+      python_version: "3.10" #No documentation for python 3.7 (pickle5 not present˘)
 
 
   job_publish_wheel:
+    if: "contains(github.event.head_commit.message, '[publish code]')"
     needs: [ManyLinux_x86_64, macos_x86_64]
-    if: "contains(github.event.head_commit.message, '[publish]')"
     uses: MartinPdeS/SuPyMode/.github/workflows/sub_deploy_pypi.yml@master
     secrets: inherit
     with:
