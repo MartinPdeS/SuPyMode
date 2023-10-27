@@ -13,7 +13,7 @@ runs:
       shell: bash
       run: |
         echo "Python version to be translated: ${{inputs.python_version}} saved in env.dotted_python_version"
-        
+
         TEMP=${{ inputs.python_version }}
         PYTHON_CP_VERSION="cp${TEMP//./}"
 
