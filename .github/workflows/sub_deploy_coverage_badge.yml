@@ -30,15 +30,7 @@ jobs:
           python_version: ${{ inputs.python_version }}
           package_name: SuPyMode
 
-      - name: "Computing total coverage"
-        run: |
-          cd tests
-          coverage run -p -m pytest -s .
-          coverage combine
-          coverage report -m --skip-covered
-          coverage json -o ./CoverageReport.json
-          export TOTAL=$(python -c "import json; print(json.load(open('CoverageReport.json'))['totals']['percent_covered_display'])")
-          echo "total=$TOTAL" >> $GITHUB_ENV
+      - uses: MartinPdeS/MPSActions/compute_unittest_coverage@master
 
       - name: "Upload: Coverage badge"
         uses: schneegans/dynamic-badges-action@v1.4.0

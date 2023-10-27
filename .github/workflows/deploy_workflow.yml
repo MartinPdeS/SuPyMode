@@ -24,7 +24,7 @@ jobs:
       python_version_list: "['3.10']"
 
   job_post_coverage:
-    if: "contains(github.event.head_commit.message, '[publish documentation]')"
+    if: "contains(github.event.head_commit.message, '[publish]')"
     needs: [ManyLinux_x86_64]
     uses: ./.github/workflows/sub_deploy_coverage_badge.yml
     secrets: inherit
@@ -33,7 +33,7 @@ jobs:
 
 
   job_build_documentation:
-    if: "contains(github.event.head_commit.message, '[publish documentation]')"
+    if: "contains(github.event.head_commit.message, '[publish]')"
     needs: [ManyLinux_x86_64]
     uses: ./.github/workflows/sub_deploy_documentation.yml
     secrets: inherit
@@ -42,7 +42,7 @@ jobs:
 
 
   job_publish_wheel:
-    if: "contains(github.event.head_commit.message, '[publish code]')"
+    if: "contains(github.event.head_commit.message, '[publish]')"
     needs: [ManyLinux_x86_64, macos_x86_64]
     uses: ./.github/workflows/sub_deploy_pypi.yml
     secrets: inherit
