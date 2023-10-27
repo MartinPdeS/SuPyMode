@@ -56,7 +56,6 @@ def get_superset_from_preset(
 
 
 def test_propagation_constant(
-        patch,
         fiber_type: object = fiber_catalogue.SMF28,
         mode_numbers: list = ['LP01', 'LP11_b', 'LP02'],
         wavelength: float = 1550e-9,
