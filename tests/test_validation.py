@@ -116,7 +116,7 @@ def test_propagation_constant(
 test_propagation_constant(
     fiber_type=fiber_catalogue.SMF28,
     wavelength=1550e-9,
-    mode_numbers=['LP01', 'LP11_a', 'LP02'],
+    mode_numbers=['LP01', 'LP11_b', 'LP02'],
     n_step=100,
     resolution=100
 )
