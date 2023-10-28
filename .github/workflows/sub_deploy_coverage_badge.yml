@@ -20,10 +20,7 @@ jobs:
 
       - uses: Bhacaz/checkout-files@v2
         with:
-          files: >
-            tests
-            .github
-            requirements
+          files: tests requirements
 
       - uses: MartinPdeS/MPSActions/install_package_on_manylinux@master
         with:
