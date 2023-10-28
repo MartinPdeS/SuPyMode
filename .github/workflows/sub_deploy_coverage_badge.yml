@@ -28,15 +28,6 @@ jobs:
           package_name: SuPyMode
 
       - uses: MartinPdeS/MPSActions/compute_unittest_coverage@master
-
-      - name: "Upload: Coverage badge"
-        uses: schneegans/dynamic-badges-action@v1.4.0
         with:
           auth: ${{ secrets.MPdS_gist_token }}
           gistID: 16caa7bb2a83d5af36740e4a6a0f861d
-          filename: SuPyMode_coverage_badge.json
-          label: Coverage
-          message: ${{ env.total }}%
-          minColorRange: 50
-          maxColorRange: 90
-          valColorRange: ${{ env.total }}
