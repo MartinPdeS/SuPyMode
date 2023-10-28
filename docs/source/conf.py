@@ -133,7 +133,7 @@ html_theme_options = {
     "logo": {
         "alt_text": "SuPyMode's logo",
         "text": "SuPyMode",
-        "link": "https://github.com/MartinPdeS/SuPyMode",
+        "link": "https://supymodes.readthedocs.io/en/master/",
     },
     "icon_links": [
         {

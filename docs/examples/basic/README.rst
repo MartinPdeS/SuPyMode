@@ -1,2 +1,2 @@
-Basic
-~~~~~
+Standard workflow
+~~~~~~~~~~~~~~~~~
