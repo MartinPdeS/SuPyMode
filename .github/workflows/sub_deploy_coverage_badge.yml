@@ -1,4 +1,4 @@
-name: badge_deploy
+name: "Coverage badge deploy"
 
 # https://github.com/YannickJadoul/Parselmouth/blob/master/.github/workflows/wheels.yml
 permissions:
@@ -13,15 +13,9 @@ on:
         default: '3.10'
 
 jobs:
-  deploy_badge:
-    name: "Badge deploy"
+  badge_deploy:
     runs-on: ubuntu-latest
     steps:
-
-      - uses: Bhacaz/checkout-files@v2
-        with:
-          files: tests requirements
-
       - uses: MartinPdeS/MPSActions/install_package_on_manylinux@master
         with:
           python_version: ${{ inputs.python_version }}
