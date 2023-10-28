@@ -36,7 +36,7 @@ capillary_tube = fiber_catalogue.FluorineCapillaryTube(radius=350e-6, wavelength
 boundaries = [
     Boundaries2D(right='symmetric', bottom='symmetric'),
     Boundaries2D(right='symmetric', bottom='anti-symmetric')
-],
+]
 
 # %%
 # Generating the computing workflow
