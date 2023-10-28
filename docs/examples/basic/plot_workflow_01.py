@@ -8,17 +8,25 @@
 # Importing the script dependencies
 from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries2D, AlphaProfile
 
-# %%
-# Creating the fiber list for mesh
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# In this example we want to simulate a single fiber at wavelength 1550 nm.
 wavelength = 1550e-9
+
+
+# %%
+# Generating the fiber structure
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Here we define the cladding and fiber structure to model the problem
+clad_structure = configuration.ring.FusedProfile_01x01
 
 fiber_list = [
     fiber_catalogue.DCF1300S_33(wavelength=wavelength)
 ]
 
-clad_structure = configuration.ring.FusedProfile_01x01
+# %%
+# Defining the boundaries of the system
+boundaries = [
+    Boundaries2D(right='symmetric', top='symmetric'),
+    Boundaries2D(right='symmetric', top='anti-symmetric')
+]
 
 # %%
 # Generating the computing workflow
@@ -32,10 +40,7 @@ workflow = Workflow(
     resolution=60,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
     x_bounds="centering-left",      # Mesh x-boundary structure.
     y_bounds="centering-bottom",    # Mesh y-boundary structure.
-    boundaries=[                    # Set of symmetries to be evaluated, each symmetry add a round of simulation
-        Boundaries2D(right='symmetric', top='symmetric'),
-        Boundaries2D(right='symmetric', top='anti-symmetric')
-    ],
+    boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=4,                # Total computed and sorted mode.
     n_added_mode=2,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
     plot_geometry=True,             # Plot the geometry mesh before computation.

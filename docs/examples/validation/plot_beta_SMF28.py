@@ -1,6 +1,6 @@
 """
-Validation: 4 for circular symmetric structure [SMF28]
-======================================================
+Propagation constant: SMF28
+===========================
 """
 
 # %%
@@ -13,9 +13,23 @@ from MPSPlots.render2D import SceneList
 
 wavelength = 1550e-9
 mode_numbers = ['LP01', 'LP02', 'LP03', 'LP41_a']
+
+
+# %%
+# Generating the fiber structure
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Here we define the cladding and fiber structure to model the problem
+clad_structure = configuration.ring.FusedProfile_01x01
+
 fiber_list = [fiber_catalogue.SMF28(wavelength=wavelength)]
 
-clad_structure = configuration.ring.FusedProfile_01x01
+
+# %%
+# Defining the boundaries of the system
+boundaries = [
+    Boundaries2D(right='symmetric', bottom='symmetric'),
+    Boundaries2D(right='symmetric', bottom='anti-symmetric')
+]
 
 # %%
 # Generating the computing workflow
@@ -29,10 +43,7 @@ workflow = Workflow(
     resolution=40,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
     x_bounds="centering-left",      # Mesh x-boundary structure.
     y_bounds="centering-top",       # Mesh y-boundary structure.
-    boundaries=[                    # Set of symmetries to be evaluated, each symmetry add a round of simulation
-        Boundaries2D(right='symmetric', bottom='symmetric'),
-        Boundaries2D(right='symmetric', bottom='anti-symmetric')
-    ],
+    boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=6,                # Total computed and sorted mode.
     n_added_mode=4,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
     plot_geometry=True,             # Plot the geometry mesh before computation.

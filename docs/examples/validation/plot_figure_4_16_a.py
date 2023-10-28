@@ -1,8 +1,7 @@
 """
-Validation: 1 with Xavier Daxhelet program
-==========================================
+Adiabatic criterion: X. D. ~ A
+==============================
 """
-
 
 # %%
 # Imports
@@ -12,30 +11,40 @@ from MPSPlots.render2D import SceneList
 from SuPyMode.tools.directories import validation_data_path
 from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries2D
 
+wavelength = 1550e-9
+
 # %%
 # Generating the fiber structure
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Here we make use of the FiberFusing to generate a fiber structure that we use
-# as the cladding.
-
+# Here we define the cladding and fiber structure to model the problem
 clad_structure = configuration.ring.FusedProfile_02x02
 
+fiber_list = [
+    fiber_catalogue.SMF28(wavelength=wavelength),
+    fiber_catalogue.SMF28(wavelength=wavelength)
+]
+
+
+# %%
+# Defining the boundaries of the system
+boundaries = [
+    Boundaries2D(right='symmetric', top='symmetric'),
+    Boundaries2D(right='symmetric', top='anti-symmetric')
+]
+
 workflow = Workflow(
-    fiber_list=[fiber_catalogue.SMF28(wavelength=1550e-9), fiber_catalogue.SMF28(wavelength=1550e-9)],
-    clad_structure=clad_structure,
-    fusion_degree=0.9,
-    wavelength=1550e-9,
-    resolution=40,
-    x_bounds="centering-left",
-    y_bounds="centering-bottom",
-    boundaries=[
-        Boundaries2D(right='symmetric', top='symmetric'),
-        Boundaries2D(right='symmetric', top='anti-symmetric')
-    ],
-    n_sorted_mode=4,
-    n_added_mode=2,
-    debug_mode=False,
-    auto_label=True
+    fiber_list=fiber_list,          # List of fiber to be added in the mesh, the order matters.
+    clad_structure=clad_structure,  # Cladding structure, if None provided then no cladding is set.
+    fusion_degree=0.9,              # Degree of fusion of the structure if applicable.
+    wavelength=wavelength,          # Wavelength used for the mode computation.
+    resolution=40,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
+    x_bounds="centering-left",      # Mesh x-boundary structure.
+    y_bounds="centering-bottom",    # Mesh y-boundary structure.
+    boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation.
+    n_sorted_mode=4,                # Total computed and sorted mode.
+    n_added_mode=2,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
+    debug_mode=False,               # Print the iteration step for the solver plus some other important steps.
+    auto_label=True                 # Auto labeling the mode. Label are not always correct and should be verified afterwards.
 )
 
 # %%
