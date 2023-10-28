@@ -40,7 +40,7 @@ jobs:
             mingw-w64-x86_64-openmp
 
       - name: "Build: Wheels"
-        uses: pypa/cibuildwheel@v2.11.2
+        uses: pypa/cibuildwheel@v2.16.2
         with:
           output-dir: dist
         env:
