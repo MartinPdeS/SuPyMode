@@ -1,51 +1,85 @@
 name: Deploy
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    push:
+        branches: [ "master" ]
+    pull_request:
+        branches: [ "master" ]
 
 permissions:
-  contents: write
+    contents: write
 
 jobs:
-  ManyLinux_x86_64:
-    uses: ./.github/workflows/build_manylinux_x86_64.yml
-    secrets: inherit
-    with:
-      python_version_list: "['3.10', '3.11']"
-
-  macos_x86_64:
-    uses: ./.github/workflows/build_macos_x86_64.yml
-    secrets: inherit
-    with:
-      python_version_list: "['3.10', '3.11']"
-
-  job_post_coverage:
-    if: "contains(github.event.head_commit.message, '[publish]')"
-    needs: [ManyLinux_x86_64]
-    uses: ./.github/workflows/sub_deploy_coverage_badge.yml
-    secrets: inherit
-    with:
-      python_version: "3.10"
+    ManyLinux_x86_64:
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                python-version: ['3.8', '3.9', '3.10', '3.11']
+        steps:
+          - uses: MartinPdeS/MPSActions/build_package_for_manylinux@master
+            with:
+                python-version: ${{ matrix.python-version }}
 
 
-  job_build_documentation:
-    if: "contains(github.event.head_commit.message, '[publish]')"
-    needs: [ManyLinux_x86_64]
-    uses: ./.github/workflows/sub_deploy_documentation.yml
-    secrets: inherit
-    with:
-      python_version: "3.10" #No documentation for python 3.7 (pickle5 not present˘)
+
+    macos_x86_64:
+        runs-on: macos-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                python-version: ['3.8', '3.9', '3.10', '3.11']
+        steps:
+          - uses: MartinPdeS/MPSActions/build_package_for_MacOS@master
+            with:
+                python-version: ${{ matrix.python-version }}
 
 
-  job_publish_wheel:
-    if: "contains(github.event.head_commit.message, '[publish]')"
-    needs: [ManyLinux_x86_64, macos_x86_64]
-    uses: ./.github/workflows/sub_deploy_pypi.yml
-    secrets: inherit
-    with:
-      python_version: "3.10"
+    Windows_x86_64:
+        runs-on: macos-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                python-version: ['3.8', '3.9', '3.10', '3.11']
+        steps:
+          - uses: MartinPdeS/MPSActions/build_package_for_Windows@master
+            with:
+                python-version: ${{ matrix.python-version }}
+
+
+    publish_coverage:
+        if: "contains(github.event.head_commit.message, '[publish]')"
+        needs: [ManyLinux_x86_64]
+        runs-on: ubuntu-latest
+        steps:
+          - uses: MartinPdeS/MPSActions/publish_coverage@master
+            with:
+                package-name: SuPyMode
+                python-version: "3.10"
+                auth: ${{ secrets.MPdS_gist_token }}
+                gistID: 2cac8ebb51cd9ce07dc7a955648301d5
+
+
+    publish_documentation:
+        if: "contains(github.event.head_commit.message, '[publish]')"
+        needs: [ManyLinux_x86_64]
+        runs-on: ubuntu-latest
+        steps:
+          - uses: MartinPdeS/MPSActions/publish_documentation@master
+            with:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                package-name: SuPyMode
+                python-version: "3.10" #no documentation for python 3.7 (pickle5 not present˘)
+
+
+    publish_wheel:
+        if: "contains(github.event.head_commit.message, '[publish]')"
+        needs: [Windows_x86_64, ManyLinux_x86_64, macos_x86_64, publish_documentation, publish_coverage]
+        runs-on: ubuntu-latest
+        steps:
+          - uses: MartinPdeS/MPSActions/publish_pypi@master
+            with:
+                python-version: "3.10"
+                password: ${{ secrets.PYPI_API_TOKEN }}
 
 # -
