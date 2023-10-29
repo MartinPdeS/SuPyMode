@@ -67,15 +67,14 @@ try:
 except ImportError:
     print('Could not load pyvista library for 3D renderin')
 
+subsection_order = ExplicitOrder(
+    ["../examples/basic", "../examples/validation"]
+)
+
 sphinx_gallery_conf = {
     'examples_dirs': '../examples',
     'gallery_dirs': "gallery",
-    "subsection_order": ExplicitOrder(
-        [
-            "../examples/basic",
-            "../examples/validation"
-        ]
-    ),
+    "subsection_order": subsection_order,
     'image_scrapers': ('matplotlib', 'pyvista'),
     'ignore_pattern': '/__',
     'plot_gallery': True,
