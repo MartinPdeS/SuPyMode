@@ -1,1 +1,0 @@
-fibermodes @ git+https://github.com/cbrunet/fibermodes
