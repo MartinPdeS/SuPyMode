@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from MPSPlots.render2D import SceneList
 
 # Local imports
-from fibermodes import FiberFactory
+from PyFiberModes import FiberFactory
 from FiberFusing.fiber import catalogue as fiber_catalogue
 from SuPyMode.tools.analytics.supermode import Supermode
 

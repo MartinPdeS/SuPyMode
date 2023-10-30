@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from scipy.constants import epsilon_0 as e0, mu_0
 
 # Local imports
-from fibermodes import Wavelength, FiberFactory, Mode, field as FieldClass
+from PyFiberModes import Wavelength, FiberFactory, Mode, field as FieldClass
 
 
 @dataclass

@@ -3,14 +3,11 @@
 
 # Built-in imports
 import numpy
-from dataclasses import dataclass
-from scipy.constants import epsilon_0 as e0, mu_0
 
 # Third-party imports
 from MPSPlots.render2D import SceneList
 
 # Local imports
-from fibermodes import Wavelength, FiberFactory, Mode, field as FieldClass
 from SuPyMode.tools.analytics.superset import Superset
 
 
