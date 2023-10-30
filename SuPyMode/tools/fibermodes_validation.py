@@ -10,7 +10,7 @@ from scipy.constants import epsilon_0 as e0, mu_0
 from MPSPlots.render2D import SceneList
 
 # Local imports
-from fibermodes import Wavelength, FiberFactory, Mode, field as FieldClass
+from PyFiberModes import Wavelength, FiberFactory, Mode, field as FieldClass
 from FiberFusing.fiber import catalogue as fiber_catalogue
 
 
@@ -227,7 +227,11 @@ class FibermodesSuperset():
             wavelength=self.wavelength
         )
 
-        field_r_mode = self.get_normalized_mode_field(mode=mode, r_space=r_space, normalization=normalization)
+        field_r_mode = self.get_normalized_mode_field(
+            mode=mode,
+            r_space=r_space,
+            normalization=normalization
+        )
 
         data_set = DataSet(
             x=r_space,
@@ -835,7 +839,7 @@ if __name__ == '__main__':
 
     fibermode_solver.plot_beta_vs_itr(
         mode_numbers=['LP01', 'LP02', 'LP03'],
-        itr_list=numpy.linspace(1.0, 0.1, 100)
+        itr_list=numpy.linspace(1.0, 0.5, 10)
     ).show()
 
     # fibermode_solver.plot_field_distribution(

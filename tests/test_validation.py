@@ -118,8 +118,8 @@ if __name__ == '__main__':
         fiber_type=fiber_catalogue.SMF28,
         mode_numbers=['LP01', 'LP11_b', 'LP02'],
         wavelength=1550e-9,
-        resolution=160,
-        n_step=100
+        resolution=20,
+        n_step=10
     )
 
 # -
