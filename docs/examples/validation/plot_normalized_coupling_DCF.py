@@ -70,7 +70,7 @@ fibermode_solver = FiberModeSolver(wavelength=1550e-9)
 fibermodes_data_sets = fibermode_solver.get_normalized_coupling(
     mode_couples=[(m0[:4], m1[:4]) for (m0, m1) in mode_couples],
     resolution=500,
-    itr_list=numpy.linspace(1.0, 0.05, 100)
+    itr_list=numpy.linspace(1.0, 0.1, 100)
 )
 
 

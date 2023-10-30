@@ -53,7 +53,7 @@ workflow = Workflow(
     n_sorted_mode=6,                # Total computed and sorted mode.
     n_added_mode=4,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
     plot_geometry=True,             # Plot the geometry mesh before computation.
-    debug_mode=True,                # Print the iteration step for the solver plus some other important steps.
+    debug_mode=False,               # Print the iteration step for the solver plus some other important steps.
     auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.05,                 # Final value of inverse taper ratio to simulate
     index_scrambling=0              # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
@@ -69,7 +69,7 @@ fibermode_solver = FiberModeSolver(wavelength=1550e-9)
 fibermodes_data_sets = fibermode_solver.get_normalized_coupling(
     mode_couples=[(m0[:4], m1[:4]) for (m0, m1) in mode_couples],
     resolution=500,
-    itr_list=numpy.linspace(1.0, 0.05, 100)
+    itr_list=numpy.linspace(1.0, 0.1, 100)
 )
 
 
