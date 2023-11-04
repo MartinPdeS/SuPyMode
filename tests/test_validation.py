@@ -87,6 +87,7 @@ def test_propagation_constant(
     fibermode_solver = DataVisualizer(wavelength=wavelength)
 
     fibermodes_data_sets = fibermode_solver.get_beta_vs_itr(
+        fiber_type=fiber_catalogue.SMF28,
         mode_numbers=[m[:4] for m in mode_numbers],
         itr_list=superset.itr_list,
         debug_mode=False

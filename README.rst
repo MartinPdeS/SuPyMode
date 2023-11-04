@@ -100,7 +100,7 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
 .. |Citation| image:: https://zenodo.org/badge/366930899.svg
    :target: https://zenodo.org/badge/latestdoi/366930899
 
-.. |Unittest| image:: https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/MartinPdeS/2cac8ebb51cd9ce07dc7a955648301d5/raw/d75a89f19acc11302d81dacefe5be207beee24a8/SuPyMode_coverage_badge.json
+.. |Unittest| image:: https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/MartinPdeS/2cac8ebb51cd9ce07dc7a955648301d5/raw/dbe91085da6e5b228bc9a0dcaeb4f50ae5abbe2d/coverage_badge.json
 
 .. |PyPi| image:: https://badge.fury.io/py/SuPyMode.svg
    :target: https://pypi.org/project/SuPyMode/

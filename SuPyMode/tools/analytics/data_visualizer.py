@@ -9,6 +9,7 @@ from MPSPlots.render2D import SceneList
 
 # Local imports
 from SuPyMode.tools.analytics.superset import Superset
+from SuPyMode.workflow import fiber_catalogue
 
 
 class DataVisualizer():
@@ -118,6 +119,7 @@ class DataVisualizer():
             itr_list: numpy.ndarray,
             resolution: int,
             mode_couples: list,
+            fiber_type: object = fiber_catalogue.SMF28,
             debug_mode: bool = True) -> list:
         """
         Gets the fibermode coupling.
@@ -138,8 +140,8 @@ class DataVisualizer():
                 print(f'{mode_couple = }', end='\r')
 
             coupling_data_set = self.superset.get_normalized_coupling_vs_itr(
-                mode_number_0=mode_couple[0],
-                mode_number_1=mode_couple[1],
+                fiber_type=fiber_type,
+                mode_couple=mode_couple,
                 itr_list=itr_list,
                 resolution=resolution,
                 debug_mode=debug_mode
@@ -192,6 +194,7 @@ class DataVisualizer():
         return figure
 
     def get_beta_vs_itr(self,
+            fiber_type: object,
             mode_numbers: list,
             itr_list: numpy.ndarray,
             debug_mode: bool = True) -> list:
@@ -210,7 +213,9 @@ class DataVisualizer():
         for mode_number in mode_numbers:
             if debug_mode:
                 print(f'{mode_number = }', end='\r')
+
             data_set = self.superset.get_beta_vs_itr(
+                fiber_type=fiber_type,
                 mode_number=mode_number,
                 itr_list=itr_list,
             )
@@ -219,7 +224,7 @@ class DataVisualizer():
 
         return data_sets
 
-    def plot_beta_vs_itr(self, mode_numbers: list, itr_list: numpy.ndarray) -> SceneList:
+    def plot_beta_vs_itr(self, fiber_type: object, mode_numbers: list, itr_list: numpy.ndarray) -> SceneList:
         """
         Plot the propagation constant [beta] vs itr.
 
@@ -241,6 +246,7 @@ class DataVisualizer():
         )
 
         data_sets = self.get_beta_vs_itr(
+            fiber_type=fiber_type,
             mode_numbers=mode_numbers,
             itr_list=itr_list
         )
@@ -266,7 +272,10 @@ if __name__ == '__main__':
     #     itr_list=numpy.linspace(1.0, 0.1, 100)
     # ).show()
 
+    from FiberFusing.fiber.catalogue import SMF28
+
     fibermode_solver.plot_beta_vs_itr(
+        fiber_type=SMF28,
         mode_numbers=['LP01', 'LP02', 'LP03'],
         itr_list=numpy.linspace(1.0, 0.1, 10)
     ).show()

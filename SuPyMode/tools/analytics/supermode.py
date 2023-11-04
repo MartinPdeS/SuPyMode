@@ -4,7 +4,7 @@
 # Built-in imports
 import numpy
 from dataclasses import dataclass
-from scipy.constants import epsilon_0 as e0, mu_0
+from scipy.constants import epsilon_0, mu_0
 
 # Local imports
 from PyFiberModes import Wavelength, FiberFactory, Mode, field as FieldClass
@@ -33,12 +33,12 @@ class Supermode():
     @property
     def neff(self) -> float:
         """ Returns effective refractive index """
-        return self.fiber.neff(self.mode, self.wavelength)
+        return self.fiber.get_effective_index(self.mode, self.wavelength)
 
     @property
     def norm_factor(self) -> float:
         """ Returns the norm factor of the supermode """
-        factor = 0.5 * numpy.sqrt(e0 / mu_0)
+        factor = 0.5 * numpy.sqrt(epsilon_0 / mu_0)
 
         return factor * (self.beta / self.wavenumber)
 
@@ -46,27 +46,31 @@ class Supermode():
         fields = FieldClass.Field(
             fiber=self.fiber,
             mode=self.mode,
-            wl=self.wavelength,
-            r=bound,
-            np=resolution
+            wavelength=self.wavelength,
+            limit=bound,
+            n_point=resolution
         )
 
         return fields.Ex()
 
     def get_norm2_field(self, field: numpy.ndarray) -> float:
-        """ Returns the L2 norm of the supermode field """
+        """
+        Returns the L2 norm of the supermode field
+        """
         field = numpy.square(field)
         sum_field = field.sum(axis=0).sum(axis=0)
         return numpy.sqrt(sum_field)
 
     def get_l2_normalized_field(self, bound: float, resolution: int = 200) -> numpy.ndarray:
-        """ Returns a L2 normalized field array """
+        """
+        Returns a L2 normalized field array
+        """
         field_object = FieldClass.Field(
             fiber=self.fiber,
             mode=self.mode,
-            wl=self.wavelength,
-            r=bound,
-            np=resolution
+            wavelength=self.wavelength,
+            limit=bound,
+            n_point=resolution
         )
 
         field_array = field_object.Ex()

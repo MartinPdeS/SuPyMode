@@ -7,7 +7,7 @@ Normalized coupling: SMF28
 # Imports
 # ~~~~~~~
 import numpy
-from SuPyMode.tools.fibermodes_validation import FiberModeSolver
+from SuPyMode.tools.analytics.data_visualizer import DataVisualizer
 from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries2D, configuration
 from MPSPlots.render2D import SceneList
 
@@ -46,7 +46,7 @@ workflow = Workflow(
     clad_structure=clad_structure,  # Cladding structure, if None provided then no cladding is set.
     fusion_degree=None,             # Degree of fusion of the structure if applicable.
     wavelength=wavelength,          # Wavelength used for the mode computation.
-    resolution=50,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
+    resolution=150,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
     x_bounds="centering-left",      # Mesh x-boundary structure.
     y_bounds="centering-top",       # Mesh y-boundary structure.
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
@@ -64,7 +64,7 @@ superset = workflow.get_superset()
 
 # %%
 # Computing the analytical values using FiberModes solver.
-fibermode_solver = FiberModeSolver(wavelength=1550e-9)
+fibermode_solver = DataVisualizer(wavelength=1550e-9)
 
 fibermodes_data_sets = fibermode_solver.get_normalized_coupling(
     mode_couples=[(m0[:4], m1[:4]) for (m0, m1) in mode_couples],

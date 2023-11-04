@@ -7,7 +7,7 @@ Normalized coupling: DCFC
 # Imports
 # ~~~~~~~
 import numpy
-from SuPyMode.tools.fibermodes_validation import FiberModeSolver
+from SuPyMode.tools.analytics.data_visualizer import DataVisualizer
 from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries2D, configuration
 from MPSPlots.render2D import SceneList
 
@@ -47,14 +47,14 @@ workflow = Workflow(
     clad_structure=clad_structure,  # Cladding structure, if None provided then no cladding is set.
     fusion_degree=None,             # Degree of fusion of the structure if applicable.
     wavelength=wavelength,          # Wavelength used for the mode computation.
-    resolution=40,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
+    resolution=100,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
     x_bounds="centering-left",      # Mesh x-boundary structure.
     y_bounds="centering-top",       # Mesh y-boundary structure.
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=6,                # Total computed and sorted mode.
     n_added_mode=4,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
-    plot_geometry=True,             # Plot the geometry mesh before computation.
-    debug_mode=False,               # Print the iteration step for the solver plus some other important steps.
+    plot_geometry=False,             # Plot the geometry mesh before computation.
+    debug_mode=True,               # Print the iteration step for the solver plus some other important steps.
     auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.05,                 # Final value of inverse taper ratio to simulate
     index_scrambling=0              # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
@@ -65,12 +65,13 @@ superset = workflow.get_superset()
 
 # %%
 # Computing the analytical values using FiberModes solver.
-fibermode_solver = FiberModeSolver(wavelength=1550e-9)
+fibermode_solver = DataVisualizer(wavelength=1550e-9)
 
 fibermodes_data_sets = fibermode_solver.get_normalized_coupling(
+    fiber_type=fiber_catalogue.DCF1300S_33,
     mode_couples=[(m0[:4], m1[:4]) for (m0, m1) in mode_couples],
     resolution=500,
-    itr_list=numpy.linspace(1.0, 0.1, 100)
+    itr_list=numpy.linspace(1.0, 0.1, 50)
 )
 
 

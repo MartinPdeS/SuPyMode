@@ -60,20 +60,19 @@ class Superset():
 
     def get_smf28_model(self, itr: float = 1.0):
         return self.get_custom_fiber_model(
-            custom_fiber_class=fiber_catalogue.SMF28,
+            fiber_type=fiber_catalogue.SMF28,
             itr=itr
         )
 
-    def get_custom_fiber_model(self, custom_fiber_class, itr: float = 1):
+    def get_custom_fiber_model(self, fiber_type, itr: float = 1):
         factory = FiberFactory()
-        factory.addLayer()
 
-        custom_fiber_instance = custom_fiber_class(wavelength=self.wavelength)
+        custom_fiber_instance = fiber_type(wavelength=self.wavelength)
 
         custom_fiber_instance.scale(factor=itr)
 
         for structure in custom_fiber_instance.structure_list[::-1]:
-            factory.addLayer(
+            factory.add_layer(
                 name=structure.name,
                 radius=structure.radius,
                 index=structure.index
@@ -132,6 +131,7 @@ class Superset():
         return field / norm
 
     def get_mode_field_vs_r(self,
+            fiber_type: object,
             itr: float,
             mode_number: Supermode,
             resolution: int = 100,
@@ -151,7 +151,7 @@ class Superset():
         :returns:   The mode field vs r.
         :rtype:     float
         """
-        fiber = self.get_smf28_model(itr=itr)
+        fiber = self.get_custom_fiber_model(fiber_type=fiber_type, itr=itr)
 
         bound = fiber.radius_boundary * 1.2
 
@@ -182,6 +182,7 @@ class Superset():
         return data_set
 
     def get_adiabatic_vs_itr(self,
+            fiber_type: object,
             mode_number_0: str,
             mode_number_1: str,
             itr_list: list,
@@ -208,7 +209,7 @@ class Superset():
             if debug_mode:
                 print(f'{itr:.3f = }\t{idx = }', end='\r')
 
-            fiber = self.get_smf28_model(itr=itr)
+            fiber = self.get_custom_fiber_model(fiber_type=fiber_type, itr=itr)
 
             mode_0 = Supermode(
                 fiber=fiber,
@@ -245,16 +246,13 @@ class Superset():
         return data_set
 
     def get_normalized_coupling(self,
-            fiber,
             mode_0: Supermode,
             mode_1: Supermode,
             resolution: int = 200) -> float:
         """
         Gets the normalized coupling between two supermodes.
 
-        :param      fiber:       The fiber
-        :type       fiber:       FiberFactory
-        :param      mode_0:      The msuperode 0
+        :param      mode_0:      The supermode 0
         :type       mode_0:      Supermode
         :param      mode_1:      The supermode 1
         :type       mode_1:      Supermode
@@ -264,7 +262,7 @@ class Superset():
         :returns:   The normalized coupling.
         :rtype:     float
         """
-        bound = fiber.radius_boundary * 1.2
+        bound = mode_0.fiber.radius_boundary * 1.2
 
         r_space = numpy.linspace(0, bound, resolution)
 
@@ -281,7 +279,7 @@ class Superset():
         )
 
         fields_term = 0
-        for structure in fiber.supymode_fiber.structure_list:
+        for structure in mode_0.fiber.supymode_fiber.structure_list:
             current_layer = structure
             if structure.name == 'air':
                 previous_layer = current_layer
@@ -305,13 +303,13 @@ class Superset():
         return coupling
 
     def get_overlap_integral(self,
-            fiber,
+            fiber_type: object,
             mode_0: Supermode,
             mode_1: Supermode,
             resolution: int = 200,
             normalization: str = 'l2') -> float:
 
-        bound = fiber.radius_boundary * 1.2
+        bound = fiber_type.radius_boundary * 1.2
 
         r_space = numpy.linspace(0, bound, resolution)
 
@@ -334,6 +332,7 @@ class Superset():
         return overlap_integral
 
     def get_overlap_integral_vs_itr(self,
+            fiber_type: object,
             mode_number_0: str,
             mode_number_1: str,
             itr_list: numpy.ndarray,
@@ -359,7 +358,8 @@ class Superset():
         for idx, itr in enumerate(itr_list):
             if debug_mode:
                 print(f'{itr:.3f = }\t{idx = }', end='\r')
-            fiber = self.get_smf28_model(itr=itr)
+
+            fiber = self.get_custom_fiber_model(fiber_type=fiber_type, itr=itr)
 
             mode_0 = Supermode(
                 fiber=fiber,
@@ -415,6 +415,7 @@ class Superset():
         return mode.beta
 
     def get_beta_vs_itr(self,
+            fiber_type: object,
             mode_number: str,
             itr_list: numpy.ndarray,
             debug_mode: bool = True) -> DataSet:
@@ -434,7 +435,8 @@ class Superset():
         for idx, itr in enumerate(itr_list):
             if debug_mode:
                 print(f'\t{idx = }\t{itr = :.3f}', end='\r')
-            fiber = self.get_smf28_model(itr=itr)
+
+            fiber = self.get_custom_fiber_model(fiber_type=fiber_type, itr=itr)
 
             mode = Supermode(
                 fiber=fiber,
@@ -460,14 +462,16 @@ class Superset():
         return data_set
 
     def get_normalized_coupling_vs_itr(self,
-            mode_number_0: str,
-            mode_number_1: str,
+            fiber_type: object,
+            mode_couple: tuple[str],
             itr_list: numpy.ndarray,
             resolution: int,
             debug_mode: bool = True) -> DataSet:
         """
         Gets the normalized coupling vs itr.
 
+        :param      fiber_type:     The fiber type to emulate
+        :type       fiber_type:     object
         :param      mode_number_0:  The mode number 0
         :type       mode_number_0:  str
         :param      mode_number_1:  The mode number 1
@@ -483,17 +487,17 @@ class Superset():
         array = numpy.zeros(itr_list.size)
 
         for idx, itr in enumerate(itr_list):
-            fiber = self.get_smf28_model(itr=itr)
+            fiber = self.get_custom_fiber_model(fiber_type=fiber_type, itr=itr)
 
             mode_0 = Supermode(
                 fiber=fiber,
-                mode_number=mode_number_0,
+                mode_number=mode_couple[0],
                 wavelength=self.wavelength
             )
 
             mode_1 = Supermode(
                 fiber=fiber,
-                mode_number=mode_number_1,
+                mode_number=mode_couple[1],
                 wavelength=self.wavelength
             )
 
@@ -502,7 +506,6 @@ class Superset():
             else:
                 try:
                     coupling = self.get_normalized_coupling(
-                        fiber=fiber,
                         mode_0=mode_0,
                         mode_1=mode_1,
                         resolution=resolution
