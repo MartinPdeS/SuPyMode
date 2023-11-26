@@ -12,18 +12,18 @@ struct FieldStructure
         double wavenumber, wavelength, dx_initial, dy_initial;
 
         FieldStructure(
-            const Eigen::MatrixXd& fields, 
-            const Eigen::VectorXd &itr_list, 
+            const Eigen::MatrixXd& fields,
+            const Eigen::VectorXd &itr_list,
             const Eigen::VectorXd &betas,
-            const double wavenumber, 
-            const double dx_initial, 
+            const double wavenumber,
+            const double dx_initial,
             const double dy_initial
         )
         : fields(fields), itr_list(itr_list)
         {
             this->wavelength = 2. * PI / wavenumber;
         }
-        
+
         double get_norm(const size_t &slice, const string &normalization_type)
         {
             if (normalization_type == "max")
@@ -38,7 +38,7 @@ struct FieldStructure
         {
             double itr = itr_list[slice];
 
-            return 0.5 * this->fields.col(slice).cwiseAbs2().sum() * this->dx_initial * itr * this->dy_initial * itr;
+            return 0.5 * this->fields.col(slice).cwiseAbs2().sum() * dx_initial * itr * dy_initial * itr;
         }
 
         double get_norm_max(const size_t &slice)
@@ -57,7 +57,7 @@ struct FieldStructure
 
             term_0 = 0.5 * this->fields.cwiseAbs2().colwise().sum();
 
-            term_1 = itr_list.cwiseProduct(itr_list) * this->dx_initial * this->dy_initial;
+            term_1 = itr_list.cwiseProduct(itr_list) * dx_initial * dy_initial;
 
             norm_array = term_0.cwiseProduct(term_1);
 
@@ -68,77 +68,65 @@ struct FieldStructure
 struct SuperMode
 {
     size_t mode_number;
-    double wavenumber, wavelength, dx_initial, dy_initial;
-    pybind11::array_t<double> itr_list_py, mesh_gradient_py;
+    double wavenumber, wavelength;
+    pybind11::array_t<double> mesh_gradient_py;
     Eigen::MatrixXd fields;
-    Eigen::VectorXd index, betas, eigen_value, itr_list, mesh_gradient;
-    size_t nx, ny, n_slice;
+    Eigen::VectorXd index, betas, eigen_value, mesh_gradient;
+    ModelParameters model_parameters;
 
     SuperMode(){}
     SuperMode(
         size_t mode_number,
         double wavenumber,
-        double dx_initial,
-        double dy_initial,
-        pybind11::array_t<double> itr_list_py,
         pybind11::array_t<double> mesh_gradient_py,
         pybind11::array_t<double> fields_py,
         pybind11::array_t<double> index_py,
         pybind11::array_t<double> betas_py,
-        pybind11::array_t<double> eigen_value_py
+        pybind11::array_t<double> eigen_value_py,
+        ModelParameters model_parameters
         )
-        : mode_number(mode_number), wavenumber(wavenumber), dx_initial(dx_initial), dy_initial(dy_initial)
+        : mode_number(mode_number), wavenumber(wavenumber)
         {
+            this->model_parameters = model_parameters;
             this->wavelength = 2. * PI / wavenumber;
-            this->nx = mesh_gradient_py.request().shape[0];
-            this->ny = mesh_gradient_py.request().shape[1];
-            this->n_slice = itr_list_py.request().shape[0];
 
             double *field_ptr = (double*) fields_py.request().ptr;
-            Eigen::Map<Eigen::MatrixXd> mapping_fields(field_ptr, nx * ny, n_slice);
+            Eigen::Map<Eigen::MatrixXd> mapping_fields(field_ptr, this->model_parameters.field_size, model_parameters.n_slice);
             this->fields = mapping_fields;
 
             double *index_ptr = (double*) index_py.request().ptr;
-            Eigen::Map<Eigen::VectorXd> mapping_index(index_ptr, n_slice, 1);
+            Eigen::Map<Eigen::VectorXd> mapping_index(index_ptr, model_parameters.n_slice, 1);
             this->index = mapping_index;
 
             double *beta_ptr = (double*) betas_py.request().ptr;
-            Eigen::Map<Eigen::VectorXd> mapping_betas(beta_ptr, n_slice, 1);
+            Eigen::Map<Eigen::VectorXd> mapping_betas(beta_ptr, model_parameters.n_slice, 1);
             this->betas = mapping_betas;
 
             double *eigen_value_ptr = (double*) eigen_value_py.request().ptr;
-            Eigen::Map<Eigen::VectorXd> mapping_eigen_value(eigen_value_ptr, n_slice, 1);
+            Eigen::Map<Eigen::VectorXd> mapping_eigen_value(eigen_value_ptr, model_parameters.n_slice, 1);
             this->eigen_value = mapping_eigen_value;
 
-            double *itr_list_ptr = (double*) itr_list_py.request().ptr;
-            Eigen::Map<Eigen::VectorXd> mapping_itr_list(itr_list_ptr, n_slice);
-            this->itr_list = mapping_itr_list;
-
             double *mesh_gradient_ptr = (double*) mesh_gradient_py.request().ptr;
-            Eigen::Map<Eigen::VectorXd> mapping_mesh_gradient(mesh_gradient_ptr, nx*ny);
+            Eigen::Map<Eigen::VectorXd> mapping_mesh_gradient(mesh_gradient_ptr, this->model_parameters.field_size);
             this->mesh_gradient = mapping_mesh_gradient;
         }
 
     SuperMode(
         const size_t mode_number,
         const double wavenumber,
-        const double dx_initial,
-        const double dy_initial,
         const Eigen::VectorXd &mesh_gradient,
-        const Eigen::VectorXd &itr_list,
-        const size_t nx,
-        const size_t ny
+        const ModelParameters &model_parameters
         )
-        : mode_number(mode_number), wavenumber(wavenumber), dx_initial(dx_initial), dy_initial(dy_initial), itr_list(itr_list), mesh_gradient(mesh_gradient)
+        : mode_number(mode_number),
+          wavenumber(wavenumber),
+          mesh_gradient(mesh_gradient)
         {
+            this->model_parameters = model_parameters;
             this->wavelength = 2. * PI / wavenumber;
-            this->nx = nx;
-            this->ny = ny;
-            this->n_slice = itr_list.size();
-            this->fields = MatrixType(nx * ny, n_slice);
-            this->eigen_value = VectorType(n_slice);
-            this->betas = VectorType(n_slice);
-            this->index = VectorType(n_slice);
+            this->fields = MatrixType(this->model_parameters.field_size, model_parameters.n_slice);
+            this->eigen_value = VectorType(model_parameters.n_slice);
+            this->betas = VectorType(model_parameters.n_slice);
+            this->index = VectorType(model_parameters.n_slice);
 
         }
 
@@ -147,14 +135,12 @@ struct SuperMode
         return pybind11::make_tuple(
             this->mode_number,
             this->wavenumber,
-            this->dx_initial,
-            this->dy_initial,
-            this->get_itr_list(),
             this->get_mesh_gradient(),
             this->get_fields_py(),
             this->get_index_py(),
             this->get_betas_py(),
-            this->get_eigen_value_py()
+            this->get_eigen_value_py(),
+            this->model_parameters
             );
     }
 
@@ -183,9 +169,9 @@ struct SuperMode
     double get_norm_cmt(const size_t &slice) const
     {
         // Equation 7.35 from Bures
-        double 
-            itr = itr_list[slice],
-            factor = 0.5 * this->dx_initial * itr * this->dy_initial * itr;
+        double
+            itr = model_parameters.itr_list[slice],
+            factor = 0.5 * this->model_parameters.dx * itr * this->model_parameters.dy * itr;
 
         return this->fields.col(slice).cwiseAbs2().sum() * factor;
     }
@@ -202,9 +188,9 @@ struct SuperMode
 
     Eigen::VectorXd get_norm_cmt_array() const
     {
-        Eigen::VectorXd 
-            term_0 = 0.5 * this->fields.cwiseAbs2().colwise().sum(), 
-            term_1 = itr_list.cwiseProduct(itr_list) * this->dx_initial * this->dy_initial, 
+        Eigen::VectorXd
+            term_0 = 0.5 * this->fields.cwiseAbs2().colwise().sum(),
+            term_1 = model_parameters.itr_list.cwiseProduct(model_parameters.itr_list) * this->model_parameters.dx * this->model_parameters.dy,
             norm_array = term_0.cwiseProduct(term_1);
 
         return norm_array;
@@ -217,7 +203,13 @@ struct SuperMode
 
     Eigen::VectorXd get_norm_l2_array() const
     {
-        return this->fields.cwiseAbs2().colwise().sum();
+        double itr = 1;
+        double
+            dx = this->model_parameters.dx * itr,
+            dy = this->model_parameters.dy * itr,
+            dA = dx * dy;
+
+        return this->fields.cwiseAbs2().colwise().sum() * dA;
     }
 
     Eigen::VectorXd get_norm_max_array() const
@@ -232,78 +224,119 @@ struct SuperMode
 
     double get_overlap_integral(const SuperMode& other_supermode, const size_t &slice_0, const size_t &slice_1) const
     {
-        Eigen::VectorXd 
-            mode_field_0 = this->get_normalized_field(slice_0, "l2"),
-            mode_field_1 = other_supermode.get_normalized_field(slice_1, "l2");
-
-        return mode_field_0.transpose() * mode_field_1;
+        return this->fields.col(slice_0).transpose() * other_supermode.fields.col(slice_0);
     }
 
     Eigen::MatrixXd get_overlap_integrals_with_mode(const SuperMode& other_supermode) const
     {
-        Eigen::MatrixXd  
-            normalized_field_0 = this->get_normalized_fields("l2"),
-            normalized_field_1 = other_supermode.get_normalized_fields("l2");
-
-        Eigen::VectorXd     
-            overlap_integrals = normalized_field_0.cwiseProduct(normalized_field_1).colwise().sum().cwiseAbs();
+        Eigen::VectorXd
+            overlap_integrals = this->fields.cwiseProduct(other_supermode.fields).colwise().sum().cwiseAbs();
 
         return overlap_integrals;
     }
 
-    Eigen::VectorXd get_normalized_field(const size_t slice, const string &normalization_type) const
+    double get_trapez_integral(const Eigen::VectorXd &mesh, const double &dx, const double &dy) const
     {
-        double norm_field = this->get_norm(slice, normalization_type);
+        double
+            dA = dx * dy,
+            integral = mesh.sum() * dA;
 
-        Eigen::VectorXd field = this->fields.col(slice);
-
-        return field / sqrt(norm_field);
+        return integral;
     }
 
-    Eigen::MatrixXd get_normalized_fields(const string &normalization_type) const
+    Eigen::VectorXd get_gradient_overlap_with_mode(const SuperMode& other_supermode) const
     {
-        Eigen::VectorXd norm_array = this->get_norm_array(normalization_type);
-
-        Eigen::MatrixXd normalized_fields = this->fields.array().rowwise() / norm_array.cwiseSqrt().transpose().array();
-
-        return normalized_fields;
-    }
-
-    Eigen::VectorXd get_gradient_overlap_with_mode(const SuperMode& other_supermode, const string &normalization_type) const
-    {
-        Eigen::MatrixXd 
-            field_0 = this->get_normalized_fields(normalization_type),
-            field_1 = other_supermode.get_normalized_fields(normalization_type),                         
+        Eigen::MatrixXd
+            field_0 = this->fields,
+            field_1 = other_supermode.fields,
             overlap = field_0.cwiseProduct(field_1).array().colwise() * mesh_gradient.array();
 
-        return overlap.colwise().sum().cwiseAbs();
+        Eigen::VectorXd
+            dx = this->model_parameters.dx * model_parameters.itr_list,
+            dy = this->model_parameters.dy * model_parameters.itr_list,
+            dA = dx.cwiseProduct(dy),
+            integral = overlap.colwise().sum(),
+            gradient_overlap = integral.cwiseAbs() * dA;
+
+        Eigen::VectorXd output(model_parameters.itr_list.size());
+
+        double gradient_overlap_, dx_scaled, dy_scaled, itr;
+        for (size_t slice = 0; slice < model_parameters.itr_list.size(); ++slice)
+        {
+            itr = model_parameters.itr_list[slice];
+            dx_scaled = this->model_parameters.dx * itr;
+            dy_scaled = this->model_parameters.dy * itr;
+            gradient_overlap_ = get_trapez_integral(integral, dx_scaled, dy_scaled);
+            output << gradient_overlap;
+        }
+
+
+        return gradient_overlap;
     }
 
     void normalize_fields()
     {
-        Eigen::VectorXd norm_array = this->get_norm_array("l2");
+        for(size_t slice = 0; slice < this->fields.cols(); ++ slice)
+            this->normalize_field_slice_l2(slice);
 
-        this->fields = this->fields.array().rowwise() / norm_array.transpose().array().cwiseSqrt();
+    }
+
+
+    void arrange_fields()
+    {
+        for(size_t slice = 0; slice < this->fields.cols() - 1; ++ slice)
+        {
+            Eigen::VectorXd
+                field_0 = this->fields.col(slice),
+                field_1 = this->fields.col(slice + 1);
+
+
+            double overlap = field_0.cwiseProduct(field_1).sum();
+            if (overlap < 0)
+                this->fields.col(slice + 1) *= -1;
+        }
+    }
+
+
+    void normalize_field_slice_l2(const size_t slice)
+    {
+        double norm = this->get_field_slice_norm_custom(slice);
+
+        this->fields.col(slice) /= sqrt(norm);
+    }
+
+    double get_field_slice_norm_custom(const size_t slice) const
+    {
+        Eigen::VectorXd field = this->fields.col(slice);
+
+        double
+            itr = this->model_parameters.itr_list[slice],
+            dx = this->model_parameters.dx * itr,
+            dy = this->model_parameters.dy * itr,
+            dA = dx * dy,
+            norm = field.cwiseAbs2().sum() * dA;
+
+        return norm;
     }
 
     Eigen::Matrix<std::complex<double>, Eigen::Dynamic, 1> get_normalized_coupling_with_mode(const SuperMode& other_supermode) const
     {
-        Eigen::VectorXd 
-            integral = this->get_gradient_overlap_with_mode(other_supermode, "scalar_coupling"),
+        Eigen::VectorXd
+            integral = this->get_gradient_overlap_with_mode(other_supermode),
             beta_0 = this->betas,
             beta_1 = other_supermode.betas,
-            delta_beta = (beta_0 - beta_1),
-            term0 = delta_beta.cwiseInverse(),
-            term1 = (beta_0.cwiseProduct(beta_1)).cwiseSqrt().cwiseInverse();
+            delta_beta = (beta_0 - beta_1).cwiseInverse(),
+            beta_prod = (beta_0.cwiseProduct(beta_1)).cwiseSqrt().cwiseInverse(),
+            denominator = delta_beta.cwiseProduct(beta_prod);
 
-        std::complex<double> scalar = - (std::complex<double>) 0.5 * J * pow(this->wavenumber, 2);
+            std::complex<double> scalar = - 0.5 * (std::complex<double>) J * pow(this->wavenumber, 2);
 
-        return scalar * term0.cwiseProduct(term1).cwiseProduct(integral);
+        return scalar * denominator.cwiseProduct(integral);
     }
 
     Eigen::VectorXd get_beating_length_with_mode(const SuperMode& other_supermode) const
     {
-        Eigen::VectorXd 
+        Eigen::VectorXd
             beta_0 = this->betas,
             beta_1 = other_supermode.betas;
 
@@ -323,15 +356,15 @@ struct SuperMode
     {
         return templated_eigen_to_ndarray(
             this->get_overlap_integrals_with_mode(supermode),
-            { n_slice }
+            { model_parameters.n_slice }
         );
     }
 
     pybind11::array_t<double> get_gradient_overlap_with_mode_py(const SuperMode& supermode, const string &normalization_type="l2") const
     {
         return templated_eigen_to_ndarray(
-            this->get_gradient_overlap_with_mode(supermode, normalization_type),
-            { n_slice }
+            this->get_gradient_overlap_with_mode(supermode),
+            { model_parameters.n_slice }
         );
     }
 
@@ -339,7 +372,7 @@ struct SuperMode
     {
         return templated_eigen_to_ndarray(
             this->get_normalized_coupling_with_mode(supermode),
-            { n_slice }
+            { model_parameters.n_slice }
         );
     }
 
@@ -347,7 +380,7 @@ struct SuperMode
     {
         return templated_eigen_to_ndarray(
             this->get_adiabatic_with_mode(supermode),
-            { n_slice }
+            { model_parameters.n_slice }
         );
     }
 
@@ -355,7 +388,7 @@ struct SuperMode
     {
         return templated_eigen_to_ndarray(
             this->get_beating_length_with_mode(supermode),
-            { n_slice }
+            { model_parameters.n_slice }
         );
     }
 
@@ -363,7 +396,7 @@ struct SuperMode
     {
         return templated_eigen_to_ndarray(
             this->fields,
-            { n_slice, nx, ny }
+            { model_parameters.n_slice, model_parameters.nx, model_parameters.ny }
         );
     }
 
@@ -371,7 +404,7 @@ struct SuperMode
     {
         return templated_eigen_to_ndarray(
             this->index,
-            { n_slice }
+            { model_parameters.n_slice }
         );
     }
 
@@ -379,7 +412,7 @@ struct SuperMode
     {
         return templated_eigen_to_ndarray(
             this->eigen_value,
-            { n_slice }
+            { model_parameters.n_slice }
         );
     }
 
@@ -387,15 +420,15 @@ struct SuperMode
     {
         return templated_eigen_to_ndarray(
             this->betas,
-            { n_slice }
+            { model_parameters.n_slice }
         );
     }
 
     pybind11::array_t<double> get_itr_list()
     {
         return templated_eigen_to_ndarray(
-            this->itr_list,
-            { n_slice }
+            this->model_parameters.itr_list,
+            { model_parameters.n_slice }
         );
     }
 
@@ -403,7 +436,7 @@ struct SuperMode
     {
         return templated_eigen_to_ndarray(
             this->mesh_gradient,
-            { nx, ny }
+            { this->model_parameters.nx, this->model_parameters.ny }
         );
     }
 
@@ -412,14 +445,12 @@ struct SuperMode
         return SuperMode{
             tuple[0].cast<size_t>(),                             // mode_number
             tuple[1].cast<double>(),                             // k_initial
-            tuple[2].cast<double>(),                             // dx
-            tuple[3].cast<double>(),                             // dy
-            tuple[4].cast<pybind11::array_t<double>>(),          // itr_list
-            tuple[5].cast<pybind11::array_t<double>>(),          // mesh_gradient
-            tuple[6].cast<pybind11::array_t<double>>(),          // fields
-            tuple[7].cast<pybind11::array_t<double>>(),          // index
-            tuple[8].cast<pybind11::array_t<double>>(),          // betas
-            tuple[9].cast<pybind11::array_t<double>>()           // eigen_values
+            tuple[2].cast<pybind11::array_t<double>>(),          // mesh_gradient
+            tuple[3].cast<pybind11::array_t<double>>(),          // fields
+            tuple[4].cast<pybind11::array_t<double>>(),          // index
+            tuple[5].cast<pybind11::array_t<double>>(),          // betas
+            tuple[6].cast<pybind11::array_t<double>>(),          // eigen_values
+            tuple[7].cast<ModelParameters>()                     // model parameters
         }; // load
     }
 

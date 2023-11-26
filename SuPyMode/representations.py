@@ -180,12 +180,15 @@ class Field(InheritFromSuperMode):
             itr_list=[] if itr is None else itr
         )
 
-        field = self._data[slice_number]
+        field = self._data[slice_number[0]]
 
         if add_symmetries:
             field = self._get_symmetrized_field(field=field)
 
-        match normalization.lower():
+        return self.normalize_field(field=field, norm_type=normalization, itr=itr)
+
+    def normalize_field(self, field: numpy.ndarray, itr: float, norm_type: str = 'L2') -> numpy.ndarray:
+        match norm_type.lower():
             case 'max':
                 norm = abs(field).max()
             case 'center':
@@ -194,7 +197,9 @@ class Field(InheritFromSuperMode):
                 center_value = field[idx_x_center, idx_y_center]
                 norm = center_value
             case 'l2':
-                norm = numpy.sqrt(numpy.trapz(numpy.trapz(numpy.square(field), dx=1, axis=0), dx=1, axis=0))
+                dx_scaled = self.parent_supermode.parent_set.coordinate_system.dx * itr
+                dy_scaled = self.parent_supermode.parent_set.coordinate_system.dy * itr
+                norm = numpy.sqrt(numpy.trapz(numpy.trapz(numpy.square(field), dx=dy_scaled, axis=0), dx=dx_scaled, axis=0))
             case 'cmt':
                 dx_scaled = self.parent_supermode.parent_set.coordinate_system.dx * itr
                 dy_scaled = self.parent_supermode.parent_set.coordinate_system.dy * itr
@@ -226,41 +231,53 @@ class Field(InheritFromSuperMode):
 
         symmetric_field = field[:, -2::-1]
         match self.boundaries.left.lower():
-            case 'symmetric': field = numpy.c_[symmetric_field, field]
+            case 'symmetric':
+                field = numpy.c_[symmetric_field, field]
 
-            case 'anti-symmetric': field = numpy.c_[-symmetric_field, field]
+            case 'anti-symmetric':
+                field = numpy.c_[-symmetric_field, field]
 
         match self.boundaries.right.lower():
-            case 'symmetric': field = numpy.c_[field, symmetric_field]
+            case 'symmetric':
+                field = numpy.c_[field, symmetric_field]
 
-            case 'anti-symmetric': field = numpy.c_[field, -symmetric_field]
+            case 'anti-symmetric':
+                field = numpy.c_[field, -symmetric_field]
 
         symmetric_field = field[-2::-1, :]
         match self.boundaries.top.lower():
-            case 'symmetric': field = numpy.r_[field, symmetric_field]
+            case 'symmetric':
+                field = numpy.r_[field, symmetric_field]
 
-            case 'anti-symmetric': field = numpy.r_[field, -symmetric_field]
+            case 'anti-symmetric':
+                field = numpy.r_[field, -symmetric_field]
 
         match self.boundaries.bottom.lower():
-            case 'symmetric': field = numpy.r_[symmetric_field, field]
+            case 'symmetric':
+                field = numpy.r_[symmetric_field, field]
 
-            case 'anti-symmetric': field = numpy.r_[-symmetric_field, field]
+            case 'anti-symmetric':
+                field = numpy.r_[-symmetric_field, field]
 
         return field
 
     def _render_on_ax_(self, ax: Axis, slice: int) -> None:
         x, y, field = self._get_symmetrized_field_and_axis(field=self._data[slice])
 
-        ax.add_mesh(
+        artist = ax.add_mesh(
             x=x,
             y=y,
             scalar=field,
-            colormap=colormaps.blue_black_red
         )
 
-        ax.add_colorbar(symmetric=True, position='right')
+        ax.add_colorbar(
+            artist=artist,
+            colormap=colormaps.blue_black_red,
+            symmetric=True,
+            position='right'
+        )
 
-        ax.set_style(plot_style.field)
+        ax.set_style(**plot_style.field)
 
     def plot(self, slice_list: list = [], itr_list: list = []) -> SceneList:
         """
@@ -274,7 +291,7 @@ class Field(InheritFromSuperMode):
         :returns:   the figure containing all the plots.
         :rtype:     SceneList
         """
-        figure = SceneList(unit_size=(3, 3), tight_layout=True)
+        figure = SceneList(unit_size=(3, 3), tight_layout=True, ax_orientation='horizontal')
 
         slice_list, itr_list = self._interpret_itr_slice_list_(
             slice_list=slice_list,

@@ -9,8 +9,7 @@ from dataclasses import dataclass
 from MPSPlots.render2D import SceneList
 
 # Local imports
-from PyFiberModes import FiberFactory
-from FiberFusing.fiber import catalogue as fiber_catalogue
+from PyFiberModes.fiber import load_fiber
 from SuPyMode.tools.analytics.supermode import Supermode
 
 
@@ -60,29 +59,14 @@ class Superset():
 
     def get_smf28_model(self, itr: float = 1.0):
         return self.get_custom_fiber_model(
-            fiber_type=fiber_catalogue.SMF28,
+            fiber_name='SMF28',
             itr=itr
         )
 
-    def get_custom_fiber_model(self, fiber_type, itr: float = 1):
-        factory = FiberFactory()
+    def get_custom_fiber_model(self, fiber_name: str, itr: float = 1):
+        fiber = load_fiber(fiber_name, wavelength=self.wavelength)
 
-        custom_fiber_instance = fiber_type(wavelength=self.wavelength)
-
-        custom_fiber_instance.scale(factor=itr)
-
-        for structure in custom_fiber_instance.structure_list[::-1]:
-            factory.add_layer(
-                name=structure.name,
-                radius=structure.radius,
-                index=structure.index
-            )
-
-        fiber = factory[0]
-
-        fiber.supymode_fiber = custom_fiber_instance
-
-        fiber.radius_boundary = numpy.max(custom_fiber_instance.boundaries)
+        fiber.scale(factor=itr)
 
         return fiber
 
@@ -153,7 +137,7 @@ class Superset():
         """
         fiber = self.get_custom_fiber_model(fiber_type=fiber_type, itr=itr)
 
-        bound = fiber.radius_boundary * 1.2
+        bound = fiber.get_fiber_radius() * 1.2
 
         r_space = numpy.linspace(0, bound, resolution)
 
@@ -262,7 +246,7 @@ class Superset():
         :returns:   The normalized coupling.
         :rtype:     float
         """
-        bound = mode_0.fiber.radius_boundary * 1.2
+        bound = mode_0.fiber.get_fiber_radius() * 1.2
 
         r_space = numpy.linspace(0, bound, resolution)
 
@@ -309,7 +293,7 @@ class Superset():
             resolution: int = 200,
             normalization: str = 'l2') -> float:
 
-        bound = fiber_type.radius_boundary * 1.2
+        bound = fiber_type.get_fiber_radius() * 1.2
 
         r_space = numpy.linspace(0, bound, resolution)
 
@@ -332,7 +316,7 @@ class Superset():
         return overlap_integral
 
     def get_overlap_integral_vs_itr(self,
-            fiber_type: object,
+            fiber_name: str,
             mode_number_0: str,
             mode_number_1: str,
             itr_list: numpy.ndarray,
@@ -359,7 +343,7 @@ class Superset():
             if debug_mode:
                 print(f'{itr:.3f = }\t{idx = }', end='\r')
 
-            fiber = self.get_custom_fiber_model(fiber_type=fiber_type, itr=itr)
+            fiber = self.get_custom_fiber_model(fiber_name=fiber_name, itr=itr)
 
             mode_0 = Supermode(
                 fiber=fiber,
@@ -415,7 +399,7 @@ class Superset():
         return mode.beta
 
     def get_beta_vs_itr(self,
-            fiber_type: object,
+            fiber_name: str,
             mode_number: str,
             itr_list: numpy.ndarray,
             debug_mode: bool = True) -> DataSet:
@@ -436,7 +420,7 @@ class Superset():
             if debug_mode:
                 print(f'\t{idx = }\t{itr = :.3f}', end='\r')
 
-            fiber = self.get_custom_fiber_model(fiber_type=fiber_type, itr=itr)
+            fiber = self.get_custom_fiber_model(fiber_name=fiber_name, itr=itr)
 
             mode = Supermode(
                 fiber=fiber,
@@ -462,7 +446,7 @@ class Superset():
         return data_set
 
     def get_normalized_coupling_vs_itr(self,
-            fiber_type: object,
+            fiber_name: str,
             mode_couple: tuple[str],
             itr_list: numpy.ndarray,
             resolution: int,
@@ -487,7 +471,7 @@ class Superset():
         array = numpy.zeros(itr_list.size)
 
         for idx, itr in enumerate(itr_list):
-            fiber = self.get_custom_fiber_model(fiber_type=fiber_type, itr=itr)
+            fiber = self.get_custom_fiber_model(fiber_name=fiber_name, itr=itr)
 
             mode_0 = Supermode(
                 fiber=fiber,

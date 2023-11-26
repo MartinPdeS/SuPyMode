@@ -692,11 +692,7 @@ class SuperSet(object):
             itr_total_list = self.slice_to_itr(slice_total_list)
             return slice_total_list, itr_total_list
 
-        if len(itr_total_list) == 1:
-            return slice_total_list[0], itr_total_list[0]
-
-        else:
-            return slice_total_list, itr_total_list
+        return slice_total_list, itr_total_list
 
     @staticmethod
     def single_plot(plot_function):
@@ -1345,12 +1341,13 @@ class SuperSet(object):
                     x=x,
                     y=y,
                     scalar=field,
-                    colormap=colormaps.blue_black_red,
-                    show_colorbar=False
                 )
 
-                artist.colorbar.symmetric = True
-                artist.colorbar.position = 'right'
+                ax.add_colorbar(
+                    artist=artist,
+                    colormap=colormaps.blue_black_red,
+                    symmetric=True
+                )
 
                 ax.set_style(**plot_style.field)
 

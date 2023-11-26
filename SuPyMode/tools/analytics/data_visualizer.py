@@ -194,7 +194,7 @@ class DataVisualizer():
         return figure
 
     def get_beta_vs_itr(self,
-            fiber_type: object,
+            fiber_name: str,
             mode_numbers: list,
             itr_list: numpy.ndarray,
             debug_mode: bool = True) -> list:
@@ -215,7 +215,7 @@ class DataVisualizer():
                 print(f'{mode_number = }', end='\r')
 
             data_set = self.superset.get_beta_vs_itr(
-                fiber_type=fiber_type,
+                fiber_name=fiber_name,
                 mode_number=mode_number,
                 itr_list=itr_list,
             )

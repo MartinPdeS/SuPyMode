@@ -1,16 +1,37 @@
 #include <pybind11/pybind11.h>
 #include "includes/supermode.cpp"
 #include <pybind11/eigen.h>
+#include "definitions.cpp"
 
 PYBIND11_MODULE(SuperMode, module)
 {
     module.doc() = "A c++ wrapper class for SuperMode";
 
+    pybind11::class_<ModelParameters>(module, "ModelParameters")
+    .def(
+        pybind11::pickle(
+            [](ModelParameters& model_parameter)
+            {
+                return model_parameter.get_state();  // dump
+            },
+            [](pybind11::tuple t)
+            {
+                return ModelParameters{
+                    t[0].cast<pybind11::array_t<double>>(),          // itr_list,
+                    t[1].cast<double>(),                             // dx
+                    t[2].cast<double>(),                             // dy
+                    t[3].cast<size_t>(),                             // nx
+                    t[4].cast<size_t>(),                             // ny
+                }; // load
+            }
+        )
+
+
+    );
+
     pybind11::class_<SuperMode>(module, "SuperMode")
 
     .def_readwrite("binding_number", &SuperMode::mode_number)
-    .def_readwrite("nx", &SuperMode::nx)
-    .def_readwrite("ny", &SuperMode::ny)
     .def_readwrite("wavelength", &SuperMode::wavelength)
     .def_readwrite("wavenumber", &SuperMode::wavenumber)
 
@@ -39,14 +60,12 @@ PYBIND11_MODULE(SuperMode, module)
                 return SuperMode{
                     t[0].cast<size_t>(),                             // mode_number
                     t[1].cast<double>(),                             // k_initial
-                    t[2].cast<double>(),                             // dx
-                    t[3].cast<double>(),                             // dy
-                    t[4].cast<pybind11::array_t<double>>(),          // itr_list
-                    t[5].cast<pybind11::array_t<double>>(),          // mesh_gradient
-                    t[6].cast<pybind11::array_t<double>>(),          // fields
-                    t[7].cast<pybind11::array_t<double>>(),          // index
-                    t[8].cast<pybind11::array_t<double>>(),          // betas
-                    t[9].cast<pybind11::array_t<double>>()           // eigen_values
+                    t[2].cast<pybind11::array_t<double>>(),          // mesh_gradient
+                    t[3].cast<pybind11::array_t<double>>(),          // fields
+                    t[4].cast<pybind11::array_t<double>>(),          // index
+                    t[5].cast<pybind11::array_t<double>>(),          // betas
+                    t[6].cast<pybind11::array_t<double>>(),          // eigen_values
+                    t[7].cast<ModelParameters>()                    // Model parameters
                 }; // load
             }
         )

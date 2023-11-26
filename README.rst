@@ -79,6 +79,19 @@ Then, download and install the SuPyMode package:
 
 ----
 
+Testing
+*******
+
+To test localy (with cloning the GitHub repository) you'll need to install the dependencies and run the coverage command as
+
+.. code:: console
+   >>> git clone https://github.com/MartinPdeS/SuPyMode.git
+   >>> cd SuPyMode
+   >>> pip install -r requirements/requirements.txt
+   >>> coverage run --source=SuPyMode --module pytest --verbose tests
+   >>> coverage report --show-missing
+
+----
 
 Contact Information
 *******************
@@ -100,7 +113,7 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
 .. |Citation| image:: https://zenodo.org/badge/366930899.svg
    :target: https://zenodo.org/badge/latestdoi/366930899
 
-.. |Unittest| image:: https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/MartinPdeS/2cac8ebb51cd9ce07dc7a955648301d5/raw/dbe91085da6e5b228bc9a0dcaeb4f50ae5abbe2d/coverage_badge.json
+.. |Unittest| image:: https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/MartinPdeS/f0955be398d59efac69042c1b0fbece2/raw/4381f2f71c43b5f1f85ad9630a3ab9a0dfef5157/SuPyModecoverage_badge.json
 
 .. |PyPi| image:: https://badge.fury.io/py/SuPyMode.svg
    :target: https://pypi.org/project/SuPyMode/

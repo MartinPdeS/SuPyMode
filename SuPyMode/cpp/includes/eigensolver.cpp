@@ -9,9 +9,14 @@
 #include "numpy_interface.cpp"
 #include "eigen_solver.cpp"
 
+
+
+
+
 class CppSolver : public BaseLaplacian
 {
     public:
+        ModelParameters model_parameters;
         size_t
             n_computed_mode,
             n_sorted_mode,
@@ -72,6 +77,7 @@ class CppSolver : public BaseLaplacian
           show_iteration(show_iteration),
           show_eigenvalues(show_eigenvalues)
     {
+
         this->k_initial = 2.0 * PI / wavelength;
         this->nx = mesh_gradient_py.request().shape[0];
         this->ny = mesh_gradient_py.request().shape[1];
@@ -87,6 +93,8 @@ class CppSolver : public BaseLaplacian
 
         this->d_itr = abs(itr_list[1] - itr_list[0]);
 
+        this->model_parameters = ModelParameters(itr_list_py, dx, dy, nx, ny);
+
         this->generate_mode_set();
     }
 
@@ -97,14 +105,14 @@ class CppSolver : public BaseLaplacian
    {
      for (int mode_number=0; mode_number<n_computed_mode; ++mode_number)
      {
-        SuperMode supermode = SuperMode(mode_number, k_initial, dx, dy, mesh_gradient, itr_list, nx, ny);
+        SuperMode supermode = SuperMode(mode_number, k_initial, mesh_gradient, this->model_parameters);
         computed_supermodes.push_back(supermode);
      }
 
 
      for (int mode_number=0; mode_number<n_sorted_mode; ++mode_number)
      {
-        SuperMode supermode = SuperMode(mode_number, k_initial, dx, dy, mesh_gradient, itr_list, nx, ny);
+        SuperMode supermode = SuperMode(mode_number, k_initial, mesh_gradient, this->model_parameters);
         sorted_supermodes.push_back(supermode);
      }
 
@@ -188,7 +196,9 @@ class CppSolver : public BaseLaplacian
         for (SuperMode& mode : sorted_supermodes)
         {
             mode.eigen_value[slice] = eigen_values[mode.mode_number];
+
             mode.fields.col(slice) << eigen_vectors.col(mode.mode_number);
+
 
             mode.betas[slice] = sqrt( abs(mode.eigen_value[slice]) ) / itr_list[slice];
             mode.index[slice] = mode.betas[slice] / k_initial;
@@ -215,9 +225,12 @@ class CppSolver : public BaseLaplacian
         for (size_t slice=0; slice<itr_list.size(); ++slice)
         {
             double itr_value = itr_list[slice];
+
             progress_bar.show_next(itr_list[slice]);
 
             k_taper = this->k_initial * itr_list[slice];
+
+
 
             std::tie(eigen_vectors, eigen_values) = this->compute_eigen_solution(alpha);
 
@@ -231,6 +244,8 @@ class CppSolver : public BaseLaplacian
 
             this->populate_sorted_supermodes(slice, eigen_vectors, eigen_values);
 
+
+
             alpha_vector.insert(alpha_vector.begin(), eigen_values[0]);
 
             alpha = extrapolator.extrapolate_next(alpha_vector);
@@ -239,11 +254,12 @@ class CppSolver : public BaseLaplacian
 
             this->iteration++;
         }
-        this->arrange_mode_field();
 
         this->sort_mode_per_last_propagation_constant();
 
         this->normalize_mode_field();
+
+        this->arrange_mode_field();
     }
 
     void sort_mode_per_last_propagation_constant()
@@ -265,22 +281,16 @@ class CppSolver : public BaseLaplacian
 
     void arrange_mode_field()
     {
-        for (size_t supermode_number=0; supermode_number<n_sorted_mode; ++supermode_number)
+
+        for (SuperMode &supermode: sorted_supermodes)
         {
-            SuperMode &supermode = sorted_supermodes[supermode_number];
-            for (size_t slice=0; slice<itr_list.size()-2; ++slice)
-            {
-                double overlap = supermode.get_overlap_integral(supermode, slice, slice+1);
-                if (overlap < 0)
-                    supermode.fields.col(slice+1) *= -1;
-            }
+            supermode.arrange_fields();
         }
-        std::cout<<"Fields regularized"<<std::endl;
+        std::cout<<"Fields arranged"<<std::endl;
     }
 
     void normalize_mode_field()
     {
-        std::cout<<"Normalizing supermode fields\n";
         for (SuperMode &supermode: sorted_supermodes)
         {
             supermode.normalize_fields();

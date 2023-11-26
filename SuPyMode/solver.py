@@ -82,9 +82,9 @@ class SuPySolver(object):
         )
 
         new_array = numpy.c_[
-            self.FD.triplet._array[:, 1],
-            self.FD.triplet._array[:, 0],
-            self.FD.triplet._array[:, 2]
+            self.FD.triplet.array[:, 1],
+            self.FD.triplet.array[:, 0],
+            self.FD.triplet.array[:, 2]
         ]
 
         Solver = CppSolver(

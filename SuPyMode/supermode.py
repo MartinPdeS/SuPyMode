@@ -149,9 +149,9 @@ class SuperMode(InheritFromSuperSet):
         if itr is None:
             itr = self.parent_set.slice_to_itr(slice_list=slice_number)
 
-        field = self.field.get_field_mesh(slice_number=slice_number, add_symmetries=True)
+        field = self.field.get_field(slice_number=slice_number, add_symmetries=True)
 
-        x_axis, y_axis = self.field.get_axis(slice_number=slice_number)
+        x_axis, y_axis = self.get_axis(slice_number=slice_number, add_symmetries=True)
 
         field_interpolation = RectBivariateSpline(
             x=x_axis * itr,
@@ -165,27 +165,27 @@ class SuperMode(InheritFromSuperSet):
         """
         Take as input a vector and return a symmetric version of that vector.
         The symmetry can be setted mirror the last or first element.
-        
+
         :param      vector:          The vector
         :type       vector:          numpy.ndarray
         :param      symmetry_type:   The symmetry type
         :type       symmetry_type:   str
-        
+
         :returns:   The symmetrized vector
         :rtype:     numpy.ndarray
-        
+
         :raises     AssertionError:  Verify that input vector is 1-dimensionnal.
         """
         assert vector.ndim == 1, f'Vector should be 1d, instead {vector.ndim} dimensional is provided.'
-        
+
         size = len(vector)
         dx = abs(vector[0] - vector[1])
-        
+
         match symmetry_type.lower():
-            case 'last': 
+            case 'last':
                 start_value = vector[0]
                 return numpy.arange(0, 2 * size - 1) * dx + start_value
-                
+
             case 'first':
                 start_value = vector[-1]
                 return numpy.arange(0, 2 * size - 1) * -dx + start_value
@@ -199,15 +199,19 @@ class SuperMode(InheritFromSuperSet):
 
         if self.boundaries.right in ['symmetric', 'anti-symmetric']:
             full_x_axis = self._get_symmetrize_vector(full_x_axis, symmetry_type='last')
+            full_x_axis.sort()
 
         if self.boundaries.left in ['symmetric', 'anti-symmetric']:
             full_x_axis = self._get_symmetrize_vector(full_x_axis, symmetry_type='first')
+            full_x_axis.sort()
 
         if self.boundaries.top in ['symmetric', 'anti-symmetric']:
             full_y_axis = self._get_symmetrize_vector(full_y_axis, symmetry_type='last')
+            full_y_axis.sort()
 
         if self.boundaries.bottom in ['symmetric', 'anti-symmetric']:
             full_y_axis = self._get_symmetrize_vector(full_y_axis, symmetry_type='first')
+            full_y_axis.sort()
 
         return full_x_axis, full_y_axis
 

@@ -33,7 +33,7 @@ class Supermode():
     @property
     def neff(self) -> float:
         """ Returns effective refractive index """
-        return self.fiber.get_effective_index(self.mode, self.wavelength)
+        return self.fiber.get_effective_index(mode=self.mode)
 
     @property
     def norm_factor(self) -> float:

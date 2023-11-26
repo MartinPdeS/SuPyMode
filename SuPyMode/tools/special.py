@@ -11,7 +11,8 @@ from matplotlib.animation import FuncAnimation, PillowWriter
 
 #  4th order accurate gradient function based on 2nd order version from http://projects.scipy.org/scipy/numpy/browser/trunk/numpy/lib/function_base.py
 def gradientO4(f, *varargs):
-    """Calculate the fourth-order-accurate gradient of an N-dimensional scalar function.
+    """
+    Calculate the fourth-order-accurate gradient of an N-dimensional scalar function.
     Uses central differences on the interior and first differences on boundaries
     to give the same shape.
     Inputs:
@@ -20,6 +21,7 @@ def gradientO4(f, *varargs):
     Outputs:
       N arrays of the same shape as f giving the derivative of f with respect
        to each dimension.
+
     """
     N = len(f.shape)  # number of dimensions
     n = len(varargs)
@@ -78,6 +80,7 @@ def gradientO4(f, *varargs):
         return outvals[0]
     else:
         return outvals
+
 
 def get_3_figures():
 
@@ -179,13 +182,12 @@ def debug_get_mode_coupling_adiabatic(superset, geometry, plot=False):
     return combinations, couplings, adiabatics
 
 
-
 class ModePropagationGifCreator():
     def __init__(self,
-                 superset,
-                 profile,
-                 max_number_of_mode: int = None,
-                 dark_background: bool=True):
+            superset,
+            profile,
+            max_number_of_mode: int = None,
+            dark_background: bool = True):
 
         self.superset = superset
         self.profile = profile
