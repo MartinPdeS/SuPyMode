@@ -22,6 +22,7 @@ fiber_list = [
     fiber_catalogue.load_fiber('DCF1300S_20', wavelength=wavelength)
 ]
 
+
 # %%
 # Defining the boundaries of the system
 boundaries = [
@@ -40,8 +41,8 @@ workflow = Workflow(
     fusion_degree=None,             # Degree of fusion of the structure if applicable.
     wavelength=wavelength,          # Wavelength used for the mode computation.
     resolution=100,                 # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
-    x_bounds="centering",           # Mesh x-boundary structure.
-    y_bounds="centering-top",       # Mesh y-boundary structure.
+    x_bounds="",                    # Mesh x-boundary structure.
+    y_bounds="top",                 # Mesh y-boundary structure.
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=3,                # Total computed and sorted mode.
     n_added_mode=5,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
@@ -49,6 +50,7 @@ workflow = Workflow(
     debug_mode=False,               # Print the iteration step for the solver plus some other important steps.
     auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.1,                  # Final value of inverse taper ratio to simulate
+    clad_rotation=0,                # Rotate the geoemtry in the given angle in degree
     index_scrambling=1e-4           # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
 )
 

@@ -14,32 +14,129 @@ from PyFinitDiff.boundaries import Boundaries2D
 from pathvalidate import sanitize_filepath
 
 
+def prepare_simulation_geometry(
+        wavelength: float,
+        clad_structure: object,
+        fiber_list: list,
+        capillary_tube: object = None,
+        fusion_degree: float = None,
+        fiber_radius: float = None,
+        x_bounds: str | list = '',
+        y_bounds: str | list = '',
+        clad_index: float | str = 'silica',
+        core_position_scrambling: float = 0,
+        index_scrambling: float = 0,
+        resolution: int = 150,
+        rotation: float = 0,
+        boundary_pad_factor: float = 1.2,
+        gaussian_filter: float = 0,
+        background_index: float = 1) -> Geometry:
+    """
+    Prepare and returns the processed geometry for simulation using SuPyMode.
+
+    :param      wavelength:                Wavelength at which evaluate the computation
+    :type       wavelength:                float
+    :param      clad_structure:            Initial optical structure
+    :type       clad_structure:            object
+    :param      fiber_list:                The fiber list
+    :type       fiber_list:                list
+    :param      capillary_tube:            Additional optical structure such as clad to add
+    :type       capillary_tube:            object
+    :param      fusion_degree:             Fusion degree for the clad fused structure
+    :type       fusion_degree:             float
+    :param      fiber_radius:              The fiber radius for the fused clad structure, all radii are assumed the same here.
+    :type       fiber_radius:              float
+    :param      x_bounds:                  The x-axis boundaries.
+    :type       x_bounds:                  str
+    :param      y_bounds:                  The y-axis boundaries.
+    :type       y_bounds:                  str
+    :param      clad_index:                The fused clad refractive index.
+    :type       clad_index:                str
+    :param      core_position_scrambling:  The core position scrambling.
+    :type       core_position_scrambling:  float
+    :param      resolution:                The rasterisation resolution for the geometry.
+    :type       resolution:                int
+    :param      background_index:          The background refractive index.
+    :type       background_index:          float
+
+    :returns:   The simulation geometry
+    :rtype:     Geometry
+    """
+
+    assert x_bounds in ['left', 'right', ''], f"Invalid 'x_bounds' input: {x_bounds}, value has to be in ['left', 'rigth']."
+    assert y_bounds in ['top', 'bottom', ''], f"Invalid 'y_bounds' input: {y_bounds}, value has to be in ['top', 'bottom']."
+
+    if clad_index.lower() == 'silica':
+        index = fiber_catalogue.get_silica_index(wavelength=wavelength)
+
+    background = BackGround(index=background_index)
+
+    clad_instance = clad_structure(
+        fiber_radius=fiber_radius,
+        fusion_degree=fusion_degree,
+        index=index,
+        core_position_scrambling=core_position_scrambling
+    )
+
+    if rotation != 0:
+        clad_instance.rotate(rotation)
+
+    geometry = Geometry(
+        background=background,
+        x_bounds=f"centering-{x_bounds}",
+        y_bounds=f"centering-{y_bounds}",
+        resolution=resolution,
+        index_scrambling=index_scrambling,
+        boundary_pad_factor=boundary_pad_factor,
+        gaussian_filter=gaussian_filter
+    )
+
+    if capillary_tube is not None:
+        geometry.add_structure(capillary_tube)
+
+    if clad_instance is not None:
+        geometry.add_structure(clad_instance)
+
+    for fiber, core in zip(fiber_list, clad_instance.cores):
+        fiber.set_position(core)
+        geometry.add_fiber(fiber)
+
+    return geometry
+
+
 @dataclass
 class Workflow():
-    fiber_list: list
-    """ List of the fiber to add to the optical structure """
+    #  Geometry arguments --------------------------
     wavelength: float
     """ Wavelenght at which evaluate the computation """
-    clad_structure: object = None
-    """ Initial optical structure """
     clad_rotation: float = 0
     """ Rotation of the clad structure [degree] """
     capillary_tube: object = None
     """ Additional optical structure such as clad to add """
     resolution: int = 100
     """ Discretization of the mesh [resolution x resolution] """
-    n_sorted_mode: int = 4
-    """ Number of mode that are computed """
-    n_added_mode: int = 4
-    """ Number of mode that are computed additionally to the sorted modes """
-    gaussian_filter_factor: float = None
-    """ Gaussian blurring of the optical structure """
+    clad_structure: object = None
+    """ Initial optical structure """
+    fiber_list: list = tuple()
+    """ List of the fiber to add to the optical structure """
     fiber_radius: float = 62.5e-6
     """ Fiber radius for the clad fused structure """
     fusion_degree: float = None
     """ Fusion degree for the clad fused structure """
+    x_bounds: str = ''
+    """ X-boundaries """
+    y_bounds: str = ''
+    """ Y-boundaries """
     air_padding_factor: float = 1.2
     """ Padding factor for air around the optica structure, preferable over 1.2 """
+    gaussian_filter_factor: float = None
+    """ Gaussian blurring of the optical structure """
+
+    #  Solver arguments --------------------------
+    n_sorted_mode: int = 4
+    """ Number of mode that are computed """
+    n_added_mode: int = 4
+    """ Number of mode that are computed additionally to the sorted modes """
     itr_final: float = 0.05
     """ Final ITR at which evaluate the modes """
     itr_initial: float = 1.0
@@ -56,11 +153,8 @@ class Workflow():
     """ List of boundaries cndition to which evaluate to modes """
     accuracy: int = 2
     """ Accuracy of the finit-difference set of value """
-    x_bounds: str = 'centering'
-    """ X-boundaries """
-    y_bounds: str = 'centering'
-    """ Y-boundaries """
 
+    #  Plot arguments --------------------------
     plot_geometry: bool = False
     """ Plot the computed geometry mesh prior computation """
     plot_cladding: bool = False
@@ -80,22 +174,36 @@ class Workflow():
     plot_beta: bool = False
     """ Plot the computed propagation constant after computation """
 
+    #  Extra arguments --------------------------
     debug_mode: bool = False
     """ Enable debug mode printing """
     auto_label: bool = False
     """ Enable auto labeling of the supermodes """
-
     generate_report: bool = False
     """ Generate final pdf reports containing geometry, fields, coupling, adiabatic criterions """
     save_superset: bool = False
     """ Save the created superset instance into a pickle file for further use """
 
     def __post_init__(self):
-        core_positions = self._initialize_cladding_structure_()
+        self.geometry = prepare_simulation_geometry(
+            wavelength=self.wavelength,
+            clad_structure=self.clad_structure,
+            fiber_list=self.fiber_list,
+            capillary_tube=self.capillary_tube,
+            fusion_degree=self.fusion_degree,
+            fiber_radius=self.fiber_radius,
+            resolution=self.resolution,
+            y_bounds=self.y_bounds,
+            x_bounds=self.x_bounds,
+            rotation=self.clad_rotation,
+            gaussian_filter=self.gaussian_filter_factor
+        )
 
-        self._initialize_fiber_structures_(core_positions=core_positions)
+        if self.plot_cladding:
+            self.clad_structure.plot().show()
 
-        self._initialize_geometry_()
+        if self.plot_geometry:
+            self.geometry.plot().show()
 
         self._initialize_solver_()
 
@@ -129,85 +237,6 @@ class Workflow():
     @property
     def superset(self):
         return self.solver.superset
-
-    def _initialize_cladding_structure_(self) -> list:
-        """
-        Initializes the cladding structure to be added to mesh geometry.
-        Returns a list of the core positions
-
-        :returns:   list of core positions
-        :rtype:     list
-        """
-        if self.clad_structure is None:
-            return [(0, 0) for _ in self.fiber_list]
-
-        silica_index = fiber_catalogue.get_silica_index(wavelength=self.wavelength)
-
-        kwargs = dict(
-            fiber_radius=self.fiber_radius,
-            index=silica_index,
-            core_position_scrambling=self.core_position_scrambling
-        )
-
-        if self.fusion_degree is None:
-            self.clad_structure = self.clad_structure(**kwargs)
-        else:
-            self.clad_structure = self.clad_structure(**kwargs, fusion_degree=self.fusion_degree)
-
-        self.clad_structure.rotate(angle=self.clad_rotation)
-
-        core_positions = self.clad_structure.cores
-
-        return core_positions
-
-    def _initialize_fiber_structures_(self, core_positions: list = None) -> None:
-        """
-        Initializes the fiber structures to be added to the mesh geometry.
-
-        :returns:   No returns
-        :rtype:     None
-        """
-        new_fiber_list = []
-        for n, (position, fiber) in enumerate(zip(core_positions, self.fiber_list)):
-            fiber.set_position(position=position)
-            new_fiber_list.append(fiber)
-
-        self.fiber_list = new_fiber_list
-
-        if self.plot_cladding:
-            self.clad_structure.plot().show()
-
-    def _initialize_geometry_(self) -> None:
-        """
-        Initializes the mesh geometry.
-
-        :returns:   No returns
-        :rtype:     None
-        """
-        background = BackGround(index=1)
-
-        self.geometry = Geometry(
-            background=background,
-            x_bounds=self.x_bounds,
-            y_bounds=self.y_bounds,
-            resolution=self.resolution,
-            index_scrambling=self.index_scrambling,
-            gaussian_filter=self.gaussian_filter_factor,
-            boundary_pad_factor=self.air_padding_factor
-        )
-
-        if self.capillary_tube is not None:
-            self.geometry.add_structure(self.capillary_tube)
-
-        if self.clad_structure is not None:
-            self.geometry.add_structure(self.clad_structure)
-
-        self.geometry.add_fiber(*self.fiber_list)
-
-        if self.plot_geometry:
-            figure = self.geometry.plot()
-            figure.show_colorbar = True
-            figure.show()
 
     def _initialize_solver_(self) -> None:
 

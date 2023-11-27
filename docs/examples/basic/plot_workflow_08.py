@@ -47,6 +47,7 @@ workflow = Workflow(
     debug_mode=True,                # Print the iteration step for the solver plus some other important steps. [Does not work properly on jupyter notebooks]
     auto_label=False,               # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.1,                  # Final value of inverse taper ratio to simulate
+    clad_rotation=0,                # Rotate the geoemtry in the given angle in degree
     index_scrambling=0e-4           # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
 )
 
