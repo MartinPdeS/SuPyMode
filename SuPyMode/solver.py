@@ -89,7 +89,7 @@ class SuPySolver(object):
 
         Solver = CppSolver(
             mesh=self.geometry.mesh,
-            gradient=self.geometry.gradient * self.geometry.coordinate_system.rho_mesh,
+            gradient=self.geometry.n2_gradient * self.geometry.coordinate_system.rho_mesh,
             itr_list=self.itr_list,
             finit_matrix=new_array.T,
             n_computed_mode=n_sorted_mode + n_added_mode,

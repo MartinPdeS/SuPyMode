@@ -17,8 +17,8 @@ wavelength = 1550e-9
 clad_structure = configuration.ring.FusedProfile_02x02
 
 fiber_list = [
-    fiber_catalogue.DCF1300S_33(wavelength=wavelength),
-    fiber_catalogue.DCF1300S_33(wavelength=wavelength)
+    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
+    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
 ]
 
 # %%

@@ -28,7 +28,6 @@ PYBIND11_MODULE(CppSolver, module)
 
      .def_readwrite("n_sorted_mode",   &CppSolver::n_sorted_mode)
      .def_readwrite("n_computed_mode", &CppSolver::n_computed_mode)
-     .def_readwrite("alpha_vector",    &CppSolver::alpha_vector)
-     .def_readwrite("wavelength",      &CppSolver::wavelength);
+     .def_readwrite("alpha_vector",    &CppSolver::alpha_vector);
 }
 

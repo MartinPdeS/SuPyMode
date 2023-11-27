@@ -16,23 +16,17 @@
 class CppSolver : public BaseLaplacian
 {
     public:
-        ModelParameters model_parameters;
+        ModelParameters
+            model_parameters;
+
         size_t
             n_computed_mode,
             n_sorted_mode,
             max_iteration,
-            iteration,
-            nx,
-            ny,
-            n_slice;
+            iteration;
 
         double
-            tolerance,
-            k_initial,
-            wavelength,
-            d_itr,
-            dx,
-            dy;
+            tolerance;
 
         std::vector<SuperMode>
             computed_supermodes,
@@ -42,15 +36,14 @@ class CppSolver : public BaseLaplacian
             show_iteration,
             show_eigenvalues;
 
-        Eigen::MatrixXd previous_eigen_vectors;
+        Eigen::MatrixXd
+            previous_eigen_vectors;
 
         Eigen::VectorXd
-            previous_eigen_values,
-            itr_list,
-            mesh_gradient;
+            previous_eigen_values;
 
-        std::vector<double> alpha_vector;
-        std::vector<size_t> updated_itr_list;
+        std::vector<double>
+            alpha_vector;
 
     CppSolver(
         pybind11::array_t<double> &mesh_py,
@@ -71,29 +64,16 @@ class CppSolver : public BaseLaplacian
           tolerance(tolerance),
           n_sorted_mode(n_sorted_mode),
           n_computed_mode(n_computed_mode),
-          wavelength(wavelength),
-          dx(dx),
-          dy(dy),
           show_iteration(show_iteration),
           show_eigenvalues(show_eigenvalues)
     {
-
-        this->k_initial = 2.0 * PI / wavelength;
-        this->nx = mesh_gradient_py.request().shape[0];
-        this->ny = mesh_gradient_py.request().shape[1];
-        this->n_slice = itr_list_py.size();
-
-        double *itr_list_ptr = (double*) itr_list_py.request().ptr;
-        Eigen::Map<Eigen::VectorXd> mapping_itr_list(itr_list_ptr, n_slice);
-        this->itr_list = mapping_itr_list;
-
-        double *mesh_gradient_ptr = (double*) mesh_gradient_py.request().ptr;
-        Eigen::Map<Eigen::VectorXd> mapping_mesh_gradient(mesh_gradient_ptr, nx * ny);
-        this->mesh_gradient = mapping_mesh_gradient;
-
-        this->d_itr = abs(itr_list[1] - itr_list[0]);
-
-        this->model_parameters = ModelParameters(itr_list_py, dx, dy, nx, ny);
+        this->model_parameters = ModelParameters(
+            wavelength,
+            mesh_gradient_py,
+            itr_list_py,
+            dx,
+            dy
+        );
 
         this->generate_mode_set();
     }
@@ -105,14 +85,14 @@ class CppSolver : public BaseLaplacian
    {
      for (int mode_number=0; mode_number<n_computed_mode; ++mode_number)
      {
-        SuperMode supermode = SuperMode(mode_number, k_initial, mesh_gradient, this->model_parameters);
+        SuperMode supermode = SuperMode(mode_number, this->model_parameters);
         computed_supermodes.push_back(supermode);
      }
 
 
      for (int mode_number=0; mode_number<n_sorted_mode; ++mode_number)
      {
-        SuperMode supermode = SuperMode(mode_number, k_initial, mesh_gradient, this->model_parameters);
+        SuperMode supermode = SuperMode(mode_number, this->model_parameters);
         sorted_supermodes.push_back(supermode);
      }
 
@@ -159,7 +139,7 @@ class CppSolver : public BaseLaplacian
             this->sort_eigen_with_fields(eigen_vectors, eigen_values);
 
         this->previous_eigen_values = eigen_values.block(0, 0, n_sorted_mode, 1);
-        this->previous_eigen_vectors = eigen_vectors.block(0, 0, this->nx * this->ny, n_sorted_mode);
+        this->previous_eigen_vectors = eigen_vectors.block(0, 0, this->model_parameters.field_size, n_sorted_mode);
     }
 
     void sort_eigen_with_fields(Eigen::MatrixXd& eigen_vectors, Eigen::VectorXd& eigen_values)
@@ -200,8 +180,8 @@ class CppSolver : public BaseLaplacian
             mode.fields.col(slice) << eigen_vectors.col(mode.mode_number);
 
 
-            mode.betas[slice] = sqrt( abs(mode.eigen_value[slice]) ) / itr_list[slice];
-            mode.index[slice] = mode.betas[slice] / k_initial;
+            mode.betas[slice] = sqrt( abs(mode.eigen_value[slice]) ) / this->model_parameters.itr_list[slice];
+            mode.index[slice] = mode.betas[slice] / this->model_parameters.wavenumber;
         }
     }
 
@@ -213,22 +193,22 @@ class CppSolver : public BaseLaplacian
         Eigen::MatrixXd eigen_vectors;
         Eigen::VectorXd eigen_values;
 
-        Extrapolator extrapolator = Extrapolator(d_itr, extrapolation_order);
+        Extrapolator extrapolator = Extrapolator(this->model_parameters.ditr, extrapolation_order);
 
-        ProgressBar progress_bar = ProgressBar(itr_list.size(), 70, show_iteration, true);
+        ProgressBar progress_bar = ProgressBar(this->model_parameters.n_slice, 70, show_iteration, true);
 
-        alpha_vector.reserve(itr_list.size());
+        alpha_vector.reserve(this->model_parameters.n_slice);
 
         if (alpha == 0)
-            alpha = -pow(this->k_initial * this->compute_max_index(), 2);
+            alpha = -pow(this->model_parameters.wavenumber * this->compute_max_index(), 2);
 
-        for (size_t slice=0; slice<itr_list.size(); ++slice)
+        for (size_t slice=0; slice<this->model_parameters.n_slice; ++slice)
         {
-            double itr_value = itr_list[slice];
+            double itr_value = this->model_parameters.itr_list[slice];
 
-            progress_bar.show_next(itr_list[slice]);
+            progress_bar.show_next(this->model_parameters.itr_list[slice]);
 
-            k_taper = this->k_initial * itr_list[slice];
+            k_taper = this->model_parameters.wavenumber * this->model_parameters.itr_list[slice];
 
 
 
@@ -244,13 +224,9 @@ class CppSolver : public BaseLaplacian
 
             this->populate_sorted_supermodes(slice, eigen_vectors, eigen_values);
 
-
-
             alpha_vector.insert(alpha_vector.begin(), eigen_values[0]);
 
             alpha = extrapolator.extrapolate_next(alpha_vector);
-
-            updated_itr_list.push_back(itr_value); // TODO: update itr list to encompass poor mode field matching
 
             this->iteration++;
         }

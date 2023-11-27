@@ -18,7 +18,7 @@ wavelength = 1550e-9
 clad_structure = configuration.ring.FusedProfile_01x01
 
 fiber_list = [
-    fiber_catalogue.DCF1300S_33(wavelength=wavelength)
+    fiber_catalogue.load_fiber('SMF28', wavelength=wavelength)
 ]
 
 # %%
@@ -37,7 +37,7 @@ workflow = Workflow(
     clad_structure=clad_structure,  # Cladding structure, if None provided then no cladding is set.
     fusion_degree=None,             # Degree of fusion of the structure if applicable.
     wavelength=wavelength,          # Wavelength used for the mode computation.
-    resolution=60,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
+    resolution=80,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
     x_bounds="centering-left",      # Mesh x-boundary structure.
     y_bounds="centering-bottom",    # Mesh y-boundary structure.
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation

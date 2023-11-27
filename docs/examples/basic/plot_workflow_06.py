@@ -29,7 +29,11 @@ for radius in numpy.linspace(10e-6, 50e-6, 19):
 
     fiber_list.append(fiber)
 
-capillary_tube = fiber_catalogue.FluorineCapillaryTube(radius=350e-6, wavelength=wavelength, delta_n=-15e-3)
+capillary_tube = fiber_catalogue.CapillaryTube(
+    radius=350e-6,
+    wavelength=wavelength,
+    delta_n=-15e-3
+)
 
 # %%
 # Defining the boundaries of the system

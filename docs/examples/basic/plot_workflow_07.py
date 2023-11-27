@@ -16,10 +16,10 @@ wavelength = 1550e-9
 clad_structure = configuration.line.FusedProfile_04x04
 
 fiber_list = [
-    fiber_catalogue.DCF1300S_42(wavelength=wavelength),
-    fiber_catalogue.DCF1300S_33(wavelength=wavelength),
-    fiber_catalogue.DCF1300S_26(wavelength=wavelength),
-    fiber_catalogue.DCF1300S_20(wavelength=wavelength)
+    fiber_catalogue.load_fiber('DCF1300S_42', wavelength=wavelength),
+    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
+    fiber_catalogue.load_fiber('DCF1300S_26', wavelength=wavelength),
+    fiber_catalogue.load_fiber('DCF1300S_20', wavelength=wavelength)
 ]
 
 # %%

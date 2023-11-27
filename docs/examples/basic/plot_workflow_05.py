@@ -22,13 +22,13 @@ wavelength = 1550e-9
 clad_structure = configuration.ring.FusedProfile_07x07
 
 fiber_list = [
-    fiber_catalogue.DCF1300S_33(wavelength=wavelength),
-    fiber_catalogue.DCF1300S_33(wavelength=wavelength),
-    fiber_catalogue.DCF1300S_33(wavelength=wavelength),
-    fiber_catalogue.DCF1300S_33(wavelength=wavelength),
-    fiber_catalogue.DCF1300S_33(wavelength=wavelength),
-    fiber_catalogue.DCF1300S_33(wavelength=wavelength),
-    fiber_catalogue.DCF1300S_33(wavelength=wavelength)
+    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
+    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
+    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
+    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
+    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
+    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
+    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
 ]
 
 
@@ -55,7 +55,7 @@ workflow = Workflow(
     n_added_mode=3,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
     plot_geometry=True,             # Plot the geometry mesh before computation.
     debug_mode=False,               # Print the iteration step for the solver plus some other important steps.
-    auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards. 
+    auto_label=False,               # Auto labeling the mode. Label are not always correct and should be verified afterwards. 
     itr_final=0.1,                  # Final value of inverse taper ratio to simulate
     index_scrambling=1e-4           # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
 )
