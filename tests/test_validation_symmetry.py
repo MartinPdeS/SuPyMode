@@ -7,7 +7,7 @@ from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundari
 
 def test_symmetry():
     symmetric_workflow = Workflow(
-        fiber_list=[fiber_catalogue.DCF1300S_33(wavelength=1550e-9)],
+        fiber_list=[fiber_catalogue.load_fiber('DCF1300S_33', wavelength=1550e-9)],
         clad_structure=configuration.ring.FusedProfile_01x01,
         wavelength=1550e-9,
         resolution=80,

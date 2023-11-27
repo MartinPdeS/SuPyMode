@@ -5,9 +5,9 @@ from SuPyMode.workflow import Workflow, fiber_catalogue, configuration, Boundari
 from SuPyMode.profiles import AlphaProfile
 
 fiber = [
-    fiber_catalogue.DCF1300S_33(wavelength=1550e-9),
-    fiber_catalogue.DCF1300S_20(wavelength=1550e-9),
-    fiber_catalogue.DCF1300S_33(wavelength=1550e-9)
+    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=1550e-9),
+    fiber_catalogue.load_fiber('DCF1300S_20', wavelength=1550e-9),
+    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=1550e-9)
 ]
 
 

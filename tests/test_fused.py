@@ -17,7 +17,7 @@ fused_structure_list = [
 @pytest.mark.parametrize('fused_structure', fused_structure_list, ids=fused_structure_list)
 def test_fused_structure_workflow(fused_structure, debug_mode: bool = False):
     fibers = [
-        fiber_catalogue.DCF1300S_33(wavelength=1550e-9) for _ in range(fused_structure.number_of_fibers)
+        fiber_catalogue.load_fiber('DCF1300S_33', wavelength=1550e-9) for _ in range(fused_structure.number_of_fibers)
     ]
 
     _ = Workflow(

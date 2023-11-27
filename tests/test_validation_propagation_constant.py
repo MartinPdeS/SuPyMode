@@ -11,7 +11,7 @@ from MPSPlots.render2D import SceneList
 
 def test_propagation_constant(wavelength: float = 1550e-8, resolution: int = 120, n_step: int = 200, itr_final: float = 0.2, plot_results: bool = False, **kwargs):
 
-    fiber = fiber_catalogue.SMF28(wavelength=wavelength)
+    fiber = fiber_catalogue.load_fiber('SMF28', wavelength=wavelength)
 
     fiber = fiber.scale(factor=10)
 

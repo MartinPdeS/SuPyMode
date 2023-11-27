@@ -18,7 +18,7 @@ def test_normalized_coupling(
         plot_results: bool = False,
         **kwargs):
 
-    fiber = fiber_catalogue.SMF28(wavelength=wavelength)
+    fiber = fiber_catalogue.load_fiber('SMF28', wavelength=wavelength)
 
     fiber = fiber.scale(factor=10)
 
