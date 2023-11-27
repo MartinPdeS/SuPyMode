@@ -9,7 +9,12 @@ from PyFiberModes import LP01
 from MPSPlots.render2D import SceneList
 
 
-def test_propagation_constant(wavelength: float = 1550e-8, resolution: int = 120, n_step: int = 200, itr_final: float = 0.2, plot_results: bool = False, **kwargs):
+def test_propagation_constant(
+        wavelength: float = 1550e-8,
+        resolution: int = 120,
+        n_step: int = 200,
+        itr_final: float = 0.2,
+        plot_results: bool = False, **kwargs):
 
     fiber = fiber_catalogue.load_fiber('SMF28', wavelength=wavelength)
 
@@ -70,7 +75,7 @@ def test_propagation_constant(wavelength: float = 1550e-8, resolution: int = 120
 
 
 if __name__ == '__main__':
-    test_normalized_coupling(
+    test_propagation_constant(
         wavelength=1550e-9,
         resolution=120,
         itr_final=0.6,

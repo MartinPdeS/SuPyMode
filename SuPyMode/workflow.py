@@ -71,15 +71,14 @@ def prepare_simulation_geometry(
 
     background = BackGround(index=background_index)
 
-    clad_instance = clad_structure(
+    clad_instance = prepare_fused_structure(
+        clad_class=clad_structure,
         fiber_radius=fiber_radius,
         fusion_degree=fusion_degree,
         index=index,
-        core_position_scrambling=core_position_scrambling
+        core_position_scrambling=core_position_scrambling,
+        rotation=rotation
     )
-
-    if rotation != 0:
-        clad_instance.rotate(rotation)
 
     geometry = Geometry(
         background=background,
@@ -97,11 +96,37 @@ def prepare_simulation_geometry(
     if clad_instance is not None:
         geometry.add_structure(clad_instance)
 
-    for fiber, core in zip(fiber_list, clad_instance.cores):
-        fiber.set_position(core)
-        geometry.add_fiber(fiber)
+    if clad_instance is not None:
+        for fiber, core in zip(fiber_list, clad_instance.cores):
+            fiber.set_position(core)
+
+    geometry.add_fiber(*fiber_list)
 
     return geometry
+
+
+def prepare_fused_structure(
+        clad_class: type,
+        fiber_radius: float,
+        fusion_degree: float,
+        index: float,
+        core_position_scrambling: float,
+        rotation: float):
+
+    if clad_class is None:
+        return None
+
+    clad_instance = clad_class(
+        fiber_radius=fiber_radius,
+        fusion_degree=fusion_degree,
+        index=index,
+        core_position_scrambling=core_position_scrambling
+    )
+
+    if rotation != 0:
+        clad_instance.rotate(rotation)
+
+    return clad_instance
 
 
 @dataclass
