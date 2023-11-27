@@ -40,14 +40,14 @@ get_basic_integral(const Eigen::MatrixXd &mesh, const double &dx, const double &
 Eigen::VectorXd
 get_gradient_field_overlap(const SuperMode& mode_0, const SuperMode& mode_1, const ModelParameters &model_parameters)
 {
-    Eigen::VectorXd field0, field1, overlap;
-    Eigen::VectorXd output(model_parameters.n_slice);
+    Eigen::VectorXd
+        output(model_parameters.n_slice);
 
     Eigen::MatrixXd
         mesh_2D = model_parameters.mesh_gradient,
         field_0,
         field_1,
-        overlap_;
+        overlap;
 
     double gradient_overlap;
     for (size_t slice = 0; slice < model_parameters.n_slice; ++slice)
@@ -58,10 +58,10 @@ get_gradient_field_overlap(const SuperMode& mode_0, const SuperMode& mode_1, con
         field_1 = mode_1.fields.col(slice);
         field_1.resize(model_parameters.nx, model_parameters.ny);
 
-        overlap_ = mesh_2D.cwiseProduct(field_0).cwiseProduct(field_1);
+        overlap = mesh_2D.cwiseProduct(field_0).cwiseProduct(field_1);
 
         gradient_overlap = get_trapz_integral(
-            overlap_,
+            overlap,
             model_parameters.dx_scaled[slice],
             model_parameters.dy_scaled[slice]
         );
