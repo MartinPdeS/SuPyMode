@@ -63,8 +63,8 @@ def prepare_simulation_geometry(
     :rtype:     Geometry
     """
 
-    assert x_bounds in ['left', 'right', ''], f"Invalid 'x_bounds' input: {x_bounds}, value has to be in ['left', 'rigth']."
-    assert y_bounds in ['top', 'bottom', ''], f"Invalid 'y_bounds' input: {y_bounds}, value has to be in ['top', 'bottom']."
+    # assert (x_bounds in ['left', 'right', '']) or is, f"Invalid 'x_bounds' input: {x_bounds}, value has to be in ['left', 'rigth']."
+    # assert y_bounds in ['top', 'bottom', ''], f"Invalid 'y_bounds' input: {y_bounds}, value has to be in ['top', 'bottom']."
 
     if clad_index.lower() == 'silica':
         index = fiber_catalogue.get_silica_index(wavelength=wavelength)
