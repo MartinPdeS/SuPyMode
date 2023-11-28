@@ -69,18 +69,6 @@
             return this->get_norm_cmt(slice);
     }
 
-    Eigen::VectorXd SuperMode::get_norm_array(const std::string &normalization_type) const
-    {
-        if (normalization_type == "max")
-            return this->get_norm_max_array();
-        if (normalization_type == "l2")
-            return this->get_norm_l2_array();
-        if (normalization_type == "cmt")
-            return this->get_norm_cmt_array();
-        if (normalization_type == "scalar_coupling")
-            return this->get_norm_scalar_coupling_array();
-    }
-
     double SuperMode::get_norm_cmt(const size_t &slice) const
     {
         // Equation 7.35 from Bures
@@ -114,17 +102,6 @@
     Eigen::VectorXd SuperMode::get_norm_scalar_coupling_array() const
     {
         return this->fields.cwiseAbs2().colwise().sum() * (2 * PI);
-    }
-
-    Eigen::VectorXd SuperMode::get_norm_l2_array() const
-    {
-        double itr = 1;
-        double
-            dx = this->model_parameters.dx * itr,
-            dy = this->model_parameters.dy * itr,
-            dA = dx * dy;
-
-        return this->fields.cwiseAbs2().colwise().sum() * dA;
     }
 
     Eigen::VectorXd SuperMode::get_norm_max_array() const

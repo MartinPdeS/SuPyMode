@@ -23,7 +23,7 @@ public:
 
     SuperMode(const size_t mode_number, const ModelParameters &model_parameters);
 
- 
+
     pybind11::tuple get_state();
 
 
