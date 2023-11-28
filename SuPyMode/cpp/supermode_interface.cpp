@@ -1,7 +1,9 @@
 #include <pybind11/pybind11.h>
+#include "includes/supermode.h"
 #include "includes/supermode.cpp"
 #include <pybind11/eigen.h>
 #include "definitions.cpp"
+
 
 PYBIND11_MODULE(SuperMode, module)
 {
