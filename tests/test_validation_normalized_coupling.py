@@ -16,6 +16,8 @@ def test_normalized_coupling(
         n_step: int = 200,
         itr_final: float = 0.6,
         plot_results: bool = False,
+        x_bounds: list | str = [-200e-6, 0],
+        y_bounds: list | str = [-200e-6, 0],
         **kwargs):
 
     fiber = fiber_catalogue.load_fiber('SMF28', wavelength=wavelength)
@@ -26,8 +28,8 @@ def test_normalized_coupling(
         fiber_list=[fiber],
         wavelength=wavelength,
         resolution=resolution,
-        x_bounds=[-200e-6, 0],
-        y_bounds=[-200e-6, 0],
+        x_bounds=x_bounds,
+        y_bounds=y_bounds,
         boundaries=[Boundaries2D(right='symmetric', top='symmetric')],
         n_sorted_mode=4,
         n_added_mode=8,
@@ -83,7 +85,8 @@ if __name__ == '__main__':
     test_normalized_coupling(
         debug_mode=True,
         plot_results=True,
-        plot_geometry=True
+        plot_geometry=True,
+        x_bounds='left'
     )
 
 # -

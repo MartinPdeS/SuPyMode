@@ -222,4 +222,7 @@ class SuperMode(InheritFromSuperSet):
 
         return (x_axis * itr, y_axis * itr)
 
+    def __repr__(self):
+        return self.label
+
 # -

@@ -1,40 +1,34 @@
 """
-Normalized coupling: DCFC
-=========================
+Normalized coupling: SMF28
+==========================
 """
 
 # %%
 # Imports
 # ~~~~~~~
 import numpy
-from SuPyMode.tools.analytics.data_visualizer import DataVisualizer
-from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries2D, configuration
+from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries2D
+from PyFiberModes.__future__ import get_normalized_LP_coupling
+from PyFiberModes import LP01, LP02
+from PyFiberModes.fiber import load_fiber
 from MPSPlots.render2D import SceneList
 
 wavelength = 1550e-9
-mode_couples = [
-    ('LP01', 'LP02'),
-    ('LP01', 'LP03'),
-    ('LP01', 'LP41_a'),
-]
+fiber_name = 'DCF1300S_33'
 
 
 # %%
 # Generating the fiber structure
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Here we define the cladding and fiber structure to model the problem
-clad_structure = configuration.ring.FusedProfile_01x01
-
-fiber_list = [
-    fiber_catalogue.DCF1300S_33(wavelength=wavelength)
-]
+supymode_fiber = fiber_catalogue.load_fiber(fiber_name, wavelength=wavelength)
+supymode_fiber = supymode_fiber.scale(10)
 
 
 # %%
 # Defining the boundaries of the system
 boundaries = [
-    Boundaries2D(right='symmetric', bottom='symmetric'),
-    Boundaries2D(right='symmetric', bottom='anti-symmetric')
+    Boundaries2D(right='symmetric', top='symmetric'),
 ]
 
 
@@ -43,36 +37,45 @@ boundaries = [
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Workflow class to define all the computation parameters before initializing the solver
 workflow = Workflow(
-    fiber_list=fiber_list,          # List of fiber to be added in the mesh, the order matters.
-    clad_structure=clad_structure,  # Cladding structure, if None provided then no cladding is set.
-    fusion_degree=None,             # Degree of fusion of the structure if applicable.
+    fiber_list=[supymode_fiber],    # List of fiber to be added in the mesh, the order matters.
     wavelength=wavelength,          # Wavelength used for the mode computation.
-    resolution=100,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
-    x_bounds="centering-left",      # Mesh x-boundary structure.
-    y_bounds="centering-top",       # Mesh y-boundary structure.
+    resolution=150,                 # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
+    x_bounds=[-200e-6, 0],          # Mesh x-boundary structure.
+    y_bounds=[-200e-6, 0],          # Mesh y-boundary structure.
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
-    n_sorted_mode=6,                # Total computed and sorted mode.
+    n_sorted_mode=5,                # Total computed and sorted mode.
     n_added_mode=4,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
-    plot_geometry=False,             # Plot the geometry mesh before computation.
-    debug_mode=True,               # Print the iteration step for the solver plus some other important steps.
+    plot_geometry=True,             # Plot the geometry mesh before computation.
+    debug_mode=False,               # Print the iteration step for the solver plus some other important steps.
     auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
-    itr_final=0.05,                 # Final value of inverse taper ratio to simulate
-    index_scrambling=0              # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
+    itr_final=0.5,                  # Final value of inverse taper ratio to simulate
+    index_scrambling=0,             # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
+    n_step=100,
+    plot_field=True
 )
 
 superset = workflow.get_superset()
+itr_list = superset.itr_list
 
 
 # %%
 # Computing the analytical values using FiberModes solver.
-fibermode_solver = DataVisualizer(wavelength=1550e-9)
-
-fibermodes_data_sets = fibermode_solver.get_normalized_coupling(
-    fiber_type=fiber_catalogue.DCF1300S_33,
-    mode_couples=[(m0[:4], m1[:4]) for (m0, m1) in mode_couples],
-    resolution=500,
-    itr_list=numpy.linspace(1.0, 0.1, 50)
+pyfibermodes_fiber = load_fiber(
+    fiber_name=fiber_name,
+    wavelength=wavelength,
+    add_air_layer=False
 )
+
+pyfibermodes_fiber = pyfibermodes_fiber.scale(10)
+
+analytical = numpy.empty(itr_list.shape)
+for idx, itr in enumerate(itr_list):
+    _fiber = pyfibermodes_fiber.scale(factor=itr)
+    analytical[idx] = get_normalized_LP_coupling(
+        fiber=_fiber,
+        mode_0=LP01,
+        mode_1=LP02
+    )
 
 
 # %%
@@ -88,36 +91,27 @@ ax = figure.append_ax(
     legend_font_size=18
 )
 
-for idx, (mode_couple, data_set) in enumerate(zip(mode_couples, fibermodes_data_sets)):
-    color = f'C{idx}'
-    not_nan_idx = numpy.where(~numpy.isnan(data_set.y))
-    y_data = data_set.y[not_nan_idx]
-    x_data = data_set.x[not_nan_idx]
+ax.add_line(
+    x=itr_list,
+    y=abs(analytical),
+    label='Analytical',
+    line_style='-',
+    line_width=2,
+    color='red',
+    layer_position=1
+)
 
-    ax.add_line(
-        x=x_data,
-        y=y_data,
-        label=mode_couple,
-        line_style='-',
-        line_width=2,
-        color=color,
-        layer_position=1
-    )
-
-    sub_samnpling = 15
-    supermode_0 = getattr(superset, mode_couple[0])
-    supermode_1 = getattr(superset, mode_couple[1])
-
-    ax.add_scatter(
-        x=superset.itr_list[::sub_samnpling],
-        y=abs(supermode_0.normalized_coupling.get_values(supermode_1)[::sub_samnpling]),
-        label=f"{mode_couple}",
-        color='black',
-        line_width=2,
-        edge_color=color,
-        marker_size=80,
-        line_style='-',
-        layer_position=2
-    )
+simulation = -abs(superset.LP01.normalized_coupling.get_values(superset.LP02))
+ax.add_scatter(
+    x=itr_list,
+    y=simulation,
+    label="SuPyMode",
+    color='black',
+    line_width=2,
+    edge_color='blue',
+    marker_size=80,
+    line_style='-',
+    layer_position=2
+)
 
 _ = figure.show()
