@@ -5,7 +5,7 @@
 #include "numpy_interface.cpp"
 #include "equations.cpp"
 
-struct SuperMode
+class SuperMode
 {
     size_t mode_number;
     Eigen::MatrixXd fields;
