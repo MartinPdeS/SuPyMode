@@ -26,7 +26,7 @@ def test_fused_structure_workflow(fused_structure, debug_mode: bool = False):
         wavelength=1550e-9,
         resolution=30,
         x_bounds="left",
-        y_bounds="",
+        y_bounds="centering",
         boundaries=[Boundaries2D(right='symmetric')],
         n_sorted_mode=2,
         n_added_mode=2,
