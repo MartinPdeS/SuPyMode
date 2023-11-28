@@ -1,6 +1,8 @@
 #pragma once
 
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+#include <pybind11/numpy.h>
 #include "../../../extern/eigen/Eigen/Sparse"
 #include "../../../extern/spectra/include/Spectra/GenEigsRealShiftSolver.h"
 #include "../../../extern/spectra/include/Spectra/MatOp/SparseGenRealShiftSolve.h"
