@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SUPERMODE_H
+#define SUPERMODE_H
 
 #include "definitions.cpp"
 #include "numpy_interface.cpp"
@@ -126,5 +127,5 @@ public:
     SuperMode get_supermode_from_tuple(pybind11::tuple tuple);
 };
 
-
+#endif
 
