@@ -82,8 +82,8 @@ def prepare_simulation_geometry(
 
     geometry = Geometry(
         background=background,
-        x_bounds=f"centering-{x_bounds}",
-        y_bounds=f"centering-{y_bounds}",
+        x_bounds=x_bounds,
+        y_bounds=y_bounds,
         resolution=resolution,
         index_scrambling=index_scrambling,
         boundary_pad_factor=boundary_pad_factor,
@@ -111,8 +111,26 @@ def prepare_fused_structure(
         fusion_degree: float,
         index: float,
         core_position_scrambling: float,
-        rotation: float):
+        rotation: float) -> object:
+    """
+    Prepare and returns a clad instance according to the clad class given as input.
 
+    :param      clad_class:                The clad class
+    :type       clad_class:                type
+    :param      fiber_radius:              The fiber radius
+    :type       fiber_radius:              float
+    :param      fusion_degree:             The fusion degree
+    :type       fusion_degree:             float
+    :param      index:                     The index
+    :type       index:                     float
+    :param      core_position_scrambling:  The core position scrambling
+    :type       core_position_scrambling:  float
+    :param      rotation:                  The rotation
+    :type       rotation:                  float
+
+    :returns:   The clad instance
+    :rtype:     object
+    """
     if clad_class is None:
         return None
 

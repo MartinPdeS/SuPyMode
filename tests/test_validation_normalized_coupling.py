@@ -51,7 +51,11 @@ def test_normalized_coupling(
     analytical = numpy.empty(itr_list.shape)
     for idx, itr in enumerate(itr_list):
         _fiber = smf28.scale(factor=itr)
-        analytical[idx] = get_normalized_LP_coupling(fiber=_fiber, mode_0=LP01, mode_1=LP02)
+        analytical[idx] = get_normalized_LP_coupling(
+            fiber=_fiber,
+            mode_0=LP01,
+            mode_1=LP02
+        )
 
     simulation = -abs(superset.LP01.normalized_coupling.get_values(superset.LP02))
 
@@ -78,7 +82,8 @@ def test_normalized_coupling(
 if __name__ == '__main__':
     test_normalized_coupling(
         debug_mode=True,
-        plot_results=True
+        plot_results=True,
+        plot_geometry=True
     )
 
 # -
