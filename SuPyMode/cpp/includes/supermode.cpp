@@ -1,5 +1,6 @@
 #pragma once
 
+#include "supermode.h"
 #include "definitions.cpp"
 #include "utils.cpp"
 #include "numpy_interface.cpp"
