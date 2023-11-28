@@ -193,14 +193,6 @@
         );
     }
 
-    pybind11::array_t<double> SuperMode::get_gradient_overlap_with_mode_py(const SuperMode& supermode) const
-    {
-        return templated_eigen_to_ndarray(
-            this->get_gradient_overlap_with_mode(supermode),
-            { model_parameters.n_slice }
-        );
-    }
-
     pybind11::array_t<std::complex<double>> SuperMode::get_normalized_coupling_with_mode_py(const SuperMode& supermode) const
     {
         return templated_eigen_to_ndarray(

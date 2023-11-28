@@ -79,9 +79,6 @@ public:
     double get_trapez_integral(const Eigen::VectorXd &mesh, const double &dx, const double &dy) const;
 
 
-    Eigen::VectorXd get_gradient_overlap_with_mode(const SuperMode& other_supermode) const;
-
-
     Eigen::Matrix<std::complex<double>, Eigen::Dynamic, 1> get_normalized_coupling_with_mode(const SuperMode& other_supermode) const;
 
 
@@ -92,9 +89,6 @@ public:
 
 
     pybind11::array_t<double> get_overlap_integrals_with_mode_py(const SuperMode& supermode) const;
-
-
-    pybind11::array_t<double> get_gradient_overlap_with_mode_py(const SuperMode& supermode) const;
 
 
     pybind11::array_t<std::complex<double>> get_normalized_coupling_with_mode_py(const SuperMode& supermode) const;
