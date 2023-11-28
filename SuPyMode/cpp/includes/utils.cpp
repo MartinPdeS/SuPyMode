@@ -66,12 +66,12 @@ get_range(size_t size){
   return output;
 }
 
-ScalarType
-Trapz(VectorType&& Vector, ScalarType dx, size_t Nx, size_t Ny){
+double
+Trapz(VectorType&& Vector, double dx, size_t Nx, size_t Ny){
 
   return Vector.sum();
-  ScalarType sum  = 0;
-  ScalarType val;
+  double sum  = 0;
+  double val;
 
   for (size_t i=0; i<Nx; ++i){
       val = Vector[i];
@@ -83,24 +83,24 @@ Trapz(VectorType&& Vector, ScalarType dx, size_t Nx, size_t Ny){
   return sum * dx;
 }
 
-ScalarType
-dydx(ScalarType x, ScalarType y)
+double
+dydx(double x, double y)
 {
     return((x - y)/2);
 }
 
 //https://www.geeksforgeeks.org/runge-kutta-4th-order-method-solve-differential-equation/
-ScalarType
-rungeKutta(ScalarType x0, ScalarType y0, ScalarType x, ScalarType h)
+double
+rungeKutta(double x0, double y0, double x, double h)
 {
     // Count number of iterations using step size or
     // step height h
     int n = (int)((x - x0) / h);
 
-    ScalarType k1, k2, k3, k4;
+    double k1, k2, k3, k4;
 
     // Iterate for number of iterations
-    ScalarType y = y0;
+    double y = y0;
     for (int i=1; i<=n; i++)
     {
         // Apply Runge Kutta Formulas to find

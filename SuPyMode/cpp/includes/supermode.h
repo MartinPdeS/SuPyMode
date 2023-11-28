@@ -1,12 +1,11 @@
 #pragma once
 
 #include "definitions.cpp"
-#include "utils.cpp"
 #include "numpy_interface.cpp"
-#include "equations.cpp"
 
 class SuperMode
 {
+public:
     size_t mode_number;
     Eigen::MatrixXd fields;
     Eigen::VectorXd index, betas, eigen_value;
@@ -24,14 +23,14 @@ class SuperMode
 
     SuperMode(const size_t mode_number, const ModelParameters &model_parameters);
 
-
+ 
     pybind11::tuple get_state();
 
 
-    double get_norm(const size_t &slice, const string &normalization_type) const;
+    double get_norm(const size_t &slice, const std::string &normalization_type) const;
 
 
-    Eigen::VectorXd get_norm_array(const string &normalization_type) const;
+    Eigen::VectorXd get_norm_array(const std::string &normalization_type) const;
 
 
     double get_norm_cmt(const size_t &slice) const;
@@ -125,8 +124,6 @@ class SuperMode
 
 
     SuperMode get_supermode_from_tuple(pybind11::tuple tuple);
-
-
 };
 
 

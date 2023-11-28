@@ -59,7 +59,7 @@
             );
     }
 
-    double SuperMode::get_norm(const size_t &slice, const string &normalization_type) const
+    double SuperMode::get_norm(const size_t &slice, const std::string &normalization_type) const
     {
         if (normalization_type == "max")
             return this->get_norm_max(slice);
@@ -69,7 +69,7 @@
             return this->get_norm_cmt(slice);
     }
 
-    Eigen::VectorXd SuperMode::get_norm_array(const string &normalization_type) const
+    Eigen::VectorXd SuperMode::get_norm_array(const std::string &normalization_type) const
     {
         if (normalization_type == "max")
             return this->get_norm_max_array();

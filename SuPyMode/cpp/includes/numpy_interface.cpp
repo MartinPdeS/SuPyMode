@@ -168,7 +168,7 @@ pybind11::array_t<T> templated_eigen_to_ndarray(
 
 
 template<typename T>
-Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>
+Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
 templated_ndarray_to_eigen_copy(pybind11::array_t<T> array)
 {
     double *p = (double*) array.request().ptr;
@@ -182,7 +182,7 @@ templated_ndarray_to_eigen_copy(pybind11::array_t<T> array)
 }
 
 template<typename T>
-Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>
+Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>
 templated_ndarray_to_eigen(pybind11::array_t<T> &array)
 {
     double *p = (double*) array.request().ptr;
@@ -197,7 +197,7 @@ templated_ndarray_to_eigen(pybind11::array_t<T> &array)
 
 
 template<typename T>
-Eigen::Matrix<ScalarType, Eigen::Dynamic, 1>
+Eigen::Matrix<double, Eigen::Dynamic, 1>
 templated_ndarray_to_eigen_vector(pybind11::array_t<T> &array)
 {
     double *p = (double*) array.request().ptr;
