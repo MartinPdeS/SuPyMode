@@ -18,9 +18,8 @@ from SuPyMode.tools.mode_label import ModeLabel
 @dataclass()
 class SuPySolver(object):
     """
-    .. note::
-        This solver class directly links to a c++ Eigensolver.
-        It solves the eigenvalues problems for a given geometry and return a collection of SuperModes.
+    This solver class directly links to a c++ Eigensolver.
+    It solves the eigenvalues problems for a given geometry and return a collection of SuperModes.
 
     """
     geometry: None = field(repr=False)
@@ -35,7 +34,7 @@ class SuPySolver(object):
     """ Print option. """
     show_eigenvalues: bool = False
     """ Print option. """
-    extrapolation_order: int = 1
+    extrapolation_order: int = 2
     """ Order of the taylor serie to extrapolate next eigenvalues . """
 
     def __post_init__(self):
@@ -50,7 +49,6 @@ class SuPySolver(object):
         return self.superset
 
     def initialize_binding(self,
-            wavelength: float,
             n_sorted_mode: int,
             boundaries: Boundaries2D,
             n_added_mode: int) -> CppSolver:
@@ -96,7 +94,7 @@ class SuPySolver(object):
             n_sorted_mode=n_sorted_mode,
             max_iter=self.max_iter,
             tolerance=self.tolerance,
-            wavelength=wavelength,
+            wavelength=self.wavelength,
             show_iteration=self.show_iteration,
             show_eigenvalues=self.show_eigenvalues,
             dx=self.geometry.coordinate_system.dx,
@@ -123,26 +121,75 @@ class SuPySolver(object):
         :type       itr_initial: float
         :param      itr_final:   Final value of ITR.
         :type       itr_final:   float
+
+        :returns:   No returns
+        :rtype:     None
         """
         self.wavelength = wavelength
         self.wavenumber = 2 * numpy.pi / wavelength
         self.itr_list = numpy.linspace(itr_initial, itr_final, n_step)
         self.superset = SuperSet(parent_solver=self, wavelength=wavelength)
 
-    def index_to_eigen_value(self, index):
+    def index_to_eigen_value(self, index: float) -> float:
+        """
+        Converts an effective index to the equivalent eigen value of the
+        linear system to be solved.
+
+        :param      eigen_value:  The eigen value
+        :type       eigen_value:  float
+
+        :returns:   The equivalent eigen value
+        :rtype:     float
+        """
         return -(index * self.wavenumber)**2
 
-    def eigen_value_to_index(self, eigen_value):
+    def eigen_value_to_index(self, eigen_value: float) -> float:
+        """
+        Converts an eigen value of the linear equation to solve to
+        its equivalent effective index.
+
+        :param      eigen_value:  The eigen value
+        :type       eigen_value:  float
+
+        :returns:   The equivalent eigen value
+        :rtype:     float
+        """
         return numpy.sqrt(eigen_value) / self.wavenumber
+
+    def get_supermode_labels(self, n_modes: int, boundaries: Boundaries2D, auto_label: bool) -> list:
+        """
+        Generate and returns the supermode label depending if auto_label
+        is activated or not.
+
+        :param      n_modes:     The n modes
+        :type       n_modes:     int
+        :param      boundaries:  The boundaries
+        :type       boundaries:  Boundaries2D
+        :param      auto_label:  The automatic label option
+        :type       auto_label:  bool
+
+        :returns:   The supermode labels.
+        :rtype:     list
+        """
+        if auto_label:
+            supermode_labels = ModeLabel(boundaries=boundaries, n_mode=n_modes).get_labels()
+        else:
+            supermode_labels = ["mode_" + "{" + str(n) + "}" for n in range(n_modes)]
+
+        return supermode_labels
 
     def add_modes(self,
             n_sorted_mode: int,
             boundaries: dict,
             n_added_mode: int = 4,
-            auto_labeling: bool = False,
             index_guess: float = 0.,
             auto_label: bool = True) -> None:
         """
+        This methodes compute new set of n_added_mode modes for a given boundaries condition.
+        It appends those modes to the one already computed.
+        The auto_labeling options works only for almost cylindrical symmetric structure with low itr.
+        If wrong label is settle it can be modified with the label_supermode method. Index guess is the effective index
+        guess given to the inverse shift power method solver to retrieve the modes with close effective index.
         Adds modes to the superset instance. SuperSet is accessible through .get_set().
 
         :param      n_sorted_mode:    Number of mode that are outputed by the c++ solver.
@@ -153,12 +200,14 @@ class SuPySolver(object):
         :type       n_added_mode:     int
         :param      index_guess:      Initial effective index guess (if 0, auto evaluated).
         :type       index_guess:      float
+
+        :returns:   No returns
+        :rtype:     None
         """
         alpha = self.index_to_eigen_value(index_guess)
 
         cpp_solver = self.initialize_binding(
             boundaries=boundaries,
-            wavelength=self.wavelength,
             n_added_mode=n_added_mode,
             n_sorted_mode=n_sorted_mode
         )
@@ -168,10 +217,11 @@ class SuPySolver(object):
             alpha=alpha
         )
 
-        if auto_label:
-            mode_labels = ModeLabel(boundaries=boundaries, n_mode=n_sorted_mode).get_labels()
-        else:
-            mode_labels = ["mode_" + "{" + str(n) + "}" for n in range(n_sorted_mode)]
+        mode_labels = self.get_supermode_labels(
+            n_modes=n_sorted_mode,
+            boundaries=boundaries,
+            auto_label=auto_label
+        )
 
         for binding_number, label in enumerate(mode_labels):
             supermode = SuperMode(
@@ -179,9 +229,7 @@ class SuPySolver(object):
                 binded_supermode=cpp_solver.get_mode(binding_number),
                 mode_number=self.mode_number,
                 solver_number=self.solver_number,
-                wavelength=self.wavelength,
                 boundaries=boundaries,
-                itr_list=self.itr_list,
                 label=label
             )
 

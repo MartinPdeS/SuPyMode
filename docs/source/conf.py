@@ -65,7 +65,7 @@ try:
     if sys.platform in ["linux", "linux2"]:
         pyvista.start_xvfb()  # Works only on linux system!
 except ImportError:
-    print('Could not load pyvista library for 3D renderin')
+    print('Could not load pyvista library for 3D rendering')
 
 subsection_order = ExplicitOrder(
     ["../examples/basic", "../examples/validation"]
@@ -132,7 +132,7 @@ html_theme_options = {
     "logo": {
         "alt_text": "SuPyMode's logo",
         "text": "SuPyMode",
-        "link": "https://supymodes.readthedocs.io/en/master/",
+        "link": "https://supymodes.readthedocs.io/en/latest/",
     },
     "icon_links": [
         {

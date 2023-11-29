@@ -52,10 +52,16 @@ set_target_properties(SuperMode PROPERTIES OUTPUT_NAME "SuperMode")
 target_link_libraries(SuperMode PRIVATE "${STATIC_STDLIB}")
 
 
+#Building ModelParameters----------------------------------------------
+pybind11_add_module(ModelParameters MODULE "${SUPYMODE_CXX_DIR}/model_parameters_interface.cpp")
+set_target_properties(ModelParameters PROPERTIES OUTPUT_NAME "ModelParameters")
+target_link_libraries(ModelParameters PRIVATE "${STATIC_STDLIB}")
 
 
 
-set_target_properties(EigenSolver SuperMode
+
+
+set_target_properties(EigenSolver SuperMode ModelParameters
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${SUPYMODE_BIN_DIR}"
     LIBRARY_OUTPUT_DIRECTORY "${SUPYMODE_BIN_DIR}"
@@ -64,7 +70,7 @@ set_target_properties(EigenSolver SuperMode
 )
 
 
-install(TARGETS EigenSolver SuperMode
+install(TARGETS EigenSolver SuperMode ModelParameters
 # install(TARGETS SuperMode
         # RUNTIME_DEPENDENCIES # do not uncomment this as it will mixed dependencies that may not be manylinux-compatible
         DESTINATION "${SUPYMODE_BIN_DIR}"

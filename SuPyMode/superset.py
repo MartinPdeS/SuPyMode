@@ -17,7 +17,6 @@ import pyvista
 
 # Local imports
 from SuPyMode.supermode import SuperMode
-from SuPyMode.slice_structure import SliceStructure
 from SuPyMode.tools import plot_style
 from SuPyMode.tools.utils import test_valid_input, get_intersection
 from SuPyMode.profiles import AlphaProfile
@@ -233,18 +232,6 @@ class SuperSet(object):
         self.supermodes[idx0], self.supermodes[idx1] = self.supermodes[idx1], self.supermodes[idx0]
 
         return self
-
-    def get_slice_structure(self, *, itr: int, add_symmetries: bool = True) -> SliceStructure:
-        x, y = self.supermodes[0].get_axis_vector()
-
-        output_slice = SliceStructure(
-            parent_superset=self,
-            itr=itr,
-            supermodes=self.supermodes,
-            add_symmetries=add_symmetries
-        )
-
-        return output_slice
 
     def compute_transmission_matrix(self) -> None:
         """

@@ -7,7 +7,8 @@ from dataclasses import dataclass
 from scipy.interpolate import RectBivariateSpline
 
 # Local imports
-from SuPyMode import representations
+from SuPyMode import representation
+from SuPyMode.binary.ModelParameters import ModelParameters
 
 
 class SuperModeCombination():
@@ -45,25 +46,21 @@ class SuperMode(InheritFromSuperSet):
     """Number which bind this mode to a specific python solver"""
     mode_number: int
     """Unique number associated to this mode in a particular symmetry set"""
-    wavelength: float
-    """UWavelength of the simulated modes"""
     boundaries: dict
     """Boundary conditions"""
-    itr_list: numpy.ndarray
-    """List of itr value corresponding to the slices where fields and propagation constant are computed"""
     label: str = None
     """Name to give to the mode"""
 
     def __post_init__(self):
         self.ID = [self.solver_number, self.binding_number]
-        self.field = representations.Field(parent_supermode=self)
-        self.index = representations.Index(parent_supermode=self)
-        self.beta = representations.Beta(parent_supermode=self)
-        self.normalized_coupling = representations.NormalizedCoupling(parent_supermode=self)
-        self.overlap = representations.Overlap(parent_supermode=self)
-        self.adiabatic = representations.Adiabatic(parent_supermode=self)
-        self.eigen_value = representations.EigenValue(parent_supermode=self)
-        self.beating_length = representations.BeatingLength(parent_supermode=self)
+        self.field = representation.Field(parent_supermode=self)
+        self.index = representation.Index(parent_supermode=self)
+        self.beta = representation.Beta(parent_supermode=self)
+        self.normalized_coupling = representation.NormalizedCoupling(parent_supermode=self)
+        self.overlap = representation.Overlap(parent_supermode=self)
+        self.adiabatic = representation.Adiabatic(parent_supermode=self)
+        self.eigen_value = representation.EigenValue(parent_supermode=self)
+        self.beating_length = representation.BeatingLength(parent_supermode=self)
 
     def __hash__(self):
         return hash(self.binded_supermode)
@@ -74,20 +71,17 @@ class SuperMode(InheritFromSuperSet):
         return self.binded_supermode.binding_number
 
     @property
+    def model_parameters(self):
+        return self.binded_supermode.model_parameters
+
+    @property
     def mesh_gradient(self) -> numpy.ndarray:
         return self.binded_supermode.mesh_gradient
 
     @property
-    def nx(self) -> int:
-        return self.binded_supermode.nx
-
-    @property
-    def ny(self) -> int:
-        return self.binded_supermode.ny
-
-    @property
     def amplitudes(self) -> numpy.ndarray:
-        amplitudes = numpy.zeros(len(self.parent_set.supermodes)).astype(complex)
+        n_mode = len(self.parent_set.supermodes)
+        amplitudes = numpy.zeros(n_mode, dtype=complex)
         amplitudes[self.mode_number] = 1
         return amplitudes
 
@@ -216,7 +210,7 @@ class SuperMode(InheritFromSuperSet):
         return full_x_axis, full_y_axis
 
     def get_axis(self, slice_number: int, add_symmetries: bool = True) -> tuple:
-        itr = self.itr_list[slice_number]
+        itr = self.model_parameters.itr_list[slice_number]
 
         x_axis, y_axis = self._get_axis_vector(add_symmetries=add_symmetries)
 

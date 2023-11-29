@@ -9,28 +9,6 @@ PYBIND11_MODULE(SuperMode, module)
 {
     module.doc() = "A c++ wrapper class for SuperMode";
 
-    pybind11::class_<ModelParameters>(module, "ModelParameters")
-    .def(
-        pybind11::pickle(
-            [](ModelParameters& model_parameter)
-            {
-                return model_parameter.get_state();  // dump
-            },
-            [](pybind11::tuple t)
-            {
-                return ModelParameters{
-                    t[0].cast<double>(),                             // wavelength
-                    t[1].cast<pybind11::array_t<double>>(),          // mesh_gradient_py,
-                    t[2].cast<pybind11::array_t<double>>(),          // itr_list_py,
-                    t[3].cast<double>(),                             // dx
-                    t[4].cast<double>()                              // dy
-                }; // load
-            }
-        )
-
-
-    );
-
     pybind11::class_<SuperMode>(module, "SuperMode")
 
     .def_readwrite("binding_number", &SuperMode::mode_number)

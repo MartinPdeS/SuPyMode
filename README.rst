@@ -119,8 +119,8 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
 .. |PyPi| image:: https://badge.fury.io/py/SuPyMode.svg
    :target: https://pypi.org/project/SuPyMode/
 
-.. |PyPi_download| image:: https://img.shields.io/pypi/dm/SuPyMode.svg
-   :target: https://pypi.org/project/SuPyMode/
+.. |PyPi_download| image:: https://img.shields.io/pypi/dm/supymode.svg
+   :target: https://pypistats.org/packages/supymode
 
 .. |colab| image:: https://colab.research.google.com/assets/colab-badge.svg
    :target: https://colab.research.google.com/github/MartinPdeS/SuPyMode/blob/master/SuPyModes.ipynb
