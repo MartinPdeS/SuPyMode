@@ -17,22 +17,19 @@ import pyvista
 
 # Local imports
 from SuPyMode.supermode import SuperMode
-from SuPyMode.tools import plot_style
 from SuPyMode.tools.utils import test_valid_input, get_intersection, interpret_slice_number_and_itr, interpret_mode_of_interest
 from SuPyMode.profiles import AlphaProfile
 from SuPyMode.tools import directories
 from MPSPlots.render2D import SceneMatrix, SceneList, Axis, Multipage
-from MPSPlots import colormaps
 
 
 @dataclass
 class SuperSet(object):
     """
-    Solver to which is associated the computed SuperSet Modes
-
+    Solver to which is associated the computed SuperSet Modes.
     This class is a representation of the fiber optic structures set of supermodes, hence the name.
-    This class has not ling to c++ codes, it is pure Python.
-    The items of this class are the supermodes generated from within the SuPySolver
+    The items of this class are the supermodes generated from within the SuPySolver.
+    It doesn't link to any c++ binding, it is pure Python.
 
     """
     parent_solver: object
@@ -43,7 +40,6 @@ class SuperSet(object):
         self._transmission_matrix = None
         self.supermodes = []
         self._itr_to_slice = interp1d(self.itr_list, numpy.arange(self.itr_list.size))
-        self._slice_to_itr = interp1d(numpy.arange(self.itr_list.size), self.itr_list)
 
     def __getitem__(self, idx: int) -> SuperMode:
         return self.supermodes[idx]
@@ -119,20 +115,6 @@ class SuperSet(object):
         itr_list = numpy.asarray(itr_list)
 
         return numpy.floor(self._itr_to_slice(itr_list)).astype(int)
-
-    def slice_to_itr(self, slice_list: list[int]) -> list[float]:
-        """
-        Return slice number associated to itr value
-
-        :param      slice_list:      Value of the slice to which evaluate the itr.
-        :type       slice_list:      list[int]
-
-        :returns:   List of itr values,
-        :rtype:     list[float]
-        """
-        slice_list = numpy.asarray(slice_list) % self.itr_list.size
-
-        return self._slice_to_itr(slice_list)
 
     def get_fundamental_supermodes(self, *, tolerance: float = 0.1) -> list[SuperMode]:
         """
@@ -640,10 +622,13 @@ class SuperSet(object):
 
         self.supermodes = supermodes[:keep_only]
 
-    def sorting_modes_solver_beta(self):
+    def sorting_modes_solver_beta(self) -> list[SuperMode]:
         """
         Re-order modes to sort them in with two parameters:
         ascending cpp_solver number and descending value of propagation constant.
+
+        :returns:   list of supermode in ordered beta
+        :rtype:     list[SuperMode]
         """
         return self._sorting_modes_(
             [-mode.beta[-1] for mode in self.supermodes],
@@ -652,10 +637,40 @@ class SuperSet(object):
 
     @staticmethod
     def single_plot(plot_function):
-        def wrapper(self, *args, **kwargs):
+        def wrapper(self, *args, mode_of_interest='all', **kwargs):
+            mode_of_interest = interpret_mode_of_interest(
+                superset=self,
+                mode_of_interest=mode_of_interest
+            )
+
             figure = SceneList(unit_size=(16, 6), ax_orientation='vertical')
-            figure.append_ax()
-            plot_function(self, ax=figure[0], *args, **kwargs)
+
+            ax = figure.append_ax()
+
+            plot_function(self, ax=ax, *args, mode_of_interest=mode_of_interest, **kwargs)
+
+            return figure
+
+        return wrapper
+
+    @staticmethod
+    def combination_plot(plot_function):
+        def wrapper(self, *args, mode_of_interest='all', mode_selection: str = 'pairs', **kwargs):
+            mode_of_interest = interpret_mode_of_interest(
+                superset=self,
+                mode_of_interest=mode_of_interest
+            )
+
+            combination = self.interpret_mode_selection(
+                mode_of_interest=mode_of_interest,
+                mode_selection=mode_selection
+            )
+
+            figure = SceneList(unit_size=(16, 6), ax_orientation='vertical')
+
+            ax = figure.append_ax()
+
+            plot_function(self, ax=ax, *args, mode_of_interest=mode_of_interest, combination=combination, **kwargs)
 
             return figure
 
@@ -666,8 +681,7 @@ class SuperSet(object):
             self,
             ax: Axis,
             show_crossings: bool = False,
-            mode_of_interest: list[SuperMode] = 'all',
-            **artist_kwargs) -> SceneList:
+            mode_of_interest: str | list[SuperMode] = 'all') -> SceneList:
         """
         Plot effective index for each mode as a function of itr
 
@@ -679,67 +693,20 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
-        ax.set_style(**plot_style.index)
-
-        self._render_index_vs_itr_on_ax_(
-            ax=ax,
-            show_crossings=show_crossings,
-            mode_of_interest=mode_of_interest,
-            **artist_kwargs
-        )
-
-    def _render_index_vs_itr_on_ax_(
-            self,
-            ax: Axis,
-            show_crossings: bool = False,
-            mode_of_interest: list[SuperMode] = 'all',
-            **artist_kwargs) -> None:
-        """
-        Render the propagation constant of the modes vs ITR on a specific user given axis.
-
-        :param      ax:                The ax to which add the artists
-        :type       ax:                Axis
-        :param      mode_of_interest:  The mode of interest
-        :type       mode_of_interest:  str
-        :param      artist_kwargs:     The keywords arguments
-        :type       artist_kwargs:     dictionary
-
-        :returns:   No returns
-        :rtype:     None
-        """
-        mode_of_interest = interpret_mode_of_interest(
-            superset=self,
-            mode_of_interest=mode_of_interest
-        )
-
         for mode in mode_of_interest:
-            y = mode.index.get_values()
+            mode.index.render_on_ax(ax=ax)
 
-            ax.add_line(
-                x=self.itr_list,
-                y=y,
-                label=f'{mode.stylized_label}'
-            )
+            ax.set_style(**mode.index.ax_style)
 
         if show_crossings:
-            crossings = self.get_index_crossing(mode_of_interest=mode_of_interest)
-            for crossing in crossings.values():
-                ax.add_scatter(
-                    x=crossing['itr'],
-                    y=crossing['index'],
-                    marker='o',
-                    color='black',
-                    marker_size=5,
-                    label='mode crossing'
-                )
+            self.add_crossings_to_ax(ax=ax, mode_of_interest=mode_of_interest, data_type='index')
 
     @single_plot
     def plot_beta(
             self,
             ax: Axis,
             show_crossings: bool = False,
-            mode_of_interest: list[SuperMode] = 'all',
-            **artist_kwargs) -> SceneList:
+            mode_of_interest: str | list[SuperMode] = 'all') -> SceneList:
         """
         Plot propagation constant for each mode as a function of itr
 
@@ -751,66 +718,20 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
-        ax.set_style(**plot_style.beta)
-
-        self._render_beta_vs_itr_on_ax_(
-            ax=ax,
-            show_crossings=show_crossings,
-            mode_of_interest=mode_of_interest,
-            **artist_kwargs
-        )
-
-    def _render_beta_vs_itr_on_ax_(
-            self,
-            ax: Axis,
-            show_crossings: bool = False,
-            mode_of_interest: list[SuperMode] = 'all',
-            **artist_kwargs) -> None:
-        """
-        Render the propagation constant of the modes vs ITR on a specific user given axis.
-
-        :param      ax:                The ax to which add the artists
-        :type       ax:                Axis
-        :param      mode_of_interest:  The mode of interest
-        :type       mode_of_interest:  str
-        :param      artist_kwargs:     The keywords arguments
-        :type       artist_kwargs:     dictionary
-
-        :returns:   No returns
-        :rtype:     None
-        """
-        mode_of_interest = interpret_mode_of_interest(
-            superset=self,
-            mode_of_interest=mode_of_interest
-        )
-
         for mode in mode_of_interest:
-            y = mode.beta.get_values()
+            mode.beta.render_on_ax(ax=ax)
 
-            ax.add_line(
-                x=self.itr_list,
-                y=y,
-                label=f'{mode.stylized_label}',
-                **artist_kwargs
-            )
+            ax.set_style(**mode.beta.ax_style)
 
         if show_crossings:
-            crossings = self.get_beta_crossing()
-            for crossing in crossings.values():
-                ax.add_scatter(
-                    x=crossing['itr'],
-                    y=crossing['beta'],
-                    marker='o',
-                    color='black',
-                    marker_size=5
-                )
+            self.add_crossings_to_ax(ax=ax, mode_of_interest=mode_of_interest, data_type='beta')
 
     @single_plot
     def plot_eigen_value(
             self,
             ax: Axis,
-            mode_of_interest: list[SuperMode] = 'all',
-            **artist_kwargs) -> SceneList:
+            mode_of_interest: str | list[SuperMode] = 'all',
+            show_crossings: bool = False) -> SceneList:
         """
         Plot propagation constant for each mode as a function of itr
 
@@ -822,56 +743,22 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
-        ax.set_style(**plot_style.eigen_value)
-
-        self._render_eigen_values_vs_itr_on_ax_(
-            ax=ax,
-            mode_of_interest=mode_of_interest,
-            **artist_kwargs
-        )
-
-    def _render_eigen_values_vs_itr_on_ax_(
-            self,
-            ax: Axis,
-            mode_of_interest: list[SuperMode] = 'all',
-            **artist_kwargs) -> None:
-        """
-        Render the eigen values of the modes vs ITR on a specific user given axis.
-
-        :param      ax:                The ax to which add the artists
-        :type       ax:                Axis
-        :param      mode_of_interest:  The mode of interest
-        :type       mode_of_interest:  str
-        :param      artist_kwargs:     The keywords arguments
-        :type       artist_kwargs:     dictionary
-
-        :returns:   No returns
-        :rtype:     None
-        """
-        mode_of_interest = interpret_mode_of_interest(
-            superset=self,
-            mode_of_interest=mode_of_interest
-        )
-
         for mode in mode_of_interest:
-            y = mode.eigen_value.get_values()
+            mode.index.render_on_ax(ax=ax)
 
-            ax.add_line(
-                x=self.itr_list,
-                y=y,
-                label=f'{mode.stylized_label}',
-                **artist_kwargs
-            )
+            ax.set_style(**mode.eigen_value.ax_style)
 
-    @single_plot
+        if show_crossings:
+            self.add_crossings_to_ax(ax=ax, mode_of_interest=mode_of_interest, data_type='eigen_value')
+
+    @combination_plot
     def plot_normalized_coupling(
             self,
             ax: Axis,
-            mode_of_interest: list = 'all',
-            mode_selection='pairs',
-            **artist_kwargs) -> SceneList:
+            mode_of_interest: list[SuperMode],
+            combination: list) -> SceneList:
         """
-        Plot coupling value for each mode as a function of itr
+        Plot normalized coupling value for each mode as a function of itr.
 
         :param      mode_of_interest:  The mode of interest
         :type       mode_of_interest:  str
@@ -883,127 +770,16 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
-        ax.set_style(**plot_style.normalized_coupling)
-
-        self._render_normalized_coupling_vs_itr_on_ax_(
-            ax=ax,
-            mode_of_interest=mode_of_interest,
-            mode_selection=mode_selection,
-            **artist_kwargs
-        )
-
-    def _render_normalized_coupling_vs_itr_on_ax_(
-            self,
-            ax: Axis,
-            mode_of_interest: list[SuperMode] = 'all',
-            mode_selection: str = 'pairs',
-            **artist_kwargs) -> None:
-        """
-        Render the beating length vs ITR on a specific user given axis.
-
-        :param      ax:                The ax to which add the artists
-        :type       ax:                Axis
-        :param      mode_of_interest:  The mode of interest
-        :type       mode_of_interest:  str
-        :param      mode_selection:    The mode selection
-        :type       mode_selection:    str
-        :param      artist_kwargs:     The keywords arguments
-        :type       artist_kwargs:     dictionary
-
-        :returns:   No returns
-        :rtype:     None
-        """
-        combination = self.interpret_combinations(
-            mode_of_interest=mode_of_interest,
-            mode_selection=mode_selection
-        )
-
         for mode_0, mode_1 in combination:
-            if mode_0.is_computation_compatible(mode_1):
-                y = numpy.abs(mode_0.normalized_coupling.get_values(other_supermode=mode_1))
+            ax.set_style(**mode_0.normalized_coupling.ax_style)
+            mode_0.normalized_coupling.render_on_ax(ax=ax, other_supermode=mode_1)
 
-                ax.add_line(
-                    x=self.itr_list,
-                    y=y,
-                    label=f'{mode_0.stylized_label} - {mode_1.stylized_label}',
-                    **artist_kwargs
-                )
-
-    @single_plot
-    def plot_overlap(
-            self,
-            ax: Axis,
-            mode_of_interest: list = 'all',
-            mode_selection='pairs',
-            **artist_kwargs) -> SceneList:
-        """
-        Plot overlap value for each mode as a function of itr
-
-        :param      mode_of_interest:  The mode of interest
-        :type       mode_of_interest:  str
-        :param      mode_selection:    The mode selection
-        :type       mode_selection:    str
-        :param      artist_kwargs:     The keywords arguments
-        :type       artist_kwargs:     dictionary
-
-        :returns:   figure instance, to plot the show() method.
-        :rtype:     SceneList
-        """
-        ax.set_style(**plot_style.overlap)
-
-        self._render_overlap_vs_itr_on_ax_(
-            ax=ax,
-            mode_of_interest=mode_of_interest,
-            mode_selection=mode_selection,
-            **artist_kwargs
-        )
-
-    def _render_overlap_vs_itr_on_ax_(
-            self,
-            ax: Axis,
-            mode_of_interest: list[SuperMode] = 'all',
-            mode_selection: str = 'pairs',
-            **artist_kwargs) -> None:
-        """
-        Render the beating length vs ITR on a specific user given axis.
-
-        :param      ax:                The ax to which add the artists
-        :type       ax:                Axis
-        :param      mode_of_interest:  The mode of interest
-        :type       mode_of_interest:  str
-        :param      mode_selection:    The mode selection
-        :type       mode_selection:    str
-        :param      artist_kwargs:     The keywords arguments
-        :type       artist_kwargs:     dictionary
-
-        :returns:   No returns
-        :rtype:     None
-        """
-        combination = self.interpret_combinations(
-            mode_of_interest=mode_of_interest,
-            mode_selection=mode_selection
-        )
-
-        for mode_0, mode_1 in combination:
-            if mode_0.is_computation_compatible(mode_1):
-                y = mode_0.overlap.get_values(other_supermode=mode_1)
-
-                ax.add_line(
-                    x=self.itr_list,
-                    y=y,
-                    label=f'{mode_0.stylized_label} - {mode_1.stylized_label}',
-                    **artist_kwargs
-                )
-
-    @single_plot
+    @combination_plot
     def plot_beating_length(
             self,
             ax: Axis,
-            mode_of_interest: list = 'all',
-            mode_selection='pairs',
-            add_profile: list[AlphaProfile] = [],
-            core_radius: float = None,
-            **artist_kwargs) -> SceneList:
+            mode_of_interest: list[SuperMode],
+            combination: list) -> SceneList:
         """
         Plot coupling value for each mode as a function of itr
 
@@ -1013,68 +789,17 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
-        ax.set_style(**plot_style.beating_length)
-
-        self._render_beating_length_vs_itr_on_ax_(
-            ax=ax,
-            mode_of_interest=mode_of_interest,
-            mode_selection=mode_selection,
-            add_profile=add_profile,
-            core_radius=core_radius,
-            **artist_kwargs
-        )
-
-        for profile in numpy.atleast_1d(add_profile):
-            profile._render_taper_length_scale_vs_itr_on_ax_(ax=ax, core_radius=core_radius)
-
-    def _render_beating_length_vs_itr_on_ax_(
-            self,
-            ax: Axis,
-            mode_of_interest: list[SuperMode] = 'all',
-            mode_selection: str = 'pairs',
-            add_profile: list[AlphaProfile] = [],
-            **artist_kwargs) -> None:
-        """
-        Render the beating length vs ITR on a specific user given axis.
-
-        :param      ax:                The ax to which add the artists
-        :type       ax:                Axis
-        :param      mode_of_interest:  The mode of interest
-        :type       mode_of_interest:  str
-        :param      mode_selection:    The mode selection
-        :type       mode_selection:    str
-        :param      add_profile:       The add profile
-        :type       add_profile:       Array
-        :param      artist_kwargs:     The keywords arguments
-        :type       artist_kwargs:     dictionary
-
-        :returns:   No returns
-        :rtype:     None
-        """
-        combination = self.interpret_combinations(
-            mode_of_interest=mode_of_interest,
-            mode_selection=mode_selection
-        )
-
         for mode_0, mode_1 in combination:
-            if mode_0.is_computation_compatible(mode_1):
-                y = mode_0.beating_length.get_values(other_supermode=mode_1)
+            ax.set_style(**mode_0.beating_length.ax_style)
+            mode_0.beating_length.render_on_ax(ax=ax, other_supermode=mode_1)
 
-                ax.add_line(
-                    x=self.itr_list,
-                    y=y,
-                    label=f'{mode_0.stylized_label} - {mode_1.stylized_label}',
-                    **artist_kwargs
-                )
-
-    @single_plot
+    @combination_plot
     def plot_adiabatic(
             self,
             ax: Axis,
-            mode_of_interest: list[SuperMode] = 'all',
-            mode_selection: str = 'pairs',
-            add_profile: list[AlphaProfile] = [],
-            **artist_kwargs) -> SceneList:
+            mode_of_interest: list[SuperMode],
+            combination: list,
+            add_profile: list[AlphaProfile] = []) -> SceneList:
         """
         Plot adiabatic criterion for each mode as a function of itr
 
@@ -1088,111 +813,12 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
-        ax.set_style(**plot_style.adiabatic)
-
-        self._render_adiabatic_vs_itr_on_ax_(
-            ax=ax,
-            mode_of_interest=mode_of_interest,
-            mode_selection=mode_selection,
-            add_profile=add_profile,
-            **artist_kwargs
-        )
-
-        for profile in numpy.atleast_1d(add_profile):
-            profile._render_adiabatic_factor_vs_itr_on_ax_(ax)
-
-    def _render_adiabatic_vs_itr_on_ax_(
-            self,
-            ax: Axis,
-            mode_of_interest: list[SuperMode] = 'all',
-            mode_selection: str = 'pairs',
-            add_profile: list[AlphaProfile] = [],
-            **artist_kwargs) -> None:
-        """
-        Render the adiabatic criterion vs ITR on a specific user given axis.
-
-        :param      ax:                The ax to which add the artists
-        :type       ax:                Axis
-        :param      mode_of_interest:  The mode of interest
-        :type       mode_of_interest:  str
-        :param      mode_selection:    The mode selection
-        :type       mode_selection:    str
-        :param      add_profile:       The add profile
-        :type       add_profile:       Array
-        :param      artist_kwargs:     The keywords arguments
-        :type       artist_kwargs:     dictionary
-
-        :returns:   No returns
-        :rtype:     None
-        """
-        combination = self.interpret_combinations(
-            mode_of_interest=mode_of_interest,
-            mode_selection=mode_selection
-        )
-
         for mode_0, mode_1 in combination:
-            if mode_0.is_computation_compatible(mode_1):
-                y = mode_0.adiabatic.get_values(other_supermode=mode_1)
-
-                ax.add_line(
-                    x=self.itr_list,
-                    y=y,
-                    label=f'{mode_0.stylized_label} - {mode_1.stylized_label}',
-                    **artist_kwargs
-                )
+            ax.set_style(**mode_0.adiabatic.ax_style)
+            mode_0.adiabatic.render_on_ax(ax=ax, other_supermode=mode_1)
 
         for profile in numpy.atleast_1d(add_profile):
             profile._render_adiabatic_factor_vs_itr_on_ax_(ax, line_style='--', color='black')
-
-    @single_plot
-    def plot_normalized_adiabatic(
-            self,
-            ax: Axis,
-            mode_of_interest: list = 'all',
-            mode_selection: str = 'pairs') -> SceneList:
-        """
-         Plot adiabatic criterion for each mode as a function of itr
-
-        :param      pair_of_interest:  List of the mode that are to be considered in the adiabatic criterion plotting.
-        :type       pair_of_interest:  list
-        :param      mode_selection:    The type of combination to be plotted, either 'specific/all/pairs'
-        :type       mode_selection:    str
-
-        :returns:   figure instance, to plot the show() method.
-        :rtype:     SceneList
-        """
-        ax.set_style(**plot_style.adiabatic)
-
-        combination = self.interpret_combinations(
-            mode_of_interest=mode_of_interest,
-            mode_selection=mode_selection
-        )
-
-        for mode_0, mode_1 in combination:
-            if mode_0.is_computation_compatible(mode_1):
-                n0 = mode_0.index._data
-                n1 = mode_1.index._data
-                beating_length = mode_0.wavelength / abs(n0 - n1)
-                y = mode_0.adiabatic.get_values(other_supermode=mode_1) * beating_length
-
-                ax.add_line(
-                    x=self.itr_list,
-                    y=y,
-                    label=f'{mode_0.stylized_label} - {mode_1.stylized_label}'
-                )
-
-    def interpret_combinations(self, mode_of_interest: list, mode_selection: str):
-        mode_of_interest = interpret_mode_of_interest(
-            superset=self,
-            mode_of_interest=mode_of_interest
-        )
-
-        combination = self.interpret_mode_selection(
-            mode_of_interest=mode_of_interest,
-            mode_selection=mode_selection
-        )
-
-        return combination
 
     def is_compute_compatible(self, pair_of_mode: tuple) -> bool:
         """
@@ -1259,7 +885,7 @@ class SuperSet(object):
             slice_list: list[int] = [0, -1],
             show_mode_label: bool = True,
             show_itr: bool = True,
-            show_slice: bool = True) -> SceneMatrix:
+            show_slice: bool = True) -> SceneList:
         """
         Plot each of the mode field for different itr value or slice number.
 
@@ -1285,98 +911,33 @@ class SuperSet(object):
         )
 
         for m, mode in enumerate(mode_of_interest):
-            
-            
-            for n, (itr, slice_number) in enumerate(zip(itr_list, slice_list)):
-                title = self.get_plot_mode_field_title(
-                    supermode=mode,
-                    itr=itr,
+            for n, slice_number in enumerate(slice_list):
+                ax = figure.append_ax(
+                    row=n,
+                    column=m,
+                )
+
+                mode.field.render_on_ax(
+                    ax=ax,
                     slice_number=slice_number,
                     show_mode_label=show_mode_label,
                     show_itr=show_itr,
                     show_slice=show_slice
                 )
 
-                ax = figure.append_ax(
-                    row=n,
-                    column=m,
-                    title=title
-                )
-
-                field = mode.field.get_field(slice_number=slice_number, add_symmetries=True)
-
-                x, y = mode.field.get_axis(slice_number=slice_number)
-
-                artist = ax.add_mesh(
-                    x=x,
-                    y=y,
-                    scalar=field,
-                )
-
-                ax.add_colorbar(
-                    artist=artist,
-                    colormap=colormaps.blue_black_red,
-                    symmetric=True
-                )
-
-                ax.set_style(**plot_style.field)
-
         return figure
-
-    def get_plot_mode_field_title(
-            self,
-            supermode: SuperMode,
-            itr: float,
-            slice_number: int,
-            show_mode_label: bool,
-            show_itr: bool,
-            show_slice: bool) -> str:
-        """
-        Gets the title for the plot_field outputed subplots.
-
-        :param      supermode:         The supermode corresponding to the specific subplot.
-        :type       supermode:         SuperMode
-        :param      itr:               The itr value
-        :type       itr:               float
-        :param      slice_number:      The slice number
-        :type       slice_number:      int
-        :param      show_mode_label:   If True the mode label will be shown.
-        :type       show_mode_label:   bool
-        :param      show_itr:          If True the title contains the itr value.
-        :type       show_itr:          bool
-        :param      show_slice:        If True the title contains the slice number of the evaluated ITR
-        :type       show_slice:        bool
-
-        :returns:   The plot mode field title.
-        :rtype:     str
-        """
-        title = ''
-
-        if show_mode_label:
-            title += f'{supermode.stylized_label}'
-
-        if show_itr or show_slice:
-            title += '\n'
-
-        if show_slice:
-            title += f'slice: {slice_number}'
-
-        if show_itr:
-            title += f'  itr: {itr:.3f}'
-
-        return title
 
     def plot(self, plot_type: str, **kwargs) -> SceneList:
         """
         Generic plot function.
 
         Args:
-            type: Plot type ['index', 'beta', 'adiabatic', 'normalized-adiabatic', 'overlap', 'coupling', 'field', 'beating-length']
+            type: Plot type ['index', 'beta', 'adiabatic', 'normalized-adiabatic', 'coupling', 'field', 'beating-length']
         """
         test_valid_input(
             variable_name='plot_type',
             user_input=plot_type,
-            valid_inputs=['index', 'beta', 'eigen-value', 'adiabatic', 'overlap', 'normalized-adiabatic', 'normalized-coupling', 'field', 'beating-length']
+            valid_inputs=['index', 'beta', 'eigen-value', 'adiabatic', 'normalized-adiabatic', 'normalized-coupling', 'field', 'beating-length']
         )
 
         match plot_type.lower():
@@ -1478,75 +1039,29 @@ class SuperSet(object):
 
         return filename
 
-    def get_beta_crossing(self, mode_of_interest: list) -> dict:
-        """
-        Returns a dictionnay of the beta mode-crossing, meaning points where the modes propagation
-        constant do cross.
-
-        :returns:   The mode crossing dictionnary.
-        :rtype:     dict
-        """
-        output_dictionnary = {}
-
-        combination = self.interpret_combinations(
+    def add_crossings_to_ax(self, ax: Axis, mode_of_interest: list, data_type: str) -> None:
+        combination = self.interpret_mode_selection(
             mode_of_interest=mode_of_interest,
             mode_selection='pairs'
         )
 
-        n_crossing = 0
         for mode_0, mode_1 in combination:
-            itr, beta = get_intersection(
+            x, y = get_intersection(
                 x=self.itr_list,
-                y0=mode_0.beta.get_values(),
-                y1=mode_1.beta.get_values(),
+                y0=getattr(mode_0, data_type)._data,
+                y1=getattr(mode_1, data_type)._data,
                 average=True
             )
 
-            if len(beta) != 0:
-                output_dictionnary[n_crossing] = {
-                    'mode0': mode_0,
-                    'mode1': mode_1,
-                    'itr': itr,
-                    'beta': beta
-                }
-                n_crossing += 1
-
-        return output_dictionnary
-
-    def get_index_crossing(self, mode_of_interest: list) -> dict:
-        """
-        Returns a dictionnay of the beta mode-crossing, meaning points where the modes propagation
-        constant do cross.
-
-        :returns:   The mode crossing dictionnary.
-        :rtype:     dict
-        """
-        output_dictionnary = {}
-
-        combination = self.interpret_combinations(
-            mode_of_interest=mode_of_interest,
-            mode_selection='pairs'
-        )
-
-        n_crossing = 0
-        for mode_0, mode_1 in combination:
-            itr, index = get_intersection(
-                x=self.itr_list,
-                y0=mode_0.index.get_values(),
-                y1=mode_1.index.get_values(),
-                average=True
-            )
-
-            if len(index) != 0:
-                output_dictionnary[n_crossing] = {
-                    'mode0': mode_0,
-                    'mode1': mode_1,
-                    'itr': itr,
-                    'index': index
-                }
-                n_crossing += 1
-
-        return output_dictionnary
+            if x is not None:
+                ax.add_scatter(
+                    x=x,
+                    y=y,
+                    marker='o',
+                    color='black',
+                    marker_size=20,
+                    label='mode crossing'
+                )
 
 
 # -

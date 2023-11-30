@@ -24,14 +24,17 @@ class InheritFromSuperSet():
     def coordinate_system(self) -> object:
         return self.parent_set.coordinate_system
 
+    @property
+    def itr_list(self) -> numpy.ndarray:
+        return self.binded_supermode.model_parameters.itr_list
+
 
 @dataclass
 class SuperMode(InheritFromSuperSet):
     """
-    .. note::
-        This class is a representation of the fiber optic structures SuperModes.
-        Those mode belongs to a SuperSet class and are constructed with the SuPySolver.
-        It links to c++ SuperMode class.
+    This class is a representation of the fiber optic structures SuperModes.
+    Those mode belongs to a SuperSet class and are constructed with the SuPySolver.
+    It links to c++ SuperMode class.
     """
     parent_set: None
     """SuperSet to which is associated the computed this mode"""
@@ -44,7 +47,7 @@ class SuperMode(InheritFromSuperSet):
     boundaries: dict
     """Boundary conditions"""
     label: str = None
-    """Name to give to the mode"""
+    """Arbitrary label given to the mode"""
 
     def __post_init__(self):
         self.ID = [self.solver_number, self.binding_number]
@@ -52,7 +55,6 @@ class SuperMode(InheritFromSuperSet):
         self.index = representation.Index(parent_supermode=self)
         self.beta = representation.Beta(parent_supermode=self)
         self.normalized_coupling = representation.NormalizedCoupling(parent_supermode=self)
-        self.overlap = representation.Overlap(parent_supermode=self)
         self.adiabatic = representation.Adiabatic(parent_supermode=self)
         self.eigen_value = representation.EigenValue(parent_supermode=self)
         self.beating_length = representation.BeatingLength(parent_supermode=self)
@@ -61,7 +63,7 @@ class SuperMode(InheritFromSuperSet):
         return hash(self.binded_supermode)
 
     @property
-    def binding_number(self):
+    def binding_number(self) -> int:
         """ Returns the mode number specific to one CppSolver """
         return self.binded_supermode.binding_number
 
@@ -81,7 +83,7 @@ class SuperMode(InheritFromSuperSet):
         return amplitudes
 
     @property
-    def stylized_label(self):
+    def stylized_label(self) -> str:
         if self.label is None:
             return f"Mode: {self.ID}"
         else:
@@ -211,13 +213,20 @@ class SuperMode(InheritFromSuperSet):
 
         return (x_axis * itr, y_axis * itr)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.label
 
     def plot(self, plot_type: str, *args, **kwargs):
-        
         match plot_type.lower():
             case 'field':
                 return self.field.plot(*args, **kwargs)
+            case 'beta':
+                return self.beta.plot(*args, **kwargs)
+            case 'index':
+                return self.beta.plot(*args, **kwargs)
+            case 'eigen-value':
+                return self.eigen_value.plot(*args, **kwargs)
+            case 'beating-length':
+                return self.beating_length.plot(*args, **kwargs)
 
 # -

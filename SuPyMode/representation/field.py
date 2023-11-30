@@ -6,7 +6,6 @@ from MPSPlots.render2D import Axis
 from MPSPlots import colormaps
 from MPSPlots.render2D import SceneMatrix
 
-from SuPyMode.tools import plot_style
 from SuPyMode.tools.utils import interpret_slice_number_and_itr, slice_to_itr
 
 from SuPyMode.representation.base import InheritFromSuperMode
@@ -170,8 +169,6 @@ class Field(InheritFromSuperMode):
             position='right'
         )
 
-        ax.set_style(**plot_style.field)
-
     def plot(
             self,
             itr_list: list[float] = [],
@@ -200,12 +197,11 @@ class Field(InheritFromSuperMode):
         )
 
         for n, (itr, slice_number) in enumerate(zip(itr_list, slice_list)):
-            ax = figure.append_ax(
-                row=n,
-                column=0,
-            )
+            ax = figure.append_ax(row=n, column=0)
 
-            self.render_field_on_ax(
+            ax.set_style(self.ax_style)
+
+            self.render_on_ax(
                 ax=ax,
                 slice_number=slice_number,
                 add_symmetries=add_symmetries
@@ -213,7 +209,7 @@ class Field(InheritFromSuperMode):
 
         return figure
 
-    def render_field_on_ax(
+    def render_on_ax(
             self,
             ax: object,
             slice_number: int,
@@ -240,7 +236,6 @@ class Field(InheritFromSuperMode):
         :returns:   No returns
         :rtype:     None
         """
-        ax.set_style(**plot_style.field)
         ax.title = self.get_plot_mode_field_title(
             slice_number=slice_number,
             show_mode_label=show_mode_label,
@@ -306,5 +301,24 @@ class Field(InheritFromSuperMode):
             title += f'  itr: {itr:.3f}'
 
         return title
+
+    @property
+    def ax_style(self) -> dict:
+        """
+        Returns the default style for the propagation constant plots for the MPSPlots library.
+
+        :returns:   The MPSPlots ax style
+        :rtype:     dict
+        """
+        style = dict(
+            show_legend=False,
+            x_label=r'X-Direction [$\mu m$]',
+            y_label=r'Y-direction [$\mu m$]',
+            x_scale_factor=1e6,
+            y_scale_factor=1e6,
+            equal=True
+        )
+
+        return style
 
 # -

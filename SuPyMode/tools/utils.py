@@ -26,6 +26,9 @@ def get_intersection(y0: numpy.ndarray, y1: numpy.ndarray, x: numpy.ndarray, ave
 
     idx = numpy.argwhere(numpy.diff(numpy.sign(y0 - y1))).flatten()
 
+    if len(idx) == 0:  # No intersection
+        return None, None
+
     if not average:
         return y0[idx]
 

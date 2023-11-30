@@ -1,18 +1,25 @@
 # #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
 
+from __future__ import annotations
+
 import numpy
 
-from SuPyMode.tools import plot_style
 from SuPyMode.representation.base import InheritFromSuperMode, BaseMultiModePlot
+from MPSPlots.render2D import SceneList, Axis
+
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from SuPyMode.supermode import SuperMode
 
 
 class NormalizedCoupling(InheritFromSuperMode, BaseMultiModePlot):
     def __init__(self, parent_supermode):
         self.parent_supermode = parent_supermode
-        self.plot_style = plot_style.normalized_coupling
 
-    def get_values(self, other_supermode) -> numpy.ndarray:
+    def get_values(self, other_supermode: SuperMode) -> numpy.ndarray:
         """
         Return the array of the modal coupling for the mode
         """
@@ -23,5 +30,65 @@ class NormalizedCoupling(InheritFromSuperMode, BaseMultiModePlot):
             output *= 0
 
         return output
+
+    def render_on_ax(self, ax: Axis, other_supermode: SuperMode) -> None:
+        """
+        Renders the normalized-coupling data with another modes on a given ax
+
+        :param      ax:               Axis to which add the plot
+        :type       ax:               Axis
+        :param      other_supermode:  The other supermode
+        :type       other_supermode:  SuperMode
+
+        :returns:   No returns
+        :rtype:     None
+        """
+        if not self.parent_supermode.is_computation_compatible(other_supermode):
+            return
+
+        y = self.get_values(other_supermode=other_supermode)
+
+        ax.add_line(
+            x=self.itr_list,
+            y=numpy.abs(y),
+            label=f'{self.parent_supermode.stylized_label} - {other_supermode.stylized_label}'
+        )
+
+    def plot(self, other_supermode: SuperMode) -> SceneList:
+        """
+        Plots the normalized coupling of this specific mode with the other one
+        given as input.
+
+        :param      other_supermode:  The other supermode
+        :type       other_supermode:  SuperMode
+
+        :returns:   The scene list.
+        :rtype:     SceneList
+        """
+        figure = SceneList()
+
+        ax = figure.append_ax(**self.ax_style)
+
+        self.render_on_ax(ax=ax, other_supermode=other_supermode)
+
+        return figure
+
+    @property
+    def ax_style(self) -> dict:
+        """
+        Returns the default style for the index plots for the MPSPlots library.
+
+        :returns:   The MPSPlots ax style
+        :rtype:     dict
+        """
+        style = dict(
+            show_legend=True,
+            x_label='Inverse taper ratio',
+            y_label='Mode coupling',
+            y_scale="linear",
+            line_width=2
+        )
+
+        return style
 
 # -
