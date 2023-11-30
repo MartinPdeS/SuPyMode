@@ -11,11 +11,6 @@ from SuPyMode import representation
 from SuPyMode.binary.ModelParameters import ModelParameters
 
 
-class SuperModeCombination():
-    def __init__(self, *supermodes):
-        self.supermodes = supermodes
-
-
 class InheritFromSuperSet():
     """
     Property class for inherited attribute from SuperSet.
@@ -218,5 +213,11 @@ class SuperMode(InheritFromSuperSet):
 
     def __repr__(self):
         return self.label
+
+    def plot(self, plot_type: str, *args, **kwargs):
+        
+        match plot_type.lower():
+            case 'field':
+                return self.field.plot(*args, **kwargs)
 
 # -

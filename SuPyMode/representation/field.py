@@ -7,6 +7,8 @@ from MPSPlots import colormaps
 from MPSPlots.render2D import SceneMatrix
 
 from SuPyMode.tools import plot_style
+from SuPyMode.tools.utils import interpret_slice_number_and_itr, slice_to_itr
+
 from SuPyMode.representation.base import InheritFromSuperMode
 
 
@@ -21,7 +23,19 @@ class Field(InheritFromSuperMode):
     def get_norm(self, slice_number: int) -> float:
         return self.parent_supermode.binded_supermode.get_norm(slice_number)
 
-    def get_field(self, slice_number: int = None, itr: float = None, add_symmetries: bool = True, normalization: str = 'L2') -> numpy.ndarray:
+    @property
+    def itr_list(self) -> numpy.ndarray:
+        return self.parent_supermode.binded_supermode.model_parameters.itr_list
+
+    @property
+    def parent_superset(self) -> object:
+        return self.parent_supermode.parent_set
+
+    def get_field(
+            self,
+            slice_number: int = [],
+            itr: float = [],
+            add_symmetries: bool = True) -> numpy.ndarray:
         """
         Returns the field with the predefined boundary conditions for a certain slice number.
         The normalization type must either be square integration (L2), max value set to one (max), center value set to one (center)
@@ -31,28 +45,42 @@ class Field(InheritFromSuperMode):
         :type       slice_number:    int
         :param      add_symmetries:  Add or not the boundary symmetries
         :type       add_symmetries:  bool
-        :param      normalization:   The normalization type ['L2', 'max', 'center', 'cmt']
-        :type       normalization:   str
 
         :returns:   The field mesh.
         :rtype:     numpy.ndarray
         """
-        assert (slice_number is None) ^ (itr is None), 'Exactly one of the two values [slice_number, itr] has to be defined'
-        assert normalization.lower() in ['l2', 'max', 'center', 'cmt'], "Normalization type must be in ['l2', 'max', 'center', 'cmt']"
+        slice_number = numpy.array(slice_number)
+        itr = numpy.array(itr)
 
-        slice_number, itr = self.parent_supermode.parent_set._interpret_itr_slice_list_(
-            slice_list=[] if slice_number is None else slice_number,
-            itr_list=[] if itr is None else itr
+        assert (slice_number.size == 0) ^ (itr.size == 0), 'Exactly one of the two values [slice_number, itr] has to be defined'
+
+        slice_list, itr_list = interpret_slice_number_and_itr(
+            itr_list=self.itr_list,
+            itr=itr,
+            slice_number=slice_number
         )
 
-        field = self._data[slice_number[0]]
+        field = numpy.take(self._data, slice_number, axis=0)
 
         if add_symmetries:
             field = self._get_symmetrized_field(field=field)
 
-        return self.normalize_field(field=field, norm_type=normalization, itr=itr)
+        return field
 
     def normalize_field(self, field: numpy.ndarray, itr: float, norm_type: str = 'L2') -> numpy.ndarray:
+        """
+        Deprecated at the moment.
+
+        :param      field:      The field
+        :type       field:      { type_description }
+        :param      itr:        The itr
+        :type       itr:        float
+        :param      norm_type:  The normalize type
+        :type       norm_type:  str
+
+        :returns:   { description_of_the_return_value }
+        :rtype:     { return_type_description }
+        """
         match norm_type.lower():
             case 'max':
                 norm = abs(field).max()
@@ -144,10 +172,11 @@ class Field(InheritFromSuperMode):
 
         ax.set_style(**plot_style.field)
 
-    def plot_field(self,
-            mode_of_interest: list = 'all',
+    def plot(
+            self,
             itr_list: list[float] = [],
-            slice_list: list[int] = [],
+            slice_list: list[int] = [0, -1],
+            add_symmetries: bool = True,
             show_mode_label: bool = True,
             show_itr: bool = True,
             show_slice: bool = True) -> SceneMatrix:
@@ -164,76 +193,118 @@ class Field(InheritFromSuperMode):
         """
         figure = SceneMatrix(unit_size=(3, 3))
 
-        slice_list, itr_list = self._interpret_itr_slice_list_(slice_list=slice_list, itr_list=itr_list)
+        slice_list, itr_list = interpret_slice_number_and_itr(
+            itr_list=self.itr_list,
+            itr=itr_list,
+            slice_number=slice_list
+        )
 
-        mode_of_interest = self.interpret_mode_of_interest(mode_of_interest=mode_of_interest)
+        for n, (itr, slice_number) in enumerate(zip(itr_list, slice_list)):
+            ax = figure.append_ax(
+                row=n,
+                column=0,
+            )
 
-        for m, mode in enumerate(mode_of_interest):
-            for n, (itr, slice_number) in enumerate(zip(itr_list, slice_list)):
-                title = self.get_plot_mode_field_title(
-                    supermode=mode,
-                    itr=itr,
-                    slice_number=slice_number,
-                    show_mode_label=show_mode_label,
-                    show_itr=show_itr,
-                    show_slice=show_slice
-                )
-
-                ax = figure.append_ax(
-                    row=n,
-                    column=m,
-                    title=title
-                )
-
-                field = mode.field.get_field(slice_number=slice_number, add_symmetries=True)
-
-                x, y = mode.field.get_axis(slice_number=slice_number)
-
-                artist = ax.add_mesh(
-                    x=x,
-                    y=y,
-                    scalar=field,
-                )
-
-                ax.add_colorbar(
-                    artist=artist,
-                    colormap=colormaps.blue_black_red,
-                    symmetric=True
-                )
-
-                ax.set_style(**plot_style.field)
+            self.render_field_on_ax(
+                ax=ax,
+                slice_number=slice_number,
+                add_symmetries=add_symmetries
+            )
 
         return figure
 
-    # def plot(self, slice_list: list = [], itr_list: list = []) -> SceneList:
-    #     """
-    #     Plotting method for the fields.
+    def render_field_on_ax(
+            self,
+            ax: object,
+            slice_number: int,
+            show_mode_label: bool = True,
+            show_itr: bool = True,
+            show_slice: bool = True,
+            add_symmetries: bool = True) -> None:
+        """
+        Render the mode field at given slice number into input ax.
 
-    #     :param      slice_list:  Value reprenting the slice where the mode field is evaluated.
-    #     :type       slice_list:  list
-    #     :param      itr_list:    Value of itr value to evaluate the mode field.
-    #     :type       itr_list:    list
+        :param      ax:               { parameter_description }
+        :type       ax:               object
+        :param      slice_number:     The slice number
+        :type       slice_number:     int
+        :param      show_mode_label:  The show mode label
+        :type       show_mode_label:  bool
+        :param      show_itr:         The show itr
+        :type       show_itr:         bool
+        :param      show_slice:       The show slice
+        :type       show_slice:       bool
+        :param      add_symmetries:   Indicates if the symmetries is added
+        :type       add_symmetries:   bool
 
-    #     :returns:   the figure containing all the plots.
-    #     :rtype:     SceneList
-    #     """
-    #     figure = SceneList(unit_size=(3, 3), tight_layout=True, ax_orientation='horizontal')
+        :returns:   No returns
+        :rtype:     None
+        """
+        ax.set_style(**plot_style.field)
+        ax.title = self.get_plot_mode_field_title(
+            slice_number=slice_number,
+            show_mode_label=show_mode_label,
+            show_itr=show_itr,
+            show_slice=show_slice
+        )
 
-    #     slice_list, itr_list = self._interpret_itr_slice_list_(
-    #         slice_list=slice_list,
-    #         itr_list=itr_list
-    #     )
+        field = self.get_field(
+            slice_number=slice_number,
+            add_symmetries=add_symmetries
+        )
 
-    #     slice_list = numpy.atleast_1d(slice_list)
-    #     itr_list = numpy.atleast_1d(itr_list)
+        x, y = self.get_axis(
+            slice_number=slice_number,
+            add_symmetries=add_symmetries
+        )
 
-    #     for n, (slice, itr) in enumerate(zip(slice_list, itr_list)):
-    #         ax = figure.append_ax(
-    #             title=f'{self.parent_supermode.stylized_label}\n[slice: {slice}  ITR: {itr:.4f}]'
-    #         )
+        artist = ax.add_mesh(
+            x=x,
+            y=y,
+            scalar=field,
+        )
 
-    #         self._render_on_ax_(ax=ax, slice=slice)
+        ax.add_colorbar(
+            artist=artist,
+            colormap=colormaps.blue_black_red,
+            symmetric=True
+        )
 
-    #     return figure
+    def get_plot_mode_field_title(self, slice_number: int, show_mode_label: bool, show_itr: bool, show_slice: bool) -> str:
+        """
+        Gets the title for the plot_field outputed subplots.
+
+        :param      supermode:         The supermode corresponding to the specific subplot.
+        :type       supermode:         SuperMode
+        :param      itr:               The itr value
+        :type       itr:               float
+        :param      slice_number:      The slice number
+        :type       slice_number:      int
+        :param      show_mode_label:   If True the mode label will be shown.
+        :type       show_mode_label:   bool
+        :param      show_itr:          If True the title contains the itr value.
+        :type       show_itr:          bool
+        :param      show_slice:        If True the title contains the slice number of the evaluated ITR
+        :type       show_slice:        bool
+
+        :returns:   The plot mode field title.
+        :rtype:     str
+        """
+        title = ''
+
+        if show_mode_label:
+            title += f'{self.stylized_label}'
+
+        if show_itr or show_slice:
+            itr = slice_to_itr(itr_list=self.itr_list, slice_number=slice_number)
+            title += '\n'
+
+        if show_slice:
+            title += f'slice: {slice_number}'
+
+        if show_itr:
+            title += f'  itr: {itr:.3f}'
+
+        return title
 
 # -

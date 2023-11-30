@@ -123,9 +123,6 @@ class InheritFromSuperMode():
     def itr_to_slice(self, itr: list = []):
         return self.parent_supermode.parent_set.itr_to_slice(itr)
 
-    def _interpret_itr_slice_list_(self, *args, **kwargs):
-        return self.parent_supermode.parent_set._interpret_itr_slice_list_(*args, **kwargs)
-
     def _get_symmetrize_vector(self, *args, **kwargs):
         return self.parent_supermode._get_symmetrize_vector(*args, **kwargs)
 

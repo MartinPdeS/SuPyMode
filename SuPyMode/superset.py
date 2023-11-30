@@ -18,7 +18,7 @@ import pyvista
 # Local imports
 from SuPyMode.supermode import SuperMode
 from SuPyMode.tools import plot_style
-from SuPyMode.tools.utils import test_valid_input, get_intersection
+from SuPyMode.tools.utils import test_valid_input, get_intersection, interpret_slice_number_and_itr, interpret_mode_of_interest
 from SuPyMode.profiles import AlphaProfile
 from SuPyMode.tools import directories
 from MPSPlots.render2D import SceneMatrix, SceneList, Axis, Multipage
@@ -30,10 +30,9 @@ class SuperSet(object):
     """
     Solver to which is associated the computed SuperSet Modes
 
-    .. note::
-        This class is a representation of the fiber optic structures set of supermodes, hence the name.
-        This class has not ling to c++ codes, it is pure Python.
-        The items of this class are the supermodes generated from within the SuPySolver
+    This class is a representation of the fiber optic structures set of supermodes, hence the name.
+    This class has not ling to c++ codes, it is pure Python.
+    The items of this class are the supermodes generated from within the SuPySolver
 
     """
     parent_solver: object
@@ -46,10 +45,10 @@ class SuperSet(object):
         self._itr_to_slice = interp1d(self.itr_list, numpy.arange(self.itr_list.size))
         self._slice_to_itr = interp1d(numpy.arange(self.itr_list.size), self.itr_list)
 
-    def __getitem__(self, idx: int):
+    def __getitem__(self, idx: int) -> SuperMode:
         return self.supermodes[idx]
 
-    def __setitem__(self, idx: int, value):
+    def __setitem__(self, idx: int, value: SuperMode) -> None:
         self.supermodes[idx] = value
 
     @property
@@ -60,7 +59,7 @@ class SuperSet(object):
         return self.parent_solver.geometry
 
     @property
-    def itr_list(self):
+    def itr_list(self) -> numpy.ndarray:
         """
         Return list of itr value that are used to compute the supermodes
         """
@@ -95,7 +94,7 @@ class SuperSet(object):
         :returns:   The non-fundamental supermodes
         :rtype:     list[SuperMode]
         """
-        return self.get_non_fundamental_supermodes(tolerance=1e-3)
+        return self.get_non_fundamental_supermodes(tolerance=1e-2)
 
     @property
     def transmission_matrix(self) -> numpy.ndarray:
@@ -325,7 +324,8 @@ class SuperSet(object):
 
         return sub_distance, sub_itr_vector, sub_t_matrix
 
-    def propagate(self, *,
+    def propagate(
+            self, *,
             profile: AlphaProfile,
             initial_amplitude: list,
             max_step: float = None,
@@ -407,7 +407,8 @@ class SuperSet(object):
         else:
             return numpy.asarray(initial_amplitude).astype(complex)
 
-    def plot_propagation(self, *,
+    def plot_propagation(
+            self, *,
             profile: AlphaProfile,
             initial_amplitude,
             max_step: float = None,
@@ -477,7 +478,8 @@ class SuperSet(object):
 
         return figure, (z, amplitudes, itr_list)
 
-    def generate_propagation_gif(self, *,
+    def generate_propagation_gif(
+            self, *,
             profile: AlphaProfile,
             initial_amplitude,
             max_step: float = None,
@@ -527,7 +529,8 @@ class SuperSet(object):
 
         return z_list, amplitudes_list, itr_list
 
-    def generate_propagation_gif_from_values(self, *,
+    def generate_propagation_gif_from_values(
+            self, *,
             amplitudes_list: numpy.ndarray,
             itr_list: numpy.ndarray,
             z_list: numpy.ndarray,
@@ -647,40 +650,6 @@ class SuperSet(object):
             [mode.solver_number for mode in self.supermodes],
         )
 
-    def _interpret_itr_slice_list_(self, *, slice_list: list[int] | int = [], itr_list: list[float] | float = [], sorting: bool = False) -> tuple:
-        """
-        Interpret and returns list of slice_number and associated itr values for a certain
-        slice_list and itr_list input.
-
-        :param      slice_list:  The slice list
-        :type       slice_list:  list
-        :param      itr_list:    The itr list
-        :type       itr_list:    list
-
-        :returns:   A tuple containing interpreted slice_number and itr_list
-        :rtype:     tuple
-        """
-
-        if slice_list is not None:
-            slice_list = numpy.atleast_1d(slice_list)
-
-        if itr_list is not None:
-            itr_list = numpy.atleast_1d(itr_list)
-
-        itr_total_list = numpy.concatenate((itr_list, self.slice_to_itr(slice_list)))
-
-        if sorting:
-            itr_total_list = numpy.sort(itr_total_list)
-
-        slice_total_list = self.itr_to_slice(itr_list=itr_total_list)
-
-        if len(slice_total_list) == 0:
-            slice_total_list = numpy.array([0, -1])
-            itr_total_list = self.slice_to_itr(slice_total_list)
-            return slice_total_list, itr_total_list
-
-        return slice_total_list, itr_total_list
-
     @staticmethod
     def single_plot(plot_function):
         def wrapper(self, *args, **kwargs):
@@ -693,7 +662,8 @@ class SuperSet(object):
         return wrapper
 
     @single_plot
-    def plot_index(self,
+    def plot_index(
+            self,
             ax: Axis,
             show_crossings: bool = False,
             mode_of_interest: list[SuperMode] = 'all',
@@ -718,7 +688,8 @@ class SuperSet(object):
             **artist_kwargs
         )
 
-    def _render_index_vs_itr_on_ax_(self,
+    def _render_index_vs_itr_on_ax_(
+            self,
             ax: Axis,
             show_crossings: bool = False,
             mode_of_interest: list[SuperMode] = 'all',
@@ -736,7 +707,10 @@ class SuperSet(object):
         :returns:   No returns
         :rtype:     None
         """
-        mode_of_interest = self.interpret_mode_of_interest(mode_of_interest)
+        mode_of_interest = interpret_mode_of_interest(
+            superset=self,
+            mode_of_interest=mode_of_interest
+        )
 
         for mode in mode_of_interest:
             y = mode.index.get_values()
@@ -760,7 +734,8 @@ class SuperSet(object):
                 )
 
     @single_plot
-    def plot_beta(self,
+    def plot_beta(
+            self,
             ax: Axis,
             show_crossings: bool = False,
             mode_of_interest: list[SuperMode] = 'all',
@@ -785,7 +760,8 @@ class SuperSet(object):
             **artist_kwargs
         )
 
-    def _render_beta_vs_itr_on_ax_(self,
+    def _render_beta_vs_itr_on_ax_(
+            self,
             ax: Axis,
             show_crossings: bool = False,
             mode_of_interest: list[SuperMode] = 'all',
@@ -803,7 +779,10 @@ class SuperSet(object):
         :returns:   No returns
         :rtype:     None
         """
-        mode_of_interest = self.interpret_mode_of_interest(mode_of_interest)
+        mode_of_interest = interpret_mode_of_interest(
+            superset=self,
+            mode_of_interest=mode_of_interest
+        )
 
         for mode in mode_of_interest:
             y = mode.beta.get_values()
@@ -827,7 +806,8 @@ class SuperSet(object):
                 )
 
     @single_plot
-    def plot_eigen_value(self,
+    def plot_eigen_value(
+            self,
             ax: Axis,
             mode_of_interest: list[SuperMode] = 'all',
             **artist_kwargs) -> SceneList:
@@ -850,7 +830,8 @@ class SuperSet(object):
             **artist_kwargs
         )
 
-    def _render_eigen_values_vs_itr_on_ax_(self,
+    def _render_eigen_values_vs_itr_on_ax_(
+            self,
             ax: Axis,
             mode_of_interest: list[SuperMode] = 'all',
             **artist_kwargs) -> None:
@@ -867,7 +848,10 @@ class SuperSet(object):
         :returns:   No returns
         :rtype:     None
         """
-        mode_of_interest = self.interpret_mode_of_interest(mode_of_interest)
+        mode_of_interest = interpret_mode_of_interest(
+            superset=self,
+            mode_of_interest=mode_of_interest
+        )
 
         for mode in mode_of_interest:
             y = mode.eigen_value.get_values()
@@ -880,7 +864,8 @@ class SuperSet(object):
             )
 
     @single_plot
-    def plot_normalized_coupling(self,
+    def plot_normalized_coupling(
+            self,
             ax: Axis,
             mode_of_interest: list = 'all',
             mode_selection='pairs',
@@ -907,7 +892,8 @@ class SuperSet(object):
             **artist_kwargs
         )
 
-    def _render_normalized_coupling_vs_itr_on_ax_(self,
+    def _render_normalized_coupling_vs_itr_on_ax_(
+            self,
             ax: Axis,
             mode_of_interest: list[SuperMode] = 'all',
             mode_selection: str = 'pairs',
@@ -944,7 +930,8 @@ class SuperSet(object):
                 )
 
     @single_plot
-    def plot_overlap(self,
+    def plot_overlap(
+            self,
             ax: Axis,
             mode_of_interest: list = 'all',
             mode_selection='pairs',
@@ -971,7 +958,8 @@ class SuperSet(object):
             **artist_kwargs
         )
 
-    def _render_overlap_vs_itr_on_ax_(self,
+    def _render_overlap_vs_itr_on_ax_(
+            self,
             ax: Axis,
             mode_of_interest: list[SuperMode] = 'all',
             mode_selection: str = 'pairs',
@@ -1008,7 +996,8 @@ class SuperSet(object):
                 )
 
     @single_plot
-    def plot_beating_length(self,
+    def plot_beating_length(
+            self,
             ax: Axis,
             mode_of_interest: list = 'all',
             mode_selection='pairs',
@@ -1038,7 +1027,8 @@ class SuperSet(object):
         for profile in numpy.atleast_1d(add_profile):
             profile._render_taper_length_scale_vs_itr_on_ax_(ax=ax, core_radius=core_radius)
 
-    def _render_beating_length_vs_itr_on_ax_(self,
+    def _render_beating_length_vs_itr_on_ax_(
+            self,
             ax: Axis,
             mode_of_interest: list[SuperMode] = 'all',
             mode_selection: str = 'pairs',
@@ -1078,7 +1068,8 @@ class SuperSet(object):
                 )
 
     @single_plot
-    def plot_adiabatic(self,
+    def plot_adiabatic(
+            self,
             ax: Axis,
             mode_of_interest: list[SuperMode] = 'all',
             mode_selection: str = 'pairs',
@@ -1108,9 +1099,10 @@ class SuperSet(object):
         )
 
         for profile in numpy.atleast_1d(add_profile):
-            profile._render_adiabatic_factor_vs_itr_on_ax_(ax, line_style='--', color='black')
+            profile._render_adiabatic_factor_vs_itr_on_ax_(ax)
 
-    def _render_adiabatic_vs_itr_on_ax_(self,
+    def _render_adiabatic_vs_itr_on_ax_(
+            self,
             ax: Axis,
             mode_of_interest: list[SuperMode] = 'all',
             mode_selection: str = 'pairs',
@@ -1153,7 +1145,8 @@ class SuperSet(object):
             profile._render_adiabatic_factor_vs_itr_on_ax_(ax, line_style='--', color='black')
 
     @single_plot
-    def plot_normalized_adiabatic(self,
+    def plot_normalized_adiabatic(
+            self,
             ax: Axis,
             mode_of_interest: list = 'all',
             mode_selection: str = 'pairs') -> SceneList:
@@ -1189,7 +1182,10 @@ class SuperSet(object):
                 )
 
     def interpret_combinations(self, mode_of_interest: list, mode_selection: str):
-        mode_of_interest = self.interpret_mode_of_interest(mode_of_interest)
+        mode_of_interest = interpret_mode_of_interest(
+            superset=self,
+            mode_of_interest=mode_of_interest
+        )
 
         combination = self.interpret_mode_selection(
             mode_of_interest=mode_of_interest,
@@ -1256,33 +1252,11 @@ class SuperSet(object):
 
         return set(mode_combinations)
 
-    def interpret_mode_of_interest(self, mode_of_interest: list) -> list:
-        if isinstance(mode_of_interest, SuperMode):
-            return [mode_of_interest]
-
-        if isinstance(mode_of_interest, list):
-            return mode_of_interest
-
-        test_valid_input(
-            variable_name='mode_of_interest',
-            user_input=mode_of_interest,
-            valid_inputs=['all', 'fundamental', 'non-fundamental']
-        )
-
-        match mode_of_interest:
-            case 'fundamental':
-                mode_of_interest = self.fundamental_supermodes
-            case 'non-fundamental':
-                mode_of_interest = self.non_fundamental_supermodes
-            case 'all':
-                mode_of_interest = self.supermodes
-
-        return mode_of_interest
-
-    def plot_field(self,
+    def plot_field(
+            self,
             mode_of_interest: list = 'all',
             itr_list: list[float] = [],
-            slice_list: list[int] = [],
+            slice_list: list[int] = [0, -1],
             show_mode_label: bool = True,
             show_itr: bool = True,
             show_slice: bool = True) -> SceneMatrix:
@@ -1299,11 +1273,20 @@ class SuperSet(object):
         """
         figure = SceneMatrix(unit_size=(3, 3))
 
-        slice_list, itr_list = self._interpret_itr_slice_list_(slice_list=slice_list, itr_list=itr_list)
+        slice_list, itr_list = interpret_slice_number_and_itr(
+            itr_list=self.itr_list,
+            itr=itr_list,
+            slice_number=slice_list
+        )
 
-        mode_of_interest = self.interpret_mode_of_interest(mode_of_interest=mode_of_interest)
+        mode_of_interest = interpret_mode_of_interest(
+            superset=self,
+            mode_of_interest=mode_of_interest
+        )
 
         for m, mode in enumerate(mode_of_interest):
+            
+            
             for n, (itr, slice_number) in enumerate(zip(itr_list, slice_list)):
                 title = self.get_plot_mode_field_title(
                     supermode=mode,
@@ -1340,7 +1323,14 @@ class SuperSet(object):
 
         return figure
 
-    def get_plot_mode_field_title(self, supermode: SuperMode, itr: float, slice_number: int, show_mode_label: bool, show_itr: bool, show_slice: bool) -> str:
+    def get_plot_mode_field_title(
+            self,
+            supermode: SuperMode,
+            itr: float,
+            slice_number: int,
+            show_mode_label: bool,
+            show_itr: bool,
+            show_slice: bool) -> str:
         """
         Gets the title for the plot_field outputed subplots.
 
@@ -1409,7 +1399,8 @@ class SuperSet(object):
             case 'normalized-adiabatic':
                 return self.plot_normalized_adiabatic(**kwargs)
 
-    def generate_pdf_report(self,
+    def generate_pdf_report(
+            self,
             filename: str = "report",
             directory: str = '.',
             itr_list: list[float] = [],

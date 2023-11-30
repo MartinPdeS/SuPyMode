@@ -64,7 +64,10 @@ class AlphaProfile():
             n_point=n_point
         )
 
-    def add_end_of_taper_segment(self, *, length: float = None, n_point: int = 100) -> None:
+    def add_end_of_taper_segment(
+            self, *,
+            length: float = None,
+            n_point: int = 100) -> None:
         """
         Add the constant section which length equal the final length of the
         heating section.
@@ -82,7 +85,8 @@ class AlphaProfile():
             n_point=n_point
         )
 
-    def add_constant_custom_section(self, *,
+    def add_constant_custom_section(
+            self, *,
             length: float,
             radius: float,
             start_z: float = 0,
@@ -132,14 +136,15 @@ class AlphaProfile():
 
         return interpolation(distance)
 
-    def get_radius_from_segment(self, *,
+    def get_radius_from_segment(
+            self, *,
             alpha: float,
             initial_heating_length: float,
             stretching_length: float,
             initial_radius: float,
             distance: numpy.ndarray) -> tuple:
         """
-        Gets the radius as a fonction of the distance for a specific segment.,
+        Gets the radius as a fonction of the distance for a specific segment.
 
         :param      alpha:                  Alpha parameter which represent how the heating section changes in time
         :type       alpha:                  float
@@ -151,6 +156,9 @@ class AlphaProfile():
         :type       stretching_length:      float
         :param      distance:               Array representing the z-distance.
         :type       distance:               numpy.ndarray
+
+        :returns:   The radius, final radius and final heating length
+        :rtype:     tuple
         """
         self.assert_conditions(
             alpha=alpha,
@@ -170,11 +178,24 @@ class AlphaProfile():
 
         return radius, final_radius, final_heating_length
 
-    def assert_conditions(self, *,
-                          alpha: float,
-                          stretching_length: float,
-                          initial_heating_length: float) -> None:
+    def assert_conditions(
+            self, *,
+            alpha: float,
+            stretching_length: float,
+            initial_heating_length: float) -> None:
+        """
+        Assert a few condition of viability of the proposed recipe.
 
+        :param      alpha:                   The alpha
+        :type       alpha:                   float
+        :param      stretching_length:       The stretching length
+        :type       stretching_length:       float
+        :param      initial_heating_length:  The initial heating length
+        :type       initial_heating_length:  float
+
+        :returns:   No returns
+        :rtype:     None
+        """
         assert initial_heating_length > 0, "The initial heat lenght initial_heating_length cannot be negative!"
 
         if alpha < 0:
@@ -195,7 +216,8 @@ class AlphaProfile():
         self.z_segment.append(end_of_segment)
         self.radius_segments.append(final_radius_of_segment)
 
-    def add_taper_custom_segment(self, *,
+    def add_taper_custom_segment(
+            self, *,
             alpha: float,
             initial_heating_length: float,
             initial_radius: float,
@@ -357,7 +379,8 @@ class AlphaProfile():
 
         return radius
 
-    def add_taper_segment(self, *,
+    def add_taper_segment(
+            self, *,
             alpha: float,
             initial_heating_length: float,
             stretching_length: float,
@@ -420,6 +443,7 @@ class AlphaProfile():
     def get_adiabatic_factor(self) -> numpy.ndarray:
         r"""
         Compute the adiabatic factor defined as:
+
         .. math::
           f_c = \frac{1}{\rho} \frac{d \rho}{d z}
 
@@ -436,6 +460,7 @@ class AlphaProfile():
         r"""
         From Tapered single-mode fibres and devices. Part 1: Adiabaticity criteria.
         Compute the adiabatic factor defined as:
+
         .. math::
           f_c = \frac{d \rho}{d z} = \Omega
 
@@ -451,6 +476,7 @@ class AlphaProfile():
     def get_length_scale(self, core_radius: float) -> numpy.ndarray:
         r"""
         Compute the adiabatic factor defined as:
+
         .. math::
           f_c = \frac{\rho}{\Omega}
 
@@ -459,7 +485,11 @@ class AlphaProfile():
         """
         return core_radius / self.get_taper_angle()
 
-    def _render_itr_vs_z_on_ax_(self, ax: Axis, **artist_kwargs) -> None:
+    def _render_itr_vs_z_on_ax_(
+            self,
+            ax: Axis,
+            line_style: str = None,
+            line_color: str = None) -> None:
         """
         Add plot onto axis, the plots is ITR vs Z-distance
 
@@ -468,14 +498,22 @@ class AlphaProfile():
         """
         ax.set_style(**plot_style.z_profile)
 
+        line_style = self.line_style if line_style is None else line_style
+        line_color = self.line_color if line_color is None else line_color
+
         ax.add_line(
             x=self.distance,
             y=self.radius / self.initial_radius,
             label=self.label,
-            **artist_kwargs
+            line_style=line_style,
+            color=line_color
         )
 
-    def _render_taper_angle_vs_z_on_ax_(self, ax: Axis, **artist_kwargs) -> None:
+    def _render_taper_angle_vs_z_on_ax_(
+            self,
+            ax: Axis,
+            line_style: str = None,
+            line_color: str = None) -> None:
         """
         Add plot onto axis, the plots is ITR vs Z-distance
 
@@ -484,14 +522,22 @@ class AlphaProfile():
         """
         ax.set_style(**plot_style.taper_angle)
 
+        line_style = self.line_style if line_style is None else line_style
+        line_color = self.line_color if line_color is None else line_color
+
         ax.add_line(
             x=self.distance,
             y=self.taper_angle,
             label=self.label,
-            **artist_kwargs
+            line_style=line_style,
+            color=line_color
         )
 
-    def _render_taper_length_scale_vs_itr_on_ax_(self, ax: Axis, core_radius: float, **artist_kwargs) -> None:
+    def _render_taper_length_scale_vs_itr_on_ax_(
+            self,
+            ax: Axis,
+            line_style: str = None,
+            line_color: str = None) -> None:
         """
         Add ITR vs Z-distance plot to axis
 
@@ -500,16 +546,24 @@ class AlphaProfile():
         """
         ax.set_style(**plot_style.taper_angle)
 
-        length_scale = self.get_length_scale(core_radius=core_radius)
+        length_scale = self.get_length_scale(core_radius=self.initial_radius)
+
+        line_style = self.line_style if line_style is None else line_style
+        line_color = self.line_color if line_color is None else line_color
 
         ax.add_line(
             x=self.itr_list,
             y=length_scale,
             label='Coupler length-scale',
-            **artist_kwargs
+            line_style=line_style,
+            color=line_color
         )
 
-    def _render_adiabatic_factor_vs_z_on_ax_(self, ax: Axis, **artist_kwargs) -> None:
+    def _render_adiabatic_factor_vs_z_on_ax_(
+            self,
+            ax: Axis,
+            line_style: str = None,
+            line_color: str = None) -> None:
         """
         Add plot onto axis, the plots is adiabatic criterion vs Z-distance
 
@@ -520,14 +574,22 @@ class AlphaProfile():
         ax.y_label = 'Adiabatic criterion'
         ax.x_label = 'z-distance'
 
+        line_style = self.line_style if line_style is None else line_style
+        line_color = self.line_color if line_color is None else line_color
+
         ax.add_line(
             x=self._distance_array,
             y=self._adiabatic_factor,
             label=self.label,
-            **artist_kwargs
+            line_style=line_style,
+            color=line_color
         )
 
-    def _render_adiabatic_factor_vs_itr_on_ax_(self, ax: Axis, **artist_kwargs) -> None:
+    def _render_adiabatic_factor_vs_itr_on_ax_(
+            self,
+            ax: Axis,
+            line_style: str = None,
+            line_color: str = None) -> None:
         """
         Add adiabatic criterion vs ITR plot to axis
 
@@ -536,14 +598,19 @@ class AlphaProfile():
         """
         ax.set_style(**plot_style.adiabatic)
 
+        line_style = self.line_style if line_style is None else line_style
+        line_color = self.line_color if line_color is None else line_color
+
         ax.add_line(
             x=self.itr_list,
             y=self.adiabatic,
             label=self.label,
-            **artist_kwargs
+            line_style=line_style,
+            color=line_color
         )
 
-    def plot(self,
+    def plot(
+            self,
             show_radius: bool = True,
             show_adiabatic: bool = True,
             show_taper_angle: bool = True) -> SceneList:
@@ -583,7 +650,8 @@ class AlphaProfile():
         figure.annotate_axis(position=(-0.15, 1.15))
         return figure
 
-    def generate_propagation_gif(self,
+    def generate_propagation_gif(
+            self,
             output_directory: str = './new_gif.gif',
             dpi: int = 100,
             fps: int = 20,
@@ -655,25 +723,5 @@ class AlphaProfile():
                 dpi=dpi,
                 writer=PillowWriter(fps=fps)
             )
-
-
-if __name__ == '__main__':
-    profile = AlphaProfile(
-        initial_radius=62.5e-6,
-        symmetric=False,
-        label='test profile',
-        line_color='red'
-    )
-
-    profile.add_taper_segment(
-        alpha=0,
-        initial_heating_length=5e-3,
-        stretching_length=20e-3,
-        n_point=100
-    )
-
-    profile.initialize()
-
-    profile.plot().show()
 
 # -

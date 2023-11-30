@@ -41,4 +41,130 @@ def test_valid_input(user_input, valid_inputs: list, variable_name: str = ''):
         raise ValueError(f"[{variable_name}] user_input: {user_input} argument not valid. Valid choices are: {valid_inputs}")
 
 
+def itr_to_slice(itr_list: numpy.ndarray, itr: float | list) -> int | list:
+    """
+    Convert itr value to slice number
+
+    :param      itr_list:  The itr list
+    :type       itr_list:  numpy.ndarray
+    :param      itr:       The itr
+    :type       itr:       float | list
+
+    :returns:   The equivalent slice numbers
+    :rtype:     float | list
+    """
+    return_scalar = False
+
+    if numpy.isscalar(itr):
+        return_scalar = True
+        itr = [itr]
+
+    slice_number = [
+        numpy.argmin(abs(itr_list - value)) for value in itr
+    ]
+
+    if return_scalar:
+        return slice_number[0]
+
+    return slice_number
+
+
+def slice_to_itr(itr_list: numpy.ndarray, slice_number: int | list) -> float | list:
+    """
+    Convert itr value to slice number
+
+    :param      itr_list:      The itr list
+    :type       itr_list:      numpy.ndarray
+    :param      slice_number:  The itr
+    :type       slice_number:  int | list
+
+    :returns:   The equivalent slice numbers
+    :rtype:     float | list
+    """
+    return_scalar = False
+
+    if numpy.isscalar(slice_number):
+        return_scalar = True
+        slice_number = [slice_number]
+
+    itr = itr_list[slice_number]
+
+    if return_scalar:
+        return itr[0]
+
+    return itr
+
+
+def interpret_slice_number_and_itr(
+        itr_list: numpy.ndarray,
+        slice_number: int | list[int],
+        itr: float | list[float],
+        sort_slice_number: bool = True) -> tuple:
+    """
+    Interpret the itr and slice_number as input and return a tuple containing all the associated values
+
+    :param      itr_list:      The itr list
+    :type       itr_list:      numpy.ndarray
+    :param      slice_number:  The slice number
+    :type       slice_number:  int | list[int]
+    :param      itr:           The itr
+    :type       itr:           float | list[float]
+
+    :returns:   All the associated slice numbers and itr values
+    :rtype:     tuple
+    """
+    slice_number = numpy.atleast_1d(slice_number)
+
+    slice_from_itr = itr_to_slice(itr_list, itr=itr)
+
+    slice_from_itr = numpy.atleast_1d(slice_from_itr)
+
+    total_slice_list = [*slice_number, *slice_from_itr]
+
+    total_itr_list = slice_to_itr(itr_list, slice_number=total_slice_list)
+
+    slice_number = numpy.asarray(total_slice_list)
+
+    itr = numpy.asarray(total_itr_list)
+
+    if sort_slice_number:
+        slice_number = numpy.sort(slice_number)[::-1]
+
+        itr = numpy.sort(itr)[::-1]
+
+    if len(itr) == 1:
+        return slice_number[0], itr[0]
+
+    return slice_number, itr
+
+
+def interpret_mode_of_interest(superset: object, mode_of_interest: str | object | list[object]) -> list[object]:
+    """
+    Interpret and returns the input for the mode_of_intereset argument.
+
+    :param      superset:          The superset
+    :type       superset:          object
+    :param      mode_of_interest:  The mode of interest
+    :type       mode_of_interest:  str | object | list[object]
+
+    :returns:   A list of the mode of interest
+    :rtype:     list[object]
+    """
+    if isinstance(mode_of_interest, str):
+        match mode_of_interest:
+            case 'fundamental':
+                return superset.fundamental_supermodes
+            case 'non-fundamental':
+                return superset.non_fundamental_supermodes
+            case 'all':
+                return superset.supermodes
+
+    if isinstance(mode_of_interest, object):
+        return [mode_of_interest]
+
+    if isinstance(mode_of_interest, list):
+        return mode_of_interest
+
+    raise ValueError(f"Invalid input for {mode_of_interest=}. Valid in put must be string ['fundamental', 'non-fundamental', 'all'] or a list or instance of SuperMode.")
+
 # -
