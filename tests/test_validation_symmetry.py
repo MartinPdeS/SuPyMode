@@ -43,8 +43,4 @@ def test_symmetry():
     if not discrepency.mean() > 0.9:
         raise ValueError(f'Symmetric and non-symmetric index do not match [mean error: {discrepency.mean()}]')
 
-
-if __name__ == '__main__':
-    test_symmetry()
-
 # -

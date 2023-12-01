@@ -6,6 +6,14 @@ import numpy
 from SuPyMode.representation.base import InheritFromSuperMode, BaseSingleModePlot
 from MPSPlots.render2D import SceneList, Axis
 
+ax_style = dict(
+    show_legend=True,
+    x_label='Inverse taper ratio',
+    y_label='Propagation constant [rad/M]',
+    y_scale="linear",
+    line_width=2
+)
+
 
 class Beta(InheritFromSuperMode, BaseSingleModePlot):
     def __init__(self, parent_supermode):
@@ -42,29 +50,11 @@ class Beta(InheritFromSuperMode, BaseSingleModePlot):
 
         ax = figure.append_ax()
 
-        ax.set_style(self.ax_style)
+        ax.set_style(**ax_style)
 
         self.render_on_ax(ax=ax)
 
         return figure
-
-    @property
-    def ax_style(self) -> dict:
-        """
-        Returns the default style for the propagation constant plots for the MPSPlots library.
-
-        :returns:   The MPSPlots ax style
-        :rtype:     dict
-        """
-        style = dict(
-            show_legend=True,
-            x_label='Inverse taper ratio',
-            y_label='Propagation constant [rad/M]',
-            y_scale="linear",
-            line_width=2
-        )
-
-        return style
 
 
 # -

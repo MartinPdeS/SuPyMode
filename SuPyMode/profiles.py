@@ -5,7 +5,7 @@ import numpy
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 
-from SuPyMode.tools import plot_style
+from SuPyMode import representation
 from MPSPlots.render2D import SceneList, Axis
 from matplotlib.animation import FuncAnimation, PillowWriter
 
@@ -496,7 +496,14 @@ class AlphaProfile():
         :param      ax:   The axis on which to add the plot
         :type       ax:   Axis
         """
-        ax.set_style(**plot_style.z_profile)
+        ax.set_style(
+            show_legend=False,
+            x_label='Z-propagation [mm]',
+            y_label='Inverse taper ratio',
+            x_scale_factor=1e3,
+            y_scale="linear",
+            line_width=2
+        )
 
         line_style = self.line_style if line_style is None else line_style
         line_color = self.line_color if line_color is None else line_color
@@ -520,7 +527,14 @@ class AlphaProfile():
         :param      ax:   The axis on which to add the plot
         :type       ax:   Axis
         """
-        ax.set_style(**plot_style.taper_angle)
+        ax.set_style(
+            show_legend=False,
+            y_label='Taper angle [rad]',
+            x_label='Z-propagation [mm]',
+            x_scale_factor=1e3,
+            y_scale="linear",
+            line_width=2
+        )
 
         line_style = self.line_style if line_style is None else line_style
         line_color = self.line_color if line_color is None else line_color
@@ -544,7 +558,14 @@ class AlphaProfile():
         :param      ax:   The axis on which to add the plot
         :type       ax:   Axis
         """
-        ax.set_style(**plot_style.taper_angle)
+        ax.set_style(
+            show_legend=False,
+            y_label='Taper angle [rad]',
+            x_label='Z-propagation [mm]',
+            x_scale_factor=1e3,
+            y_scale="linear",
+            line_width=2
+        )
 
         length_scale = self.get_length_scale(core_radius=self.initial_radius)
 
@@ -596,7 +617,7 @@ class AlphaProfile():
         :param      ax:   The axis on which to add the plot
         :type       ax:   Axis
         """
-        ax.set_style(**plot_style.adiabatic)
+        ax.set_style(**representation.adiabatic.ax_style)
 
         line_style = self.line_style if line_style is None else line_style
         line_color = self.line_color if line_color is None else line_color

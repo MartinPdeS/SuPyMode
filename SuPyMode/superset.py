@@ -17,6 +17,7 @@ import pyvista
 
 # Local imports
 from SuPyMode.supermode import SuperMode
+from SuPyMode import representation
 from SuPyMode.tools.utils import test_valid_input, get_intersection, interpret_slice_number_and_itr, interpret_mode_of_interest
 from SuPyMode.profiles import AlphaProfile
 from SuPyMode.tools import directories
@@ -78,7 +79,7 @@ class SuperSet(object):
         :returns:   The fundamental supermodes
         :rtype:     list[SuperMode]
         """
-        return self.get_fundamental_supermodes(tolerance=1e-3)
+        return self.get_fundamental_supermodes(tolerance=1e-2)
 
     @property
     def non_fundamental_supermodes(self) -> list[SuperMode]:
@@ -265,6 +266,7 @@ class SuperSet(object):
     def compute_coupling_factor(self, *, coupler_length: float) -> numpy.ndarray:
         r"""
         Compute the coupling factor defined as:
+
         .. math::
             f_c = \frac{1}{\rho} \frac{d \rho}{d z}
 
@@ -693,10 +695,10 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
+        ax.set_style(**representation.index.ax_style)
+
         for mode in mode_of_interest:
             mode.index.render_on_ax(ax=ax)
-
-            ax.set_style(**mode.index.ax_style)
 
         if show_crossings:
             self.add_crossings_to_ax(ax=ax, mode_of_interest=mode_of_interest, data_type='index')
@@ -718,10 +720,10 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
+        ax.set_style(**representation.beta.ax_style)
+
         for mode in mode_of_interest:
             mode.beta.render_on_ax(ax=ax)
-
-            ax.set_style(**mode.beta.ax_style)
 
         if show_crossings:
             self.add_crossings_to_ax(ax=ax, mode_of_interest=mode_of_interest, data_type='beta')
@@ -743,10 +745,10 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
+        ax.set_style(**representation.eigen_value.ax_style)
+
         for mode in mode_of_interest:
             mode.index.render_on_ax(ax=ax)
-
-            ax.set_style(**mode.eigen_value.ax_style)
 
         if show_crossings:
             self.add_crossings_to_ax(ax=ax, mode_of_interest=mode_of_interest, data_type='eigen_value')
@@ -770,8 +772,9 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
+        ax.set_style(**representation.normalized_coupling.ax_style)
+
         for mode_0, mode_1 in combination:
-            ax.set_style(**mode_0.normalized_coupling.ax_style)
             mode_0.normalized_coupling.render_on_ax(ax=ax, other_supermode=mode_1)
 
     @combination_plot
@@ -813,8 +816,9 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
+        ax.set_style(**representation.adiabatic.ax_style)
+
         for mode_0, mode_1 in combination:
-            ax.set_style(**mode_0.adiabatic.ax_style)
             mode_0.adiabatic.render_on_ax(ax=ax, other_supermode=mode_1)
 
         for profile in numpy.atleast_1d(add_profile):
@@ -917,6 +921,8 @@ class SuperSet(object):
                     column=m,
                 )
 
+                ax.set_style(**representation.field.ax_style)
+
                 mode.field.render_on_ax(
                     ax=ax,
                     slice_number=slice_number,
@@ -983,7 +989,7 @@ class SuperSet(object):
         :param      mode_of_interest:  List of the mode that are to be considered in the adiabatic criterion plotting.
         :type       mode_of_interest:  list
 
-        :returns:   { description_of_the_return_value }
+        :returns:   No return
         :rtype:     None
         """
         if directory == 'auto':
@@ -993,22 +999,23 @@ class SuperSet(object):
 
         logging.info(f"Saving report pdf into: {filename}")
 
-        figures = []
-        figures.append(self.geometry.plot()._render_())
+        figure_list = []
 
-        figures.append(self.plot_field(itr_list=itr_list, slice_list=slice_list)._render_())
+        figure_list.append(self.geometry.plot()._render_())
 
-        figures.append(self.plot_index()._render_())
+        figure_list.append(self.plot_field(itr_list=itr_list, slice_list=slice_list)._render_())
 
-        figures.append(self.plot_beta()._render_())
+        figure_list.append(self.plot_index()._render_())
 
-        figures.append(self.plot_normalized_coupling(mode_of_interest=mode_of_interest, mode_selection=mode_selection)._render_())
+        figure_list.append(self.plot_beta()._render_())
 
-        figures.append(self.plot_adiabatic(mode_of_interest=mode_of_interest, mode_selection=mode_selection)._render_())
+        figure_list.append(self.plot_normalized_coupling(mode_of_interest=mode_of_interest, mode_selection=mode_selection)._render_())
 
-        Multipage(filename, figs=figures, dpi=dpi)
+        figure_list.append(self.plot_adiabatic(mode_of_interest=mode_of_interest, mode_selection=mode_selection)._render_())
 
-        for figure in figures:
+        Multipage(filename, figs=figure_list, dpi=dpi)
+
+        for figure in figure_list:
             figure.close()
 
     def save_instance(self, filename: str, directory: str = '.') -> Path:

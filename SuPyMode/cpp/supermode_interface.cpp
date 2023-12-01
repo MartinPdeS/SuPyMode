@@ -1,7 +1,5 @@
 #include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
-#include "definitions.cpp"
-#include "includes/supermode.h"
+#include "includes/model_parameters.cpp"
 #include "includes/supermode.cpp"
 
 

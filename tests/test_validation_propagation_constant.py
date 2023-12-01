@@ -74,15 +74,4 @@ def test_propagation_constant(
         raise AssertionError(f"Discrepency between the computed and analytical normalized coupling, discrepency: [mean error: {error.mean()}, mean relative error: {relative_error.mean()}]")
 
 
-if __name__ == '__main__':
-    test_propagation_constant(
-        wavelength=1550e-9,
-        resolution=120,
-        itr_final=0.6,
-        n_step=100,
-        plot_field=True,
-        debug_mode=True,
-        plot_results=True
-    )
-
 # -

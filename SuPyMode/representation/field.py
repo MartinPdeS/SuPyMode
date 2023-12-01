@@ -10,6 +10,15 @@ from SuPyMode.tools.utils import interpret_slice_number_and_itr, slice_to_itr
 
 from SuPyMode.representation.base import InheritFromSuperMode
 
+ax_style = dict(
+    show_legend=False,
+    x_label=r'X-Direction [$\mu m$]',
+    y_label=r'Y-direction [$\mu m$]',
+    x_scale_factor=1e6,
+    y_scale_factor=1e6,
+    equal=True
+)
+
 
 class Field(InheritFromSuperMode):
     def __init__(self, parent_supermode):
@@ -199,7 +208,7 @@ class Field(InheritFromSuperMode):
         for n, (itr, slice_number) in enumerate(zip(itr_list, slice_list)):
             ax = figure.append_ax(row=n, column=0)
 
-            ax.set_style(self.ax_style)
+            ax.set_style(**ax_style)
 
             self.render_on_ax(
                 ax=ax,
@@ -302,23 +311,5 @@ class Field(InheritFromSuperMode):
 
         return title
 
-    @property
-    def ax_style(self) -> dict:
-        """
-        Returns the default style for the propagation constant plots for the MPSPlots library.
-
-        :returns:   The MPSPlots ax style
-        :rtype:     dict
-        """
-        style = dict(
-            show_legend=False,
-            x_label=r'X-Direction [$\mu m$]',
-            y_label=r'Y-direction [$\mu m$]',
-            x_scale_factor=1e6,
-            y_scale_factor=1e6,
-            equal=True
-        )
-
-        return style
 
 # -

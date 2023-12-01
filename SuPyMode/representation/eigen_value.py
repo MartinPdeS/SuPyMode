@@ -7,6 +7,15 @@ from SuPyMode.representation.base import InheritFromSuperMode, BaseSingleModePlo
 from MPSPlots.render2D import SceneList, Axis
 
 
+ax_style = dict(
+    show_legend=True,
+    x_label='Inverse taper ratio',
+    y_label='Mode eigen values',
+    y_scale="linear",
+    line_width=2
+)
+
+
 class EigenValue(InheritFromSuperMode, BaseSingleModePlot):
     def __init__(self, parent_supermode):
         self.parent_supermode = parent_supermode
@@ -42,28 +51,11 @@ class EigenValue(InheritFromSuperMode, BaseSingleModePlot):
 
         ax = figure.append_ax()
 
-        ax.set_style(self.ax_style)
+        ax.set_style(**ax_style)
 
         self.render_on_ax(ax=ax)
 
         return figure
 
-    @property
-    def ax_style(self) -> dict:
-        """
-        Returns the default style for the eigen value plots for the MPSPlots library.
-
-        :returns:   The MPSPlots ax style
-        :rtype:     dict
-        """
-        style = dict(
-            show_legend=True,
-            x_label='Inverse taper ratio',
-            y_label='Mode eigen values',
-            y_scale="linear",
-            line_width=2
-        )
-
-        return style
 
 # -

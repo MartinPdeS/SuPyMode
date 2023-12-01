@@ -219,7 +219,7 @@ class Workflow():
 
     #  Extra arguments --------------------------
     debug_mode: bool = False
-    """ Enable debug mode printing """
+    """ Level of debug mode printing [0, 1, 2, 3]"""
     auto_label: bool = False
     """ Enable auto labeling of the supermodes """
     generate_report: bool = False
@@ -287,9 +287,8 @@ class Workflow():
             geometry=self.geometry,
             tolerance=1e-20,
             max_iter=5000,
-            show_iteration=self.debug_mode,
             accuracy=self.accuracy,
-            show_eigenvalues=False,
+            debug_mode=self.debug_mode,
             extrapolation_order=self.extrapolation_order
         )
 

@@ -1,10 +1,12 @@
 #pragma once
 
+#include "model_parameters.cpp"
 #include "supermode.h"
 #include "definitions.cpp"
 #include "utils.cpp"
 #include "numpy_interface.cpp"
 #include "equations.cpp"
+
 
     SuperMode::SuperMode(){}
     SuperMode::SuperMode(

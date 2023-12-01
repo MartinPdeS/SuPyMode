@@ -30,12 +30,10 @@ class SuPySolver(object):
     """ Maximum iteration for the c++ Eigensolver """
     accuracy: int = 2
     """ Accuracy of the finit difference methode """
-    show_iteration: bool = True
-    """ Print option. """
-    show_eigenvalues: bool = False
-    """ Print option. """
     extrapolation_order: int = 2
     """ Order of the taylor serie to extrapolate next eigenvalues . """
+    debug_mode: int = 1
+    """ Level of debug outprint from the c++ binding [0, 1, 2] """
 
     def __post_init__(self):
         self.mode_number = 0
@@ -48,7 +46,8 @@ class SuPySolver(object):
     def get_set(self):
         return self.superset
 
-    def initialize_binding(self,
+    def initialize_binding(
+            self,
             n_sorted_mode: int,
             boundaries: Boundaries2D,
             n_added_mode: int) -> CppSolver:
@@ -95,8 +94,7 @@ class SuPySolver(object):
             max_iter=self.max_iter,
             tolerance=self.tolerance,
             wavelength=self.wavelength,
-            show_iteration=self.show_iteration,
-            show_eigenvalues=self.show_eigenvalues,
+            debug_mode=3,
             dx=self.geometry.coordinate_system.dx,
             dy=self.geometry.coordinate_system.dy
         )
@@ -105,7 +103,8 @@ class SuPySolver(object):
 
         return Solver
 
-    def init_superset(self,
+    def init_superset(
+            self,
             wavelength: float,
             n_step: int = 300,
             itr_initial: float = 1.0,
@@ -178,7 +177,8 @@ class SuPySolver(object):
 
         return supermode_labels
 
-    def add_modes(self,
+    def add_modes(
+            self,
             n_sorted_mode: int,
             boundaries: dict,
             n_added_mode: int = 4,

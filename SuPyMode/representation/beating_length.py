@@ -13,6 +13,15 @@ if TYPE_CHECKING:
     from SuPyMode.supermode import SuperMode
 
 
+ax_style = dict(
+    show_legend=True,
+    x_label='Inverse taper ratio',
+    y_label='Beating length [m]',
+    y_scale="log",
+    line_width=2
+)
+
+
 class BeatingLength(InheritFromSuperMode, BaseMultiModePlot):
     def __init__(self, parent_supermode):
         self.parent_supermode = parent_supermode
@@ -56,27 +65,10 @@ class BeatingLength(InheritFromSuperMode, BaseMultiModePlot):
         """
         figure = SceneList()
 
-        ax = figure.append_ax(**self.ax_style)
+        ax = figure.append_ax(**ax_style)
 
         self.render_on_ax(ax=ax, other_supermode=other_supermode)
 
         return figure
 
-    @property
-    def ax_style(self) -> dict:
-        """
-        Returns the default style for the index plots for the MPSPlots library.
-
-        :returns:   The MPSPlots ax style
-        :rtype:     dict
-        """
-        style = dict(
-            show_legend=True,
-            x_label='Inverse taper ratio',
-            y_label='Beating length [m]',
-            y_scale="log",
-            line_width=2
-        )
-
-        return style
 # -

@@ -80,13 +80,4 @@ def test_normalized_coupling(
     if relative_error.mean() > 0.1:
         raise AssertionError(f"Discrepency between the computed and analytical normalized coupling, discrepency: [mean error: {error.mean()}, mean relative error: {relative_error.mean()}]")
 
-
-if __name__ == '__main__':
-    test_normalized_coupling(
-        debug_mode=True,
-        plot_results=True,
-        plot_geometry=True,
-        x_bounds='left'
-    )
-
 # -

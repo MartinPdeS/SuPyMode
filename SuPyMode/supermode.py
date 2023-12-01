@@ -68,7 +68,7 @@ class SuperMode(InheritFromSuperSet):
         return self.binded_supermode.binding_number
 
     @property
-    def model_parameters(self):
+    def model_parameters(self) -> ModelParameters:
         return self.binded_supermode.model_parameters
 
     @property

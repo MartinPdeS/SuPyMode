@@ -33,8 +33,4 @@ def test_fused_structure_workflow(fused_structure, debug_mode: bool = False):
         debug_mode=debug_mode
     )
 
-
-if __name__ == '__main__':
-    for fused_structure in fused_structure_list:
-        test_fused_structure_workflow(fused_structure=fused_structure, debug_mode=True)
 # -

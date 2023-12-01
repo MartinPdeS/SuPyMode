@@ -39,7 +39,7 @@ def get_intersection(y0: numpy.ndarray, y1: numpy.ndarray, x: numpy.ndarray, ave
         return x_mean, y_mean
 
 
-def test_valid_input(user_input, valid_inputs: list, variable_name: str = ''):
+def test_valid_input(user_input, valid_inputs: list, variable_name: str = '') -> None:
     if user_input not in valid_inputs:
         raise ValueError(f"[{variable_name}] user_input: {user_input} argument not valid. Valid choices are: {valid_inputs}")
 

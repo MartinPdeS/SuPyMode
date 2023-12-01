@@ -1,6 +1,5 @@
 #include <pybind11/pybind11.h>
-#include <pybind11/eigen.h>
-#include "definitions.cpp"
+#include "includes/model_parameters.cpp"
 
 
 PYBIND11_MODULE(ModelParameters, module)

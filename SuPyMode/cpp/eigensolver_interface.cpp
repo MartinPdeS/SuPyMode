@@ -6,7 +6,7 @@
 PYBIND11_MODULE(CppSolver, module)
 {
     pybind11::class_<CppSolver>(module, "CppSolver")
-    .def(pybind11::init<ndarray&, ndarray&, Vecf2D&, ndarray&, size_t, size_t, size_t, double, double, double, double, bool, bool>(),
+    .def(pybind11::init<ndarray&, ndarray&, Vecf2D&, ndarray&, size_t, size_t, size_t, double, double, double, double, int>(),
          pybind11::arg("mesh"),
          pybind11::arg("gradient"),
          pybind11::arg("finit_matrix"),
@@ -18,8 +18,7 @@ PYBIND11_MODULE(CppSolver, module)
          pybind11::arg("wavelength"),
          pybind11::arg("dx"),
          pybind11::arg("dy"),
-         pybind11::arg("show_iteration") = false,
-         pybind11::arg("show_eigenvalues") = false
+         pybind11::arg("debug_mode")
        )
 
      .def("loop_over_itr",             &CppSolver::loop_over_itr, pybind11::arg("extrapolation_order"), pybind11::arg("alpha"))

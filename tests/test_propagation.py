@@ -38,7 +38,7 @@ def test_propagation():
         boundaries=[Boundaries2D(right='symmetric')],
         n_sorted_mode=2,
         n_added_mode=2,
-        debug_mode=False
+        debug_mode=0
     )
 
     superset = workflow.get_superset()
@@ -50,9 +50,5 @@ def test_propagation():
         method='RK45',
         max_step=1550e-9 / 400
     )
-
-
-if __name__ == '__main__':
-    test_propagation()
 
 # -

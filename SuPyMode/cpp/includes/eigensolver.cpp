@@ -16,9 +16,6 @@
 class CppSolver : public BaseLaplacian
 {
     public:
-        ModelParameters
-            model_parameters;
-
         size_t
             n_computed_mode,
             n_sorted_mode,
@@ -32,10 +29,6 @@ class CppSolver : public BaseLaplacian
             computed_supermodes,
             sorted_supermodes;
 
-        bool
-            show_iteration,
-            show_eigenvalues;
-
         Eigen::MatrixXd
             previous_eigen_vectors;
 
@@ -44,6 +37,9 @@ class CppSolver : public BaseLaplacian
 
         std::vector<double>
             alpha_vector;
+
+        ModelParameters
+            model_parameters;
 
     CppSolver(
         pybind11::array_t<double> &mesh_py,
@@ -57,15 +53,12 @@ class CppSolver : public BaseLaplacian
         double wavelength,
         double dx,
         double dy,
-        bool show_iteration,
-        bool show_eigenvalues)
+        int debug_mode)
         : BaseLaplacian(mesh_py, finit_difference_matrix),
           max_iteration(max_iteration),
           tolerance(tolerance),
           n_sorted_mode(n_sorted_mode),
-          n_computed_mode(n_computed_mode),
-          show_iteration(show_iteration),
-          show_eigenvalues(show_eigenvalues)
+          n_computed_mode(n_computed_mode)
     {
         this->model_parameters = ModelParameters(
             wavelength,
@@ -74,6 +67,8 @@ class CppSolver : public BaseLaplacian
             dx,
             dy
         );
+
+        this->model_parameters.debug_mode = debug_mode;
 
         this->generate_mode_set();
     }
@@ -195,7 +190,7 @@ class CppSolver : public BaseLaplacian
 
         Extrapolator extrapolator = Extrapolator(this->model_parameters.ditr, extrapolation_order);
 
-        ProgressBar progress_bar = ProgressBar(this->model_parameters.n_slice, 70, show_iteration, true);
+        ProgressBar progress_bar = ProgressBar(this->model_parameters.n_slice, 70, true, true);
 
         alpha_vector.reserve(this->model_parameters.n_slice);
 
@@ -206,7 +201,8 @@ class CppSolver : public BaseLaplacian
         {
             double itr_value = this->model_parameters.itr_list[slice];
 
-            progress_bar.show_next(this->model_parameters.itr_list[slice]);
+            if (this->model_parameters.debug_mode > 0)
+                progress_bar.show_next(this->model_parameters.itr_list[slice]);
 
             k_taper = this->model_parameters.wavenumber * this->model_parameters.itr_list[slice];
 
@@ -214,7 +210,7 @@ class CppSolver : public BaseLaplacian
 
             std::tie(eigen_vectors, eigen_values) = this->compute_eigen_solution(alpha);
 
-            if (show_eigenvalues)
+            if (this->model_parameters.debug_mode > 2)
             {
                 std::cout.precision(16);
                 std::cout<<" alpha guess: "<<alpha<<"\t"
@@ -240,7 +236,8 @@ class CppSolver : public BaseLaplacian
 
     void sort_mode_per_last_propagation_constant()
     {
-        std::cout<<"Sorting supermode fields"<<std::endl;
+        if (this->model_parameters.debug_mode > 1)
+            std::cout<<"Sorting supermode with propgation constant"<<std::endl;
 
         std::vector<double> list_index;
         for (SuperMode &supermode: sorted_supermodes)
@@ -257,22 +254,20 @@ class CppSolver : public BaseLaplacian
 
     void arrange_mode_field()
     {
+        if (this->model_parameters.debug_mode > 1)
+            std::cout<<"Arranging fields"<<std::endl;
 
         for (SuperMode &supermode: sorted_supermodes)
-        {
             supermode.arrange_fields();
-        }
-        std::cout<<"Fields arranged"<<std::endl;
     }
 
     void normalize_mode_field()
     {
-        for (SuperMode &supermode: sorted_supermodes)
-        {
-            supermode.normalize_fields();
-        }
+        if (this->model_parameters.debug_mode > 1)
+            std::cout<<"Normalizing fields"<<std::endl;
 
-        std::cout<<"Fields normalized"<<std::endl;
+        for (SuperMode &supermode: sorted_supermodes)
+            supermode.normalize_fields();
     }
 
 

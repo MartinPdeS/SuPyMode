@@ -14,6 +14,17 @@ if TYPE_CHECKING:
     from SuPyMode.supermode import SuperMode
 
 
+ax_style = dict(
+    show_legend=True,
+    x_label='Inverse taper ratio',
+    y_label=r'Adiabatic criterion [$\mu$m$^{-1}$]',
+    y_scale='log',
+    y_scale_factor=1e-6,
+    y_limits=[1e-5, 1],
+    line_width=2
+)
+
+
 class Adiabatic(InheritFromSuperMode, BaseMultiModePlot):
     def __init__(self, parent_supermode):
         self.parent_supermode = parent_supermode
@@ -65,29 +76,10 @@ class Adiabatic(InheritFromSuperMode, BaseMultiModePlot):
         """
         figure = SceneList()
 
-        ax = figure.append_ax(**self.ax_style)
+        ax = figure.append_ax(**ax_style)
 
         self.render_on_ax(ax=ax, other_supermode=other_supermode)
 
         return figure
 
-    @property
-    def ax_style(self) -> dict:
-        """
-        Returns the default style for the eigen value plots for the MPSPlots library.
-
-        :returns:   The MPSPlots ax style
-        :rtype:     dict
-        """
-        style = dict(
-            show_legend=True,
-            x_label='Inverse taper ratio',
-            y_label=r'Adiabatic criterion [$\mu$m$^{-1}$]',
-            y_scale='log',
-            y_scale_factor=1e-6,
-            y_limits=[1e-5, 1],
-            line_width=2
-        )
-
-        return style
 # -

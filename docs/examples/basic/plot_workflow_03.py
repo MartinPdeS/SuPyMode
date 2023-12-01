@@ -5,7 +5,7 @@
 
 # %%
 # Importing the script dependencies
-from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries2D, AlphaProfile
+from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries2D
 
 # %%
 # Creating the fiber list for mesh
@@ -43,12 +43,12 @@ workflow = Workflow(
     resolution=60,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
     x_bounds="centering",           # Mesh x-boundary structure.
     y_bounds="centering",           # Mesh y-boundary structure.
-    boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation 
+    boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=6,                # Total computed and sorted mode.
     n_added_mode=3,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
     plot_geometry=True,             # Plot the geometry mesh before computation.
-    debug_mode=False,               # Print the iteration step for the solver plus some other important steps.
-    auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards. 
+    debug_mode=0,                   # Print the iteration step for the solver plus some other important steps.
+    auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.1,                  # Final value of inverse taper ratio to simulate
     clad_rotation=0,                # Rotate the geoemtry in the given angle in degree
     index_scrambling=1e-4           # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
