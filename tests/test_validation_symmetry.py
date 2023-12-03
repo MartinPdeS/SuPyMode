@@ -16,7 +16,7 @@ def test_symmetry():
         boundaries=[Boundaries2D(right='symmetric')],
         n_sorted_mode=1,
         n_added_mode=2,
-        debug_mode=False
+        debug_mode=1
 
     )
 
@@ -30,7 +30,7 @@ def test_symmetry():
         boundaries=[Boundaries2D()],
         n_sorted_mode=1,
         n_added_mode=2,
-        debug_mode=False
+        debug_mode=1
     )
 
     discrepency = numpy.isclose(

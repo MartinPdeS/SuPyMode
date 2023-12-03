@@ -218,7 +218,7 @@ class Workflow():
     """ Plot the computed propagation constant after computation """
 
     #  Extra arguments --------------------------
-    debug_mode: bool = False
+    debug_mode: int = 1
     """ Level of debug mode printing [0, 1, 2, 3]"""
     auto_label: bool = False
     """ Enable auto labeling of the supermodes """

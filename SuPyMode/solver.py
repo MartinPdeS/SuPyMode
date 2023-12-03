@@ -94,7 +94,7 @@ class SuPySolver(object):
             max_iter=self.max_iter,
             tolerance=self.tolerance,
             wavelength=self.wavelength,
-            debug_mode=3,
+            debug_mode=self.debug_mode,
             dx=self.geometry.coordinate_system.dx,
             dy=self.geometry.coordinate_system.dy
         )

@@ -57,7 +57,7 @@ jobs:
                 package-name: SuPyMode
                 python-version: "3.10"
                 auth: ${{ secrets.GIST_TOKEN }}
-                gistID: f0955be398d59efac69042c1b0fbece2
+                gistID: 8e5ebf39ed694d3c90a790dffc0eff4f
 
 
     publish_documentation:

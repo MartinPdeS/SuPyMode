@@ -25,8 +25,6 @@ def test_propagation():
         n_point=200
     )
 
-    profile.initialize()
-
     workflow = Workflow(
         fiber_list=fiber,
         clad_structure=configuration.ring.FusedProfile_03x03,

@@ -345,8 +345,8 @@ class SuperSet(object):
         )
 
         z_to_itr = interp1d(
-            profile.distance,
-            profile.itr_list,
+            profile.get_distance(),
+            profile.get_itr_list(),
             bounds_error=False,
             fill_value='extrapolate',
             axis=-1
@@ -367,7 +367,7 @@ class SuperSet(object):
         sol = solve_ivp(
             model,
             y0=initial_amplitude,
-            t_span=[0, profile.length],
+            t_span=[0, profile.total_length],
             vectorized=True,
             max_step=max_step,
             method=method,
@@ -376,8 +376,8 @@ class SuperSet(object):
 
         norm = (numpy.abs(sol.y)**2).sum(axis=0)
 
-        if not numpy.all(numpy.isclose(norm, 1.0, atol=1e-1)):
-            logging.warning(f'Warning Power conservation is not acheived [tol: 1e-1]. You should consider reducing the max step size [{max_step = }]')
+        if not numpy.all(numpy.isclose(norm, 1.0, atol := 1e-1)):
+            logging.warning(f'Power conservation is not acheived [{atol = }]. You should consider reducing the max step size [{max_step = }]')
 
         return sol.t, sol.y, z_to_itr(sol.t)
 
