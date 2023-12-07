@@ -169,8 +169,8 @@ class AlphaProfile():
 
     def evaluate_adiabatic_factor(self, itr: numpy.ndarray) -> numpy.ndarray:
         interpolation = interp1d(
-            x=self.itr_list.array,
-            y=self.adiabatic.array,
+            x=self.itr_list,
+            y=self.adiabatic,
             bounds_error=False,
             fill_value=numpy.nan
         )
@@ -179,8 +179,8 @@ class AlphaProfile():
 
     def evaluate_distance_vs_itr(self, distance: numpy.ndarray) -> numpy.ndarray:
         interpolation = interp1d(
-            x=self.itr_list.array,
-            y=self.distance.array,
+            x=self.itr_list,
+            y=self.distance,
             bounds_error=True,
         )
 
@@ -705,9 +705,9 @@ class AlphaProfile():
 
         sub_sampling_factor = int(self.distance.size / number_of_frames)
 
-        sub_distance = self.distance.array[::sub_sampling_factor] * 1e3
-        sub_radius = self.radius.array[::sub_sampling_factor]
-        sub_itr_list = self.itr_list.array[::sub_sampling_factor]
+        sub_distance = self.distance[::sub_sampling_factor] * 1e3
+        sub_radius = self.radius[::sub_sampling_factor]
+        sub_itr_list = self.itr_list[::sub_sampling_factor]
 
         if dark_background:
             style = plt.style.context("dark_background")
