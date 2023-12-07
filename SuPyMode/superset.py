@@ -292,6 +292,8 @@ class SuperSet(object):
         :param      add_coupling:     Add coupling to the transmission matrix
         :type       add_coupling:     bool
         """
+        profile.initialize()
+
         final_slice = self.itr_to_slice(itr_list=profile.smallest_itr)
 
         sub_t_matrix = self.transmission_matrix[..., :final_slice]
@@ -334,6 +336,8 @@ class SuperSet(object):
         :returns:   The amplitudes as a function of the distance in the coupler
         :rtype:     numpy.ndarray
         """
+        profile.initialize()
+
         initial_amplitude = numpy.asarray(initial_amplitude).astype(complex)
 
         if max_step is None:
@@ -345,8 +349,8 @@ class SuperSet(object):
         )
 
         z_to_itr = interp1d(
-            profile.get_distance(),
-            profile.get_itr_list(),
+            profile.distance.array,
+            profile.itr_list.array,
             bounds_error=False,
             fill_value='extrapolate',
             axis=-1

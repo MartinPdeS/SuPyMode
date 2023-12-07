@@ -24,6 +24,10 @@ class TaperSection():
         return self.z_array[0]
 
     @property
+    def is_constant(self) -> float:
+        return self.radius_array[0] == self.radius_array[-1]
+
+    @property
     def z_final(self) -> float:
         return self.z_array[-1]
 
@@ -191,6 +195,9 @@ class AlphaProfile():
         :returns:   No returns
         :rtype:     None
         """
+        if self.last_section.is_constant:
+            return
+
         length = self.last_section.heating_length_final / 2
 
         section = self.get_constant_custom_section(
@@ -235,12 +242,9 @@ class AlphaProfile():
         return section
 
     def evaluate_adiabatic_factor(self, itr: numpy.ndarray) -> numpy.ndarray:
-        itr_list = self.get_itr_list()
-        adiabatic = self.get_adiabatic()
-
         interpolation = interp1d(
-            x=itr_list,
-            y=adiabatic,
+            x=self.itr_list.array,
+            y=self.adiabatic.array,
             bounds_error=False,
             fill_value=numpy.nan
         )
@@ -248,12 +252,9 @@ class AlphaProfile():
         return interpolation(itr)
 
     def evaluate_distance_vs_itr(self, distance: numpy.ndarray) -> numpy.ndarray:
-        itr_list = self.get_itr_list()
-        distance = self.get_distance()
-
         interpolation = interp1d(
-            x=itr_list,
-            y=distance,
+            x=self.itr_list.array,
+            y=self.distance.array,
             bounds_error=True,
         )
 
@@ -537,8 +538,8 @@ class AlphaProfile():
 
     def get_itr_vs_distance_interpolation(self):
         return interp1d(
-            x=self.get_distance(),
-            y=self.get_itr_list(),
+            x=self.distance.array,
+            y=self.itr_list.array,
             bounds_error=False,
             fill_value=0
         )
