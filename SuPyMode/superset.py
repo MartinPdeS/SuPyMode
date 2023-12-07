@@ -817,12 +817,11 @@ class SuperSet(object):
         :rtype:     SceneList
         """
         ax.set_style(**representation.adiabatic.ax_style)
-
         for mode_0, mode_1 in combination:
             mode_0.adiabatic.render_on_ax(ax=ax, other_supermode=mode_1)
 
         for profile in numpy.atleast_1d(add_profile):
-            profile._render_adiabatic_factor_vs_itr_on_ax_(ax, line_style='--', color='black')
+            profile.render_adiabatic_factor_vs_itr_on_ax(ax=ax, line_style='--', line_color='black')
 
     def is_compute_compatible(self, pair_of_mode: tuple) -> bool:
         """

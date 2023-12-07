@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from SuPyMode.superset import SuperSet
+    from SuPyMode.supermode import SuperMode
+
 import numpy
 
 
@@ -141,17 +147,17 @@ def interpret_slice_number_and_itr(
     return slice_number, itr
 
 
-def interpret_mode_of_interest(superset: object, mode_of_interest: str | object | list[object]) -> list[object]:
+def interpret_mode_of_interest(superset: SuperSet, mode_of_interest: str | SuperMode | list[SuperMode]) -> list[SuperMode]:
     """
     Interpret and returns the input for the mode_of_intereset argument.
 
     :param      superset:          The superset
-    :type       superset:          object
+    :type       superset:          SuperSet
     :param      mode_of_interest:  The mode of interest
-    :type       mode_of_interest:  str | object | list[object]
+    :type       mode_of_interest:  str | SuperMode | list[SuperMode]
 
     :returns:   A list of the mode of interest
-    :rtype:     list[object]
+    :rtype:     list[SuperMode]
     """
     if isinstance(mode_of_interest, str):
         match mode_of_interest:
@@ -162,7 +168,7 @@ def interpret_mode_of_interest(superset: object, mode_of_interest: str | object 
             case 'all':
                 return superset.supermodes
 
-    if isinstance(mode_of_interest, object):
+    if not numpy.iterable(mode_of_interest):
         return [mode_of_interest]
 
     if isinstance(mode_of_interest, list):
