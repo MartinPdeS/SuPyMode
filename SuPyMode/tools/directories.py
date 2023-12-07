@@ -10,7 +10,6 @@ __all__ = [
     'project_path',
     'test_path',
     'instance_directory',
-    'examples_path',
     'version_path',
     'validation_data_path',
     'doc_path',
@@ -26,8 +25,6 @@ project_path = root_path.parents[0]
 test_path = project_path.joinpath('tests')
 
 instance_directory = root_path.joinpath('superset_instances')
-
-examples_path = root_path.joinpath('examples')
 
 reports_path = root_path.joinpath('reports')
 

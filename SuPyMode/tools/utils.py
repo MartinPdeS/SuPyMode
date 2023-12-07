@@ -8,6 +8,27 @@ if TYPE_CHECKING:
     from SuPyMode.supermode import SuperMode
 
 import numpy
+import pickle
+from pathlib import Path
+from SuPyMode.tools.directories import instance_directory
+
+
+def load_superset(filename: str, directory: str = '.'):
+    """
+    Saves the superset instance as a serialized pickle file.
+
+    :param      filename:  The filename
+    :type       filename:  str
+    """
+    if directory == 'auto':
+        directory = instance_directory
+
+    filename = Path(directory).joinpath(filename).with_suffix('.pickle')
+
+    with open(filename, 'rb') as input_file:
+        superset = pickle.load(input_file)
+
+    return superset
 
 
 def get_close_points(tolerane: float, y0: numpy.ndarray, y1: numpy.ndarray, x: numpy.ndarray = None):

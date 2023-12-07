@@ -97,7 +97,7 @@ To test localy (with cloning the GitHub repository) you'll need to install the d
 Contact Information
 *******************
 
-As of 2021 the project is still under development if you want to collaborate it would be a pleasure. I encourage you to contact me.
+As of 2023 the project is still under development if you want to collaborate it would be a pleasure. I encourage you to contact me.
 
 SuPyMode was written by `Martin Poinsinet de Sivry-Houle <https://github.com/MartinPdS>`_  .
 
@@ -115,8 +115,6 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
    :target: https://zenodo.org/badge/latestdoi/366930899
 
 .. |Unittest| image:: https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/MartinPdeS/8e5ebf39ed694d3c90a790dffc0eff4f/raw
-
-https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/MartinPdeS/8e5ebf39ed694d3c90a790dffc0eff4f/raw/2caf5d2ef1ad5171c037ad0055774810d203a7fb/SuPyModecoverage_badge.json
 
 .. |PyPi| image:: https://badge.fury.io/py/SuPyMode.svg
    :target: https://pypi.org/project/SuPyMode/
