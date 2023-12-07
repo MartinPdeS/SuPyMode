@@ -49,69 +49,6 @@ class TaperSection():
         )
 
 
-class SymmetricArray():
-    def __init__(self, array: numpy.ndarray, symmetric: bool):
-        self.symmetric = symmetric
-        self._array = array
-        self._symmetric_array = numpy.r_[array, array[-2::-1]]
-
-    @property
-    def array(self) -> numpy.ndarray:
-        if self.symmetric:
-            return self._symmetric_array
-
-        return self._array
-
-    def min(self) -> float:
-        return self.array.min()
-
-    def max(self) -> float:
-        return self.array.max()
-
-    @property
-    def size(self) -> float:
-        return self.array.size
-
-    @property
-    def shape(self) -> float:
-        return self.array.shape
-
-    def __mul__(self, other):
-        _array = self._array.__mul__(other)
-        return SymmetricArray(array=_array, symmetric=self.symmetric)
-
-    def __truediv__(self, other):
-        _array = self._array.__truediv__(other)
-        return SymmetricArray(array=_array, symmetric=self.symmetric)
-
-
-class DoubledArray():
-    def __init__(self, array: numpy.ndarray, symmetric: bool):
-        self.symmetric = symmetric
-        self._array = array
-        self._doubled_array = numpy.linspace(array[0], 2 * array[-1], 2 * array.size - 1)
-
-    @property
-    def array(self) -> numpy.ndarray:
-        if self.symmetric:
-            return self._doubled_array
-        return self._array
-
-    def min(self) -> float:
-        return self.array.min()
-
-    def max(self) -> float:
-        return self.array.max()
-
-    @property
-    def size(self) -> float:
-        return self.array.size
-
-    @property
-    def shape(self) -> float:
-        return self.array.shape
-
-
 @dataclass
 class AlphaProfile():
     r"""
@@ -151,17 +88,6 @@ class AlphaProfile():
     def last_section(self) -> TaperSection:
         """ Returns the last taper section added to the profile """
         return self.section_list[-1]
-
-    def get_distance(self) -> DoubledArray:
-        """
-        Returns the distance array of the profile
-
-        :returns:   The distance.
-        :rtype:     DoubledArray
-        """
-        distance = numpy.linspace(0, self.last_z, self.n_point)
-
-        return DoubledArray(distance, symmetric=self.symmetric)
 
     def add_constant_segment(self, *, length: float, n_point: int = 100) -> None:
         """
@@ -260,7 +186,7 @@ class AlphaProfile():
 
         return interpolation(distance)
 
-    def get_radius_from_segment(
+    def compute_radius_from_segment(
             self, *,
             alpha: float,
             initial_heating_length: float,
@@ -358,7 +284,7 @@ class AlphaProfile():
 
         assert distance[0] == 0, "Computation of taper section takes z as a reference and thus has to start with 0."
 
-        radius, final_radius, final_heating_length = self.get_radius_from_segment(
+        radius, final_radius, final_heating_length = self.compute_radius_from_segment(
             alpha=alpha,
             initial_heating_length=initial_heating_length,
             stretching_length=stretching_length,
@@ -375,27 +301,40 @@ class AlphaProfile():
 
         self.section_list.append(section)
 
-    def get_radius(self) -> SymmetricArray:
+    def compute_distance(self) -> numpy.ndarray:
+        """
+        Returns the distance array of the profile
+
+        :returns:   The distance.
+        :rtype:     numpy.ndarray
+        """
+        distance = numpy.linspace(0, self.last_z, self.n_point)
+
+        self._distance = distance
+
+    def compute_radius(self) -> numpy.ndarray:
         """
         Returns the array of radius [vs z-distance] for the taper structure
 
         :returns:   The ITR array
         :rtype:     numpy.ndarray
         """
-        radius = self.get_radius_from_segment_from_interpolation(self.distance._array)
+        radius = self.compute_radius_from_segment_from_interpolation(self.distance)
 
-        return SymmetricArray(array=radius, symmetric=self.symmetric)
+        self._radius = radius
 
-    def get_itr_list(self) -> SymmetricArray:
+    def compute_itr_list(self) -> numpy.ndarray:
         """
         Returns the array of ITR value [vs z-distance] for the taper structure
 
         :returns:   The ITR array
-        :rtype:     SymmetricArray
+        :rtype:     numpy.ndarray
         """
-        return self.radius / self.initial_radius
+        itr_list = self.radius / self.initial_radius
 
-    def get_adiabatic(self) -> SymmetricArray:
+        self._itr_list = itr_list
+
+    def compute_adiabatic(self) -> numpy.ndarray:
         """
         Returns the array of adiabatc factor [vs ITR] for the taper structure
 
@@ -403,17 +342,17 @@ class AlphaProfile():
             f_c = \frac{1}{\rho} \frac{d \rho}{d z}
 
         :returns:   The adiabatic factor
-        :rtype:     SymmetricArray
+        :rtype:     numpy.ndarray
         """
-        dz = numpy.gradient(self.distance._array, axis=0, edge_order=2)
+        dz = numpy.gradient(self.distance, axis=0, edge_order=2)
 
-        ditr = numpy.gradient(numpy.log(self.radius._array), axis=0, edge_order=2)
+        ditr = numpy.gradient(numpy.log(self.radius), axis=0, edge_order=2)
 
         adiabatic = abs(ditr / dz)
 
-        return SymmetricArray(array=adiabatic, symmetric=self.symmetric)
+        self._adiabatic = adiabatic
 
-    def get_taper_angle(self, symmetric: bool = None) -> SymmetricArray:
+    def compute_taper_angle(self, symmetric: bool = None) -> numpy.ndarray:
         r"""
         Returns the array of taper angle for the taper structure
         From Tapered single-mode fibres and devices. Part 1: Adiabaticity criteria.
@@ -423,15 +362,15 @@ class AlphaProfile():
             f_c = \frac{d \rho}{d z} = \Omega
 
         :returns:   The taper angle array
-        :rtype:     SymmetricArray
+        :rtype:     numpy.ndarray
         """
-        d_z = numpy.gradient(self.distance._array, axis=0, edge_order=2)
+        d_z = numpy.gradient(self.distance, axis=0, edge_order=2)
 
-        d_rho = numpy.gradient(self.radius._array, axis=0, edge_order=2)
+        d_rho = numpy.gradient(self.radius, axis=0, edge_order=2)
 
         taper_angle = abs(d_rho / d_z)
 
-        return SymmetricArray(array=taper_angle, symmetric=self.symmetric)
+        self._taper_angle = taper_angle
 
     @property
     def smallest_itr(self) -> float:
@@ -480,16 +419,57 @@ class AlphaProfile():
             return self.last_section.radius_final
 
     def initialize(self) -> None:
+        symmetric = self.symmetric
+
+        self.symmetric = False
+
         if self.add_end_of_taper_section:
             self.add_end_of_taper_segment()
 
-        self.distance = self.get_distance()
-        self.radius = self.get_radius()
-        self.itr_list = self.get_itr_list()
-        self.taper_angle = self.get_taper_angle()
-        self.adiabatic = self.get_adiabatic()
+        self.compute_distance()
+        self.compute_radius()
+        self.compute_itr_list()
+        self.compute_taper_angle()
+        self.compute_adiabatic()
 
-    def get_radius_from_segment_from_interpolation(self, z: numpy.ndarray) -> numpy.ndarray:
+        self.symmetric = symmetric
+
+    @property
+    def distance(self):
+        if self.symmetric:
+            return numpy.linspace(self._distance[0], 2 * self._distance[-1], 2 * self._distance.size - 1)
+
+        return self._distance
+
+    @property
+    def radius(self):
+        if self.symmetric:
+            return numpy.r_[self._radius, self._radius[-2::-1]]
+
+        return self._radius
+
+    @property
+    def itr_list(self):
+        if self.symmetric:
+            return numpy.r_[self._itr_list, self._itr_list[-2::-1]]
+
+        return self._itr_list
+
+    @property
+    def taper_angle(self):
+        if self.symmetric:
+            return numpy.r_[self._taper_angle, self._taper_angle[-2::-1]]
+
+        return self._taper_angle
+
+    @property
+    def adiabatic(self):
+        if self.symmetric:
+            return numpy.r_[self._adiabatic, self._adiabatic[-2::-1]]
+
+        return self._adiabatic
+
+    def compute_radius_from_segment_from_interpolation(self, z: numpy.ndarray) -> numpy.ndarray:
         """
         Gets the radius of the component from all the interpolation segment.
 
@@ -538,8 +518,8 @@ class AlphaProfile():
 
     def get_itr_vs_distance_interpolation(self):
         return interp1d(
-            x=self.distance.array,
-            y=self.itr_list.array,
+            x=self.distance,
+            y=self.itr_list,
             bounds_error=False,
             fill_value=0
         )
@@ -558,8 +538,8 @@ class AlphaProfile():
             )
 
             ax.add_line(
-                x=x.array,
-                y=y.array,
+                x=x,
+                y=y,
                 label=self.label,
                 line_style=line_style,
                 color=line_color

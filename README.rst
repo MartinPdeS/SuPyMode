@@ -73,7 +73,7 @@ Then, download and install the SuPyMode package:
     >>> git clone https://github.com/MartinPdeS/SuPyMode.git
     >>> cd SuPyMode && mkdir build && cd build
     >>> cmake ..
-    >>> make install                    (Linux, MacOs)
+    >>> make install (Linux, MacOs)
     >>> cd ..
     >>> pip3 install .
 
@@ -99,7 +99,7 @@ Contact Information
 
 As of 2021 the project is still under development if you want to collaborate it would be a pleasure. I encourage you to contact me.
 
-PyMieSim was written by `Martin Poinsinet de Sivry-Houle <https://github.com/MartinPdS>`_  .
+SuPyMode was written by `Martin Poinsinet de Sivry-Houle <https://github.com/MartinPdS>`_  .
 
 Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@polymtl.ca?subject=SuPyMode>`_ .
 
