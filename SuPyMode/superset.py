@@ -349,8 +349,8 @@ class SuperSet(object):
         )
 
         z_to_itr = interp1d(
-            profile.distance.array,
-            profile.itr_list.array,
+            profile.distance,
+            profile.itr_list,
             bounds_error=False,
             fill_value='extrapolate',
             axis=-1
