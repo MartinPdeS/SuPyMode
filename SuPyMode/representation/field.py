@@ -63,9 +63,9 @@ class Field(InheritFromSuperMode):
         assert (slice_number.size == 0) ^ (itr.size == 0), 'Exactly one of the two values [slice_number, itr] has to be defined'
 
         slice_list, itr_list = interpret_slice_number_and_itr(
-            itr_list=self.itr_list,
-            itr=itr,
-            slice_number=slice_number
+            itr_baseline=self.itr_list,
+            itr_list=itr,
+            slice_list=slice_number
         )
 
         field = numpy.take(self._data, slice_number, axis=0)
@@ -200,9 +200,9 @@ class Field(InheritFromSuperMode):
         figure = SceneMatrix(unit_size=(3, 3))
 
         slice_list, itr_list = interpret_slice_number_and_itr(
-            itr_list=self.itr_list,
-            itr=itr_list,
-            slice_number=slice_list
+            itr_baseline=self.itr_list,
+            itr_list=itr_list,
+            slice_list=slice_list
         )
 
         for n, (itr, slice_number) in enumerate(zip(itr_list, slice_list)):

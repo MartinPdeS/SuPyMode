@@ -1,12 +1,18 @@
 # #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from SuPyMode.supermode import SuperMode
+
+
 import numpy
 from MPSPlots.render2D import SceneList, Axis
 
 
 class BaseMultiModePlot():
-    def _render_on_ax_(self, ax: Axis, other_supermode: 'SuperMode' = None):
+    def _render_on_ax_(self, ax: Axis, other_supermode: SuperMode = None):
         if other_supermode is None:
             other_supermode = self.parent_supermode.parent_set.supermodes
         else:
@@ -24,7 +30,11 @@ class BaseMultiModePlot():
 
             ax.set_style(**self.plot_style)
 
-    def plot(self, other_supermode=None, row: int = 0, col: int = 0) -> None:
+    def plot(
+            self,
+            other_supermode: SuperMode = None,
+            row: int = 0,
+            col: int = 0) -> None:
         """
         Plotting method for the index.
 
@@ -132,8 +142,4 @@ class InheritFromSuperMode():
     def get_axis(self, *args, **kwargs):
         return self.parent_supermode.get_axis(*args, **kwargs)
 
-
-class NameSpace():
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
+# -

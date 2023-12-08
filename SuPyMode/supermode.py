@@ -9,6 +9,7 @@ from scipy.interpolate import RectBivariateSpline
 # Local imports
 from SuPyMode import representation
 from SuPyMode.binary.ModelParameters import ModelParameters
+from SuPyMode.tools.utils import interpret_slice_number_and_itr
 
 
 class InheritFromSuperSet():
@@ -138,7 +139,10 @@ class SuperMode(InheritFromSuperSet):
             slice_number = self.parent_set.itr_to_slice(itr_list=itr)
 
         if itr is None:
-            itr = self.parent_set.slice_to_itr(slice_list=slice_number)
+            slice_number, itr = interpret_slice_number_and_itr(
+                itr_baseline=self.itr_list,
+                slice_list=slice_number
+            )
 
         field = self.field.get_field(slice_number=slice_number, add_symmetries=True)
 

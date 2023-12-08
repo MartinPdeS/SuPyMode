@@ -2,16 +2,16 @@
 # # -*- coding: utf-8 -*-
 
 from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from SuPyMode.supermode import SuperMode
 
 import numpy
 
 from SuPyMode.representation.base import InheritFromSuperMode, BaseMultiModePlot
 from MPSPlots.render2D import SceneList, Axis
 
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from SuPyMode.supermode import SuperMode
 
 
 ax_style = dict(
@@ -29,9 +29,15 @@ class Adiabatic(InheritFromSuperMode, BaseMultiModePlot):
     def __init__(self, parent_supermode):
         self.parent_supermode = parent_supermode
 
-    def get_values(self, other_supermode) -> numpy.ndarray:
+    def get_values(self, other_supermode: SuperMode) -> numpy.ndarray:
         """
         Return the array of the modal coupling for the mode
+
+        :param      other_supermode:  The other supermode
+        :type       other_supermode:  SuperMode
+
+        :returns:   The values
+        :rtype:     numpy.ndarray
         """
         output = self.parent_supermode.binded_supermode.get_adiabatic_with_mode(other_supermode.binded_supermode)
 

@@ -33,6 +33,7 @@ def test_normalized_coupling(
         boundaries=[Boundaries2D(right='symmetric', top='symmetric')],
         n_sorted_mode=4,
         n_added_mode=8,
+        debug_mode=0,
         auto_label=True,
         itr_final=itr_final,
         n_step=n_step,

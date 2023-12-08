@@ -40,11 +40,8 @@ class SuPySolver(object):
         self.solver_number = 0
 
     @property
-    def axes(self) -> object:
+    def coordinate_system(self) -> object:
         return self.geometry.coordinate_system
-
-    def get_set(self):
-        return self.superset
 
     def initialize_binding(
             self,

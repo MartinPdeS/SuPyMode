@@ -94,7 +94,7 @@ class ModePropagationGifCreator():
             ax.set_xticks([])
             ax.set_yticks([])
             self.field_axes.append(ax)
-            ax.set_title(superset[mode].stylized_name)
+            ax.set_title(self.superset[mode].stylized_name)
 
     def generate_figure(self, unit_size: tuple = (3, 6)) -> None:
         figure_size = (unit_size[0] * self.number_of_mode, unit_size[1])
@@ -117,7 +117,7 @@ class ModePropagationGifCreator():
 
     def populate_axes(self, z: float):
         itr = self.profile.master_interpolation_z_to_itr(z)
-        slice_structure = superset.get_slice_structure(itr=itr, add_symmetries=True)
+        slice_structure = self.superset.get_slice_structure(itr=itr, add_symmetries=True)
 
         self.ax_profile.set_title(f'Z-distance: {z:>5.3e}    ITR: {itr:>5.3f}')
         self.profile_line = self.ax_profile.axvline(z, linestyle='--', color='red')
@@ -127,7 +127,7 @@ class ModePropagationGifCreator():
 
     def update_axes(self, z: float):
         itr = self.profile.master_interpolation_z_to_itr(z)
-        slice_structure = superset.get_slice_structure(itr=itr, add_symmetries=True)
+        slice_structure = self.superset.get_slice_structure(itr=itr, add_symmetries=True)
         self.profile_line.set_xdata(z)
         self.ax_profile.set_title(f'Z-distance: {z:>5.3e}    ITR: {itr:>5.3f}')
 
@@ -136,7 +136,7 @@ class ModePropagationGifCreator():
             ax.pcolormesh(field, cmap=CMAP.BKR)
 
     def make_animation(self, n_step: int = 20, dpi: float = 100, fps: int = 50):
-        a.populate_axes(z=0e-3)
+        self.populate_axes(z=0e-3)
 
         factor = self.profile.length / n_step
 

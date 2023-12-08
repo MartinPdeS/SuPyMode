@@ -12,11 +12,3 @@ build-verbosity = "1"
 
 [tool.cibuildwheel.linux]
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
-
-
-
-[tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "-v"
-testpaths = ["./tests/*"]
- 

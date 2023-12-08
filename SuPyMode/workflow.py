@@ -282,7 +282,6 @@ class Workflow():
         return self.solver.superset
 
     def _initialize_solver_(self) -> None:
-
         self.solver = SuPySolver(
             geometry=self.geometry,
             tolerance=1e-20,

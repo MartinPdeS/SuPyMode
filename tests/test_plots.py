@@ -7,7 +7,7 @@ from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundari
 
 
 @patch("matplotlib.pyplot.show")
-def test_plot_superset(patch):
+def test_superset_plot(patch):
     fibers = [
         fiber_catalogue.load_fiber('SMF28', wavelength=1550e-9),
         fiber_catalogue.load_fiber('SMF28', wavelength=1550e-9),
@@ -22,6 +22,7 @@ def test_plot_superset(patch):
         resolution=30,
         x_bounds="left",
         y_bounds="centering",
+        debug_mode=0,
         boundaries=[Boundaries2D(right='symmetric')],
         n_sorted_mode=2,
         n_added_mode=2,
@@ -40,5 +41,44 @@ def test_plot_superset(patch):
     superset.plot('adiabatic').show().close()
 
     superset.plot('field').show().close()
+
+
+@patch("matplotlib.pyplot.show")
+def test_representation_plot(patch):
+    fibers = [
+        fiber_catalogue.load_fiber('SMF28', wavelength=1550e-9),
+        fiber_catalogue.load_fiber('SMF28', wavelength=1550e-9),
+    ]
+
+    fused_structure = configuration.ring.FusedProfile_02x02
+
+    workflow = Workflow(
+        fiber_list=fibers,
+        clad_structure=fused_structure,
+        wavelength=1550e-9,
+        resolution=30,
+        x_bounds="left",
+        y_bounds="centering",
+        debug_mode=0,
+        boundaries=[Boundaries2D(right='symmetric')],
+        n_sorted_mode=2,
+        n_added_mode=2,
+    )
+
+    superset = workflow.superset
+
+    mode = superset[0]
+
+    mode.index.plot().show().close()
+
+    mode.beta.plot().show().close()
+
+    mode.eigen_value.plot().show().close()
+
+    mode.normalized_coupling.plot(other_supermode=superset[1]).show().close()
+
+    mode.adiabatic.plot(other_supermode=superset[1]).show().close()
+
+    mode.field.plot().show().close()
 
 # -

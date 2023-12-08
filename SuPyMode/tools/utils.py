@@ -126,15 +126,15 @@ def slice_to_itr(itr_list: numpy.ndarray, slice_number: int | list) -> float | l
 
 
 def interpret_slice_number_and_itr(
-        itr_list: numpy.ndarray,
-        slice_number: int | list[int],
-        itr: float | list[float],
+        itr_baseline: numpy.ndarray,
+        slice_list: int | list[int] = [],
+        itr_list: float | list[float] = [],
         sort_slice_number: bool = True) -> tuple:
     """
-    Interpret the itr and slice_number as input and return a tuple containing all the associated values
+    Interpret the itr and slice_list as input and return a tuple containing all the associated values
 
-    :param      itr_list:      The itr list
-    :type       itr_list:      numpy.ndarray
+    :param      itr_baseline:      The itr list
+    :type       itr_baseline:      numpy.ndarray
     :param      slice_number:  The slice number
     :type       slice_number:  int | list[int]
     :param      itr:           The itr
@@ -143,29 +143,29 @@ def interpret_slice_number_and_itr(
     :returns:   All the associated slice numbers and itr values
     :rtype:     tuple
     """
-    slice_number = numpy.atleast_1d(slice_number)
+    slice_list = numpy.atleast_1d(slice_list)
 
-    slice_from_itr = itr_to_slice(itr_list, itr=itr)
+    slice_from_itr = itr_to_slice(itr_baseline, itr=itr_list)
 
     slice_from_itr = numpy.atleast_1d(slice_from_itr)
 
-    total_slice_list = [*slice_number, *slice_from_itr]
+    total_slice_list = [*slice_list, *slice_from_itr]
 
-    total_itr_list = slice_to_itr(itr_list, slice_number=total_slice_list)
+    total_itr_list = slice_to_itr(itr_baseline, slice_number=total_slice_list)
 
-    slice_number = numpy.asarray(total_slice_list)
+    slice_list = numpy.asarray(total_slice_list)
 
-    itr = numpy.asarray(total_itr_list)
+    itr_list = numpy.asarray(total_itr_list)
 
     if sort_slice_number:
-        slice_number = numpy.sort(slice_number)[::-1]
+        slice_list = numpy.sort(slice_list)[::-1]
 
-        itr = numpy.sort(itr)[::-1]
+        itr_list = numpy.sort(itr_list)[::-1]
 
-    if len(itr) == 1:
-        return slice_number[0], itr[0]
+    if len(itr_list) == 1:
+        return slice_list[0], itr_list[0]
 
-    return slice_number, itr
+    return slice_list, itr_list
 
 
 def interpret_mode_of_interest(superset: SuperSet, mode_of_interest: str | SuperMode | list[SuperMode]) -> list[SuperMode]:

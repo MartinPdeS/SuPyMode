@@ -907,9 +907,9 @@ class SuperSet(object):
         figure = SceneMatrix(unit_size=(3, 3))
 
         slice_list, itr_list = interpret_slice_number_and_itr(
-            itr_list=self.itr_list,
-            itr=itr_list,
-            slice_number=slice_list
+            itr_baseline=self.itr_list,
+            itr_list=itr_list,
+            slice_list=slice_list
         )
 
         mode_of_interest = interpret_mode_of_interest(
