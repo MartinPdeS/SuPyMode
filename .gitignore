@@ -19,7 +19,7 @@ build
 *.egg*
 *.whl
 .pdf
-Perso/
+perso/
 
 docs/source/gallery
 docs/source/api
