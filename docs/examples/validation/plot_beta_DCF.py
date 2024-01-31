@@ -37,7 +37,7 @@ boundaries = [
 # Workflow class to define all the computation parameters before initializing the solver
 workflow = Workflow(
     fiber_list=fiber_list,          # List of fiber to be added in the mesh, the order matters.
-    fusion_degree=None,             # Degree of fusion of the structure if applicable.
+    fusion_degree='auto',           # Degree of fusion of the structure if applicable.
     wavelength=wavelength,          # Wavelength used for the mode computation.
     resolution=50,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
     x_bounds="left",                # Mesh x-boundary structure.
