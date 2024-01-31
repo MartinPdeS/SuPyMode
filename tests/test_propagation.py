@@ -28,7 +28,7 @@ def test_propagation():
     workflow = Workflow(
         fiber_list=fiber,
         clad_structure=configuration.ring.FusedProfile_03x03,
-        fusion_degree=0.3,
+        fusion_degree='auto',
         wavelength=1550e-9,
         resolution=40,
         x_bounds="left",

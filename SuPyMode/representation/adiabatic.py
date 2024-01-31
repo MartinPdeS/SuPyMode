@@ -12,8 +12,6 @@ from SuPyMode.representation.base import InheritFromSuperMode, BaseMultiModePlot
 from MPSPlots.render2D import SceneList, Axis
 
 
-
-
 ax_style = dict(
     show_legend=True,
     x_label='Inverse taper ratio',

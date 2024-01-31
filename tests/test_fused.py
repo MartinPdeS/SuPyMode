@@ -30,7 +30,8 @@ def test_fused_structure_workflow(fused_structure):
         boundaries=[Boundaries2D(right='symmetric')],
         n_sorted_mode=2,
         n_added_mode=2,
-        debug_mode=0
+        debug_mode=0,
+        fusion_degree='auto'
     )
 
 # -

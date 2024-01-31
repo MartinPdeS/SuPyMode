@@ -12,11 +12,11 @@ from SuPyMode.representation.base import InheritFromSuperMode
 
 ax_style = dict(
     show_legend=False,
-    x_label=r'X-Direction [$\mu m$]',
-    y_label=r'Y-direction [$\mu m$]',
+    x_label=r'',
+    y_label=r'',
+    show_ticks=False,
     x_scale_factor=1e6,
     y_scale_factor=1e6,
-    equal=True
 )
 
 

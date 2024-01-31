@@ -19,7 +19,7 @@ def prepare_simulation_geometry(
         clad_structure: object,
         fiber_list: list,
         capillary_tube: object = None,
-        fusion_degree: float = None,
+        fusion_degree: float | str = 'auto',
         fiber_radius: float = None,
         x_bounds: str | list = '',
         y_bounds: str | list = '',
@@ -62,10 +62,6 @@ def prepare_simulation_geometry(
     :returns:   The simulation geometry
     :rtype:     Geometry
     """
-
-    # assert (x_bounds in ['left', 'right', '']) or is, f"Invalid 'x_bounds' input: {x_bounds}, value has to be in ['left', 'rigth']."
-    # assert y_bounds in ['top', 'bottom', ''], f"Invalid 'y_bounds' input: {y_bounds}, value has to be in ['top', 'bottom']."
-
     if clad_index.lower() == 'silica':
         index = fiber_catalogue.get_silica_index(wavelength=wavelength)
 
@@ -164,7 +160,7 @@ class Workflow():
     """ List of the fiber to add to the optical structure """
     fiber_radius: float = 62.5e-6
     """ Fiber radius for the clad fused structure """
-    fusion_degree: float = None
+    fusion_degree: float = 'auto'
     """ Fusion degree for the clad fused structure """
     x_bounds: str = ''
     """ X-boundaries """
