@@ -36,7 +36,7 @@ jobs:
           - uses: MartinPdeS/MPSActions/publish_coverage@master
             with:
                 package-name: SuPyMode
-                python-version: "3.11"
+                python-version: "3.10"
                 auth: ${{ secrets.GIST_TOKEN }}
                 gistID: 8e5ebf39ed694d3c90a790dffc0eff4f
 
@@ -50,7 +50,7 @@ jobs:
             with:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 package-name: SuPyMode
-                python-version: "3.11" #no documentation for python 3.7 (pickle5 not present˘)
+                python-version: "3.10" #no documentation for python 3.7 (pickle5 not present˘)
 
 
     publish_wheel:
@@ -60,7 +60,7 @@ jobs:
         steps:
           - uses: MartinPdeS/MPSActions/publish_pypi@master
             with:
-                python-version: "3.11"
+                python-version: "3.10"
                 password: ${{ secrets.PYPI_API_TOKEN }}
 
 # -
