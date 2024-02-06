@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy
-from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries2D
+from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries
 
 
 def test_symmetry():
@@ -13,7 +13,7 @@ def test_symmetry():
         resolution=80,
         x_bounds="left",
         y_bounds="centering",
-        boundaries=[Boundaries2D(right='symmetric')],
+        boundaries=[Boundaries(right='symmetric')],
         n_sorted_mode=1,
         n_added_mode=2,
         debug_mode=0
@@ -27,7 +27,7 @@ def test_symmetry():
         resolution=80,
         x_bounds="centering",
         y_bounds="centering",
-        boundaries=[Boundaries2D()],
+        boundaries=[Boundaries()],
         n_sorted_mode=1,
         n_added_mode=2,
         debug_mode=0

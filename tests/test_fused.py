@@ -3,7 +3,7 @@
 
 import pytest
 
-from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries2D
+from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries
 
 fused_structure_list = [
     configuration.ring.FusedProfile_01x01,
@@ -27,7 +27,7 @@ def test_fused_structure_workflow(fused_structure):
         resolution=30,
         x_bounds="left",
         y_bounds="centering",
-        boundaries=[Boundaries2D(right='symmetric')],
+        boundaries=[Boundaries(right='symmetric')],
         n_sorted_mode=2,
         n_added_mode=2,
         debug_mode=0,

@@ -3,7 +3,7 @@
 
 from unittest.mock import patch
 
-from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries2D
+from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries
 
 
 @patch("matplotlib.pyplot.show")
@@ -23,7 +23,7 @@ def test_superset_plot(patch):
         x_bounds="left",
         y_bounds="centering",
         debug_mode=0,
-        boundaries=[Boundaries2D(right='symmetric')],
+        boundaries=[Boundaries(right='symmetric')],
         n_sorted_mode=2,
         n_added_mode=2,
     )
@@ -60,7 +60,7 @@ def test_representation_plot(patch):
         x_bounds="left",
         y_bounds="centering",
         debug_mode=0,
-        boundaries=[Boundaries2D(right='symmetric')],
+        boundaries=[Boundaries(right='symmetric')],
         n_sorted_mode=2,
         n_added_mode=2,
     )

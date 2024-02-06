@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from SuPyMode.workflow import Workflow, fiber_catalogue, configuration, Boundaries2D
+from SuPyMode.workflow import Workflow, fiber_catalogue, configuration, Boundaries
 from SuPyMode.profiles import AlphaProfile
 
 fiber = [
@@ -33,7 +33,7 @@ def test_propagation():
         resolution=40,
         x_bounds="left",
         y_bounds="centering",
-        boundaries=[Boundaries2D(right='symmetric')],
+        boundaries=[Boundaries(right='symmetric')],
         n_sorted_mode=2,
         n_added_mode=2,
         debug_mode=0

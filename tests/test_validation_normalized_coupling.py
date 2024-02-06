@@ -3,7 +3,7 @@
 
 
 import numpy
-from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries2D
+from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries
 from PyFiberModes.fiber import load_fiber
 from PyFiberModes.__future__ import get_normalized_LP_coupling
 from PyFiberModes import LP01, LP02
@@ -30,7 +30,7 @@ def test_normalized_coupling(
         resolution=resolution,
         x_bounds=x_bounds,
         y_bounds=y_bounds,
-        boundaries=[Boundaries2D(right='symmetric', top='symmetric')],
+        boundaries=[Boundaries(right='symmetric', top='symmetric')],
         n_sorted_mode=4,
         n_added_mode=8,
         debug_mode=0,

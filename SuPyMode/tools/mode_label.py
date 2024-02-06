@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from dataclasses import dataclass
-from PyFinitDiff.boundaries import Boundaries2D
+from PyFinitDiff.finite_difference_2D import Boundaries
 
 
-@dataclass
+@dataclass(frozen=True)
 class ModeLabel:
-    boundaries: Boundaries2D
+    boundaries: Boundaries
     n_mode: int = 2
 
     label_list_str = ['01', '11', '21', '02', '31', '12', '41', '22', '03', '51', '32', '13']
@@ -30,12 +30,12 @@ class ModeLabel:
 
     def get_labels(self) -> list:
         label_dictionnary = {
-            label: symmetries for label, symmetries in self.label_dictionnary.items() if self.boundaries.x_symmetry in [symmetries['x'], 'zero']
+            label: symmetries for label, symmetries in self.label_dictionnary.items() if self.boundaries.get_x_parity() in [symmetries['x'], 'zero']
 
         }
 
         label_dictionnary = {
-            label: symmetries for label, symmetries in label_dictionnary.items() if self.boundaries.y_symmetry in [symmetries['y'], 'zero']
+            label: symmetries for label, symmetries in label_dictionnary.items() if self.boundaries.get_y_parity() in [symmetries['y'], 'zero']
 
         }
 

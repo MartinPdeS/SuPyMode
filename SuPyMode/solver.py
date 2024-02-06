@@ -4,7 +4,8 @@
 # Third-party imports
 import numpy
 from dataclasses import dataclass, field
-from PyFinitDiff.sparse2D import FiniteDifference2D
+from PyFinitDiff.finite_difference_2D import FiniteDifference
+from PyFinitDiff.finite_difference_2D import Boundaries
 from MPSTools.tools.mathematics import get_rho_gradient
 from FiberFusing.geometry import Geometry
 from FiberFusing.coordinate_system import CoordinateSystem
@@ -12,7 +13,6 @@ from FiberFusing.coordinate_system import CoordinateSystem
 # Local imports
 from SuPyMode.superset import SuperSet
 from SuPyMode.supermode import SuperMode
-from PyFinitDiff.boundaries import Boundaries2D
 from SuPyMode.binary.CppSolver import CppSolver
 from SuPyMode.binary.SuperMode import SuperMode as BindingSuperMode  # It has to be imported in order for pybind11 to know the type
 from SuPyMode.tools.mode_label import ModeLabel
@@ -44,6 +44,8 @@ class SuPySolver(object):
             assert self.coordinate_system is not None, "Geometry provided without its coordinate system"
             self.mesh = self.geometry
         else:
+            self.geometry.generate_coordinate_system()
+            self.geometry.generate_mesh()
             self.mesh = self.geometry.mesh
             self.coordinate_system = self.geometry.coordinate_system
 
@@ -67,7 +69,7 @@ class SuPySolver(object):
     def initialize_binding(
             self,
             n_sorted_mode: int,
-            boundaries: Boundaries2D,
+            boundaries: Boundaries,
             n_added_mode: int) -> CppSolver:
         """
         Initializes the c++ binding of the class.
@@ -79,12 +81,12 @@ class SuPySolver(object):
         :param      n_added_mode:     Number of additional modes that are computed for that will be sorted out, the higher the value the less likely mode mismatch will occur.
         :type       n_added_mode:     int
         :param      boundaries:       Symmetries of the finit-difference system.
-        :type       boundaries:       Boundaries2D
+        :type       boundaries:       Boundaries
 
         :returns:   The cpp solver.
         :rtype:     CppSolver
         """
-        self.FD = FiniteDifference2D(
+        self.FD = FiniteDifference(
             n_x=self.coordinate_system.nx,
             n_y=self.coordinate_system.ny,
             dx=self.coordinate_system.dx,
@@ -173,7 +175,7 @@ class SuPySolver(object):
         """
         return numpy.sqrt(eigen_value) / self.wavenumber
 
-    def get_supermode_labels(self, n_modes: int, boundaries: Boundaries2D, auto_label: bool) -> list:
+    def get_supermode_labels(self, n_modes: int, boundaries: Boundaries, auto_label: bool) -> list:
         """
         Generate and returns the supermode label depending if auto_label
         is activated or not.
@@ -181,7 +183,7 @@ class SuPySolver(object):
         :param      n_modes:     The n modes
         :type       n_modes:     int
         :param      boundaries:  The boundaries
-        :type       boundaries:  Boundaries2D
+        :type       boundaries:  Boundaries
         :param      auto_label:  The automatic label option
         :type       auto_label:  bool
 
@@ -199,7 +201,7 @@ class SuPySolver(object):
     def add_modes(
             self,
             n_sorted_mode: int,
-            boundaries: Boundaries2D,
+            boundaries: Boundaries,
             n_added_mode: int = 4,
             index_guess: float = 0.,
             auto_label: bool = True) -> None:
@@ -214,7 +216,7 @@ class SuPySolver(object):
         :param      n_sorted_mode:    Number of mode that are outputed by the c++ solver.
         :type       n_sorted_mode:    int
         :param      boundaries:       Boundaries of the finit-difference system.
-        :type       boundaries:       Boundaries2D
+        :type       boundaries:       Boundaries
         :param      n_added_mode:     Number of additional modes that are computed for that will be sorted out, the higher the value the less likely mode mismatch will occur.
         :type       n_added_mode:     int
         :param      index_guess:      Initial effective index guess (if 0, auto evaluated).

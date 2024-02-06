@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries2D
+from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries
 
 
 def test_superset_plot():
@@ -21,7 +21,7 @@ def test_superset_plot():
         y_bounds="centering",
         debug_mode=0,
         auto_label=True,
-        boundaries=[Boundaries2D(right='symmetric')],
+        boundaries=[Boundaries(right='symmetric')],
         n_sorted_mode=2,
         n_added_mode=2,
     )

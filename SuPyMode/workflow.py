@@ -10,7 +10,7 @@ from FiberFusing.fiber import catalogue as fiber_catalogue
 from SuPyMode.profiles import AlphaProfile
 from FiberFusing import configuration
 
-from PyFinitDiff.boundaries import Boundaries2D
+from PyFinitDiff.finite_difference_2D import Boundaries
 from pathvalidate import sanitize_filepath
 
 
@@ -188,7 +188,7 @@ class Workflow():
     """ Scrambling of the clad core position """
     index_scrambling: float = 0
     """ Scrambling of the structure refractive index """
-    boundaries: list = (Boundaries2D(),)
+    boundaries: list = (Boundaries(),)
     """ List of boundaries cndition to which evaluate to modes """
     accuracy: int = 2
     """ Accuracy of the finit-difference set of value """
