@@ -1,6 +1,6 @@
-MPSPlots
-PyFinitDiff
-FiberFusing
+MPSPlots==1.3.19
+PyFinitDiff==1.0.14
+FiberFusing==1.0.16
 numpy
 scipy
 matplotlib

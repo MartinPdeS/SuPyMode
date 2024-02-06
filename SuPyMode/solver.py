@@ -5,6 +5,9 @@
 import numpy
 from dataclasses import dataclass, field
 from PyFinitDiff.sparse2D import FiniteDifference2D
+from MPSTools.tools.mathematics import get_rho_gradient
+from FiberFusing.geometry import Geometry
+from FiberFusing.coordinate_system import CoordinateSystem
 
 # Local imports
 from SuPyMode.superset import SuperSet
@@ -22,11 +25,11 @@ class SuPySolver(object):
     It solves the eigenvalues problems for a given geometry and return a collection of SuperModes.
 
     """
-    geometry: None = field(repr=False)
-    """ geometry of the coupler structure """
+    geometry: Geometry | numpy.ndarray = field(repr=False)
+    """ Refractive index geometry of the optical structure """
     tolerance: float = 1e-8
     """ Absolute tolerance on the propagation constant computation """
-    max_iter: int = 10000
+    max_iter: int = 10_000
     """ Maximum iteration for the c++ Eigensolver """
     accuracy: int = 2
     """ Accuracy of the finit difference methode """
@@ -34,14 +37,32 @@ class SuPySolver(object):
     """ Order of the taylor serie to extrapolate next eigenvalues . """
     debug_mode: int = 1
     """ Level of debug outprint from the c++ binding [0, 1, 2] """
+    coordinate_system: CoordinateSystem = None
 
     def __post_init__(self):
+        if isinstance(self.geometry, numpy.ndarray):
+            assert self.coordinate_system is not None, "Geometry provided without its coordinate system"
+            self.mesh = self.geometry
+        else:
+            self.mesh = self.geometry.mesh
+            self.coordinate_system = self.geometry.coordinate_system
+
         self.mode_number = 0
         self.solver_number = 0
 
-    @property
-    def coordinate_system(self) -> object:
-        return self.geometry.coordinate_system
+    def get_n2_rho_gradient(self) -> numpy.ndarray:
+        """
+        Returns the n squared radial gradient.
+
+        :returns:   The n 2 rho gradient.
+        :rtype:     numpy.ndarray
+        """
+        gradient = get_rho_gradient(
+            mesh=self.mesh**2,
+            coordinate_system=self.coordinate_system
+        )
+
+        return gradient
 
     def initialize_binding(
             self,
@@ -63,13 +84,11 @@ class SuPySolver(object):
         :returns:   The cpp solver.
         :rtype:     CppSolver
         """
-        self.geometry.generate_coordinate_mesh_gradient()
-
         self.FD = FiniteDifference2D(
-            n_x=self.geometry.coordinate_system.nx,
-            n_y=self.geometry.coordinate_system.ny,
-            dx=self.geometry.coordinate_system.dx,
-            dy=self.geometry.coordinate_system.dy,
+            n_x=self.coordinate_system.nx,
+            n_y=self.coordinate_system.ny,
+            dx=self.coordinate_system.dx,
+            dy=self.coordinate_system.dy,
             derivative=2,
             accuracy=self.accuracy,
             boundaries=boundaries
@@ -81,9 +100,11 @@ class SuPySolver(object):
             self.FD.triplet.array[:, 2]
         ]
 
+        mesh_gradient_term = self.get_n2_rho_gradient() * self.coordinate_system.rho_mesh
+
         Solver = CppSolver(
-            mesh=self.geometry.mesh,
-            gradient=self.geometry.n2_gradient * self.geometry.coordinate_system.rho_mesh,
+            mesh=self.mesh,
+            gradient=mesh_gradient_term,
             itr_list=self.itr_list,
             finit_matrix=new_array.T,
             n_computed_mode=n_sorted_mode + n_added_mode,
@@ -92,8 +113,8 @@ class SuPySolver(object):
             tolerance=self.tolerance,
             wavelength=self.wavelength,
             debug_mode=self.debug_mode,
-            dx=self.geometry.coordinate_system.dx,
-            dy=self.geometry.coordinate_system.dy
+            dx=self.coordinate_system.dx,
+            dy=self.coordinate_system.dy
         )
 
         Solver.compute_laplacian()
@@ -168,7 +189,8 @@ class SuPySolver(object):
         :rtype:     list
         """
         if auto_label:
-            supermode_labels = ModeLabel(boundaries=boundaries, n_mode=n_modes).get_labels()
+            mode_label = ModeLabel(boundaries=boundaries, n_mode=n_modes)
+            supermode_labels = mode_label.get_labels()
         else:
             supermode_labels = ["mode_" + "{" + str(n) + "}" for n in range(n_modes)]
 
@@ -177,7 +199,7 @@ class SuPySolver(object):
     def add_modes(
             self,
             n_sorted_mode: int,
-            boundaries: dict,
+            boundaries: Boundaries2D,
             n_added_mode: int = 4,
             index_guess: float = 0.,
             auto_label: bool = True) -> None:
