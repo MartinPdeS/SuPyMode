@@ -5,7 +5,7 @@
 
 # %%
 # Importing the script dependencies
-from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries2D
+from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries
 
 wavelength = 1550e-9
 
@@ -40,7 +40,7 @@ workflow = Workflow(
     resolution=80,                 # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
     x_bounds="centering",           # Mesh x-boundary structure.
     y_bounds="centering",           # Mesh y-boundary structure.
-    boundaries=[Boundaries2D()],    # Set of symmetries to be evaluated, each symmetry add a round of simulation
+    boundaries=[Boundaries()],    # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=6,                # Total computed and sorted mode.
     n_added_mode=6,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
     plot_geometry=True,             # Plot the geometry mesh before computation.

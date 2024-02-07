@@ -5,7 +5,7 @@
 
 # %%
 # Importing the script dependencies
-from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries2D
+from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries
 import numpy
 
 # %%
@@ -38,8 +38,8 @@ capillary_tube = fiber_catalogue.CapillaryTube(
 # %%
 # Defining the boundaries of the system
 boundaries = [
-    Boundaries2D(right='symmetric', bottom='symmetric'),
-    Boundaries2D(right='symmetric', bottom='anti-symmetric')
+    Boundaries(right='symmetric', bottom='symmetric'),
+    Boundaries(right='symmetric', bottom='anti-symmetric')
 ]
 
 # %%

@@ -6,7 +6,7 @@
 
 # %%
 # Importing the script dependencies
-from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries2D
+from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries
 
 # %%
 # Creating the fiber list for mesh
@@ -35,7 +35,7 @@ fiber_list = [
 # %%
 # Defining the boundaries of the system
 boundaries = [
-    Boundaries2D()
+    Boundaries()
 ]
 
 # %%

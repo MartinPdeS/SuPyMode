@@ -5,7 +5,7 @@
 
 # %%
 # Importing the script dependencies
-from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries2D
+from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries
 
 wavelength = 1550e-9
 
@@ -26,8 +26,8 @@ fiber_list = [
 # %%
 # Defining the boundaries of the system
 boundaries = [
-    Boundaries2D(bottom='symmetric'),
-    Boundaries2D(bottom='anti-symmetric')
+    Boundaries(bottom='symmetric'),
+    Boundaries(bottom='anti-symmetric')
 ]
 
 

@@ -7,7 +7,7 @@ Propagation constant: DCFC
 # Imports
 # ~~~~~~~
 import numpy
-from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries2D
+from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries
 from PyFiberModes import LP01
 from PyFiberModes.fiber import load_fiber
 from MPSPlots.render2D import SceneList
@@ -27,8 +27,8 @@ fiber_list = [
 # %%
 # Defining the boundaries of the system
 boundaries = [
-    Boundaries2D(right='symmetric', bottom='symmetric'),
-    Boundaries2D(right='symmetric', bottom='anti-symmetric')
+    Boundaries(right='symmetric', bottom='symmetric'),
+    Boundaries(right='symmetric', bottom='anti-symmetric')
 ]
 
 # %%

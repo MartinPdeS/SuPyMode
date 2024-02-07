@@ -7,7 +7,7 @@ Normalized coupling: SMF28
 # Imports
 # ~~~~~~~
 import numpy
-from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries2D
+from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries
 from PyFiberModes.__future__ import get_normalized_LP_coupling
 from PyFiberModes import LP01, LP02
 from PyFiberModes.fiber import load_fiber
@@ -28,7 +28,7 @@ supymode_fiber = supymode_fiber.scale(10)
 # %%
 # Defining the boundaries of the system
 boundaries = [
-    Boundaries2D(right='symmetric', top='symmetric'),
+    Boundaries(right='symmetric', top='symmetric'),
 ]
 
 
