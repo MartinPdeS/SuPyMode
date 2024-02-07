@@ -96,10 +96,12 @@ class SuPySolver(object):
             boundaries=boundaries
         )
 
+        self.FD.construct_triplet()
+
         new_array = numpy.c_[
-            self.FD.triplet.array[:, 1],
-            self.FD.triplet.array[:, 0],
-            self.FD.triplet.array[:, 2]
+            self.FD._triplet.array[:, 1],
+            self.FD._triplet.array[:, 0],
+            self.FD._triplet.array[:, 2]
         ]
 
         mesh_gradient_term = self.get_n2_rho_gradient() * self.coordinate_system.rho_mesh

@@ -1,7 +1,0 @@
-MPSPlots==1.3.19
-PyFinitDiff==1.1.0
-FiberFusing==1.0.16
-numpy
-scipy
-matplotlib
-pathvalidate

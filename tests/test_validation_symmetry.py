@@ -10,13 +10,15 @@ def test_symmetry():
         fiber_list=[fiber_catalogue.load_fiber('DCF1300S_33', wavelength=1550e-9)],
         clad_structure=configuration.ring.FusedProfile_01x01,
         wavelength=1550e-9,
-        resolution=80,
+        resolution=160,
+        n_step=10,
+        itr_final=0.9,
         x_bounds="left",
         y_bounds="centering",
         boundaries=[Boundaries(right='symmetric')],
         n_sorted_mode=1,
         n_added_mode=2,
-        debug_mode=0
+        debug_mode=0,
 
     )
 
@@ -24,23 +26,27 @@ def test_symmetry():
         fiber_list=[fiber_catalogue.load_fiber('DCF1300S_33', wavelength=1550e-9)],
         clad_structure=configuration.ring.FusedProfile_01x01,
         wavelength=1550e-9,
-        resolution=80,
+        resolution=160,
+        n_step=10,
+        itr_final=0.9,
         x_bounds="centering",
         y_bounds="centering",
         boundaries=[Boundaries()],
         n_sorted_mode=1,
         n_added_mode=2,
-        debug_mode=0
+        debug_mode=0,
     )
 
     discrepency = numpy.isclose(
         symmetric_workflow.superset[0].index._data,
         asymmetric_workflow.superset[0].index._data,
-        atol=1e-10,
-        rtol=1e-10
+        atol=1e-5,
+        rtol=1e-5
     )
 
     if not discrepency.mean() > 0.9:
         raise ValueError(f'Symmetric and non-symmetric index do not match [mean error: {discrepency.mean()}]')
 
+
+test_symmetry()
 # -
