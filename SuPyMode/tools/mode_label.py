@@ -11,10 +11,9 @@ class ModeLabel:
     n_mode: int = 2
 
     label_list_str = ['01', '11', '21', '02', '31', '12', '41', '22', '03', '51', '32', '13']
+    label_dictionnary = {}
 
     def __post_init__(self):
-        self.label_dictionnary = {}
-
         for mode_number in self.label_list_str:
             azimuthal_number = int(mode_number[0])
             if azimuthal_number == 0:
