@@ -86,7 +86,7 @@ To test localy (with cloning the GitHub repository) you'll need to install the d
 
 .. code:: python
 
-   >>> git clone https://github.com/MartinPdeS/SuPyMode.git
+   >>> git clone --recurse-submodules https://github.com/MartinPdeS/SuPyMode.git
    >>> cd SuPyMode
    >>> pip install -r requirements/requirements.txt
    >>> coverage run --source=SuPyMode --module pytest --verbose tests
