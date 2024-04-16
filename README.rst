@@ -60,12 +60,6 @@ To install manually (os independent) you will need to install:
 
 1. cmake (3.16+)
 
-In order to use the SuPyMode Simulator Library, one must have installed the python dependencies:
-
-.. code-block:: python
-
-    >>> pip3 install -r requirements.txt
-
 Then, download and install the SuPyMode package:
 
 .. code-block:: python
