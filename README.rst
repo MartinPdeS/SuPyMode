@@ -73,7 +73,7 @@ Then, download and install the SuPyMode package:
     >>> git clone https://github.com/MartinPdeS/SuPyMode.git
     >>> cd SuPyMode && mkdir build && cd build
     >>> cmake ..
-    >>> make install (Linux, MacOs)
+    >>> cmake --build .
     >>> cd ..
     >>> pip3 install .
 
@@ -82,13 +82,13 @@ Then, download and install the SuPyMode package:
 Testing
 *******
 
-To test localy (with cloning the GitHub repository) you'll need to install the dependencies and run the coverage command as
+Make sure to install both coverage and pytest using ``pip3 install coverage pytest``. To test locally (with cloning the GitHub repository) you'll need to install the dependencies and run the coverage command as
 
 .. code:: python
 
    >>> git clone --recurse-submodules https://github.com/MartinPdeS/SuPyMode.git
    >>> cd SuPyMode
-   >>> pip install -r requirements/requirements.txt
+   >>> pip3 install PyFiberModes
    >>> coverage run --source=SuPyMode --module pytest --verbose tests
    >>> coverage report --show-missing
 
