@@ -64,7 +64,7 @@ Then, download and install the SuPyMode package:
 
 .. code-block:: python
 
-    >>> git clone https://github.com/MartinPdeS/SuPyMode.git
+    >>> git clone --recurse-submodules https://github.com/MartinPdeS/SuPyMode.git
     >>> cd SuPyMode && mkdir build && cd build
     >>> cmake ..
     >>> cmake --build .
