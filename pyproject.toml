@@ -1,3 +1,24 @@
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+    '-v',
+    '-rA',
+    '-rw'
+]
+
+testpaths = [
+    "tests/test_api.py",
+    "tests/test_plots.py",
+    "tests/test_profile.py",
+    "tests/test_propagation.py",
+    "tests/test_validation_normalized_coupling.py",
+    "tests/test_validation_propagation_constant.py",
+    "tests/test_validation_symmetry.py",
+    "tests/test_workflow.py"
+]
+
+minversion = 6.0
+
 [tool.cibuildwheel]
 build-frontend = "pip"
 build-verbosity = 0

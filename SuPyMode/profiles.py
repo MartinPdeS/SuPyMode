@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import Tuple
 import numpy
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
@@ -14,6 +15,24 @@ from dataclasses import dataclass, field
 
 @dataclass
 class TaperSection():
+    """
+    A class to represent a taper section in optical fiber simulations.
+
+    Attributes:
+        z_array (np.ndarray): The array of longitudinal positions along the taper (z-coordinates).
+        radius_array (np.ndarray): The array of taper radii corresponding to the z positions.
+        heating_length_initial (float, optional): The initial heating length of the taper section.
+        heating_length_final (float, optional): The final heating length of the taper section.
+
+    Properties:
+        z_initial (float): Returns the initial z position of the taper.
+        z_final (float): Returns the final z position of the taper.
+        radius_initial (float): Returns the initial radius at the start of the taper.
+        radius_final (float): Returns the radius at the end of the taper.
+        is_constant (bool): Determines if the taper's radius is constant throughout.
+        interpolation (callable): Provides an interpolation function for the radius over z.
+    """
+
     z_array: numpy.ndarray
     radius_array: numpy.ndarray
     heating_length_initial: float = None
@@ -21,26 +40,38 @@ class TaperSection():
 
     @property
     def z_initial(self) -> float:
+        """ Returns the initial z-coordinate of the taper section. """
         return self.z_array[0]
 
     @property
     def is_constant(self) -> float:
+        """ Checks if the taper section's radius remains constant over its length. """
         return self.radius_array[0] == self.radius_array[-1]
 
     @property
     def z_final(self) -> float:
+        """ Returns the final z-coordinate of the taper section. """
         return self.z_array[-1]
 
     @property
     def radius_initial(self) -> float:
+        """ Returns the initial radius of the taper section. """
         return self.radius_array[0]
 
     @property
     def radius_final(self) -> float:
+        """ Returns the final radius of the taper section. """
         return self.radius_array[-1]
 
     @property
     def interpolation(self):
+        """
+        Provides an interpolation function for radius as a function of z-coordinate.
+
+        Returns:
+            interp1d: An interpolator that estimates the radius at any z within the bounds
+                      of z_array, with extrapolation set to zero outside the bounds.
+        """
         return interp1d(
             x=self.z_array,
             y=self.radius_array,
@@ -52,55 +83,46 @@ class TaperSection():
 @dataclass
 class AlphaProfile():
     r"""
-    Class represent the fiber structure coupler z-profile.
-    This particular class is set to a Gaussian profile.
+    Represents a Gaussian profile for an optical fiber coupler.
 
     Translation table from article to class:
         - :math:`rho_w` = radius_segment
         - :math:`rho_0` = initial_radius
         - :math:`l_w` = heating_length_segment
         - :math:`x_0` = stretching_length
+
+    Attributes:
+        initial_radius (float): Initial radius of the taper structure, defaults to 1.
+        n_point (int): Number of points for differential equation resolution, recommended 200+.
+        symmetric (bool): If true, the taper structure is considered symmetric about z.
+        label (str): Label for the profile, used in plotting.
+        add_end_of_taper_section (bool): If true, adds a constant section at the end of the taper.
+        line_color (str): Line color for plots, not part of the main data model.
+        line_style (str): Line style for plots, not part of the main data model.
     """
     initial_radius: float = 1
-    """ Initial radius of the taper structure """
     n_point: int = 200
-    """ Number of point for solving the differential equation for the ITR vs distance. Keep it high [200+]"""
     symmetric: bool = False
-    """ Bolean to defined if the taper structure is z-symmetric """
     label: str = 'profile'
-    """ Label of the profile, shown as label of plots """
     add_end_of_taper_section: bool = True
-    """ Define if constant section is added at end of taper """
     line_color: str = field(default='black', repr=False)
-    """ Color of the lines for the plots """
     line_style: str = field(default='--', repr=False)
-    """ Style of the lines for the plots """
 
     def __post_init__(self):
         self.section_list = []
 
     @property
     def first_section(self) -> TaperSection:
-        """ Returns the first taper section added to the profile """
+        """ Returns the first taper section added to the profile. """
         return self.section_list[0]
 
     @property
     def last_section(self) -> TaperSection:
-        """ Returns the last taper section added to the profile """
+        """ Returns the last taper section added to the profile. """
         return self.section_list[-1]
 
     def add_constant_segment(self, *, length: float, n_point: int = 100) -> None:
-        """
-        Add the constant section following the last section which length is to be evaluated.
-
-        :param      length:   Length of the constant section to be added
-        :type       length:   float
-        :param      n_point:  The number of point where wo which evaluate that segment
-        :type       n_point:  int
-
-        :returns:   No returns
-        :rtype:     None
-        """
+        """ Adds a constant section at the specified length with a given number of points. """
         section = self.get_constant_custom_section(
             length=length,
             rho=self.last_radius,
@@ -111,16 +133,7 @@ class AlphaProfile():
         self.section_list.append(section)
 
     def add_end_of_taper_segment(self, *, n_point: int = 100) -> None:
-        """
-        Add the constant section which length equal the final length of the
-        heating section.
-
-        :param      n_point:  The number of point where wo which evaluate that segment
-        :type       n_point:  int
-
-        :returns:   No returns
-        :rtype:     None
-        """
+        """ Adds a constant segment at the end of the taper if the last section is not constant. """
         if self.last_section.is_constant:
             return
 
@@ -192,23 +205,26 @@ class AlphaProfile():
             initial_heating_length: float,
             stretching_length: float,
             initial_radius: float,
-            distance: numpy.ndarray) -> tuple:
+            distance: numpy.ndarray) -> Tuple[numpy.ndarray, float, float]:
         """
-        Gets the radius as a fonction of the distance for a specific segment.
+        Computes the radius as a function of the distance for a specific segment,
+        applying a tapering formula based on the provided parameters.
 
-        :param      alpha:                  Alpha parameter which represent how the heating section changes in time
-        :type       alpha:                  float
-        :param      initial_heating_length: Initial length of the heating section
-        :type       initial_heating_length: float
-        :param      initial_radius:         The initial radius of the segment to be added
-        :type       initial_radius:         float
-        :param      stretching_length:      The total elongated lenght of the current segment to be added
-        :type       stretching_length:      float
-        :param      distance:               Array representing the z-distance.
-        :type       distance:               numpy.ndarray
+        Args:
+            alpha (float): Rate at which the heating section's influence changes over time.
+            initial_heating_length (float): Initial length of the heating section.
+            initial_radius (float): Radius at the start of the segment.
+            stretching_length (float): Total length over which the segment is elongated.
+            distance (numpy.ndarray): Array representing the z-distance.
 
-        :returns:   The radius, final radius and final heating length
-        :rtype:     tuple
+        Returns:
+            Tuple[numpy.ndarray, float, float]: A tuple containing:
+                - radius (numpy.ndarray): Computed radius at each point in 'distance'.
+                - final_radius (float): Radius at the end of the segment.
+                - final_heating_length (float): Total length of the heating section after stretching.
+
+        Raises:
+            ValueError: If input conditions are not physically or mathematically valid.
         """
         self.assert_conditions(
             alpha=alpha,
@@ -224,7 +240,8 @@ class AlphaProfile():
         final_radius = initial_radius * (1 + alpha * stretching_length / initial_heating_length)**(-1 / (2 * alpha))
         final_heating_length = initial_heating_length + alpha * stretching_length
 
-        assert not numpy.any(radius < 0), "Negative radius value are not physical"
+        if numpy.any(radius <= 0):
+            raise ValueError("Computed radius values contain non-physical negative or zero values.")
 
         return radius, final_radius, final_heating_length
 
@@ -234,22 +251,24 @@ class AlphaProfile():
             stretching_length: float,
             initial_heating_length: float) -> None:
         """
-        Assert a few condition of viability of the proposed recipe.
+        Validates conditions for computing the taper segment.
 
-        :param      alpha:                   The alpha
-        :type       alpha:                   float
-        :param      stretching_length:       The stretching length
-        :type       stretching_length:       float
-        :param      initial_heating_length:  The initial heating length
-        :type       initial_heating_length:  float
+        Args:
+            alpha (float): Alpha parameter, non-zero to avoid division by zero.
+            stretching_length (float): Length over which the segment is elongated.
+            initial_heating_length (float): Initial length of the heating section.
 
-        :returns:   No returns
-        :rtype:     None
+        Raises:
+            ValueError: If any condition that ensures a physically viable profile is violated.
         """
-        assert initial_heating_length > 0, "The initial heat lenght initial_heating_length cannot be negative!"
+        if initial_heating_length <= 0:
+            raise ValueError("Initial heating length must be positive.")
 
-        if alpha < 0:
-            assert stretching_length < initial_heating_length / abs(alpha), "Condition: x0 < initial_heating_length / |alpha| is not respected! see Birks article in the references!"
+        if alpha == 0:
+            raise ValueError("Alpha must not be zero to avoid division by zero in formula.")
+
+        if alpha < 0 and stretching_length >= initial_heating_length / abs(alpha):
+            raise ValueError("Stretching length for negative alpha exceeds the physically viable limit.")
 
     def add_taper_custom_segment(
             self, *,
@@ -627,7 +646,7 @@ class AlphaProfile():
         :param      ax:   The axis on which to add the plot
         :type       ax:   Axis
         """
-        ax.set_style(**representation.adiabatic.ax_style)
+        ax.set_style(**representation.adiabatic.Adiabatic.plot_style)
 
         return self.itr_list, self.adiabatic
 

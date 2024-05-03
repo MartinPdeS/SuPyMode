@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from typing import Iterable
 if TYPE_CHECKING:
     from SuPyMode.superset import SuperSet
     from SuPyMode.supermode import SuperMode
@@ -10,7 +11,7 @@ if TYPE_CHECKING:
 import numpy
 import pickle
 from pathlib import Path
-from SuPyMode.tools.directories import instance_directory
+from SuPyMode.directories import instance_directory
 
 
 def load_superset(filename: str, directory: str = '.'):
@@ -129,7 +130,7 @@ def interpret_slice_number_and_itr(
         itr_baseline: numpy.ndarray,
         slice_list: int | list[int] = [],
         itr_list: float | list[float] = [],
-        sort_slice_number: bool = True) -> tuple:
+        sort_slice_number: bool = False) -> tuple:
     """
     Interpret the itr and slice_list as input and return a tuple containing all the associated values
 
@@ -143,6 +144,11 @@ def interpret_slice_number_and_itr(
     :returns:   All the associated slice numbers and itr values
     :rtype:     tuple
     """
+    return_as_iterable = False
+
+    if isinstance(slice_list, Iterable) or isinstance(itr_list, Iterable):
+        return_as_iterable = True
+
     slice_list = numpy.atleast_1d(slice_list)
 
     slice_from_itr = itr_to_slice(itr_baseline, itr=itr_list)
@@ -162,7 +168,7 @@ def interpret_slice_number_and_itr(
 
         itr_list = numpy.sort(itr_list)[::-1]
 
-    if len(itr_list) == 1:
+    if not return_as_iterable:
         return slice_list[0], itr_list[0]
 
     return slice_list, itr_list

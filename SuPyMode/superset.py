@@ -20,18 +20,19 @@ from SuPyMode.supermode import SuperMode
 from SuPyMode import representation
 from SuPyMode.tools.utils import test_valid_input, get_intersection, interpret_slice_number_and_itr, interpret_mode_of_interest
 from SuPyMode.profiles import AlphaProfile
-from SuPyMode.tools import directories
+from SuPyMode import directories
 from MPSPlots.render2D import SceneMatrix, SceneList, Axis, Multipage
 
 
 @dataclass
 class SuperSet(object):
     """
-    Solver to which is associated the computed SuperSet Modes.
-    This class is a representation of the fiber optic structures set of supermodes, hence the name.
-    The items of this class are the supermodes generated from within the SuPySolver.
-    It doesn't link to any c++ binding, it is pure Python.
+    A class representing a set of supermodes calculated for a specific optical fiber configuration.
+    It facilitates operations on supermodes like sorting, plotting, and computations related to fiber optics simulations.
 
+    Attributes:
+        parent_solver (object): The solver instance that generated this SuperSet.
+        wavelength (float): The wavelength used in the solver, in meters.
     """
     parent_solver: object
     wavelength: float
@@ -72,24 +73,26 @@ class SuperSet(object):
     @property
     def fundamental_supermodes(self) -> list[SuperMode]:
         """
-        Returns a list of the fundamental supermodes.
-        Those supermodes are defined as the highest beta-value supermodes associated
-        with a particular fiber
+        Identifies and returns fundamental supermodes based on the highest beta values and minimal spatial overlap.
 
-        :returns:   The fundamental supermodes
-        :rtype:     list[SuperMode]
+        Args:
+            tolerance (float): The spatial overlap tolerance for mode distinction.
+
+        Returns:
+            list[SuperMode]: A list of fundamental supermodes.
         """
         return self.get_fundamental_supermodes(tolerance=1e-2)
 
     @property
     def non_fundamental_supermodes(self) -> list[SuperMode]:
         """
-        Returns a list of the non-fundamental supermodes.
-        The fundamental supermodes are defined as the highest beta-value supermodes associated
-        with a particular fiber
+        Identifies and returns non-fundamental supermodes based on the specified spatial overlap tolerance.
 
-        :returns:   The non-fundamental supermodes
-        :rtype:     list[SuperMode]
+        Args:
+            tolerance (float): The spatial overlap tolerance for distinguishing between fundamental and other modes.
+
+        Returns:
+            list[SuperMode]: A list of non-fundamental supermodes.
         """
         return self.get_non_fundamental_supermodes(tolerance=1e-2)
 
@@ -699,7 +702,7 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
-        ax.set_style(**representation.index.ax_style)
+        ax.set_style(**representation.index.Index.plot_style)
 
         for mode in mode_of_interest:
             mode.index.render_on_ax(ax=ax)
@@ -724,7 +727,7 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
-        ax.set_style(**representation.beta.ax_style)
+        ax.set_style(**representation.beta.Beta.plot_style)
 
         for mode in mode_of_interest:
             mode.beta.render_on_ax(ax=ax)
@@ -749,7 +752,7 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
-        ax.set_style(**representation.eigen_value.ax_style)
+        ax.set_style(**representation.eigen_value.EigenValue.plot_style)
 
         for mode in mode_of_interest:
             mode.index.render_on_ax(ax=ax)
@@ -776,7 +779,7 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
-        ax.set_style(**representation.normalized_coupling.ax_style)
+        ax.set_style(**representation.normalized_coupling.NormalizedCoupling.plot_style)
 
         for mode_0, mode_1 in combination:
             mode_0.normalized_coupling.render_on_ax(ax=ax, other_supermode=mode_1)
@@ -797,7 +800,7 @@ class SuperSet(object):
         :rtype:     SceneList
         """
         for mode_0, mode_1 in combination:
-            ax.set_style(**mode_0.beating_length.ax_style)
+            ax.set_style(**mode_0.beating_length.BeatingLength.plot_style)
             mode_0.beating_length.render_on_ax(ax=ax, other_supermode=mode_1)
 
     @combination_plot
@@ -820,12 +823,12 @@ class SuperSet(object):
         :returns:   figure instance, to plot the show() method.
         :rtype:     SceneList
         """
-        ax.set_style(**representation.adiabatic.ax_style)
+        ax.set_style(**representation.adiabatic.Adiabatic.plot_style)
         for mode_0, mode_1 in combination:
             mode_0.adiabatic.render_on_ax(ax=ax, other_supermode=mode_1)
 
         for profile in numpy.atleast_1d(add_profile):
-            profile.render_adiabatic_factor_vs_itr_on_ax(ax=ax, line_style='--', line_color='black')
+            profile.render_adiabatic_factor_vs_itr_on_ax(ax=ax, line_style='--')
 
     def is_compute_compatible(self, pair_of_mode: tuple) -> bool:
         """
@@ -924,7 +927,7 @@ class SuperSet(object):
                     column=m,
                 )
 
-                ax.set_style(**representation.field.ax_style)
+                ax.set_style(**representation.field.Field.plot_style)
 
                 mode.field.render_on_ax(
                     ax=ax,
@@ -938,17 +941,18 @@ class SuperSet(object):
 
     def plot(self, plot_type: str, **kwargs) -> SceneList:
         """
-        Generic plot function.
+        General plotting function to handle different types of supermode plots.
 
         Args:
-            type: Plot type ['index', 'beta', 'adiabatic', 'normalized-adiabatic', 'coupling', 'field', 'beating-length']
-        """
-        test_valid_input(
-            variable_name='plot_type',
-            user_input=plot_type,
-            valid_inputs=['index', 'beta', 'eigen-value', 'adiabatic', 'normalized-adiabatic', 'normalized-coupling', 'field', 'beating-length']
-        )
+            plot_type (str): The type of plot to generate. Options include 'index', 'beta', 'eigen-value', etc.
+            **kwargs: Additional keyword arguments for specific plot configurations.
 
+        Returns:
+            SceneList: The generated plot as a SceneList object.
+
+        Raises:
+            ValueError: If an unrecognized plot type is specified.
+        """
         match plot_type.lower():
             case 'index':
                 return self.plot_index(**kwargs)
@@ -968,6 +972,8 @@ class SuperSet(object):
                 return self.plot_beating_length(**kwargs)
             case 'normalized-adiabatic':
                 return self.plot_normalized_adiabatic(**kwargs)
+            case _:
+                raise ValueError(f'Invalid plot type: {plot_type}. Options are: index, beta, eigen-value, adiabatic, normalized-adiabatic, normalized-coupling, field, beating-length')
 
     def generate_pdf_report(
             self,

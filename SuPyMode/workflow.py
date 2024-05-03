@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import List, Union, Optional
 from dataclasses import dataclass
 from pathlib import Path
 
 from FiberFusing import Geometry, BackGround
 from SuPyMode.solver import SuPySolver
 from FiberFusing.fiber import catalogue as fiber_catalogue
-from SuPyMode.profiles import AlphaProfile
-from FiberFusing import configuration
+from SuPyMode.profiles import AlphaProfile  # noqa: F401
+from FiberFusing import configuration  # noqa: F401
 
 from PyFinitDiff.finite_difference_2D import Boundaries
 from pathvalidate import sanitize_filepath
@@ -17,13 +18,13 @@ from pathvalidate import sanitize_filepath
 def prepare_simulation_geometry(
         wavelength: float,
         clad_structure: object,
-        fiber_list: list,
-        capillary_tube: object = None,
-        fusion_degree: float | str = 'auto',
-        fiber_radius: float = None,
-        x_bounds: str | list = '',
-        y_bounds: str | list = '',
-        clad_index: float | str = 'silica',
+        fiber_list: List[object],
+        capillary_tube: Optional[object] = None,
+        fusion_degree: Union[float, str] = 'auto',
+        fiber_radius: Optional[float] = None,
+        x_bounds: Union[str, List[float]] = '',
+        y_bounds: Union[str, List[float]] = '',
+        clad_index: Union[float, str] = 'silica',
         core_position_scrambling: float = 0,
         index_scrambling: float = 0,
         resolution: int = 150,
@@ -32,38 +33,36 @@ def prepare_simulation_geometry(
         gaussian_filter: float = 0,
         background_index: float = 1) -> Geometry:
     """
-    Prepare and returns the processed geometry for simulation using SuPyMode.
+    Prepares and returns the simulation geometry for optical fiber configurations,
+    incorporating fused structures, optional capillary tubes, and specific boundary conditions.
 
-    :param      wavelength:                Wavelength at which evaluate the computation
-    :type       wavelength:                float
-    :param      clad_structure:            Initial optical structure
-    :type       clad_structure:            object
-    :param      fiber_list:                The fiber list
-    :type       fiber_list:                list
-    :param      capillary_tube:            Additional optical structure such as clad to add
-    :type       capillary_tube:            object
-    :param      fusion_degree:             Fusion degree for the clad fused structure
-    :type       fusion_degree:             float
-    :param      fiber_radius:              The fiber radius for the fused clad structure, all radii are assumed the same here.
-    :type       fiber_radius:              float
-    :param      x_bounds:                  The x-axis boundaries.
-    :type       x_bounds:                  str
-    :param      y_bounds:                  The y-axis boundaries.
-    :type       y_bounds:                  str
-    :param      clad_index:                The fused clad refractive index.
-    :type       clad_index:                str
-    :param      core_position_scrambling:  The core position scrambling.
-    :type       core_position_scrambling:  float
-    :param      resolution:                The rasterisation resolution for the geometry.
-    :type       resolution:                int
-    :param      background_index:          The background refractive index.
-    :type       background_index:          float
+    Args:
+        wavelength (float): Wavelength for refractive index calculation.
+        clad_structure (object): Cladding or structural template for fibers.
+        fiber_list (List[object]): List of fibers to be included in the simulation.
+        capillary_tube (Optional[object]): Optional capillary structure to add.
+        fusion_degree (Union[float, str]): Degree of fusion, specifying overlap between fibers.
+        fiber_radius (Optional[float]): Uniform radius for all fibers, if specified.
+        x_bounds (Union[str, List[float]]): X-axis boundary conditions or limits.
+        y_bounds (Union[str, List[float]]): Y-axis boundary conditions or limits.
+        clad_index (Union[float, str]): Refractive index for the cladding material, can be a known string identifier.
+        core_position_scrambling (float): Random displacement added to fiber core positions to simulate imperfections.
+        index_scrambling (float): Noise level to simulate index inhomogeneity.
+        resolution (int): Resolution of the geometry mesh grid.
+        rotation (float): Rotation angle for the structure (degrees).
+        boundary_pad_factor (float): Padding factor for boundary adjustments.
+        gaussian_filter (float): Standard deviation for Gaussian blur to smooth sharp transitions.
+        background_index (float): Background refractive index for the simulation area.
 
-    :returns:   The simulation geometry
-    :rtype:     Geometry
+    Returns:
+        Geometry: Configured geometry object ready for simulation.
     """
-    if clad_index.lower() == 'silica':
+    if isinstance(clad_index, str) and clad_index.lower() == 'silica':
         index = fiber_catalogue.get_silica_index(wavelength=wavelength)
+    elif isinstance(clad_index, (float, int)):
+        index = clad_index
+    else:
+        raise ValueError("Invalid clad_index: must be either 'silica' or a numeric index value.")
 
     background = BackGround(index=background_index)
 
@@ -145,85 +144,90 @@ def prepare_fused_structure(
 
 @dataclass
 class Workflow():
+    """
+    A class to configure and execute optical simulations using finite difference methods on specified fiber geometries.
+
+    Attributes:
+        wavelength (float): Wavelength at which the simulation is evaluated.
+        resolution (int): Resolution of the simulation mesh.
+        fiber_radius (float): Radius for the fused clad structure.
+        n_sorted_mode (int): Number of modes that are computed and sorted.
+        n_added_mode (int): Additional modes computed beyond the sorted modes for increased accuracy.
+        itr_final (float): Final Inverse Taper Ratio (ITR) for mode evaluation.
+        itr_initial (float): Initial ITR for mode evaluation.
+        n_step (int): Number of steps to iterate through the ITR section.
+        fusion_degree (Union[float, str]): Fusion degree for the clad fused structure; 'auto' for automatic calculation.
+        clad_rotation (float): Rotation of the clad structure in degrees.
+        accuracy (int): Accuracy level of the finite difference method.
+        debug_mode (int): Debug mode level for verbose output during computations.
+        auto_label (bool): If True, automatically labels supermodes.
+        generate_report (bool): If True, generates a PDF report of the simulation results.
+        save_superset (bool): If True, saves the computed superset instance for later use.
+        fiber_list (List[object]): List of fibers included in the optical structure.
+        boundaries (List[Boundaries]): Boundary conditions applied to the simulation.
+        capillary_tube (Optional[object]): Additional capillary structure to include in the simulation.
+        clad_structure (Optional[object]): Initial optical structure used for the simulation.
+        x_bounds (str): Boundary conditions along the x-axis.
+        y_bounds (str): Boundary conditions along the y-axis.
+        air_padding_factor (float): Factor for padding the structure with air to prevent boundary effects.
+        gaussian_filter_factor (Optional[float]): Gaussian blurring factor applied to the structure for smoothing.
+
+    Plotting Flags:
+        Various flags that determine which aspects of the simulation are plotted.
+
+    Methods:
+        __post_init__: Initializes the simulation geometry and solver upon object creation.
+        plot: Plots various simulation outputs based on the provided plot type.
+        save_superset_instance: Saves the computed superset to a file for later use.
+        generate_pdf_report: Generates a comprehensive PDF report of all relevant simulation data and results.
+        _get_auto_generated_filename: Generates a filename based on the simulation parameters.
+    """
+
     #  Geometry arguments --------------------------
     wavelength: float
-    """ Wavelenght at which evaluate the computation """
     clad_rotation: float = 0
-    """ Rotation of the clad structure [degree] """
     capillary_tube: object = None
-    """ Additional optical structure such as clad to add """
     resolution: int = 100
-    """ Discretization of the mesh [resolution x resolution] """
     clad_structure: object = None
-    """ Initial optical structure """
     fiber_list: list = tuple()
-    """ List of the fiber to add to the optical structure """
     fiber_radius: float = 62.5e-6
-    """ Fiber radius for the clad fused structure """
     fusion_degree: float = 'auto'
-    """ Fusion degree for the clad fused structure """
     x_bounds: str = ''
-    """ X-boundaries """
     y_bounds: str = ''
-    """ Y-boundaries """
     air_padding_factor: float = 1.2
-    """ Padding factor for air around the optica structure, preferable over 1.2 """
     gaussian_filter_factor: float = None
-    """ Gaussian blurring of the optical structure """
 
     #  Solver arguments --------------------------
     n_sorted_mode: int = 4
-    """ Number of mode that are computed """
     n_added_mode: int = 4
-    """ Number of mode that are computed additionally to the sorted modes """
     itr_final: float = 0.05
-    """ Final ITR at which evaluate the modes """
     itr_initial: float = 1.0
-    """ Start ITR at which evaluate the modes """
     n_step: int = 500
-    """ Discretization of the z-profile """
     extrapolation_order: int = 2
-    """ Eigen_value extrapolation for slice solving """
     core_position_scrambling: float = 0
-    """ Scrambling of the clad core position """
     index_scrambling: float = 0
-    """ Scrambling of the structure refractive index """
     boundaries: list = (Boundaries(),)
-    """ List of boundaries cndition to which evaluate to modes """
     accuracy: int = 2
-    """ Accuracy of the finit-difference set of value """
 
     #  Plot arguments --------------------------
     plot_geometry: bool = False
-    """ Plot the computed geometry mesh prior computation """
     plot_cladding: bool = False
-    """ Plot the cladding structure prior computation """
     plot_field: bool = False
-    """ Plot the mode field after computation """
     plot_adiabatic: bool = False
-    """ Plot the adiabatic criterion after computation """
     plot_coupling: bool = False
-    """ Plot the mode coupling after computation """
     plot_beating_length: bool = False
-    """ Plot the mode beating length after computation """
     plot_eigen_values: bool = False
-    """ Plot the computed eigen_values after computation """
     plot_index: bool = False
-    """ Plot the computed effective index after computation """
     plot_beta: bool = False
-    """ Plot the computed propagation constant after computation """
 
     #  Extra arguments --------------------------
     debug_mode: int = 1
-    """ Level of debug mode printing [0, 1, 2, 3]"""
     auto_label: bool = False
-    """ Enable auto labeling of the supermodes """
     generate_report: bool = False
-    """ Generate final pdf reports containing geometry, fields, coupling, adiabatic criterions """
     save_superset: bool = False
-    """ Save the created superset instance into a pickle file for further use """
 
     def __post_init__(self):
+        """Initializes the simulation geometry and solver, and optionally plots the initial setup if enabled."""
         self.geometry = prepare_simulation_geometry(
             wavelength=self.wavelength,
             clad_structure=self.clad_structure,
@@ -278,6 +282,8 @@ class Workflow():
         return self.solver.superset
 
     def _initialize_solver_(self) -> None:
+        """Initializes the solver with the set geometry and starts the mode computation process."""
+
         self.solver = SuPySolver(
             geometry=self.geometry,
             tolerance=1e-20,
@@ -330,17 +336,7 @@ class Workflow():
         return filename.replace('.', '_')
 
     def save_superset_instance(self, filename: str = 'auto', directory: str = 'auto') -> Path:
-        """
-        Saves a superset instance in the form of a serialized files using the picles library.
-
-        :param      filename:   The filename
-        :type       filename:   str
-        :param      directory:  The directory
-        :type       directory:  str
-
-        :returns:   The path directory of the saved instance
-        :rtype:     Path
-        """
+        """Saves the superset instance to a file, defaulting to an auto-generated filename if not specified."""
         if filename == 'auto':
             filename = self._get_auto_generated_filename_()
 
@@ -374,14 +370,13 @@ class Workflow():
 
         filename = sanitize_filepath(filename)
 
-        self.solver.superset.generate_pdf_report(
-            filename=filename,
-            **kwargs
-        )
+        self.solver.superset.generate_pdf_report(filename=filename, **kwargs)
 
         return filename
 
     def plot(self, *args, **kwargs):
+        """Plots various types of data from the simulation based on the specified plot type."""
+
         return self.solver.superset.plot(*args, **kwargs)
 
 

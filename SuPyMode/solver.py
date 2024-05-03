@@ -14,30 +14,32 @@ from FiberFusing.coordinate_system import CoordinateSystem
 from SuPyMode.superset import SuperSet
 from SuPyMode.supermode import SuperMode
 from SuPyMode.binary.CppSolver import CppSolver
-from SuPyMode.binary.SuperMode import SuperMode as BindingSuperMode  # It has to be imported in order for pybind11 to know the type
-from SuPyMode.tools.mode_label import ModeLabel
+from SuPyMode.binary.SuperMode import SuperMode as BindingSuperMode  # noqa: F401 It has to be imported in order for pybind11 to know the type
+from SuPyMode.mode_label import ModeLabel
 
 
 @dataclass()
 class SuPySolver(object):
     """
-    This solver class directly links to a c++ Eigensolver.
-    It solves the eigenvalues problems for a given geometry and return a collection of SuperModes.
+    Solver class integrating a C++ eigensolver to compute eigenvalues for optical fiber geometries.
+    This class manages the eigenvalue problems and returns collections of computed SuperModes.
 
+    Attributes:
+        geometry (Geometry | np.ndarray): The refractive index geometry of the optical structure.
+        tolerance (float): Absolute tolerance for the propagation constant computation.
+        max_iter (int): Maximum iterations for the C++ eigensolver.
+        accuracy (int): Accuracy level of the finite difference method.
+        extrapolation_order (int): Order of Taylor series used to extrapolate eigenvalues.
+        debug_mode (int): Debug output level from the C++ binding (0, 1, 2).
+        coordinate_system (Optional[CoordinateSystem]): The coordinate system linked with the geometry.
     """
     geometry: Geometry | numpy.ndarray = field(repr=False)
-    """ Refractive index geometry of the optical structure """
     tolerance: float = 1e-8
-    """ Absolute tolerance on the propagation constant computation """
     max_iter: int = 10_000
-    """ Maximum iteration for the c++ Eigensolver """
     accuracy: int = 2
-    """ Accuracy of the finit difference methode """
     extrapolation_order: int = 2
-    """ Order of the taylor serie to extrapolate next eigenvalues . """
     debug_mode: int = 1
-    """ Level of debug outprint from the c++ binding [0, 1, 2] """
-    coordinate_system: CoordinateSystem = None
+    coordinate_system: CoordinateSystem | None = None
 
     def __post_init__(self):
         if isinstance(self.geometry, numpy.ndarray):
@@ -66,25 +68,17 @@ class SuPySolver(object):
 
         return gradient
 
-    def initialize_binding(
-            self,
-            n_sorted_mode: int,
-            boundaries: Boundaries,
-            n_added_mode: int) -> CppSolver:
+    def initialize_binding(self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int) -> CppSolver:
         """
-        Initializes the c++ binding of the class.
+        Initializes and configures the C++ solver binding for eigenvalue computations.
 
-        :param      wavelength:       Wavelenght for the mode computation
-        :type       wavelength:       float
-        :param      n_sorted_mode:    Number of mode that are outputed by the c++ solver.
-        :type       n_sorted_mode:    int
-        :param      n_added_mode:     Number of additional modes that are computed for that will be sorted out, the higher the value the less likely mode mismatch will occur.
-        :type       n_added_mode:     int
-        :param      boundaries:       Symmetries of the finit-difference system.
-        :type       boundaries:       Boundaries
+        Args:
+            n_sorted_mode (int): Number of modes to sort and retrieve from the solver.
+            boundaries (Boundaries): Boundary conditions for the finite difference system.
+            n_added_mode (int): Number of extra modes calculated for accuracy and reliability.
 
-        :returns:   The cpp solver.
-        :rtype:     CppSolver
+        Returns:
+            CppSolver: Configured C++ solver instance.
         """
         self.FD = FiniteDifference(
             n_x=self.coordinate_system.nx,
@@ -125,26 +119,15 @@ class SuPySolver(object):
 
         return Solver
 
-    def init_superset(
-            self,
-            wavelength: float,
-            n_step: int = 300,
-            itr_initial: float = 1.0,
-            itr_final: float = 0.1) -> None:
+    def init_superset(self, wavelength: float, n_step: int = 300, itr_initial: float = 1.0, itr_final: float = 0.1) -> None:
         """
-        Initialize superset instance which contains the computed superodes.
+        Initializes a SuperSet instance containing computed supermodes over a range of inverse taper ratios (ITR).
 
-        :param      wavelength:  Wavelenght for the mode computation
-        :type       wavelength:  float
-        :param      n_step:      Number of stop to iterate through the ITR (inverse taper ration) section.
-        :type       n_step:      int
-        :param      itr_initial: Initial value of ITR.
-        :type       itr_initial: float
-        :param      itr_final:   Final value of ITR.
-        :type       itr_final:   float
-
-        :returns:   No returns
-        :rtype:     None
+        Args:
+            wavelength (float): Wavelength for the mode computation.
+            n_step (int): Number of steps for the ITR interpolation.
+            itr_initial (float): Initial ITR value.
+            itr_final (float): Final ITR value.
         """
         self.wavelength = wavelength
         self.wavenumber = 2 * numpy.pi / wavelength
@@ -153,44 +136,39 @@ class SuPySolver(object):
 
     def index_to_eigen_value(self, index: float) -> float:
         """
-        Converts an effective index to the equivalent eigen value of the
-        linear system to be solved.
+        Converts a refractive index to the corresponding eigenvalue for the solver.
 
-        :param      eigen_value:  The eigen value
-        :type       eigen_value:  float
+        Args:
+            index (float): Refractive index to convert.
 
-        :returns:   The equivalent eigen value
-        :rtype:     float
+        Returns:
+            float: Calculated eigenvalue based on the given index and the wavenumber.
         """
         return -(index * self.wavenumber)**2
 
     def eigen_value_to_index(self, eigen_value: float) -> float:
         """
-        Converts an eigen value of the linear equation to solve to
-        its equivalent effective index.
+        Converts an eigenvalue from the solver to the corresponding refractive index.
 
-        :param      eigen_value:  The eigen value
-        :type       eigen_value:  float
+        Args:
+            eigen_value (float): Eigenvalue to convert.
 
-        :returns:   The equivalent eigen value
-        :rtype:     float
+        Returns:
+            float: Equivalent refractive index calculated from the eigenvalue and the wavenumber.
         """
         return numpy.sqrt(eigen_value) / self.wavenumber
 
     def get_supermode_labels(self, n_modes: int, boundaries: Boundaries, auto_label: bool) -> list:
         """
-        Generate and returns the supermode label depending if auto_label
-        is activated or not.
+        Generates labels for supermodes based on boundary conditions and whether auto-labeling is enabled.
 
-        :param      n_modes:     The n modes
-        :type       n_modes:     int
-        :param      boundaries:  The boundaries
-        :type       boundaries:  Boundaries
-        :param      auto_label:  The automatic label option
-        :type       auto_label:  bool
+        Args:
+            n_modes (int): Number of modes for which labels are needed.
+            boundaries (Boundaries): Boundary conditions that affect mode symmetries.
+            auto_label (bool): If True, automatically generates labels based on mode symmetries; otherwise, generates generic labels.
 
-        :returns:   The supermode labels.
-        :rtype:     list
+        Returns:
+            list: List of labels for the supermodes.
         """
         if auto_label:
             mode_label = ModeLabel(boundaries=boundaries, n_mode=n_modes)
@@ -200,32 +178,19 @@ class SuPySolver(object):
 
         return supermode_labels
 
-    def add_modes(
-            self,
-            n_sorted_mode: int,
-            boundaries: Boundaries,
-            n_added_mode: int = 4,
-            index_guess: float = 0.,
-            auto_label: bool = True) -> None:
+    def add_modes(self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int = 4, index_guess: float = 0., auto_label: bool = True) -> None:
         """
-        This methodes compute new set of n_added_mode modes for a given boundaries condition.
-        It appends those modes to the one already computed.
-        The auto_labeling options works only for almost cylindrical symmetric structure with low itr.
-        If wrong label is settle it can be modified with the label_supermode method. Index guess is the effective index
-        guess given to the inverse shift power method solver to retrieve the modes with close effective index.
-        Adds modes to the superset instance. SuperSet is accessible through .get_set().
+        Computes and adds a specified number of supermodes to the solver's collection, using given boundary conditions and mode sorting criteria.
 
-        :param      n_sorted_mode:    Number of mode that are outputed by the c++ solver.
-        :type       n_sorted_mode:    int
-        :param      boundaries:       Boundaries of the finit-difference system.
-        :type       boundaries:       Boundaries
-        :param      n_added_mode:     Number of additional modes that are computed for that will be sorted out, the higher the value the less likely mode mismatch will occur.
-        :type       n_added_mode:     int
-        :param      index_guess:      Initial effective index guess (if 0, auto evaluated).
-        :type       index_guess:      float
+        Args:
+            n_sorted_mode (int): Number of modes to output and sort from the solver.
+            boundaries (Boundaries): Boundary conditions for the finite difference calculations.
+            n_added_mode (int): Additional modes computed to ensure mode matching accuracy.
+            index_guess (float): Starting guess for the refractive index used in calculations (if 0, auto evaluated).
+            auto_label (bool): If True, enables automatic labeling of modes based on symmetry.
 
-        :returns:   No returns
-        :rtype:     None
+        Returns:
+            None: This method updates the solver's internal state but does not return any value.
         """
         alpha = self.index_to_eigen_value(index_guess)
 

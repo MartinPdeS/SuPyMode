@@ -227,10 +227,17 @@ class SuperMode(InheritFromSuperSet):
             case 'beta':
                 return self.beta.plot(*args, **kwargs)
             case 'index':
-                return self.beta.plot(*args, **kwargs)
+                return self.index.plot(*args, **kwargs)
             case 'eigen-value':
                 return self.eigen_value.plot(*args, **kwargs)
             case 'beating-length':
                 return self.beating_length.plot(*args, **kwargs)
+            case 'adiabatic':
+                return self.adiabatic.plot(*args, **kwargs)
+            case 'normalized-coupling':
+                return self.normalized_coupling.plot(*args, **kwargs)
+            case _:
+                raise ValueError(f'Invalid plot type: {plot_type}. Options are: index, beta, eigen-value, field, beating-length')
+
 
 # -

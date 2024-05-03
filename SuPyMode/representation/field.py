@@ -1,6 +1,11 @@
 # #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
 
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from SuPyMode.supermode import SuperMode
+
 import numpy
 from MPSPlots.render2D import Axis
 from MPSPlots import colormaps
@@ -10,84 +15,121 @@ from SuPyMode.tools.utils import interpret_slice_number_and_itr, slice_to_itr
 
 from SuPyMode.representation.base import InheritFromSuperMode
 
-ax_style = dict(
-    show_legend=False,
-    x_label=r'',
-    y_label=r'',
-    show_ticks=False,
-    x_scale_factor=1e6,
-    y_scale_factor=1e6,
-)
-
 
 class Field(InheritFromSuperMode):
-    def __init__(self, parent_supermode):
+    """
+    Represents a field derived from a supermode in a modal analysis framework.
+
+    This class extends functionality from a parent supermode class to manage field data operations,
+    including retrieving and processing field data for visualization and analysis.
+
+    Attributes:
+        parent_supermode (InheritFromSuperMode): Reference to the parent supermode object that provides source data.
+    """
+
+    plot_style = dict(
+        show_legend=False,
+        x_label=r'',
+        y_label=r'',
+        show_ticks=False,
+        x_scale_factor=1e6,
+        y_scale_factor=1e6
+    )
+
+    def __init__(self, parent_supermode: SuperMode):
+        """
+        Initialize the Field object with a reference to a parent supermode.
+
+        Args:
+            parent_supermode (InheritFromSuperMode): The parent supermode from which this field is derived.
+        """
         self.parent_supermode = parent_supermode
         self._data = self.parent_supermode.binded_supermode.get_fields()
 
-    def get_values(self):
+    def get_values(self) -> numpy.ndarray:
+        """
+        Retrieve the raw field data from the parent supermode.
+
+        Returns:
+            numpy.ndarray: The field data as a numpy array.
+        """
+
         return self._data
 
     def get_norm(self, slice_number: int) -> float:
+        """
+        Calculate the norm of the field for a specific slice.
+
+        Args:
+            slice_number (int): The slice number for which to calculate the norm.
+
+        Returns:
+            float: The norm of the field.
+        """
         return self.parent_supermode.binded_supermode.get_norm(slice_number)
 
     @property
     def itr_list(self) -> numpy.ndarray:
+        """
+        Provides a list of iteration indices available for the fields.
+
+        Returns:
+            numpy.ndarray: An array of iteration indices.
+        """
         return self.parent_supermode.binded_supermode.model_parameters.itr_list
 
     @property
     def parent_superset(self) -> object:
+        """
+        Access the parent set of the supermode.
+
+        Returns:
+            object: The parent set object.
+        """
         return self.parent_supermode.parent_set
 
-    def get_field(
-            self,
-            slice_number: int = [],
-            itr: float = [],
-            add_symmetries: bool = True) -> numpy.ndarray:
+    def get_field(self, slice_number: int = [], itr: float = [], add_symmetries: bool = True) -> numpy.ndarray:
         """
-        Returns the field with the predefined boundary conditions for a certain slice number.
-        The normalization type must either be square integration (L2), max value set to one (max), center value set to one (center)
-        or the normalization provided with coupled-mode theory (cmt).
+        Retrieve a specific field adjusted for boundary conditions and optionally add symmetries.
 
-        :param      slice_number:    The slice number
-        :type       slice_number:    int
-        :param      add_symmetries:  Add or not the boundary symmetries
-        :type       add_symmetries:  bool
+        Args:
+            slice_number (int): The slice number to retrieve.
+            itr (float): The iteration to use for retrieving the field.
+            add_symmetries (bool): Whether to add boundary symmetries to the field.
 
-        :returns:   The field mesh.
-        :rtype:     numpy.ndarray
+        Returns:
+            numpy.ndarray: The requested field as a numpy array.
+
+        Raises:
+            AssertionError: If neither or both of slice_number and itr are defined.
         """
-        slice_number = numpy.array(slice_number)
-        itr = numpy.array(itr)
-
-        assert (slice_number.size == 0) ^ (itr.size == 0), 'Exactly one of the two values [slice_number, itr] has to be defined'
+        assert (numpy.size(slice_number) != 0) ^ (numpy.size(itr) != 0), 'Exactly one of the two values [slice_number, itr] must be defined.'
 
         slice_list, itr_list = interpret_slice_number_and_itr(
             itr_baseline=self.itr_list,
-            itr_list=itr,
-            slice_list=slice_number
+            itr_list=numpy.array(itr),
+            slice_list=numpy.array(slice_number)
         )
 
-        field = numpy.take(self._data, slice_number, axis=0)
-
+        field = numpy.take(self._data, slice_list, axis=0)
         if add_symmetries:
-            field = self._get_symmetrized_field(field=field)
+            field = self._get_symmetrized_field(field)
 
         return field
 
     def normalize_field(self, field: numpy.ndarray, itr: float, norm_type: str = 'L2') -> numpy.ndarray:
         """
-        Deprecated at the moment.
+        Normalize a field array based on a specified normalization method.
 
-        :param      field:      The field
-        :type       field:      { type_description }
-        :param      itr:        The itr
-        :type       itr:        float
-        :param      norm_type:  The normalize type
-        :type       norm_type:  str
+        Currently, this method is deprecated.
 
-        :returns:   { description_of_the_return_value }
-        :rtype:     { return_type_description }
+        Args:
+            field (numpy.ndarray): The field to normalize.
+            itr (float): The iteration value for normalization scaling.
+            norm_type (str): The type of normalization ('max', 'center', 'L2', 'cmt').
+
+        Returns:
+            numpy.ndarray: The normalized field.
         """
         match norm_type.lower():
             case 'max':
@@ -109,6 +151,18 @@ class Field(InheritFromSuperMode):
         return field / norm
 
     def _get_symmetrized_field_and_axis(self, field: numpy.ndarray) -> tuple:
+        """
+        Generate a symmetrical version of the input field mesh according to defined boundary conditions.
+
+        Args:
+            field (numpy.ndarray): The 2D field mesh to be symmetrized.
+
+        Returns:
+            numpy.ndarray: The symmetrized field mesh.
+
+        Raises:
+            AssertionError: If the input is not a 2D array.
+        """
         x_axis, y_axis = self._get_axis_vector(add_symmetries=True)
 
         field = self._get_symmetrized_field(field=field)
@@ -117,18 +171,18 @@ class Field(InheritFromSuperMode):
 
     def _get_symmetrized_field(self, field: numpy.ndarray) -> numpy.ndarray:
         """
-        Take as input a mesh and return a symmetric version of that mesh.
-        The symmetry can be setted mirror the top or bottom, left or right.
+        Retrieve the field and axis data adjusted for symmetry.
 
-        :param      vector:          The 2-d mesh
-        :type       vector:          numpy.ndarray
+        This method generates symmetrized versions of the field and its corresponding axis vectors.
 
-        :returns:   The symmetrized mesh
-        :rtype:     numpy.ndarray
+        Args:
+            field (numpy.ndarray): The field data array to be symmetrized.
 
-        :raises     AssertionError:  Verify that input vector is 2-dimensionnal.
+        Returns:
+            tuple: A tuple containing the x-axis, y-axis, and the symmetrized field data.
         """
-        assert field.ndim == 2, f'Mesh should be 2d, instead {field.ndim} dimensional is provided.'
+        field = field.squeeze()
+        assert field.ndim == 2, f"Expected a 2-dimensional array, but got {field.ndim}-dimensional."
 
         symmetric_field = field[:, -2::-1]
         match self.boundaries.left.lower():
@@ -163,6 +217,18 @@ class Field(InheritFromSuperMode):
         return field
 
     def _render_on_ax_(self, ax: Axis, slice: int) -> None:
+        """
+        Renders a specified slice of the field data on a provided Axis object.
+
+        This method is typically used to add a field mesh plot to a plotting axis as part of a larger figure or plot matrix.
+
+        Args:
+            ax (Axis): The plotting Axis object to render the field on.
+            slice (int): The slice index of the field data to render.
+
+        Note:
+            This method applies internal colormap settings and adjusts the axis based on the field data.
+        """
         x, y, field = self._get_symmetrized_field_and_axis(field=self._data[slice])
 
         artist = ax.add_mesh(
@@ -187,15 +253,18 @@ class Field(InheritFromSuperMode):
             show_itr: bool = True,
             show_slice: bool = True) -> SceneMatrix:
         """
-        Plot each of the mode field for different itr value or slice number.
+        Plot the field for specified iterations or slice numbers.
 
-        :param      itr_list:    List of itr value to evaluate the mode field
-        :type       itr_list:    list
-        :param      slice_list:  List of integer reprenting the slice where the mode field is evaluated
-        :type       slice_list:  list
+        Args:
+            itr_list (list[float]): List of iterations to evaluate the field.
+            slice_list (list[int]): List of slices to evaluate the field.
+            add_symmetries (bool): Whether to include boundary symmetries in the plot.
+            show_mode_label (bool): Whether to show the mode label.
+            show_itr (bool): Whether to show the iteration value.
+            show_slice (bool): Whether to show the slice number.
 
-        :returns:   The figure
-        :rtype:     SceneMatrix
+        Returns:
+            SceneMatrix: A matrix scene containing the plots.
         """
         figure = SceneMatrix(unit_size=(3, 3))
 
@@ -208,7 +277,7 @@ class Field(InheritFromSuperMode):
         for n, (itr, slice_number) in enumerate(zip(itr_list, slice_list)):
             ax = figure.append_ax(row=n, column=0)
 
-            ax.set_style(**ax_style)
+            ax.set_style(**self.plot_style)
 
             self.render_on_ax(
                 ax=ax,
@@ -276,23 +345,16 @@ class Field(InheritFromSuperMode):
 
     def get_plot_mode_field_title(self, slice_number: int, show_mode_label: bool, show_itr: bool, show_slice: bool) -> str:
         """
-        Gets the title for the plot_field outputed subplots.
+        Constructs a title for the field plot based on the mode, iteration, and slice number.
 
-        :param      supermode:         The supermode corresponding to the specific subplot.
-        :type       supermode:         SuperMode
-        :param      itr:               The itr value
-        :type       itr:               float
-        :param      slice_number:      The slice number
-        :type       slice_number:      int
-        :param      show_mode_label:   If True the mode label will be shown.
-        :type       show_mode_label:   bool
-        :param      show_itr:          If True the title contains the itr value.
-        :type       show_itr:          bool
-        :param      show_slice:        If True the title contains the slice number of the evaluated ITR
-        :type       show_slice:        bool
+        Args:
+            slice_number (int): The slice number for which the field is plotted.
+            show_mode_label (bool): Flag to include the mode label in the title.
+            show_itr (bool): Flag to include the iteration number in the title.
+            show_slice (bool): Flag to include the slice number in the title.
 
-        :returns:   The plot mode field title.
-        :rtype:     str
+        Returns:
+            str: The constructed title for the plot.
         """
         title = ''
 

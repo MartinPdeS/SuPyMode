@@ -40,11 +40,7 @@ logo_path = static_doc_path.joinpath('logo.png')
 
 doc_css_path = doc_path.joinpath('source/_static/default.css')
 
-rtd_example = 'https://pymiesim.readthedocs.io/en/latest/examples.html'
-
-rtd_material = 'https://pymiesim.readthedocs.io/en/latest/material.html'
-
-rtd_lp_mode = 'https://pymiesim.readthedocs.io/en/latest/LPModes.html'
+rtd_example = 'https://supymode.readthedocs.io/en/latest/examples.html'
 
 
 if __name__ == '__main__':
