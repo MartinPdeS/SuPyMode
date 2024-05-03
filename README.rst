@@ -60,20 +60,14 @@ To install manually (os independent) you will need to install:
 
 1. cmake (3.16+)
 
-In order to use the SuPyMode Simulator Library, one must have installed the python dependencies:
-
-.. code-block:: python
-
-    >>> pip3 install -r requirements.txt
-
 Then, download and install the SuPyMode package:
 
 .. code-block:: python
 
-    >>> git clone https://github.com/MartinPdeS/SuPyMode.git
+    >>> git clone --recurse-submodules https://github.com/MartinPdeS/SuPyMode.git
     >>> cd SuPyMode && mkdir build && cd build
     >>> cmake ..
-    >>> make install (Linux, MacOs)
+    >>> cmake --build .
     >>> cd ..
     >>> pip3 install .
 
@@ -82,13 +76,13 @@ Then, download and install the SuPyMode package:
 Testing
 *******
 
-To test localy (with cloning the GitHub repository) you'll need to install the dependencies and run the coverage command as
+Make sure to install both coverage and pytest using ``pip3 install coverage pytest``. To test locally (with cloning the GitHub repository) you'll need to install the dependencies and run the coverage command as
 
 .. code:: python
 
-   >>> git clone https://github.com/MartinPdeS/SuPyMode.git
+   >>> git clone --recurse-submodules https://github.com/MartinPdeS/SuPyMode.git
    >>> cd SuPyMode
-   >>> pip install -r requirements/requirements.txt
+   >>> pip3 install PyFiberModes
    >>> coverage run --source=SuPyMode --module pytest --verbose tests
    >>> coverage report --show-missing
 
