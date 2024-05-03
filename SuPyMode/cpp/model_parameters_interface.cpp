@@ -33,9 +33,6 @@ PYBIND11_MODULE(ModelParameters, module)
                 }; // load
             }
         )
-
-
     );
-
 }
 

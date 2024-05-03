@@ -6,7 +6,7 @@
 PYBIND11_MODULE(CppSolver, module)
 {
     pybind11::class_<CppSolver>(module, "CppSolver")
-    .def(pybind11::init<ndarray&, ndarray&, Vecf2D&, ndarray&, size_t, size_t, size_t, double, double, double, double, int>(),
+    .def(pybind11::init<pybind11::array_t<double>&, pybind11::array_t<double>&, std::vector<std::vector<double>>&, pybind11::array_t<double>&, size_t, size_t, size_t, double, double, double, double, int>(),
          pybind11::arg("mesh"),
          pybind11::arg("gradient"),
          pybind11::arg("finit_matrix"),
@@ -21,12 +21,12 @@ PYBIND11_MODULE(CppSolver, module)
          pybind11::arg("debug_mode")
        )
 
-     .def("loop_over_itr",             &CppSolver::loop_over_itr, pybind11::arg("extrapolation_order"), pybind11::arg("alpha"))
-     .def("compute_laplacian",         &CppSolver::compute_laplacian)
-     .def("get_mode",                  &CppSolver::get_sorted_mode)
+     .def("loop_over_itr", &CppSolver::loop_over_itr, pybind11::arg("extrapolation_order"), pybind11::arg("alpha"))
+     .def("compute_laplacian", &CppSolver::compute_laplacian)
+     .def("get_mode", &CppSolver::get_sorted_mode)
 
-     .def_readwrite("n_sorted_mode",   &CppSolver::n_sorted_mode)
+     .def_readwrite("n_sorted_mode", &CppSolver::n_sorted_mode)
      .def_readwrite("n_computed_mode", &CppSolver::n_computed_mode)
-     .def_readwrite("alpha_vector",    &CppSolver::alpha_vector);
+     .def_readwrite("alpha_vector", &CppSolver::alpha_vector);
 }
 

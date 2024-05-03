@@ -29,7 +29,7 @@ void inplace_reorder_vector(std::vector<T>& vector, std::vector<size_t>& order)
 }
 
 template <typename T>
-std::vector<size_t> sort_indexes(const vector<T> &v, bool Reverse=true) {
+std::vector<size_t> sort_indexes(const vector<T> &v, bool reverse=true) {
 
   // initialize original index locations
   vector<size_t> idx(v.size());
@@ -42,21 +42,20 @@ std::vector<size_t> sort_indexes(const vector<T> &v, bool Reverse=true) {
   stable_sort(idx.begin(), idx.end(),
        [&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
 
-  if (Reverse)
+  if (reverse)
       std::reverse(idx.begin(), idx.end());
 
   return idx;
 }
 
-VectorType
+Eigen::Matrix<double, Eigen::Dynamic, 1>
 GetRandomVector(size_t size){
-  VectorType Output = VectorType::Random(size);
+  Eigen::Matrix<double, Eigen::Dynamic, 1> Output = Eigen::Matrix<double, Eigen::Dynamic, 1>::Random(size);
   Output.normalize();
   return Output;
 }
 
-std::vector<size_t>
-get_range(size_t size){
+std::vector<size_t> get_range(size_t size){
   std::vector<size_t> output;
   output.reserve(size);
 
@@ -66,21 +65,23 @@ get_range(size_t size){
   return output;
 }
 
-double
-Trapz(VectorType&& Vector, double dx, size_t Nx, size_t Ny){
+double Trapz(const Eigen::Matrix<double, Eigen::Dynamic, 1> &vector, double dx, size_t n_x, size_t n_y){
 
-  return Vector.sum();
-  double sum  = 0;
-  double val;
+    return vector.sum();
 
-  for (size_t i=0; i<Nx; ++i){
-      val = Vector[i];
-      if ( i % Nx == 0 || i % Nx == Nx-1 ) { val /= 2.0; };
-      if ( i < Ny || i > Ny*(Nx-1) )       { val /= 2.0; };
-      sum += val;
+    double sum  = 0;
+    double val;
+
+    for (size_t i=0; i<n_x; ++i){
+        val = vector[i];
+        if ( i % n_x == 0 || i % n_x == n_x-1 )
+            val /= 2.0;
+        if ( i < n_y || i > n_y * (n_x-1) )
+            val /= 2.0;
+        sum += val;
       }
 
-  return sum * dx;
+    return sum * dx;
 }
 
 double
@@ -105,10 +106,10 @@ rungeKutta(double x0, double y0, double x, double h)
     {
         // Apply Runge Kutta Formulas to find
         // next value of y
-        k1 = h*dydx(x0, y);
-        k2 = h*dydx(x0 + 0.5*h, y + 0.5*k1);
-        k3 = h*dydx(x0 + 0.5*h, y + 0.5*k2);
-        k4 = h*dydx(x0 + h, y + k3);
+        k1 = h * dydx(x0, y);
+        k2 = h * dydx(x0 + 0.5*h, y + 0.5*k1);
+        k3 = h * dydx(x0 + 0.5*h, y + 0.5*k2);
+        k4 = h * dydx(x0 + h, y + k3);
 
         // Update next value of y
         y = y + (1.0/6.0)*(k1 + 2*k2 + 2*k3 + k4);

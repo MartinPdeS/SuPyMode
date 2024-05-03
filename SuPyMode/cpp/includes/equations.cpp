@@ -4,7 +4,7 @@
 #include "supermode.h"
 
 double
-get_trapz_integral(const Eigen::MatrixXd &mesh, const double &dx, const double &dy)
+get_trapz_integral(const Eigen::MatrixXd &mesh, double dx, double dy)
 {
     Eigen::VectorXd
         vector_integral(mesh.rows());
@@ -25,8 +25,7 @@ get_trapz_integral(const Eigen::MatrixXd &mesh, const double &dx, const double &
     return integral;
 }
 
-double
-get_basic_integral(const Eigen::MatrixXd &mesh, const double &dx, const double &dy)
+double get_basic_integral(const Eigen::MatrixXd &mesh, double dx, double dy)
 {
     double
         dA = dx * dy,
@@ -40,8 +39,7 @@ get_basic_integral(const Eigen::MatrixXd &mesh, const double &dx, const double &
 Eigen::VectorXd
 get_gradient_field_overlap(const SuperMode& mode_0, const SuperMode& mode_1, const ModelParameters &model_parameters)
 {
-    Eigen::VectorXd
-        output(model_parameters.n_slice);
+    Eigen::VectorXd output(model_parameters.n_slice);
 
     Eigen::MatrixXd
         mesh_2D = model_parameters.mesh_gradient,

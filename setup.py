@@ -29,16 +29,18 @@ class build_ext(build_ext_orig):
     def run(self):
         for ext in self.extensions:
             self.build_cmake(ext)
-        super().run()
+
+        old_inplace, self.inplace = self.inplace, 0
+        build_ext_orig.run(self)
+        self.inplace = old_inplace
 
     def build_cmake(self, ext):
+        self.inplace = 1
+
         root_directory = pathlib.Path().absolute()
 
         build_temp = pathlib.Path(self.build_temp)
         build_temp.mkdir(parents=True, exist_ok=True)
-        extdir = pathlib.Path(self.get_ext_fullpath(ext.name))
-
-        extdir.mkdir(parents=True, exist_ok=True)
 
         cmake_args = [f'-DPYBIND11_PYTHON_VERSION={major}.{minor}']
 

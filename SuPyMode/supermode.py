@@ -9,46 +9,31 @@ from scipy.interpolate import RectBivariateSpline
 # Local imports
 from SuPyMode import representation
 from SuPyMode.binary.ModelParameters import ModelParameters
-from SuPyMode.tools.utils import interpret_slice_number_and_itr
-
-
-class InheritFromSuperSet():
-    """
-    Property class for inherited attribute from SuperSet.
-
-    """
-    @property
-    def geometry(self) -> object:
-        return self.parent_set.geometry
-
-    @property
-    def coordinate_system(self) -> object:
-        return self.parent_set.coordinate_system
-
-    @property
-    def itr_list(self) -> numpy.ndarray:
-        return self.binded_supermode.model_parameters.itr_list
+from SuPyMode.tools.utils import interpret_slice_number_and_itr, get_symmetrized_vector
 
 
 @dataclass
-class SuperMode(InheritFromSuperSet):
+class SuperMode():
     """
-    This class is a representation of the fiber optic structures SuperModes.
-    Those mode belongs to a SuperSet class and are constructed with the SuPySolver.
-    It links to c++ SuperMode class.
+    Represents supermodes within fiber optic structures. This class serves as a Python
+    counterpart to a C++ SuperMode class, facilitating integration and computation via
+    the SuPySolver. Instances of this class belong to a SuperSet, and each supermode
+    is uniquely identified within its symmetry set by a mode number.
+
+    Attributes:
+        parent_set (None): The SuperSet instance associated with this supermode.
+        binded_supermode (None): The corresponding C++ bound supermode object.
+        solver_number (int): Identifier linking this supermode to a specific Python solver.
+        mode_number (int): Unique identifier for this mode within a symmetry set.
+        boundaries (dict): Specifications of the boundary conditions for the supermode.
+        label (str, optional): An arbitrary descriptive label for the supermode.
     """
-    parent_set: None
-    """SuperSet to which is associated the computed this mode"""
-    binded_supermode: None
-    """C++ binded sueprmode"""
+    parent_set: object
+    binded_supermode: object
     solver_number: int
-    """Number which bind this mode to a specific python solver"""
     mode_number: int
-    """Unique number associated to this mode in a particular symmetry set"""
     boundaries: dict
-    """Boundary conditions"""
     label: str = None
-    """Arbitrary label given to the mode"""
 
     def __post_init__(self):
         self.ID = [self.solver_number, self.binding_number]
@@ -65,15 +50,32 @@ class SuperMode(InheritFromSuperSet):
 
     @property
     def binding_number(self) -> int:
-        """ Returns the mode number specific to one CppSolver """
+        """Retrieves the binding number specific to the linked C++ solver."""
         return self.binded_supermode.binding_number
 
     @property
+    def geometry(self) -> object:
+        """Accesses the geometric configuration associated with the supermode."""
+        return self.parent_set.geometry
+
+    @property
+    def coordinate_system(self) -> object:
+        """Accesses the coordinate system used by the supermode."""
+        return self.parent_set.coordinate_system
+
+    @property
+    def itr_list(self) -> numpy.ndarray:
+        """Provides a list of iteration parameters from the model."""
+        return self.binded_supermode.model_parameters.itr_list
+
+    @property
     def model_parameters(self) -> ModelParameters:
+        """Retrieves the parameters defining the model's computational aspects."""
         return self.binded_supermode.model_parameters
 
     @property
     def mesh_gradient(self) -> numpy.ndarray:
+        """Accesses the gradient mesh associated with the supermode."""
         return self.binded_supermode.mesh_gradient
 
     @property
@@ -133,7 +135,7 @@ class SuperMode(InheritFromSuperSet):
         :rtype:     RectBivariateSpline
         """
         if not (itr is None) ^ (slice_number is None):
-            raise ValueError("Exactly one of the two keyword argument [itr, slice_number] has to be provided.")
+            raise ValueError("Exactly one of itr or slice_number must be provided.")
 
         if slice_number is None:
             slice_number = self.parent_set.itr_to_slice(itr_list=itr)
@@ -156,35 +158,6 @@ class SuperMode(InheritFromSuperSet):
 
         return field_interpolation
 
-    def _get_symmetrize_vector(self, vector: numpy.ndarray, symmetry_type: str = 'last') -> numpy.ndarray:
-        """
-        Take as input a vector and return a symmetric version of that vector.
-        The symmetry can be setted mirror the last or first element.
-
-        :param      vector:          The vector
-        :type       vector:          numpy.ndarray
-        :param      symmetry_type:   The symmetry type
-        :type       symmetry_type:   str
-
-        :returns:   The symmetrized vector
-        :rtype:     numpy.ndarray
-
-        :raises     AssertionError:  Verify that input vector is 1-dimensionnal.
-        """
-        assert vector.ndim == 1, f'Vector should be 1d, instead {vector.ndim} dimensional is provided.'
-
-        size = len(vector)
-        dx = abs(vector[0] - vector[1])
-
-        match symmetry_type.lower():
-            case 'last':
-                start_value = vector[0]
-                return numpy.arange(0, 2 * size - 1) * dx + start_value
-
-            case 'first':
-                start_value = vector[-1]
-                return numpy.arange(0, 2 * size - 1) * -dx + start_value
-
     def _get_axis_vector(self, add_symmetries: bool = True) -> tuple:
         full_x_axis = self.coordinate_system.x_vector
         full_y_axis = self.coordinate_system.y_vector
@@ -193,19 +166,19 @@ class SuperMode(InheritFromSuperSet):
             return full_x_axis, full_y_axis
 
         if self.boundaries.right in ['symmetric', 'anti-symmetric']:
-            full_x_axis = self._get_symmetrize_vector(full_x_axis, symmetry_type='last')
+            full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type='last')
             full_x_axis.sort()
 
         if self.boundaries.left in ['symmetric', 'anti-symmetric']:
-            full_x_axis = self._get_symmetrize_vector(full_x_axis, symmetry_type='first')
+            full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type='first')
             full_x_axis.sort()
 
         if self.boundaries.top in ['symmetric', 'anti-symmetric']:
-            full_y_axis = self._get_symmetrize_vector(full_y_axis, symmetry_type='last')
+            full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type='last')
             full_y_axis.sort()
 
         if self.boundaries.bottom in ['symmetric', 'anti-symmetric']:
-            full_y_axis = self._get_symmetrize_vector(full_y_axis, symmetry_type='first')
+            full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type='first')
             full_y_axis.sort()
 
         return full_x_axis, full_y_axis

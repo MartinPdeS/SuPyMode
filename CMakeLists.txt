@@ -19,13 +19,14 @@ find_package(Python ${PYBIND11_PYTHON_VERSION} EXACT COMPONENTS Interpreter Deve
 add_subdirectory("extern/pybind11")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen)
 include_directories("${CMAKE_SOURCE_DIR}/SuPyMode/cpp/includes")
+include_directories("${CMAKE_SOURCE_DIR}/SuPyMode/cpp/headers")
 
 if (WIN32)
     message("Windows OS detected")
     set(STATIC_STDLIB "-w -lm -static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive") # Need to keep -lwinpthread static because of MinGW dll directory not the same as windows' MSVC
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     message("AppleClang compiler detected")
-    set(STATIC_STDLIB "-w -lm -static-libstdc++")
+    set(STATIC_STDLIB "-w -v -lm -static-libstdc++")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     message("GNU compiler detected")
     # set(STATIC_STDLIB "-w -lm -static-libstdc++ -static-libgcc")

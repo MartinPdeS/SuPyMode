@@ -132,17 +132,24 @@ def interpret_slice_number_and_itr(
         itr_list: float | list[float] = [],
         sort_slice_number: bool = False) -> tuple:
     """
-    Interpret the itr and slice_list as input and return a tuple containing all the associated values
+    Interprets slice numbers and corresponding inverse taper ratios (ITRs), returning arrays of slice numbers
+    and their respective ITRs based on the provided lists of slices and ITRs.
 
-    :param      itr_baseline:      The itr list
-    :type       itr_baseline:      numpy.ndarray
-    :param      slice_number:  The slice number
-    :type       slice_number:  int | list[int]
-    :param      itr:           The itr
-    :type       itr:           float | list[float]
+    Parameters:
+    - itr_baseline (numpy.ndarray): Array of baseline ITR values, typically equidistant, representing the full range.
+    - slice_list (Union[int, List[int]], optional): A single slice index or a list of slice indices. Default is an empty list.
+    - itr_list (Union[float, List[float]], optional): A single ITR value or a list of ITR values to be converted to slice indices. Default is an empty list.
+    - sort_slice_number (bool, optional): Whether to sort the resulting slice numbers and corresponding ITRs in descending order. Default is False.
 
-    :returns:   All the associated slice numbers and itr values
-    :rtype:     tuple
+    Returns:
+    - Tuple[numpy.ndarray, numpy.ndarray]: Two numpy arrays, the first containing slice indices and the second containing the corresponding ITR values.
+
+    Raises:
+    - ValueError: If the provided ITRs or slice indices are outside the bounds of the baseline ITR array.
+
+    Note:
+    - This function assumes that the input ITRs and slice numbers are within the range covered by the `itr_baseline`.
+    - The function will also combine and sort the slice indices derived directly and those converted from the given ITRs if `sort_slice_number` is True.
     """
     return_as_iterable = False
 
@@ -176,15 +183,20 @@ def interpret_slice_number_and_itr(
 
 def interpret_mode_of_interest(superset: SuperSet, mode_of_interest: str | SuperMode | list[SuperMode]) -> list[SuperMode]:
     """
-    Interpret and returns the input for the mode_of_intereset argument.
+    Resolves the mode of interest from user input to the appropriate list of SuperMode instances
+    based on the specified criteria or direct references.
 
-    :param      superset:          The superset
-    :type       superset:          SuperSet
-    :param      mode_of_interest:  The mode of interest
-    :type       mode_of_interest:  str | SuperMode | list[SuperMode]
+    Parameters:
+        - superset (SuperSet): The superset containing all supermodes, including fundamental and non-fundamental modes.
+        - mode_of_interest (Union[str, SuperMode, List[SuperMode]]): This parameter can be a string specifying a category
+          of modes such as 'fundamental', 'non-fundamental', 'all', a single SuperMode instance, or a list of SuperMode instances.
 
-    :returns:   A list of the mode of interest
-    :rtype:     list[SuperMode]
+    Returns:
+        - List[SuperMode]: A list of SuperMode instances corresponding to the specified mode of interest.
+
+    Raises:
+        - ValueError: If the mode_of_interest is not one of the expected types or if the string input does not match
+        any known category.
     """
     if isinstance(mode_of_interest, str):
         match mode_of_interest:
@@ -194,13 +206,59 @@ def interpret_mode_of_interest(superset: SuperSet, mode_of_interest: str | Super
                 return superset.non_fundamental_supermodes
             case 'all':
                 return superset.supermodes
+            case _:
+                raise ValueError(f"Unrecognized mode category '{mode_of_interest}'. Expected 'fundamental', 'non-fundamental', or 'all'.")
 
-    if not numpy.iterable(mode_of_interest):
+    if isinstance(mode_of_interest, SuperMode):
         return [mode_of_interest]
 
-    if isinstance(mode_of_interest, list):
+    if isinstance(mode_of_interest, list) and all(isinstance(item, SuperMode) for item in mode_of_interest):
         return mode_of_interest
 
-    raise ValueError(f"Invalid input for {mode_of_interest=}. Valid in put must be string ['fundamental', 'non-fundamental', 'all'] or a list or instance of SuperMode.")
+    raise ValueError("mode_of_interest must be either 'fundamental', 'non-fundamental', 'all', a SuperMode instance, or a list of SuperMode instances.")
+
+
+def get_symmetrized_vector(vector: numpy.ndarray, symmetry_type: str = 'last') -> numpy.ndarray:
+    """
+    Generate a symmetric version of the input vector based on the specified symmetry type.
+
+    Parameters:
+    -----------
+    vector : numpy.ndarray
+        A one-dimensional array for which the symmetric version is to be calculated.
+    symmetry_type : str, optional
+        Type of symmetry to apply. Supported types:
+        - 'last': Symmetrize using the last element as reference.
+        - 'first': Symmetrize using the first element as reference.
+        Default is 'last'.
+
+    Returns:
+    --------
+    numpy.ndarray
+        A new vector that is the symmetrized version of the input vector.
+
+    Raises:
+    -------
+    ValueError
+        If the input vector is not one-dimensional or the symmetry type is unsupported.
+    """
+
+    if vector.ndim != 1:
+        raise ValueError(f"Expected a 1-dimensional vector, but got a {vector.ndim}-dimensional vector instead.")
+
+    if symmetry_type.lower() not in ['last', 'first']:
+        raise ValueError("Symmetry type must be 'last' or 'first'.")
+
+    size = len(vector)
+    dx = numpy.diff(vector)[0]  # More robust than assuming vector[1] - vector[0]
+
+    if symmetry_type.lower() == 'last':
+        start_value = vector[-1]
+        expanded = numpy.arange(0, 2 * size - 1) * dx
+        return start_value - expanded[::-1] if dx > 0 else start_value + expanded[::-1]
+    else:  # 'first'
+        start_value = vector[0]
+        expanded = numpy.arange(0, 2 * size - 1) * dx
+        return start_value + expanded
 
 # -

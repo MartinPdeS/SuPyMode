@@ -7,33 +7,27 @@
 class ModelParameters
 {
     public:
+        double wavelength;
+        double wavenumber;
+        double dx;
+        double dy;
+        double ditr;
 
-        double
-            wavelength,
-            wavenumber,
-            dx,
-            dy,
-            ditr;
+        size_t nx;
+        size_t ny;
+        size_t n_slice;
+        size_t field_size;
 
-        size_t
-            nx,
-            ny,
-            n_slice,
-            field_size;
+        pybind11::array_t<double> itr_list_py;
+        pybind11::array_t<double> mesh_gradient_py;
 
-        pybind11::array_t<double>
-            itr_list_py,
-            mesh_gradient_py;
+        Eigen::VectorXd mesh_gradient;
+        Eigen::VectorXd itr_list;
+        Eigen::VectorXd dx_scaled;
+        Eigen::VectorXd dy_scaled;
+        Eigen::VectorXd wavenumber_scaled;
 
-        Eigen::VectorXd
-            mesh_gradient,
-            itr_list,
-            dx_scaled,
-            dy_scaled,
-            wavenumber_scaled;
-
-        int
-            debug_mode;
+        int debug_mode;
 
         ModelParameters(){}
 
@@ -44,11 +38,8 @@ class ModelParameters
             double dx,
             double dy
        ):
-        wavelength(wavelength),
-        itr_list_py(itr_list_py),
-        mesh_gradient_py(mesh_gradient_py),
-        dx(dx),
-        dy(dy)
+        wavelength(wavelength), itr_list_py(itr_list_py),
+        mesh_gradient_py(mesh_gradient_py), dx(dx), dy(dy)
         {
             this->nx = mesh_gradient_py.request().shape[0];
             this->ny = mesh_gradient_py.request().shape[1];
@@ -88,7 +79,7 @@ class ModelParameters
             this->dx,
             this->dy,
             this->n_slice
-            );
+        );
     }
 
     std::ostream &operator<<(std::ostream &os)
