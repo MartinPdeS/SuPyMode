@@ -85,7 +85,7 @@ public:
 
     double extrapolate_next(const std::vector<double> &y_list){
         double next_y = 0;
-        size_t local_max_order = min(y_list.size() - 1, this->extrapolation_order);
+        size_t local_max_order = std::min(y_list.size() - 1, this->extrapolation_order);
 
         for (size_t order = 0; order < local_max_order + 1; ++order){
             next_y += this->taylor_expansion(y_list, order);

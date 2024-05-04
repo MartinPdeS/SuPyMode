@@ -1,10 +1,9 @@
 #pragma once
 
 #include <numeric>      // std::iota
-#include <algorithm>    // std::sort, std::stable_sort
-#include "definitions.cpp"
+#include <algorithm>    // std::stable_sort
+#include <eigen/Eigen>
 
-using namespace std;
 
 template <typename T>
 size_t get_index_of_max_value(std::vector<T> &vector)
@@ -22,24 +21,24 @@ void inplace_reorder_vector(std::vector<T>& vector, std::vector<size_t>& order)
         while( i != order[i] )
         {
             int alt = order[i];
-            swap( vector[i], vector[alt] );
-            swap( order[i], order[alt] );
+            std::swap( vector[i], vector[alt] );
+            std::swap( order[i], order[alt] );
         }
     }
 }
 
 template <typename T>
-std::vector<size_t> sort_indexes(const vector<T> &v, bool reverse=true) {
+std::vector<size_t> sort_indexes(const std::vector<T> &v, bool reverse=true) {
 
   // initialize original index locations
-  vector<size_t> idx(v.size());
-  iota(idx.begin(), idx.end(), 0);
+  std::vector<size_t> idx(v.size());
+  std::iota(idx.begin(), idx.end(), 0);
 
   // sort indexes based on comparing values in v
   // using std::stable_sort instead of std::sort
   // to avoid unnecessary index re-orderings
   // when v contains elements of equal values
-  stable_sort(idx.begin(), idx.end(),
+  std::stable_sort(idx.begin(), idx.end(),
        [&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
 
   if (reverse)

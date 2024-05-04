@@ -7,7 +7,6 @@
 #include "definitions.cpp"
 #include "utils.cpp"
 #include "numpy_interface.cpp"
-#include "eigen_solver.cpp"
 
 
 

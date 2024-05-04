@@ -1,7 +1,11 @@
 #pragma once
 
+#include "definitions.cpp"
+#include "utils.cpp"
 #include "supermode.h"
-#include "equations.cpp"
+
+
+typedef std::complex<double> complex128;
 
 pybind11::tuple SuperMode::get_state()
 {
@@ -15,6 +19,18 @@ pybind11::tuple SuperMode::get_state()
         );
 }
 
+SuperMode SuperMode::get_supermode_from_tuple(pybind11::tuple tuple) const
+{
+    return SuperMode{
+        tuple[0].cast<size_t>(),                             // mode_number
+        tuple[1].cast<pybind11::array_t<double>>(),          // fields
+        tuple[2].cast<pybind11::array_t<double>>(),          // index
+        tuple[3].cast<pybind11::array_t<double>>(),          // betas
+        tuple[4].cast<pybind11::array_t<double>>(),          // eigen_values
+        tuple[5].cast<ModelParameters>()                     // model parameters
+    }; // load
+}
+
 double SuperMode::get_norm(const size_t &slice, const std::string &normalization_type) const
 {
     if (normalization_type == "max")
@@ -25,9 +41,74 @@ double SuperMode::get_norm(const size_t &slice, const std::string &normalization
         return this->get_norm_cmt(slice);
 }
 
-double SuperMode::get_norm_cmt(const size_t &slice) const
+Eigen::VectorXd SuperMode::get_beating_length_with_mode(const SuperMode &other_supermode) const {
+
+    Eigen::VectorXd beta_0 = this->betas, beta_1 = other_supermode.betas;
+
+    return (beta_0 - beta_1).cwiseAbs().cwiseInverse() * (2 * PI);
+}
+
+
+Eigen::VectorXd SuperMode::get_adiabatic_with_mode(const SuperMode &other_supermode) const {
+    Eigen::VectorXd delta_beta = (this->betas - other_supermode.betas).cwiseAbs();
+
+    Eigen::Matrix<std::complex<double>, Eigen::Dynamic, 1>
+        coupling = this->get_normalized_coupling_with_mode(other_supermode).cwiseAbs();
+
+    return delta_beta.cwiseProduct(coupling.cwiseInverse()).cwiseAbs();
+}
+
+Eigen::Matrix<complex128, Eigen::Dynamic, 1> SuperMode::get_normalized_coupling_with_mode(const SuperMode &other_supermode) const {
+    Eigen::VectorXd
+        integral = this->get_gradient_field_overlap(other_supermode),
+        beta_0 = this->betas,
+        beta_1 = other_supermode.betas,
+        delta_beta = (beta_0 - beta_1).cwiseInverse(),
+        beta_prod = (beta_0.cwiseProduct(beta_1)).cwiseSqrt().cwiseInverse(),
+        denominator = delta_beta.cwiseProduct(beta_prod);
+
+    double k2 = pow(model_parameters.wavenumber, 2);
+
+    std::complex<double> scalar = -J * k2 / 2.0;
+
+    return scalar * denominator.cwiseProduct(integral);
+}
+
+Eigen::VectorXd SuperMode::get_gradient_field_overlap(const SuperMode &other_supermode) const
 {
-    // Equation 7.35 from Bures
+    Eigen::VectorXd output(model_parameters.n_slice);
+
+    Eigen::MatrixXd
+        mesh_2D = model_parameters.mesh_gradient,
+        field_0,
+        field_1,
+        overlap;
+
+    double gradient_overlap;
+    for (size_t slice = 0; slice < model_parameters.n_slice; ++slice)
+    {
+        field_0 = this->fields.col(slice);
+        field_0.resize(model_parameters.nx, model_parameters.ny);
+
+        field_1 = other_supermode.fields.col(slice);
+        field_1.resize(model_parameters.nx, model_parameters.ny);
+
+        overlap = mesh_2D.cwiseProduct(field_0).cwiseProduct(field_1);
+
+        gradient_overlap = get_trapz_integral(
+            overlap,
+            model_parameters.dx_scaled[slice],
+            model_parameters.dy_scaled[slice]
+        );
+
+        output[slice] = gradient_overlap;
+    }
+
+    return output;
+}
+
+double SuperMode::get_norm_cmt(const size_t &slice) const // Equation 7.35 from Bures
+{
     double
         itr = model_parameters.itr_list[slice],
         factor = 0.5 * this->model_parameters.dx * itr * this->model_parameters.dy * itr;
@@ -87,7 +168,6 @@ void SuperMode::normalize_fields()
 {
     for(size_t slice = 0; slice < this->fields.cols(); ++ slice)
         this->normalize_field_slice_l2(slice);
-
 }
 
 void SuperMode::arrange_fields()
@@ -126,32 +206,7 @@ double SuperMode::get_field_slice_norm_custom(const size_t slice) const
     return norm;
 }
 
-Eigen::Matrix<std::complex<double>, Eigen::Dynamic, 1> SuperMode::get_normalized_coupling_with_mode(const SuperMode& other_supermode) const
-{
-    return get_mode_normalized_coupling(*this, other_supermode, this->model_parameters);
-}
 
-Eigen::VectorXd SuperMode::get_beating_length_with_mode(const SuperMode& other_supermode) const
-{
-    return get_mode_beating_length_with_mode(*this, other_supermode, this->model_parameters);
-}
-
-Eigen::VectorXd SuperMode::get_adiabatic_with_mode(const SuperMode& other_supermode) const
-{
-    return get_mode_adiabatic_with_mode(*this, other_supermode, model_parameters);
-}
-
-SuperMode SuperMode::get_supermode_from_tuple(pybind11::tuple tuple) const
-{
-    return SuperMode{
-        tuple[0].cast<size_t>(),                             // mode_number
-        tuple[1].cast<pybind11::array_t<double>>(),          // fields
-        tuple[2].cast<pybind11::array_t<double>>(),          // index
-        tuple[3].cast<pybind11::array_t<double>>(),          // betas
-        tuple[4].cast<pybind11::array_t<double>>(),          // eigen_values
-        tuple[5].cast<ModelParameters>()                     // model parameters
-    }; // load
-}
 
 
 
