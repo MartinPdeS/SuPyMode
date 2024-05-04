@@ -1,12 +1,7 @@
 #pragma once
 
-#include "model_parameters.cpp"
 #include "supermode.h"
-#include "definitions.cpp"
-#include "utils.cpp"
-#include "numpy_interface.cpp"
 #include "equations.cpp"
-
 
 pybind11::tuple SuperMode::get_state()
 {
@@ -144,30 +139,6 @@ Eigen::VectorXd SuperMode::get_beating_length_with_mode(const SuperMode& other_s
 Eigen::VectorXd SuperMode::get_adiabatic_with_mode(const SuperMode& other_supermode) const
 {
     return get_mode_adiabatic_with_mode(*this, other_supermode, model_parameters);
-}
-
-pybind11::array_t<double> SuperMode::get_overlap_integrals_with_mode_py(const SuperMode& supermode) const
-{
-    return eigen_to_ndarray(
-        this->get_overlap_integrals_with_mode(supermode),
-        { model_parameters.n_slice }
-    );
-}
-
-pybind11::array_t<double> SuperMode::get_adiabatic_with_mode_py(const SuperMode& supermode) const
-{
-    return eigen_to_ndarray(
-        this->get_adiabatic_with_mode(supermode),
-        { model_parameters.n_slice }
-    );
-}
-
-pybind11::array_t<double> SuperMode::get_beating_length_with_mode_py(const SuperMode& supermode) const
-{
-    return eigen_to_ndarray(
-        this->get_beating_length_with_mode(supermode),
-        { model_parameters.n_slice }
-    );
 }
 
 SuperMode SuperMode::get_supermode_from_tuple(pybind11::tuple tuple) const

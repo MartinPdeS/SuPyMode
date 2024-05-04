@@ -1,6 +1,8 @@
 #pragma once
 
 #include "definitions.cpp"
+#include "model_parameters.cpp"
+#include "utils.cpp"
 #include "numpy_interface.cpp"
 
 class SuperMode
@@ -50,7 +52,6 @@ public:
 
     pybind11::tuple get_state();
 
-
     double get_norm(const size_t &slice, const std::string &normalization_type) const;
 
     Eigen::VectorXd get_norm_array(const std::string &normalization_type) const;
@@ -81,10 +82,11 @@ public:
 
     Eigen::VectorXd get_beating_length_with_mode(const SuperMode& other_supermode) const;
     Eigen::VectorXd get_adiabatic_with_mode(const SuperMode& other_supermode) const;
-    pybind11::array_t<double> get_overlap_integrals_with_mode_py(const SuperMode& supermode) const;
-    pybind11::array_t<std::complex<double>> get_normalized_coupling_with_mode_py(const SuperMode& supermode) const {return eigen_to_ndarray(this->get_normalized_coupling_with_mode(supermode), {model_parameters.n_slice});};
-    pybind11::array_t<double> get_adiabatic_with_mode_py(const SuperMode& supermode) const;
-    pybind11::array_t<double> get_beating_length_with_mode_py(const SuperMode& supermode) const;
+
+    pybind11::array_t<double> get_overlap_integrals_with_mode_py(const SuperMode& supermode) const {return eigen_to_ndarray(this->get_overlap_integrals_with_mode(supermode), {model_parameters.n_slice});}
+    pybind11::array_t<std::complex<double>> get_normalized_coupling_with_mode_py(const SuperMode& supermode) const {return eigen_to_ndarray(this->get_normalized_coupling_with_mode(supermode), {model_parameters.n_slice});}
+    pybind11::array_t<double> get_adiabatic_with_mode_py(const SuperMode& supermode) const {return eigen_to_ndarray(this->get_adiabatic_with_mode(supermode), {model_parameters.n_slice});}
+    pybind11::array_t<double> get_beating_length_with_mode_py(const SuperMode& supermode) const {return eigen_to_ndarray(this->get_beating_length_with_mode(supermode), {model_parameters.n_slice});}
 
 
     pybind11::array_t<double> get_fields_py() const {return eigen_to_ndarray(this->fields, {model_parameters.n_slice, model_parameters.nx, model_parameters.ny});}
@@ -93,7 +95,7 @@ public:
     pybind11::array_t<double> get_betas_py() const {return eigen_to_ndarray(this->betas, {model_parameters.n_slice});}
     pybind11::array_t<double> get_itr_list() const {return eigen_to_ndarray(this->model_parameters.itr_list, {model_parameters.n_slice});}
 
-    pybind11::array_t<double> get_mesh_gradient() const {return eigen_to_ndarray(this->model_parameters.mesh_gradient, {this->model_parameters.nx, this->model_parameters.ny});};
+    pybind11::array_t<double> get_mesh_gradient() const {return eigen_to_ndarray(this->model_parameters.mesh_gradient, {this->model_parameters.nx, this->model_parameters.ny});}
 
 
     SuperMode get_supermode_from_tuple(pybind11::tuple tuple) const;

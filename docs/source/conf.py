@@ -8,7 +8,7 @@ from packaging.version import parse
 from MPSPlots.styles import use_mpsplots_style
 
 
-from SuPyMode.tools.directories import (
+from SuPyMode.directories import (
     project_path,
     doc_css_path,
     version_path,
