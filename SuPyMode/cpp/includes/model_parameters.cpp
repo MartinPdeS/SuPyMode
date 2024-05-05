@@ -1,7 +1,13 @@
 #pragma once
 
-#include <definitions.cpp>
+#include "../../../extern/eigen/Eigen/Sparse"
+#include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+#include <pybind11/numpy.h>
+#include "numpy_interface.cpp"
 
+
+#define PI 3.1415926535897932384626f
 
 
 class ModelParameters
@@ -29,17 +35,10 @@ class ModelParameters
 
         int debug_mode;
 
-        ModelParameters(){}
+        ModelParameters() = default;
 
-        ModelParameters(
-            double wavelength,
-            pybind11::array_t<double> mesh_gradient_py,
-            pybind11::array_t<double> itr_list_py,
-            double dx,
-            double dy
-       ):
-        wavelength(wavelength), itr_list_py(itr_list_py),
-        mesh_gradient_py(mesh_gradient_py), dx(dx), dy(dy)
+        ModelParameters(double wavelength, pybind11::array_t<double> mesh_gradient_py, pybind11::array_t<double> itr_list_py, double dx, double dy, int debug_mode = 0)
+        : wavelength(wavelength), itr_list_py(itr_list_py), mesh_gradient_py(mesh_gradient_py), dx(dx), dy(dy), debug_mode(debug_mode)
         {
             this->nx = mesh_gradient_py.request().shape[0];
             this->ny = mesh_gradient_py.request().shape[1];
@@ -48,47 +47,50 @@ class ModelParameters
             this->field_size = nx * ny;
             this->n_slice = itr_list_py.size();
 
-
-            double *itr_list_ptr = (double*) itr_list_py.request().ptr;
-            Eigen::Map<Eigen::VectorXd> mapping_itr_list(itr_list_ptr, n_slice);
-            this->itr_list = mapping_itr_list;
-
-            double *mesh_gradient_ptr = (double*) mesh_gradient_py.request().ptr;
-            Eigen::Map<Eigen::VectorXd> mapping_mesh_gradient(mesh_gradient_ptr, nx * ny);
-            this->mesh_gradient = mapping_mesh_gradient;
-
+            this->itr_list = convert_py_to_eigen<double>(itr_list_py, n_slice);
+            this->mesh_gradient = convert_py_to_eigen<double>(mesh_gradient_py, nx * ny);
 
             this->ditr = abs(itr_list[1] - itr_list[0]);
 
             this->compute_scaled_parameters();
         }
 
-    void compute_scaled_parameters()
-    {
-        this->dx_scaled = itr_list * dx;
-        this->dy_scaled = itr_list * dy;
-        this->wavenumber_scaled = itr_list * this->wavenumber;
-    }
+        void compute_scaled_parameters()
+        {
+            this->dx_scaled = itr_list * dx;
+            this->dy_scaled = itr_list * dy;
+            this->wavenumber_scaled = itr_list * this->wavenumber;
+        }
 
-    pybind11::tuple get_state()
-    {
-        return pybind11::make_tuple(
-            this->wavelength,
-            this->mesh_gradient_py,
-            this->itr_list_py,
-            this->dx,
-            this->dy,
-            this->n_slice
-        );
-    }
+        static pybind11::tuple get_pickle(ModelParameters &model_parameters)
+        {
+            return pybind11::make_tuple(
+                model_parameters.wavelength,
+                model_parameters.mesh_gradient_py,
+                model_parameters.itr_list_py,
+                model_parameters.dx,
+                model_parameters.dy,
+                model_parameters.n_slice
+            );
+        }
 
-    std::ostream &operator<<(std::ostream &os)
-    {
-        return os << 'dx: '<< this->dx
-                  << 'dy: '<< this->dy
-                  << 'nx: '<< this->nx
-                  << 'ny: '<< this->ny
-                  << 'n_slice: '<< this->n_slice;
-    }
+        static ModelParameters build_from_tuple(pybind11::tuple tuple) {
+            return ModelParameters{
+                tuple[0].cast<double>(),                             // wavelength
+                tuple[1].cast<pybind11::array_t<double>>(),          // mesh_gradient_py,
+                tuple[2].cast<pybind11::array_t<double>>(),          // itr_list_py,
+                tuple[3].cast<double>(),                             // dx
+                tuple[4].cast<double>()                              // dy
+            }; // load
+        }
+
+        std::ostream &operator<<(std::ostream &os)
+        {
+            return os << 'dx: '<< this->dx
+                      << 'dy: '<< this->dy
+                      << 'nx: '<< this->nx
+                      << 'ny: '<< this->ny
+                      << 'n_slice: '<< this->n_slice;
+        }
 
 };

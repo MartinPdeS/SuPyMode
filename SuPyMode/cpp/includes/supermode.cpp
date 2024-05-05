@@ -1,35 +1,11 @@
 #pragma once
 
-#include "definitions.cpp"
 #include "utils.cpp"
 #include "supermode.h"
 
 
 typedef std::complex<double> complex128;
-
-pybind11::tuple SuperMode::get_state()
-{
-    return pybind11::make_tuple(
-        this->mode_number,
-        this->get_fields_py(),
-        this->get_index_py(),
-        this->get_betas_py(),
-        this->get_eigen_value_py(),
-        this->model_parameters
-        );
-}
-
-SuperMode SuperMode::get_supermode_from_tuple(pybind11::tuple tuple) const
-{
-    return SuperMode{
-        tuple[0].cast<size_t>(),                             // mode_number
-        tuple[1].cast<pybind11::array_t<double>>(),          // fields
-        tuple[2].cast<pybind11::array_t<double>>(),          // index
-        tuple[3].cast<pybind11::array_t<double>>(),          // betas
-        tuple[4].cast<pybind11::array_t<double>>(),          // eigen_values
-        tuple[5].cast<ModelParameters>()                     // model parameters
-    }; // load
-}
+std::complex<double> J(0.0, 1.0);
 
 double SuperMode::get_norm(const size_t &slice, const std::string &normalization_type) const
 {
@@ -78,24 +54,17 @@ Eigen::VectorXd SuperMode::get_gradient_field_overlap(const SuperMode &other_sup
 {
     Eigen::VectorXd output(model_parameters.n_slice);
 
-    Eigen::MatrixXd
-        mesh_2D = model_parameters.mesh_gradient,
-        field_0,
-        field_1,
-        overlap;
+    Eigen::MatrixXd field_0, field_1, overlap;
 
     double gradient_overlap;
     for (size_t slice = 0; slice < model_parameters.n_slice; ++slice)
     {
-        field_0 = this->fields.col(slice);
-        field_0.resize(model_parameters.nx, model_parameters.ny);
+        Eigen::Map<const Eigen::MatrixXd> field_0(this->fields.col(slice).data(), model_parameters.nx, model_parameters.ny);
+        Eigen::Map<const Eigen::MatrixXd> field_1(other_supermode.fields.col(slice).data(), model_parameters.nx, model_parameters.ny);
 
-        field_1 = other_supermode.fields.col(slice);
-        field_1.resize(model_parameters.nx, model_parameters.ny);
+        overlap = model_parameters.mesh_gradient.cwiseProduct(field_0).cwiseProduct(field_1);
 
-        overlap = mesh_2D.cwiseProduct(field_0).cwiseProduct(field_1);
-
-        gradient_overlap = get_trapz_integral(
+        gradient_overlap = this->get_trapz_integral(
             overlap,
             model_parameters.dx_scaled[slice],
             model_parameters.dy_scaled[slice]
@@ -206,7 +175,34 @@ double SuperMode::get_field_slice_norm_custom(const size_t slice) const
     return norm;
 }
 
+double SuperMode::get_trapz_integral(const Eigen::MatrixXd& mesh, double dx, double dy) const
+{
+    // Precompute the scaling factors for the integral to simplify the loop calculations.
+    const double dx_half = 0.5 * dx;
+    const double dy_half = 0.5 * dy;
 
+    // Initialize vector to store the integral of each row.
+    Eigen::VectorXd row_integrals(mesh.rows());
+
+    // Compute the integral for each row using the trapezoidal rule.
+    for (int row = 0; row < mesh.rows(); ++row)
+    {
+        double row_integral = 0.0;
+        for (int col = 0; col < mesh.cols() - 1; ++col)
+            row_integral += (mesh(row, col) + mesh(row, col + 1)) * dx_half;
+
+        row_integrals(row) = row_integral;
+    }
+
+    // Compute the total integral using the trapezoidal rule across the rows' integrals.
+    double total_integral = 0.0;
+    for (int row = 0; row < mesh.rows() - 1; ++row)
+    {
+        total_integral += (row_integrals(row) + row_integrals(row + 1)) * dy_half;
+    }
+
+    return total_integral;
+}
 
 
 

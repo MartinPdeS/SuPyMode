@@ -4,7 +4,6 @@
 #include "model_parameters.cpp"
 #include "numpy_interface.cpp"
 #include <eigen/Eigen>
-#include "equations.cpp"
 
 typedef std::complex<double> complex128;
 
@@ -27,20 +26,13 @@ public:
         eigen_value = convert_py_to_eigen(eigen_value_py, this->model_parameters.n_slice, 1);
     }
 
-    SuperMode(const size_t mode_number, const ModelParameters &model_parameters) :
-    mode_number(mode_number)
+    SuperMode(const size_t mode_number, const ModelParameters &model_parameters) : mode_number(mode_number)
     {
         this->model_parameters = model_parameters;
         this->fields = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>(this->model_parameters.field_size, model_parameters.n_slice);
         this->eigen_value = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
         this->betas = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
         this->index = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
-    }
-
-    Eigen::VectorXd convert_py_to_eigen(pybind11::array_t<double> array_py, size_t rows, size_t cols) const {
-        auto info = array_py.request();
-        double* ptr = static_cast<double*>(info.ptr);
-        return Eigen::Map<Eigen::VectorXd>(ptr, rows, cols);
     }
 
     double get_norm(const size_t &slice, const std::string &normalization_type) const;
@@ -77,8 +69,7 @@ public:
 
     Eigen::VectorXd get_gradient_field_overlap(const SuperMode &other_supermode) const;
 
-
-
+    double get_trapz_integral(const Eigen::MatrixXd& mesh, double dx, double dy) const;
 
     pybind11::array_t<double> get_overlap_integrals_with_mode_py(const SuperMode& supermode) const {
         return eigen_to_ndarray<double>(this->get_overlap_integrals_with_mode(supermode), {model_parameters.n_slice});
@@ -120,8 +111,27 @@ public:
         return eigen_to_ndarray<double>(this->model_parameters.mesh_gradient, {this->model_parameters.nx, this->model_parameters.ny});
     }
 
-    SuperMode get_supermode_from_tuple(pybind11::tuple tuple) const;
-    pybind11::tuple get_state();
+    static pybind11::tuple get_pickle(SuperMode &supermode) {
+        return pybind11::make_tuple(
+            supermode.mode_number,
+            supermode.get_fields_py(),
+            supermode.get_index_py(),
+            supermode.get_betas_py(),
+            supermode.get_eigen_value_py(),
+            supermode.model_parameters
+        );
+    }
+
+    static SuperMode build_from_tuple(pybind11::tuple tuple) {
+        return SuperMode{
+            tuple[0].cast<size_t>(),                             // mode_number
+            tuple[1].cast<pybind11::array_t<double>>(),          // fields
+            tuple[2].cast<pybind11::array_t<double>>(),          // index
+            tuple[3].cast<pybind11::array_t<double>>(),          // betas
+            tuple[4].cast<pybind11::array_t<double>>(),          // eigen_values
+            tuple[5].cast<ModelParameters>()                     // Model parameters
+        }; // load
+    }
 };
 
 

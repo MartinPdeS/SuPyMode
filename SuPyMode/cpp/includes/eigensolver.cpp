@@ -1,11 +1,14 @@
 #pragma once
 
+
+#include "../../../extern/spectra/include/Spectra/GenEigsRealShiftSolver.h"
+#include "../../../extern/spectra/include/Spectra/MatOp/SparseGenRealShiftSolve.h"
 #include "eigensolver.h"
 
 
 void CppSolver::generate_mode_set()
 {
- for (int mode_number=0; mode_number<n_computed_mode; ++mode_number)
+ for (int mode_number=0; mode_number < n_computed_mode; ++mode_number)
  {
     SuperMode supermode = SuperMode(mode_number, this->model_parameters);
     computed_supermodes.push_back(supermode);
@@ -20,7 +23,7 @@ void CppSolver::generate_mode_set()
 
 }
 
-std::tuple<Eigen::MatrixXd, Eigen::VectorXd> CppSolver::compute_eigen_solution(const double &alpha)
+std::tuple<Eigen::MatrixXd, Eigen::VectorXd> CppSolver::compute_eigen_solution(const double alpha)
 {
     this->compute_finit_diff_matrix();
 
@@ -78,12 +81,8 @@ void CppSolver::sort_eigen_with_fields(Eigen::MatrixXd& eigen_vectors, Eigen::Ve
         double best_overlap = overlap_matrix.row(mode_0).maxCoeff(&max_index);
 
         if (best_overlap < 0.5)
-            std::cout<<"Warning: bad mode field matching"<<"\n"
-                     <<"\titeration: "<<this->iteration<<"\n"
-                     <<"\tbest overlap: "<<best_overlap<<"\n"
-                     <<"\tmodes index: "<<mode_0<<"\n"
-                     <<"\tmax_index: "<<max_index<<"\n"
-                     <<std::endl;
+            printf("Warning: bad mode field matching\n\titeration: %d\n\tbest overlap: %f\n\tmodes index: %d\n\tmax_index: %d\n", this->iteration, best_overlap, mode_0, max_index);
+
 
         eigen_vectors.col(mode_0) = temporary_vector.col(max_index);
         eigen_values.row(mode_0) = temporary_value.row(max_index);
@@ -92,7 +91,7 @@ void CppSolver::sort_eigen_with_fields(Eigen::MatrixXd& eigen_vectors, Eigen::Ve
     }
 }
 
-void CppSolver::populate_sorted_supermodes(size_t slice, Eigen::MatrixXd& eigen_vectors, Eigen::VectorXd& eigen_values)
+void CppSolver::populate_sorted_supermodes(size_t slice, Eigen::MatrixXd &eigen_vectors, Eigen::VectorXd &eigen_values)
 {
     for (SuperMode& mode : sorted_supermodes)
     {
@@ -100,12 +99,10 @@ void CppSolver::populate_sorted_supermodes(size_t slice, Eigen::MatrixXd& eigen_
 
         mode.fields.col(slice) << eigen_vectors.col(mode.mode_number);
 
-
         mode.betas[slice] = sqrt( abs(mode.eigen_value[slice]) ) / this->model_parameters.itr_list[slice];
         mode.index[slice] = mode.betas[slice] / this->model_parameters.wavenumber;
     }
 }
-
 
 void CppSolver::loop_over_itr(size_t extrapolation_order, double alpha)
 {
@@ -131,8 +128,6 @@ void CppSolver::loop_over_itr(size_t extrapolation_order, double alpha)
             progress_bar.show_next(this->model_parameters.itr_list[slice]);
 
         k_taper = this->model_parameters.wavenumber * this->model_parameters.itr_list[slice];
-
-
 
         std::tie(eigen_vectors, eigen_values) = this->compute_eigen_solution(alpha);
 
@@ -163,7 +158,7 @@ void CppSolver::loop_over_itr(size_t extrapolation_order, double alpha)
 void CppSolver::sort_mode_per_last_propagation_constant()
 {
     if (this->model_parameters.debug_mode > 1)
-        std::cout<<"Sorting supermode with propgation constant"<<std::endl;
+        printf("Sorting supermode with propgation constant");
 
     std::vector<double> list_index;
     for (SuperMode &supermode: sorted_supermodes)
@@ -181,7 +176,7 @@ void CppSolver::sort_mode_per_last_propagation_constant()
 void CppSolver::arrange_mode_field()
 {
     if (this->model_parameters.debug_mode > 1)
-        std::cout<<"Arranging fields"<<std::endl;
+        printf("Arranging fields");
 
     for (SuperMode &supermode: sorted_supermodes)
         supermode.arrange_fields();
@@ -190,7 +185,7 @@ void CppSolver::arrange_mode_field()
 void CppSolver::normalize_mode_field()
 {
     if (this->model_parameters.debug_mode > 1)
-        std::cout<<"Normalizing fields"<<std::endl;
+        printf("Normalizing fields");
 
     for (SuperMode &supermode: sorted_supermodes)
         supermode.normalize_fields();

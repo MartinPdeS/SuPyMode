@@ -1,15 +1,15 @@
 #pragma once
 
+
+#include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+#include <pybind11/numpy.h>
 #include "supermode.cpp"
 #include "extrapolate.cpp"
 #include "progressbar.cpp"
 #include "laplacian.cpp"
-#include "definitions.cpp"
 #include "utils.cpp"
 #include "numpy_interface.cpp"
-
-
-
 
 
 class CppSolver : public BaseLaplacian
@@ -50,18 +50,9 @@ class CppSolver : public BaseLaplacian
           max_iteration(max_iteration),
           tolerance(tolerance),
           n_sorted_mode(n_sorted_mode),
-          n_computed_mode(n_computed_mode)
+          n_computed_mode(n_computed_mode),
+          model_parameters(wavelength, mesh_gradient_py, itr_list_py, dx, dy, debug_mode)
     {
-        this->model_parameters = ModelParameters(
-            wavelength,
-            mesh_gradient_py,
-            itr_list_py,
-            dx,
-            dy
-        );
-
-        this->model_parameters.debug_mode = debug_mode;
-
         this->generate_mode_set();
     }
 
@@ -69,11 +60,11 @@ class CppSolver : public BaseLaplacian
 
     void generate_mode_set();
 
-    std::tuple<Eigen::MatrixXd, Eigen::VectorXd> compute_eigen_solution(const double &alpha);
+    std::tuple<Eigen::MatrixXd, Eigen::VectorXd> compute_eigen_solution(const double alpha);
 
-    void sort_eigen_decomposition(Eigen::MatrixXd& eigen_vectors, Eigen::VectorXd& eigen_values);
+    void sort_eigen_decomposition(Eigen::MatrixXd &eigen_vectors, Eigen::VectorXd &eigen_values);
 
-    void sort_eigen_with_fields(Eigen::MatrixXd& eigen_vectors, Eigen::VectorXd& eigen_values);
+    void sort_eigen_with_fields(Eigen::MatrixXd &eigen_vectors, Eigen::VectorXd &eigen_values);
 
     void populate_sorted_supermodes(size_t slice, Eigen::MatrixXd& eigen_vectors, Eigen::VectorXd& eigen_values);
 

@@ -1,5 +1,4 @@
 #include <pybind11/pybind11.h>
-#include "includes/model_parameters.cpp"
 #include "includes/supermode.cpp"
 
 
@@ -8,7 +7,7 @@ PYBIND11_MODULE(SuperMode, module)
     module.doc() = "A c++ wrapper class for SuperMode";
 
     pybind11::class_<SuperMode>(module, "SuperMode")
-
+    .def_readonly("fields", &SuperMode::fields)
     .def_readwrite("binding_number", &SuperMode::mode_number)
     .def_readwrite("model_parameters", &SuperMode::model_parameters)
 
@@ -24,26 +23,6 @@ PYBIND11_MODULE(SuperMode, module)
     .def("get_adiabatic_with_mode", &SuperMode::get_adiabatic_with_mode_py)
     .def("get_overlap_integrals_with_mode", &SuperMode::get_overlap_integrals_with_mode_py)
     .def("get_beating_length_with_mode", &SuperMode::get_beating_length_with_mode_py)
-    .def(
-        pybind11::pickle(
-            [](SuperMode& a)
-            {
-                return  a.get_state();  // dump
-            },
-            [](pybind11::tuple t)
-            {
-                return SuperMode{
-                    t[0].cast<size_t>(),                             // mode_number
-                    t[1].cast<pybind11::array_t<double>>(),          // fields
-                    t[2].cast<pybind11::array_t<double>>(),          // index
-                    t[3].cast<pybind11::array_t<double>>(),          // betas
-                    t[4].cast<pybind11::array_t<double>>(),          // eigen_values
-                    t[5].cast<ModelParameters>()                     // Model parameters
-                }; // load
-            }
-        )
-
-
-    );
+    .def(pybind11::pickle(&SuperMode::get_pickle, &SuperMode::build_from_tuple));
 }
 

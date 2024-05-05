@@ -1,7 +1,9 @@
 #pragma once
 
-#include "definitions.cpp"
-
+#include <vector>
+#include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+#include <pybind11/numpy.h>
 
 template<typename T>
 std::vector<size_t> get_stride_from_dimension(std::vector<size_t> dimension)
@@ -18,8 +20,6 @@ std::vector<size_t> get_stride_from_dimension(std::vector<size_t> dimension)
 
   return stride;
 }
-
-
 
 template<typename T, typename MatrixType>
 pybind11::array_t<T> eigen_to_ndarray(const MatrixType &eigen_matrix, const std::vector<size_t> &dimension)
@@ -49,4 +49,18 @@ pybind11::array_t<T> eigen_to_ndarray(const MatrixType &eigen_matrix, const std:
     );
 
     return numpy_array;
+}
+
+template<typename T>
+Eigen::VectorXd convert_py_to_eigen(pybind11::array_t<T> array_py, size_t rows, size_t cols) {
+    auto info = array_py.request();
+    T* ptr = static_cast<T*>(info.ptr);
+    return Eigen::Map<Eigen::VectorXd>(ptr, rows, cols);
+}
+
+template<typename T>
+Eigen::VectorXd convert_py_to_eigen(pybind11::array_t<T> array_py, size_t rows) {
+    auto info = array_py.request();
+    T* ptr = static_cast<T*>(info.ptr);
+    return Eigen::Map<Eigen::VectorXd>(ptr, rows);
 }
