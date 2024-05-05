@@ -17,6 +17,8 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build" FORCE)
 #FIND_PACKAGE------------------------
 find_package(Python ${PYBIND11_PYTHON_VERSION} EXACT COMPONENTS Interpreter Development.Module)
 add_subdirectory("extern/pybind11")
+add_subdirectory("extern/eigen")
+add_subdirectory("extern/spectra")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/extern/spectra/include")
 include_directories("${CMAKE_SOURCE_DIR}/SuPyMode/cpp/includes")
