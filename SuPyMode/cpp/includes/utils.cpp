@@ -2,7 +2,7 @@
 
 #include <numeric>      // std::iota
 #include <algorithm>    // std::stable_sort
-#include "eigen/Eigen"
+#include <eigen/Eigen>
 
 
 template <typename T>
