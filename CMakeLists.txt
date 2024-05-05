@@ -46,7 +46,7 @@ message(STATUS "Custom flags passed to linker: " ${STATIC_STDLIB})
 #Building EigenSolver----------------------------------------------
 pybind11_add_module(EigenSolver MODULE "${SUPYMODE_CXX_DIR}/eigensolver_interface.cpp")
 set_target_properties(EigenSolver PROPERTIES OUTPUT_NAME "CppSolver")
-target_link_libraries(EigenSolver PRIVATE "${STATIC_STDLIB}")
+target_link_libraries(EigenSolver PRIVATE "${STATIC_STDLIB}" "${Eigen_LIBRARIES}")
 
 #Building SuperModes----------------------------------------------
 pybind11_add_module(SuperMode MODULE "${SUPYMODE_CXX_DIR}/supermode_interface.cpp")
