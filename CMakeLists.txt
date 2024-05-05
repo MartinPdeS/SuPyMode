@@ -16,21 +16,16 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build" FORCE)
 
 #FIND_PACKAGE------------------------
 find_package(Python ${PYBIND11_PYTHON_VERSION} EXACT COMPONENTS Interpreter Development.Module)
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/extern/pybind11")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/extern/spectra")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen")
-
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/extern/spectra/include")
+add_subdirectory("extern/pybind11")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen)
 include_directories("${CMAKE_SOURCE_DIR}/SuPyMode/cpp/includes")
-include_directories("${CMAKE_SOURCE_DIR}/SuPyMode/cpp/headers")
 
 if (WIN32)
     message("Windows OS detected")
     set(STATIC_STDLIB "-w -lm -static-libgcc -static-libstdc++ -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive") # Need to keep -lwinpthread static because of MinGW dll directory not the same as windows' MSVC
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     message("AppleClang compiler detected")
-    set(STATIC_STDLIB "-w -v -lm -static-libstdc++")
+    set(STATIC_STDLIB "-w -lm -static-libstdc++")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     message("GNU compiler detected")
     # set(STATIC_STDLIB "-w -lm -static-libstdc++ -static-libgcc")
@@ -73,5 +68,4 @@ install(
     DESTINATION "${SUPYMODE_BIN_DIR}"
     # RUNTIME_DEPENDENCIES # do not uncomment this as it will mixed dependencies that may not be manylinux-compatible
 )
-
 
