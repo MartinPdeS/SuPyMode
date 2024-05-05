@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include "../../../extern/spectra/include/Spectra/GenEigsRealShiftSolver.h"
-#include "../../../extern/spectra/include/Spectra/MatOp/SparseGenRealShiftSolve.h"
+#include "Spectra/GenEigsRealShiftSolver.h"
+#include "Spectra/MatOp/SparseGenRealShiftSolve.h"
 #include "eigensolver.h"
 
 

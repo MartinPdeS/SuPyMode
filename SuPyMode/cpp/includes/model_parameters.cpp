@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../extern/eigen/Eigen/Sparse"
+#include "Eigen/Sparse"
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
