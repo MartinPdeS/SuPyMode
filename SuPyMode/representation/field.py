@@ -44,7 +44,6 @@ class Field(InheritFromSuperMode):
             parent_supermode (InheritFromSuperMode): The parent supermode from which this field is derived.
         """
         self.parent_supermode = parent_supermode
-        self._data = self.parent_supermode.binded_supermode.get_fields()
 
     def get_values(self) -> numpy.ndarray:
         """
@@ -54,7 +53,7 @@ class Field(InheritFromSuperMode):
             numpy.ndarray: The field data as a numpy array.
         """
 
-        return self._data
+        return self.parent_supermode.binded_supermode.get_fields()
 
     def get_norm(self, slice_number: int) -> float:
         """
@@ -111,11 +110,12 @@ class Field(InheritFromSuperMode):
             slice_list=numpy.array(slice_number)
         )
 
-        field = numpy.take(self._data, slice_list, axis=0)
+        fields = self.parent_supermode.binded_supermode.get_fields()
+        fields = numpy.take(fields, slice_list, axis=0)
         if add_symmetries:
-            field = self._get_symmetrized_field(field)
+            fields = self._get_symmetrized_field(fields)
 
-        return field
+        return fields
 
     def normalize_field(self, field: numpy.ndarray, itr: float, norm_type: str = 'L2') -> numpy.ndarray:
         """
@@ -229,7 +229,9 @@ class Field(InheritFromSuperMode):
         Note:
             This method applies internal colormap settings and adjusts the axis based on the field data.
         """
-        x, y, field = self._get_symmetrized_field_and_axis(field=self._data[slice])
+        field = self.parent_supermode.binded_supermode.get_field[slice]
+
+        x, y, field = self._get_symmetrized_field_and_axis(field=field)
 
         artist = ax.add_mesh(
             x=x,

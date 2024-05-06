@@ -23,6 +23,7 @@ PYBIND11_MODULE(SuperMode, module)
     .def("get_adiabatic_with_mode", &SuperMode::get_adiabatic_with_mode_py)
     .def("get_overlap_integrals_with_mode", &SuperMode::get_overlap_integrals_with_mode_py)
     .def("get_beating_length_with_mode", &SuperMode::get_beating_length_with_mode_py)
-    .def(pybind11::pickle(&SuperMode::get_pickle, &SuperMode::build_from_tuple));
+    .def(pybind11::pickle(&SuperMode::get_pickle, &SuperMode::build_from_tuple))
+    .def("get_field", &SuperMode::get_field_py, pybind11::arg("index"));
 }
 

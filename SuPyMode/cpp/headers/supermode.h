@@ -6,7 +6,7 @@
 #include <eigen/Eigen>
 
 typedef std::complex<double> complex128;
-
+#include <iostream>
 class SuperMode
 {
 public:
@@ -109,6 +109,11 @@ public:
 
     pybind11::array_t<double> get_mesh_gradient() const {
         return eigen_to_ndarray<double>(this->model_parameters.mesh_gradient, {this->model_parameters.nx, this->model_parameters.ny});
+    }
+
+    pybind11::array_t<double> get_field_py(const size_t index) const {
+        Eigen::MatrixXd output = this->fields.col(index);
+        return eigen_to_ndarray<double>(output, {this->model_parameters.nx, this->model_parameters.ny});
     }
 
     static pybind11::tuple get_pickle(SuperMode &supermode) {

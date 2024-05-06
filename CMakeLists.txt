@@ -18,8 +18,6 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build" FORCE)
 find_package(Python ${PYBIND11_PYTHON_VERSION} EXACT COMPONENTS Interpreter Development.Module)
 add_subdirectory("extern/pybind11")
 
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/extern/spectra/include")
 include_directories("${CMAKE_SOURCE_DIR}/SuPyMode/cpp/includes")
 include_directories("${CMAKE_SOURCE_DIR}/SuPyMode/cpp/headers")
 
@@ -45,17 +43,20 @@ message(STATUS "Custom flags passed to linker: " ${STATIC_STDLIB})
 pybind11_add_module(EigenSolver MODULE "${SUPYMODE_CXX_DIR}/eigensolver_interface.cpp")
 set_target_properties(EigenSolver PROPERTIES OUTPUT_NAME "CppSolver")
 target_link_libraries(EigenSolver PRIVATE "${STATIC_STDLIB}" "${Eigen_LIBRARIES}")
+target_include_directories(EigenSolver PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen")
+target_include_directories(EigenSolver PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/extern/spectra/include")
 
 #Building SuperModes----------------------------------------------
 pybind11_add_module(SuperMode MODULE "${SUPYMODE_CXX_DIR}/supermode_interface.cpp")
 set_target_properties(SuperMode PROPERTIES OUTPUT_NAME "SuperMode")
 target_link_libraries(SuperMode PRIVATE "${STATIC_STDLIB}")
-
+target_include_directories(SuperMode PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen")
 
 #Building ModelParameters----------------------------------------------
 pybind11_add_module(ModelParameters MODULE "${SUPYMODE_CXX_DIR}/model_parameters_interface.cpp")
 set_target_properties(ModelParameters PROPERTIES OUTPUT_NAME "ModelParameters")
 target_link_libraries(ModelParameters PRIVATE "${STATIC_STDLIB}")
+target_include_directories(ModelParameters PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen")
 
 set_target_properties(
     EigenSolver SuperMode ModelParameters

@@ -158,7 +158,7 @@ void CppSolver::loop_over_itr(size_t extrapolation_order, double alpha)
 void CppSolver::sort_mode_per_last_propagation_constant()
 {
     if (this->model_parameters.debug_mode > 1)
-        printf("Sorting supermode with propgation constant");
+        printf("Sorting supermode with propgation constant\n");
 
     std::vector<double> list_index;
     for (SuperMode &supermode: sorted_supermodes)
@@ -176,7 +176,7 @@ void CppSolver::sort_mode_per_last_propagation_constant()
 void CppSolver::arrange_mode_field()
 {
     if (this->model_parameters.debug_mode > 1)
-        printf("Arranging fields");
+        printf("Arranging fields\n");
 
     for (SuperMode &supermode: sorted_supermodes)
         supermode.arrange_fields();
@@ -185,7 +185,7 @@ void CppSolver::arrange_mode_field()
 void CppSolver::normalize_mode_field()
 {
     if (this->model_parameters.debug_mode > 1)
-        printf("Normalizing fields");
+        printf("Normalizing fields\n");
 
     for (SuperMode &supermode: sorted_supermodes)
         supermode.normalize_fields();
