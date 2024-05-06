@@ -3,7 +3,7 @@
 
 #include "model_parameters.cpp"
 #include "numpy_interface.cpp"
-#include <eigen/Eigen>
+#include "eigen/Eigen"
 
 typedef std::complex<double> complex128;
 #include <iostream>
