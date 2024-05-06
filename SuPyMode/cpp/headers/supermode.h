@@ -48,8 +48,8 @@ public:
     Eigen::VectorXd get_norm_l2_array() const;
     Eigen::VectorXd get_norm_max_array() const;
 
-    double get_overlap_integral(const SuperMode& other_supermode, size_t slice) const;
-    double get_overlap_integral(const SuperMode& other_supermode, size_t slice_0, size_t slice_1) const;
+    double get_overlap_integral(const SuperMode &other_supermode, size_t slice) const;
+    double get_overlap_integral(const SuperMode &other_supermode, size_t slice_0, size_t slice_1) const;
 
     Eigen::MatrixXd get_overlap_integrals_with_mode(const SuperMode& other_supermode) const;
 
