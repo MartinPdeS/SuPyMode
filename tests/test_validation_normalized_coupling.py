@@ -11,7 +11,7 @@ from MPSPlots.render2D import SceneList
 
 def test_normalized_coupling(
         wavelength: float = 1550e-9,
-        resolution: int = 160,
+        resolution: int = 180,
         fiber_name: str = 'SMF28',
         n_step: int = 200,
         itr_final: float = 0.6,

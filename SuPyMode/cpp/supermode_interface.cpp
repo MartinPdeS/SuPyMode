@@ -14,6 +14,7 @@ PYBIND11_MODULE(SuperMode, module)
     .def("itr_list", &SuperMode::get_itr_list)
 
     .def("get_fields", &SuperMode::get_fields_py)
+    .def("get_field", &SuperMode::get_field_py, pybind11::arg("index"))
     .def("get_norm", &SuperMode::get_norm)
     .def("get_index", &SuperMode::get_index_py)
     .def("get_betas", &SuperMode::get_betas_py)
@@ -24,6 +25,6 @@ PYBIND11_MODULE(SuperMode, module)
     .def("get_overlap_integrals_with_mode", &SuperMode::get_overlap_integrals_with_mode_py)
     .def("get_beating_length_with_mode", &SuperMode::get_beating_length_with_mode_py)
     .def(pybind11::pickle(&SuperMode::get_pickle, &SuperMode::build_from_tuple))
-    .def("get_field", &SuperMode::get_field_py, pybind11::arg("index"));
+    ;
 }
 
