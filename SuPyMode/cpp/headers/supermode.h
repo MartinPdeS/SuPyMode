@@ -6,7 +6,7 @@
 #include "eigen/Eigen"
 
 typedef std::complex<double> complex128;
-#include <iostream>
+
 class SuperMode
 {
 public:

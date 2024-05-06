@@ -2,7 +2,7 @@
 
 #include <numeric>      // std::iota
 #include <algorithm>    // std::stable_sort
-#include "eigen/Eigen"
+#include <Eigen/Core>
 
 
 template <typename T>
@@ -64,34 +64,13 @@ std::vector<size_t> get_range(size_t size){
   return output;
 }
 
-double Trapz(const Eigen::Matrix<double, Eigen::Dynamic, 1> &vector, double dx, size_t n_x, size_t n_y){
-
-    return vector.sum();
-
-    double sum  = 0;
-    double val;
-
-    for (size_t i=0; i<n_x; ++i){
-        val = vector[i];
-        if ( i % n_x == 0 || i % n_x == n_x-1 )
-            val /= 2.0;
-        if ( i < n_y || i > n_y * (n_x-1) )
-            val /= 2.0;
-        sum += val;
-      }
-
-    return sum * dx;
-}
-
-double
-dydx(double x, double y)
+double dydx(double x, double y)
 {
     return((x - y)/2);
 }
 
 //https://www.geeksforgeeks.org/runge-kutta-4th-order-method-solve-differential-equation/
-double
-rungeKutta(double x0, double y0, double x, double h)
+double rungeKutta(double x0, double y0, double x, double h)
 {
     // Count number of iterations using step size or
     // step height h
