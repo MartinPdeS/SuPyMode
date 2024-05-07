@@ -52,14 +52,21 @@ pybind11::array_t<T> eigen_to_ndarray(const MatrixType &eigen_matrix, const std:
 }
 
 template<typename T>
-Eigen::VectorXd convert_py_to_eigen(pybind11::array_t<T> array_py, size_t rows, size_t cols) {
+Eigen::MatrixXd convert_py_to_eigen(pybind11::array_t<T> &array_py) {
     auto info = array_py.request();
     T* ptr = static_cast<T*>(info.ptr);
-    return Eigen::Map<Eigen::VectorXd>(ptr, rows, cols);
+    return Eigen::Map<Eigen::MatrixXd>(ptr, info.shape[0], info.shape[1]);
 }
 
 template<typename T>
-Eigen::VectorXd convert_py_to_eigen(pybind11::array_t<T> array_py, size_t rows) {
+Eigen::MatrixXd convert_py_to_eigen(pybind11::array_t<T> &array_py, size_t rows, size_t cols) {
+    auto info = array_py.request();
+    T* ptr = static_cast<T*>(info.ptr);
+    return Eigen::Map<Eigen::MatrixXd>(ptr, rows, cols);
+}
+
+template<typename T>
+Eigen::VectorXd convert_py_to_eigen(pybind11::array_t<T> &array_py, size_t rows) {
     auto info = array_py.request();
     T* ptr = static_cast<T*>(info.ptr);
     return Eigen::Map<Eigen::VectorXd>(ptr, rows);

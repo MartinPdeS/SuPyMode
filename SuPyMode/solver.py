@@ -6,7 +6,6 @@ import numpy
 from dataclasses import dataclass, field
 from PyFinitDiff.finite_difference_2D import FiniteDifference
 from PyFinitDiff.finite_difference_2D import Boundaries
-from MPSTools.tools.mathematics import get_rho_gradient
 from FiberFusing.geometry import Geometry
 from FiberFusing.coordinate_system import CoordinateSystem
 
@@ -15,6 +14,7 @@ from SuPyMode.superset import SuperSet
 from SuPyMode.supermode import SuperMode
 from SuPyMode.binary.CppSolver import CppSolver
 from SuPyMode.binary.SuperMode import SuperMode as BindingSuperMode  # noqa: F401 It has to be imported in order for pybind11 to know the type
+from SuPyMode.binary.Example import get_rho_gradient_5p
 from SuPyMode.mode_label import ModeLabel
 
 
@@ -54,20 +54,6 @@ class SuPySolver(object):
         self.mode_number = 0
         self.solver_number = 0
 
-    def get_n2_rho_gradient(self) -> numpy.ndarray:
-        """
-        Returns the n squared radial gradient.
-
-        :returns:   The n 2 rho gradient.
-        :rtype:     numpy.ndarray
-        """
-        gradient = get_rho_gradient(
-            mesh=self.mesh**2,
-            coordinate_system=self.coordinate_system
-        )
-
-        return gradient
-
     def initialize_binding(self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int) -> CppSolver:
         """
         Initializes and configures the C++ solver binding for eigenvalue computations.
@@ -98,7 +84,13 @@ class SuPySolver(object):
             self.FD._triplet.array[:, 2]
         ]
 
-        mesh_gradient_term = self.get_n2_rho_gradient() * self.coordinate_system.rho_mesh
+        rho_gradient = get_rho_gradient_5p(
+            self.mesh**2,
+            self.coordinate_system.x_vector,
+            self.coordinate_system.y_vector
+        )
+
+        mesh_gradient_term = rho_gradient * self.coordinate_system.rho_mesh
 
         Solver = CppSolver(
             mesh=self.mesh,

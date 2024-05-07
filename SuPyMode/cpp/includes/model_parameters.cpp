@@ -27,7 +27,7 @@ class ModelParameters
         pybind11::array_t<double> itr_list_py;
         pybind11::array_t<double> mesh_gradient_py;
 
-        Eigen::VectorXd mesh_gradient;
+        Eigen::MatrixXd mesh_gradient;
         Eigen::VectorXd itr_list;
         Eigen::VectorXd dx_scaled;
         Eigen::VectorXd dy_scaled;
@@ -48,7 +48,7 @@ class ModelParameters
             this->n_slice = itr_list_py.size();
 
             this->itr_list = convert_py_to_eigen<double>(itr_list_py, n_slice);
-            this->mesh_gradient = convert_py_to_eigen<double>(mesh_gradient_py, nx * ny);
+            this->mesh_gradient = convert_py_to_eigen<double>(mesh_gradient_py, nx, ny);
 
             this->ditr = abs(itr_list[1] - itr_list[0]);
 
