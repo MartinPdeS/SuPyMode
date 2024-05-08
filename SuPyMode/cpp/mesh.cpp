@@ -4,8 +4,6 @@
 #include <unsupported/Eigen/MatrixFunctions>
 
 
-#include <iostream>
-
 std::pair<Eigen::MatrixXd, Eigen::MatrixXd> compute_gradient_2p(const Eigen::MatrixXd& image, double dx, double dy) {
     int rows = image.rows();
     int cols = image.cols();

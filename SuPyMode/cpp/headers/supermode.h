@@ -4,7 +4,6 @@
 #include "model_parameters.cpp"
 #include "numpy_interface.cpp"
 #include <Eigen/Core>
-#include <iostream>
 
 typedef std::complex<double> complex128;
 

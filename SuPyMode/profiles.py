@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Tuple
+from typing import Tuple, Callable
 import numpy
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
@@ -109,20 +109,44 @@ class AlphaProfile():
     line_style: str = field(default='--', repr=False)
 
     def __post_init__(self):
+        """
+        Initialize the section list after the dataclass fields are set. This method
+        prepares the profile object for further operations such as adding sections
+        or computing properties.
+        """
         self.section_list = []
 
     @property
     def first_section(self) -> TaperSection:
-        """ Returns the first taper section added to the profile. """
+        """
+        Retrieves the first taper section added to the profile.
+
+        Returns:
+            TaperSection: The first taper section object in the section list.
+        """
         return self.section_list[0]
 
     @property
     def last_section(self) -> TaperSection:
-        """ Returns the last taper section added to the profile. """
+        """
+        Retrieves the last taper section added to the profile.
+
+        Returns:
+            TaperSection: The last taper section object in the section list.
+        """
         return self.section_list[-1]
 
     def add_constant_segment(self, *, length: float, n_point: int = 100) -> None:
-        """ Adds a constant section at the specified length with a given number of points. """
+        """
+        Adds a constant section at the specified length with a given number of points to the profile.
+
+        Parameters:
+            length (float): Length of the constant section to be added.
+            n_point (int): Number of points along the section for detailed resolution, defaults to 100.
+
+        Returns:
+            None
+        """
         section = self.get_constant_custom_section(
             length=length,
             rho=self.last_radius,
@@ -133,7 +157,16 @@ class AlphaProfile():
         self.section_list.append(section)
 
     def add_end_of_taper_segment(self, *, n_point: int = 100) -> None:
-        """ Adds a constant segment at the end of the taper if the last section is not constant. """
+        """
+        Adds a constant segment at the end of the taper if the last section is not constant. This method
+        ensures the taper ends smoothly or extends as needed.
+
+        Parameters:
+            n_point (int): Number of points along the section, defaults to 100.
+
+        Returns:
+            None
+        """
         if self.last_section.is_constant:
             return
 
@@ -155,19 +188,16 @@ class AlphaProfile():
             start_z: float = 0,
             n_point: int = 100) -> None:
         """
-        Add the constant section which length, radius and start position is to be provided
+        Creates a constant section with specified parameters and adds it to the profile.
 
-        :param      length:   Length of the constant section to be added
-        :type       length:   float
-        :param      radius:   Radius of the constant section to be added
-        :type       radius:   float
-        :param      start_z:  Initial z-position of the constant section to be added
-        :type       start_z:  float
-        :param      n_point:  The number of point where wo which evaluate that segment
-        :type       n_point:  int
+        Parameters:
+            length (float): Length of the constant section to be added.
+            radius (float): Radius of the section.
+            start_z (float): Starting z-position for the section, defaults to 0.
+            n_point (int): Number of points for resolution within the section, defaults to 100.
 
-        :returns:   No returns
-        :rtype:     None
+        Returns:
+            TaperSection: The newly created taper section.
         """
         z_array = numpy.linspace(start_z, length + start_z, n_point)
 
@@ -181,6 +211,15 @@ class AlphaProfile():
         return section
 
     def evaluate_adiabatic_factor(self, itr: numpy.ndarray) -> numpy.ndarray:
+        """
+        Evaluates the adiabatic factor for given inverse taper ratios (ITR).
+
+        Parameters:
+            itr (numpy.ndarray): Array of inverse taper ratios.
+
+        Returns:
+            numpy.ndarray: Array of adiabatic factors corresponding to the provided ITRs.
+        """
         interpolation = interp1d(
             x=self.itr_list,
             y=self.adiabatic,
@@ -191,6 +230,15 @@ class AlphaProfile():
         return interpolation(itr)
 
     def evaluate_distance_vs_itr(self, distance: numpy.ndarray) -> numpy.ndarray:
+        """
+        Evaluates the function of distance versus inverse taper ratio using interpolation.
+
+        Parameters:
+            distance (numpy.ndarray): Array of distances at which the ITR needs to be evaluated.
+
+        Returns:
+            numpy.ndarray: Array of ITRs at the specified distances.
+        """
         interpolation = interp1d(
             x=self.itr_list,
             y=self.distance,
@@ -279,21 +327,19 @@ class AlphaProfile():
             start_z: float = 0,
             n_point: int = 100) -> None:
         """
-        Add a tapered section for a given alpha, initial_heating_length, initial_radius, stretching_length and starting z position
+        Adds a custom tapered section to the profile based on specified parameters. This method is useful for creating
+        detailed and specific taper geometries within the optical fiber.
 
-        :param      alpha:                  Alpha parameter which represent how the heating section changes in time
-        :type       alpha:                  float
-        :param      initial_heating_length: Initial length of the heating section
-        :type       initial_heating_length: float
-        :param      initial_radius:         The initial radius of the segment to be added
-        :type       initial_radius:         float
-        :param      stretching_length:      The total elongated lenght of the current segment to be added
-        :type       stretching_length:      float
-        :param      n_point:                The number of point where wo which evaluate that segment
-        :type       n_point:                int
+        Parameters:
+            alpha (float): Rate at which the heating section's influence changes over time.
+            initial_heating_length (float): Initial length of the heating section before any stretching.
+            initial_radius (float): Initial radius at the start of the taper segment.
+            stretching_length (float): Length over which the taper is stretched.
+            start_z (float): Starting z-coordinate for the taper segment, defaults to 0.
+            n_point (int): Number of points along the taper for resolution, defaults to 100.
 
-        :returns:   No returns
-        :rtype:     None
+        Returns:
+            None
         """
         alpha = 0.01 if alpha == 0 else alpha
 
@@ -320,94 +366,69 @@ class AlphaProfile():
 
         self.section_list.append(section)
 
-    def compute_distance(self) -> numpy.ndarray:
+    def compute_adiabatic(self, distance: numpy.ndarray, radius: numpy.ndarray) -> numpy.ndarray:
         """
-        Returns the distance array of the profile
-
-        :returns:   The distance.
-        :rtype:     numpy.ndarray
-        """
-        distance = numpy.linspace(0, self.last_z, self.n_point)
-
-        self._distance = distance
-
-    def compute_radius(self) -> numpy.ndarray:
-        """
-        Returns the array of radius [vs z-distance] for the taper structure
-
-        :returns:   The ITR array
-        :rtype:     numpy.ndarray
-        """
-        radius = self.compute_radius_from_segment_from_interpolation(self.distance)
-
-        self._radius = radius
-
-    def compute_itr_list(self) -> numpy.ndarray:
-        """
-        Returns the array of ITR value [vs z-distance] for the taper structure
-
-        :returns:   The ITR array
-        :rtype:     numpy.ndarray
-        """
-        itr_list = self.radius / self.initial_radius
-
-        self._itr_list = itr_list
-
-    def compute_adiabatic(self) -> numpy.ndarray:
-        """
-        Returns the array of adiabatc factor [vs ITR] for the taper structure
+        Computes the adiabatic factor, a measure of how gradually a taper changes, which is crucial for ensuring minimal
+        light loss due to mode conversion.
 
         .. math::
             f_c = \frac{1}{\rho} \frac{d \rho}{d z}
 
-        :returns:   The adiabatic factor
-        :rtype:     numpy.ndarray
+        Parameters:
+            distance (numpy.ndarray): Array of distances along the taper.
+            radius (numpy.ndarray): Array of radii corresponding to each distance.
+
+        Returns:
+            numpy.ndarray: Array of adiabatic factors for the given distances and radii.
         """
-        dz = numpy.gradient(self.distance, axis=0, edge_order=2)
+        dz = numpy.gradient(distance, axis=0, edge_order=2)
 
-        ditr = numpy.gradient(numpy.log(self.radius), axis=0, edge_order=2)
+        ditr = numpy.gradient(numpy.log(radius), axis=0, edge_order=2)
 
-        adiabatic = abs(ditr / dz)
+        return abs(ditr / dz)
 
-        self._adiabatic = adiabatic
-
-    def compute_taper_angle(self, symmetric: bool = None) -> numpy.ndarray:
+    def compute_taper_angle(self, distance: numpy.ndarray, radius: numpy.ndarray) -> numpy.ndarray:
         r"""
-        Returns the array of taper angle for the taper structure
+        Computes the taper angle for a given set of distances and corresponding radii in the taper structure. This angle
+        can provide insights into the performance and behavior of the taper under different conditions.
         From Tapered single-mode fibres and devices. Part 1: Adiabaticity criteria.
-        Compute the adiabatic factor defined as:
 
         .. math::
             f_c = \frac{d \rho}{d z} = \Omega
 
-        :returns:   The taper angle array
-        :rtype:     numpy.ndarray
+
+        Parameters:
+            distance (numpy.ndarray): Array of distances along the taper.
+            radius (numpy.ndarray): Array of radii corresponding to each distance.
+
+        Returns:
+            numpy.ndarray: Array of taper angles calculated from the rate of change of the radius with respect to the distance.
         """
-        d_z = numpy.gradient(self.distance, axis=0, edge_order=2)
+        d_z = numpy.gradient(distance, axis=0, edge_order=2)
 
-        d_rho = numpy.gradient(self.radius, axis=0, edge_order=2)
+        d_rho = numpy.gradient(radius, axis=0, edge_order=2)
 
-        taper_angle = abs(d_rho / d_z)
-
-        self._taper_angle = taper_angle
+        return abs(d_rho / d_z)
 
     @property
     def smallest_itr(self) -> float:
         """
-        Returns the smallest itr of the taper structure
+        Retrieves the smallest inverse taper ratio (ITR) of the taper structure. The smallest ITR can indicate the
+        tightest part of the taper, which is critical for applications requiring precise control over light propagation.
 
-        :returns:   Smallest itr value
-        :rtype:     float
+        Returns:
+            float: The smallest ITR value found in the taper profile.
         """
         return self.itr_list.min()
 
     @property
     def last_z(self) -> float:
         """
-        Returns the last, or equivalently the largest propagation distance computed
+        Retrieves the last, or maximum, z-coordinate computed for the taper sections, which represents the end point
+        of the taper structure.
 
-        :returns:   The z-distance
-        :rtype:     float
+        Returns:
+            float: The last z-coordinate value in the taper structure.
         """
         if len(self.section_list) == 0:
             return 0
@@ -417,20 +438,21 @@ class AlphaProfile():
     @property
     def total_length(self) -> float:
         """
-        Returns the total length of the component comprising the taper and constants sections.
+        Computes the total length of the taper structure, including both taper and constant sections, providing an overall
+        size of the taper profile.
 
-        :returns:   { description_of_the_return_value }
-        :rtype:     float
+        Returns:
+            float: Total length of the taper structure.
         """
         return self.last_section.z_final
 
     @property
     def last_radius(self) -> float:
         """
-        Retunrs the radius value of the last z-position
+        Retrieves the radius at the last computed z-position, which represents the end radius of the taper structure.
 
-        :returns:   The radius value
-        :rtype:     float
+        Returns:
+            float: Radius at the last z-coordinate in the taper profile.
         """
         if len(self.section_list) == 0:
             return self.initial_radius
@@ -438,65 +460,45 @@ class AlphaProfile():
             return self.last_section.radius_final
 
     def initialize(self) -> None:
-        symmetric = self.symmetric
+        """
+        Initializes or re-initializes the profile, typically called after making modifications to the taper sections. This method
+        recalculates and updates internal parameters to reflect the current state of the taper structure.
 
-        self.symmetric = False
-
+        Returns:
+            None
+        """
         if self.add_end_of_taper_section:
             self.add_end_of_taper_segment()
 
-        self.compute_distance()
-        self.compute_radius()
-        self.compute_itr_list()
-        self.compute_taper_angle()
-        self.compute_adiabatic()
+        distance = numpy.linspace(0, self.last_z, self.n_point)
+        radius = self.compute_radius_from_segment_from_interpolation(distance)
+        itr_list = radius / self.initial_radius
+        adiabatic = self.compute_adiabatic(distance=distance, radius=radius)
+        taper_angle = self.compute_taper_angle(distance=distance, radius=radius)
 
-        self.symmetric = symmetric
-
-    @property
-    def distance(self):
         if self.symmetric:
-            return numpy.linspace(self._distance[0], 2 * self._distance[-1], 2 * self._distance.size - 1)
-
-        return self._distance
-
-    @property
-    def radius(self):
-        if self.symmetric:
-            return numpy.r_[self._radius, self._radius[-2::-1]]
-
-        return self._radius
-
-    @property
-    def itr_list(self):
-        if self.symmetric:
-            return numpy.r_[self._itr_list, self._itr_list[-2::-1]]
-
-        return self._itr_list
-
-    @property
-    def taper_angle(self):
-        if self.symmetric:
-            return numpy.r_[self._taper_angle, self._taper_angle[-2::-1]]
-
-        return self._taper_angle
-
-    @property
-    def adiabatic(self):
-        if self.symmetric:
-            return numpy.r_[self._adiabatic, self._adiabatic[-2::-1]]
-
-        return self._adiabatic
+            self.distance = numpy.linspace(distance[0], 2 * distance[-1], 2 * distance.size - 1)
+            self.itr_list = numpy.r_[itr_list, itr_list[-2::-1]]
+            self.radius = numpy.r_[radius, radius[-2::-1]]
+            self.adiabatic = numpy.r_[adiabatic, adiabatic[-2::-1]]
+            self.taper_angle = numpy.r_[taper_angle, taper_angle[-2::-1]]
+        else:
+            self.distance = distance
+            self.radius = radius
+            self.itr_list = itr_list
+            self.adiabatic = adiabatic
+            self.taper_angle = taper_angle
 
     def compute_radius_from_segment_from_interpolation(self, z: numpy.ndarray) -> numpy.ndarray:
         """
-        Gets the radius of the component from all the interpolation segment.
+        Computes the radius at specified z-distances based on interpolation from existing taper sections, providing a continuous
+        profile of the radius along the taper.
 
-        :param      z:    The distance array to which evaluate the radius of the component
-        :type       z:    numpy.ndarray
+        Parameters:
+            z (numpy.ndarray): Array of z-distances at which to evaluate the radius.
 
-        :returns:   The evaluated radius of the component vs the distance
-        :rtype:     numpy.ndarray
+        Returns:
+            numpy.ndarray: Array of radius values interpolated along the given z-distances.
         """
         radius = numpy.zeros(z.size)
 
@@ -515,16 +517,18 @@ class AlphaProfile():
             initial_radius: float = None,
             n_point: int = 100) -> None:
         """
-        Add a tapered section following the previous one for a given alpha, initial_heating_length, stretching_length.
+        Adds a tapered section following the previously defined section, using provided taper parameters to define the new section's
+        geometry and behavior.
 
-        :param      alpha:                  Alpha parameter which represent how the heating section changes in time
-        :type       alpha:                  float
-        :param      initial_heating_length: Initial length of the heating section
-        :type       initial_heating_length: float
-        :param      stretching_length:      The total elongated lenght of the current segment to be added
-        :type       stretching_length:      float
-        :param      n_point:                The number of point where wo which evaluate that segment
-        :type       n_point:                int
+        Parameters:
+            alpha (float): Rate at which the heating section's influence changes over time.
+            initial_heating_length (float): Initial length of the heating section.
+            stretching_length (float): Total length over which the segment is stretched.
+            initial_radius (float): Radius at the start of the segment, defaults to the last radius if not provided.
+            n_point (int): Number of points along the section for resolution, defaults to 100.
+
+        Returns:
+            None
         """
         return self.add_taper_custom_segment(
             alpha=alpha,
@@ -535,7 +539,14 @@ class AlphaProfile():
             n_point=n_point
         )
 
-    def get_itr_vs_distance_interpolation(self):
+    def get_itr_vs_distance_interpolation(self) -> Callable:
+        """
+        Generates an interpolation function for inverse taper ratio (ITR) as a function of distance.
+        This allows for quick lookups of ITR at arbitrary distances along the taper.
+
+        Returns:
+            Callable: A function that interpolates ITR based on given distances.
+        """
         return interp1d(
             x=self.distance,
             y=self.itr_list,
@@ -544,39 +555,40 @@ class AlphaProfile():
         )
 
     def single_plot(function):
+        """
+        Decorator to apply a standard plotting style to any plotting function within this class.
+        It automatically sets line styles, colors, and labels from the class attributes.
+
+        Parameters:
+            function (Callable): The plotting function to decorate.
+
+        Returns:
+            Callable: A wrapped plotting function that integrates additional styling and annotations.
+        """
+
         def wrapper(self, ax: Axis, line_color: str = None, line_style: str = None, **kwargs):
             line_style = self.line_style if line_style is None else line_style
             line_color = self.line_color if line_color is None else line_color
 
-            x, y = function(
-                self,
-                ax=ax,
-                line_color=line_color,
-                line_style=line_style,
-                **kwargs
-            )
+            x, y = function(self, ax=ax, line_color=line_color, line_style=line_style, **kwargs)
 
-            ax.add_line(
-                x=x,
-                y=y,
-                label=self.label,
-                line_style=line_style,
-                color=line_color
-            )
+            ax.add_line(x=x, y=y, label=self.label, line_style=line_style, color=line_color)
 
         return wrapper
 
     @single_plot
-    def render_itr_vs_z_on_ax(
-            self,
-            ax: Axis,
-            line_style: str = None,
-            line_color: str = None) -> None:
+    def render_itr_vs_z_on_ax(self, ax: Axis, **kwargs) -> None:
         """
-        Add plot onto axis, the plots is ITR vs Z-distance
+        Renders a plot of inverse taper ratio (ITR) versus z-distance onto a given axis. This method is typically
+        used for visualizing how the ITR changes along the length of the taper.
 
-        :param      ax:   The axis on which to add the plot
-        :type       ax:   Axis
+        Parameters:
+            ax (Axis): The matplotlib axis on which to plot.
+            line_style (str, optional): Line style for the plot, defaults to class attribute.
+            line_color (str, optional): Line color for the plot, defaults to class attribute.
+
+        Returns:
+            None
         """
         ax.set_style(
             show_legend=False,
@@ -591,16 +603,18 @@ class AlphaProfile():
         return self.distance, self.itr_list
 
     @single_plot
-    def render_taper_angle_vs_z_on_ax(
-            self,
-            ax: Axis,
-            line_style: str = None,
-            line_color: str = None) -> None:
+    def render_taper_angle_vs_z_on_ax(self, ax: Axis, **kwargs) -> None:
         """
-        Add plot onto axis, the plots is ITR vs Z-distance
+        Plots the taper angle as a function of z-distance on a provided axis. Useful for understanding the geometric
+        changes in the taper profile over its length.
 
-        :param      ax:   The axis on which to add the plot
-        :type       ax:   Axis
+        Parameters:
+            ax (Axis): The matplotlib axis on which to plot.
+            line_style (str, optional): Specifies the style of the plot line, if different from the class default.
+            line_color (str, optional): Specifies the color of the plot line, if different from the class default.
+
+        Returns:
+            None
         """
         ax.set_style(
             show_legend=False,
@@ -615,16 +629,18 @@ class AlphaProfile():
         return self.distance, self.taper_angle
 
     @single_plot
-    def render_adiabatic_factor_vs_z_on_ax(
-            self,
-            ax: Axis,
-            line_style: str = None,
-            line_color: str = None) -> None:
+    def render_adiabatic_factor_vs_z_on_ax(self, ax: Axis, **kwargs) -> None:
         """
-        Add plot onto axis, the plots is adiabatic criterion vs Z-distance
+        Plots the adiabatic criterion versus z-distance on the specified axis. This plot helps assess the
+        efficiency and effectiveness of the taper in maintaining adiabatic conditions throughout its course.
 
-        :param      ax:   The axis on which to add the plot
-        :type       ax:   Axis
+        Parameters:
+            ax (Axis): The matplotlib axis on which to plot.
+            line_style (str, optional): Line style for the plot, can override default.
+            line_color (str, optional): Line color for the plot, can override default.
+
+        Returns:
+            None
         """
         ax.set_style(
             y_scale='log',
@@ -635,11 +651,7 @@ class AlphaProfile():
         return self.distance, self.adiabatic
 
     @single_plot
-    def render_adiabatic_factor_vs_itr_on_ax(
-            self,
-            ax: Axis,
-            line_style: str = None,
-            line_color: str = None) -> None:
+    def render_adiabatic_factor_vs_itr_on_ax(self, ax: Axis, **kwargs) -> None:
         """
         Add adiabatic criterion vs ITR plot to axis
 
@@ -656,17 +668,16 @@ class AlphaProfile():
             show_adiabatic: bool = True,
             show_taper_angle: bool = True) -> SceneList:
         """
-        Generate two plots: ITR vs z distance and adiabatic criterion vs ITR
+        Generates plots based on the current state of the taper profile. This can include plots of radius vs. z-distance,
+        adiabatic factor vs. ITR, and taper angle vs. z-distance, based on the specified flags.
 
-        :param      show_radius:       If True, plot shows radius as function of ITR
-        :type       show_radius:       bool
-        :param      show_adiabatic:    If True, plot shows adiabatic criterion as function of ITR
-        :type       show_adiabatic:    bool
-        :param      show_taper_angle:  If True, plot shows taper angle as function of ITR
-        :type       show_taper_angle:  bool
+        Parameters:
+            show_radius (bool): If True, includes a plot of radius vs. z-distance.
+            show_adiabatic (bool): If True, includes a plot of adiabatic factor vs. ITR.
+            show_taper_angle (bool): If True, includes a plot of taper angle vs. z-distance.
 
-        :returns:   The scene list.
-        :rtype:     SceneList
+        Returns:
+            SceneList: A collection of matplotlib axes with the requested plots.
         """
         self.initialize()
 

@@ -63,9 +63,6 @@ Eigen::VectorXd SuperMode::get_gradient_field_overlap(const SuperMode &other_sup
 
         overlap = model_parameters.mesh_gradient.cwiseProduct(field_0).cwiseProduct(field_1);
 
-        std::cout<<model_parameters.mesh_gradient.rows()<<" cols" <<model_parameters.mesh_gradient.cols()<<"\n";
-        std::cout<<field_0.rows()<<" cols" <<field_0.cols()<<"\n";
-
         gradient_overlap = this->get_trapz_integral(
             overlap,
             model_parameters.dx_scaled[slice],
