@@ -88,7 +88,7 @@ class SuPySolver(object):
             self.mesh**2,
             self.coordinate_system.x_vector,
             self.coordinate_system.y_vector
-        )
+        ).T
 
         mesh_gradient_term = rho_gradient * self.coordinate_system.rho_mesh
 

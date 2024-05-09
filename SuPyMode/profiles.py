@@ -477,17 +477,52 @@ class AlphaProfile():
         taper_angle = self.compute_taper_angle(distance=distance, radius=radius)
 
         if self.symmetric:
-            self.distance = numpy.linspace(distance[0], 2 * distance[-1], 2 * distance.size - 1)
-            self.itr_list = numpy.r_[itr_list, itr_list[-2::-1]]
-            self.radius = numpy.r_[radius, radius[-2::-1]]
-            self.adiabatic = numpy.r_[adiabatic, adiabatic[-2::-1]]
-            self.taper_angle = numpy.r_[taper_angle, taper_angle[-2::-1]]
+            self._distance = numpy.linspace(distance[0], 2 * distance[-1], 2 * distance.size - 1)
+            self._itr_list = numpy.r_[itr_list, itr_list[-2::-1]]
+            self._radius = numpy.r_[radius, radius[-2::-1]]
+            self._adiabatic = numpy.r_[adiabatic, adiabatic[-2::-1]]
+            self._taper_angle = numpy.r_[taper_angle, taper_angle[-2::-1]]
         else:
-            self.distance = distance
-            self.radius = radius
-            self.itr_list = itr_list
-            self.adiabatic = adiabatic
-            self.taper_angle = taper_angle
+            self._distance = distance
+            self._radius = radius
+            self._itr_list = itr_list
+            self._adiabatic = adiabatic
+            self._taper_angle = taper_angle
+
+    @property
+    def distance(self) -> numpy.ndarray:
+        try:
+            return self._distance
+        except AttributeError:
+            raise AttributeError('Profile has not been initialized yet. The user need to run the initialize() method first. ')
+
+    @property
+    def radius(self) -> numpy.ndarray:
+        try:
+            return self._radius
+        except AttributeError:
+            raise AttributeError('Profile has not been initialized yet. The user need to run the initialize() method first. ')
+
+    @property
+    def itr_list(self) -> numpy.ndarray:
+        try:
+            return self._itr_list
+        except AttributeError:
+            raise AttributeError('Profile has not been initialized yet. The user need to run the initialize() method first. ')
+
+    @property
+    def adiabatic(self) -> numpy.ndarray:
+        try:
+            return self._adiabatic
+        except AttributeError:
+            raise AttributeError('Profile has not been initialized yet. The user need to run the initialize() method first. ')
+
+    @property
+    def taper_angle(self) -> numpy.ndarray:
+        try:
+            return self._taper_angle
+        except AttributeError:
+            raise AttributeError('Profile has not been initialized yet. The user need to run the initialize() method first. ')
 
     def compute_radius_from_segment_from_interpolation(self, z: numpy.ndarray) -> numpy.ndarray:
         """
@@ -554,7 +589,7 @@ class AlphaProfile():
             fill_value=0
         )
 
-    def single_plot(function):
+    def single_plot(function) -> Callable:
         """
         Decorator to apply a standard plotting style to any plotting function within this class.
         It automatically sets line styles, colors, and labels from the class attributes.
@@ -577,7 +612,7 @@ class AlphaProfile():
         return wrapper
 
     @single_plot
-    def render_itr_vs_z_on_ax(self, ax: Axis, **kwargs) -> None:
+    def render_itr_vs_z_on_ax(self, ax: Axis, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
         """
         Renders a plot of inverse taper ratio (ITR) versus z-distance onto a given axis. This method is typically
         used for visualizing how the ITR changes along the length of the taper.
@@ -588,7 +623,7 @@ class AlphaProfile():
             line_color (str, optional): Line color for the plot, defaults to class attribute.
 
         Returns:
-            None
+            tuple[numpy.ndarray, numpy.ndarray]
         """
         ax.set_style(
             show_legend=False,
@@ -603,7 +638,7 @@ class AlphaProfile():
         return self.distance, self.itr_list
 
     @single_plot
-    def render_taper_angle_vs_z_on_ax(self, ax: Axis, **kwargs) -> None:
+    def render_taper_angle_vs_z_on_ax(self, ax: Axis, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
         """
         Plots the taper angle as a function of z-distance on a provided axis. Useful for understanding the geometric
         changes in the taper profile over its length.
@@ -614,7 +649,7 @@ class AlphaProfile():
             line_color (str, optional): Specifies the color of the plot line, if different from the class default.
 
         Returns:
-            None
+            tuple[numpy.ndarray, numpy.ndarray]
         """
         ax.set_style(
             show_legend=False,
@@ -629,7 +664,7 @@ class AlphaProfile():
         return self.distance, self.taper_angle
 
     @single_plot
-    def render_adiabatic_factor_vs_z_on_ax(self, ax: Axis, **kwargs) -> None:
+    def render_adiabatic_factor_vs_z_on_ax(self, ax: Axis, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
         """
         Plots the adiabatic criterion versus z-distance on the specified axis. This plot helps assess the
         efficiency and effectiveness of the taper in maintaining adiabatic conditions throughout its course.
@@ -640,7 +675,7 @@ class AlphaProfile():
             line_color (str, optional): Line color for the plot, can override default.
 
         Returns:
-            None
+            tuple[numpy.ndarray, numpy.ndarray]
         """
         ax.set_style(
             y_scale='log',
@@ -651,7 +686,7 @@ class AlphaProfile():
         return self.distance, self.adiabatic
 
     @single_plot
-    def render_adiabatic_factor_vs_itr_on_ax(self, ax: Axis, **kwargs) -> None:
+    def render_adiabatic_factor_vs_itr_on_ax(self, ax: Axis, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
         """
         Add adiabatic criterion vs ITR plot to axis
 
@@ -679,8 +714,6 @@ class AlphaProfile():
         Returns:
             SceneList: A collection of matplotlib axes with the requested plots.
         """
-        self.initialize()
-
         figure = SceneList(
             title=f'Minimum ITR: {self.smallest_itr:.4f}',
             ax_orientation='vertical',
@@ -711,27 +744,22 @@ class AlphaProfile():
             number_of_frames: int = 200,
             dark_background: bool = True) -> None:
         """
-        Genrates gif of the propagation of light into the taper structure
+        Generates an animated GIF of light propagation in a taper structure.
 
-        :param      output_directory:  The output directory
-        :type       output_directory:  str
-        :param      dpi:               The dpi
-        :type       dpi:               int
-        :param      fps:               The fps [frame per seconde]
-        :type       fps:               int
-        :param      number_of_frames:  The number of frame
-        :type       number_of_frames:  int
-        :param      dark_background:   If True the background is black
-        :type       dark_background:   bool
+        Parameters:
+            output_directory (str): Path where the GIF will be saved.
+            dpi (int): Dots per inch for the output GIF.
+            fps (int): Frames per second for the animation.
+            number_of_frames (int): Total number of frames in the animation.
+            dark_background (bool): If True, use a dark background for the GIF.
 
-        :returns:   No returns
-        :rtype:     None
+        Returns:
+            None
         """
         self.initialize()
-
-        figure, ax = plt.subplots(1, 1, figsize=(12, 6))
-
-        ax.set_xlabel('Propagation axis [mm]', color='white')
+        figure, ax = plt.subplots(figsize=(12, 6))
+        ax.set_xlabel('Propagation axis [mm]', color='white' if dark_background else 'black')
+        style_context = "dark_background" if dark_background else "default"
 
         sub_sampling_factor = int(self.distance.size / number_of_frames)
 
@@ -739,13 +767,7 @@ class AlphaProfile():
         sub_radius = self.radius[::sub_sampling_factor]
         sub_itr_list = self.itr_list[::sub_sampling_factor]
 
-        if dark_background:
-            style = plt.style.context("dark_background")
-            ax.tick_params(colors='white', direction='out')
-        else:
-            style = plt.style.context('default')
-
-        with style:
+        with plt.style.context(style_context):
             def init_func() -> tuple:
                 line_0 = ax.plot(sub_distance, sub_radius, color='black')
                 line_1 = ax.plot(sub_distance, -sub_radius, color='black')
@@ -770,28 +792,23 @@ class AlphaProfile():
 
                 line_0 = ax.set_title(title, color='white')
 
-                line_1 = ax.axvline(
-                    position,
-                    linestyle='--',
-                    linewidth=2,
-                    color='red'
-                )
+                line_1 = ax.axvline(position, linestyle='--', linewidth=2, color='red')
 
                 return line_0, line_1
 
-            animation = FuncAnimation(
-                fig=figure,
-                func=animate,
-                init_func=init_func,
-                blit=True,
-                repeat=True,
-                frames=sub_itr_list.size
-            )
+        animation = FuncAnimation(
+            fig=figure,
+            func=animate,
+            init_func=init_func,
+            blit=True,
+            repeat=True,
+            frames=sub_itr_list.size
+        )
 
-            animation.save(
-                output_directory,
-                dpi=dpi,
-                writer=PillowWriter(fps=fps)
-            )
+        animation.save(
+            output_directory,
+            dpi=dpi,
+            writer=PillowWriter(fps=fps)
+        )
 
 # -
