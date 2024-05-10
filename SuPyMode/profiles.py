@@ -756,7 +756,6 @@ class AlphaProfile():
         Returns:
             None
         """
-        self.initialize()
         figure, ax = plt.subplots(figsize=(12, 6))
         ax.set_xlabel('Propagation axis [mm]', color='white' if dark_background else 'black')
         style_context = "dark_background" if dark_background else "default"

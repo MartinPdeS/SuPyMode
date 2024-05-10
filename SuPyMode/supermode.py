@@ -3,16 +3,16 @@
 
 # Built-in imports
 import numpy
-from dataclasses import dataclass
+from dataclasses import dataclass, field as field_arg
 from scipy.interpolate import RectBivariateSpline
 
 # Local imports
 from SuPyMode import representation
 from SuPyMode.binary.ModelParameters import ModelParameters
-from SuPyMode.tools.utils import interpret_slice_number_and_itr, get_symmetrized_vector
+from SuPyMode.utils import interpret_slice_number_and_itr, get_symmetrized_vector
 
 
-@dataclass
+@dataclass(kw_only=True)
 class SuperMode():
     """
     Represents supermodes within fiber optic structures. This class serves as a Python
@@ -34,6 +34,15 @@ class SuperMode():
     mode_number: int
     boundaries: dict
     label: str = None
+    ID: list = field_arg(init=False)
+    # Other representations
+    field: representation.Field = field_arg(init=False)
+    index: representation.Index = field_arg(init=False)
+    beta: representation.Beta = field_arg(init=False)
+    normalized_coupling: representation.NormalizedCoupling = field_arg(init=False)
+    adiabatic: representation.Adiabatic = field_arg(init=False)
+    eigen_value: representation.EigenValue = field_arg(init=False)
+    beating_length: representation.BeatingLength = field_arg(init=False)
 
     def __post_init__(self):
         self.ID = [self.solver_number, self.binding_number]
@@ -46,6 +55,13 @@ class SuperMode():
         self.beating_length = representation.BeatingLength(parent_supermode=self)
 
     def __hash__(self):
+        """
+        Returns a hash based on the binded supermode object, allowing this class
+        instance to be used in hash-based collections like sets and dictionaries.
+
+        Returns:
+            int: The hash value of the binded supermode object.
+        """
         return hash(self.binded_supermode)
 
     @property
@@ -55,12 +71,22 @@ class SuperMode():
 
     @property
     def geometry(self) -> object:
-        """Accesses the geometric configuration associated with the supermode."""
+        """
+        Provides access to the geometric configuration associated with the supermode.
+
+        Returns:
+            object: The geometry of the parent SuperSet.
+        """
         return self.parent_set.geometry
 
     @property
     def coordinate_system(self) -> object:
-        """Accesses the coordinate system used by the supermode."""
+        """
+        Accesses the coordinate system used by the supermode.
+
+        Returns:
+            object: The coordinate system of the parent SuperSet.
+        """
         return self.parent_set.coordinate_system
 
     @property
@@ -70,7 +96,12 @@ class SuperMode():
 
     @property
     def model_parameters(self) -> ModelParameters:
-        """Retrieves the parameters defining the model's computational aspects."""
+        """
+        Retrieves parameters defining the model's computational aspects.
+
+        Returns:
+            ModelParameters: Computational parameters from the binded supermode.
+        """
         return self.binded_supermode.model_parameters
 
     @property
@@ -80,6 +111,13 @@ class SuperMode():
 
     @property
     def amplitudes(self) -> numpy.ndarray:
+        """
+        Computes the amplitude array for this supermode, setting its own mode number
+        to 1 and all others to 0.
+
+        Returns:
+            numpy.ndarray: Array of complex numbers representing amplitudes.
+        """
         n_mode = len(self.parent_set.supermodes)
         amplitudes = numpy.zeros(n_mode, dtype=complex)
         amplitudes[self.mode_number] = 1
@@ -87,6 +125,13 @@ class SuperMode():
 
     @property
     def stylized_label(self) -> str:
+        """
+        Provides a stylized label for the supermode. If no custom label is provided,
+        it defaults to a generic label with the mode ID.
+
+        Returns:
+            str: The stylized or default label.
+        """
         if self.label is None:
             return f"Mode: {self.ID}"
         else:
@@ -94,16 +139,14 @@ class SuperMode():
 
     def is_computation_compatible(self, other: 'SuperMode') -> bool:
         """
-        Determines whether the specified other supermode is compatible
-        for computation of the modal coupling and adiabatic criterion.
-        It, basically return False only if the mode is the same or if the
-        boundaries symmetries differ in some way.
+        Determines if another supermode is compatible for computation, based on unique
+        identifiers and boundary conditions.
 
-        :param      other:  The other SuperMode to compare with
-        :type       other:  SuperMode
+        Parameters:
+            other (SuperMode): The other supermode to compare.
 
-        :returns:   True if the specified other is computation compatible, False otherwise.
-        :rtype:     bool
+        Returns:
+            bool: True if the supermodes are compatible for computation, False otherwise.
         """
         if self.ID != other.ID and self.is_symmetry_compatible(other):
             return True
@@ -124,17 +167,20 @@ class SuperMode():
 
     def get_field_interpolation(self, itr: float = None, slice_number: int = None) -> RectBivariateSpline:
         """
-        Gets the mode field interpolation at a certain itr or slice number value.
+        Computes the field interpolation for a given iteration or slice number. Requires
+        exactly one of the parameters to be specified.
 
-        :param      itr:           The itr
-        :type       itr:           float
-        :param      slice_number:  The slice number
-        :type       slice_number:  int
+        Parameters:
+            itr (float, optional): The iteration number for which to compute the interpolation.
+            slice_number (int, optional): The slice number for which to compute the interpolation.
 
-        :returns:   The mode field interpolation.
-        :rtype:     RectBivariateSpline
+        Returns:
+            RectBivariateSpline: Interpolated field values over a grid.
+
+        Raises:
+            ValueError: If neither or both parameters are specified.
         """
-        if not (itr is None) ^ (slice_number is None):
+        if (itr is None) == (slice_number is None):
             raise ValueError("Exactly one of itr or slice_number must be provided.")
 
         if slice_number is None:
@@ -193,24 +239,38 @@ class SuperMode():
     def __repr__(self) -> str:
         return self.label
 
-    def plot(self, plot_type: str, *args, **kwargs):
+    def plot(self, plot_type: str, **kwargs):
+        """
+        Plots various properties of the supermode based on specified type.
+
+        Parameters:
+            plot_type (str): The type of plot to generate (e.g., 'field', 'beta').
+            *args: Additional positional arguments for the plot function.
+            **kwargs: Additional keyword arguments for the plot function.
+
+        Returns:
+            The result of the plotting function, typically a plot object.
+
+        Raises:
+            ValueError: If an invalid plot type is specified.
+        """
         match plot_type.lower():
             case 'field':
-                return self.field.plot(*args, **kwargs)
+                return self.field.plot(**kwargs)
             case 'beta':
-                return self.beta.plot(*args, **kwargs)
+                return self.beta.plot(**kwargs)
             case 'index':
-                return self.index.plot(*args, **kwargs)
+                return self.index.plot(**kwargs)
             case 'eigen-value':
-                return self.eigen_value.plot(*args, **kwargs)
+                return self.eigen_value.plot(**kwargs)
             case 'beating-length':
-                return self.beating_length.plot(*args, **kwargs)
+                return self.beating_length.plot(**kwargs)
             case 'adiabatic':
-                return self.adiabatic.plot(*args, **kwargs)
+                return self.adiabatic.plot(**kwargs)
             case 'normalized-coupling':
-                return self.normalized_coupling.plot(*args, **kwargs)
+                return self.normalized_coupling.plot(**kwargs)
             case _:
-                raise ValueError(f'Invalid plot type: {plot_type}. Options are: index, beta, eigen-value, field, beating-length')
+                raise ValueError(f'Invalid plot type: {plot_type}. Options are: index, beta, eigen-value, field, beating-length, adiabatic, normalized-coupling')
 
 
 # -

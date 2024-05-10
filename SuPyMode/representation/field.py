@@ -11,7 +11,7 @@ from MPSPlots.render2D import Axis
 from MPSPlots import colormaps
 from MPSPlots.render2D import SceneMatrix
 
-from SuPyMode.tools.utils import interpret_slice_number_and_itr, slice_to_itr
+from SuPyMode.utils import interpret_slice_number_and_itr, slice_to_itr
 
 from SuPyMode.representation.base import InheritFromSuperMode
 
@@ -87,7 +87,7 @@ class Field(InheritFromSuperMode):
         """
         return self.parent_supermode.parent_set
 
-    def get_field(self, slice_number: int = [], itr: float = [], add_symmetries: bool = True) -> numpy.ndarray:
+    def get_field(self, slice_number: int = None, itr: float = None, add_symmetries: bool = True) -> numpy.ndarray:
         """
         Retrieve a specific field adjusted for boundary conditions and optionally add symmetries.
 
@@ -102,12 +102,10 @@ class Field(InheritFromSuperMode):
         Raises:
             AssertionError: If neither or both of slice_number and itr are defined.
         """
-        assert (numpy.size(slice_number) != 0) ^ (numpy.size(itr) != 0), 'Exactly one of the two values [slice_number, itr] must be defined.'
-
         slice_list, itr_list = interpret_slice_number_and_itr(
             itr_baseline=self.itr_list,
-            itr_list=numpy.array(itr),
-            slice_list=numpy.array(slice_number)
+            itr_list=itr,
+            slice_list=slice_number
         )
 
         fields = self.parent_supermode.binded_supermode.get_fields()

@@ -47,8 +47,7 @@ class SuPySolver(object):
             self.mesh = self.geometry
         else:
             self.geometry.generate_coordinate_system()
-            self.geometry.generate_mesh()
-            self.mesh = self.geometry.mesh
+            self.mesh = self.geometry.generate_mesh()
             self.coordinate_system = self.geometry.coordinate_system
 
         self.mode_number = 0

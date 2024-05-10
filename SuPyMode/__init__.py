@@ -1,1 +1,1 @@
-from .tools.utils import load_superset  # noqa: F401, W292
+from .utils import load_superset  # noqa: F401, W292

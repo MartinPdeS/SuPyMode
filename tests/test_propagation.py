@@ -8,7 +8,7 @@ from SuPyMode.profiles import AlphaProfile
 fibers = [
     fiber_catalogue.load_fiber('DCF1300S_33', wavelength=1550e-9),
     fiber_catalogue.load_fiber('DCF1300S_20', wavelength=1550e-9),
-    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=1550e-9)
+    fiber_catalogue.load_fiber('DCF1300S_42', wavelength=1550e-9)
 ]
 
 
@@ -34,6 +34,8 @@ def test_propagation():
         stretching_length=5e-3,  # Total length of the taper
         n_point=200  # Number of points to calculate within the taper segment
     )
+
+    profile.initialize()
 
     # Initialize the workflow with the specified configuration and fibers
     workflow = Workflow(

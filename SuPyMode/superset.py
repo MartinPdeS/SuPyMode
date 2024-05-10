@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from itertools import combinations, product
 from pathvalidate import sanitize_filepath
+from typing import Optional, Tuple, List, Callable
 
 # Third-party imports
 from scipy.interpolate import interp1d
@@ -18,7 +19,7 @@ import pyvista
 # Local imports
 from SuPyMode.supermode import SuperMode
 from SuPyMode import representation
-from SuPyMode.tools.utils import test_valid_input, get_intersection, interpret_slice_number_and_itr, interpret_mode_of_interest
+from SuPyMode.utils import test_valid_input, get_intersection, interpret_slice_number_and_itr, interpret_mode_of_interest
 from SuPyMode.profiles import AlphaProfile
 from SuPyMode import directories
 from MPSPlots.render2D import SceneMatrix, SceneList, Axis, Multipage
@@ -262,7 +263,7 @@ class SuperSet(object):
             t_matrix[mode_1.mode_number, mode_0.mode_number, :] = + coupling
 
         if numpy.isnan(t_matrix).any() or numpy.isinf(t_matrix).any():
-            raise ValueError('Nan or inf values detected in transmission matrix')
+            raise ValueError('Nan or inf values detected in transmission matrix, verify that there is no hybrid mode in the computation.')
 
         return t_matrix
 
@@ -317,157 +318,148 @@ class SuperSet(object):
             self, *,
             profile: AlphaProfile,
             initial_amplitude: list,
-            max_step: float = None,
-            n_step: int = None,
+            max_step: Optional[float] = None,
+            n_step: Optional[int] = None,
             add_coupling: bool = True,
             method: str = 'RK45',
-            **kwargs) -> numpy.ndarray:
+            **kwargs: dict) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]:
         """
-        Returns the amplitudes value of the supermodes in the coupler.
+        Propagates the amplitudes of the supermodes in a coupler based on a given profile.
 
-        :param      initial_amplitude:  The initial amplitude
-        :type       initial_amplitude:  list
-        :param      profile:            The z-profile of the coupler
-        :type       profile:            object
-        :param      max_step:           The maximum stride to use in the solver
-        :type       max_step:           float
-        :param      add_coupling:       Add coupling to the transmission matrix
-        :type       add_coupling:       bool
-        :param      kwargs:             The keywords arguments to be passed to the solver
-        :type       kwargs:             dictionary
+        Args:
+            profile (AlphaProfile): The z-profile of the coupler.
+            initial_amplitude (list): The initial amplitude as a list.
+            max_step (float, optional): The maximum step size used by the solver. Defaults to None.
+            n_step (int, optional): Number of steps used by the solver (not currently used in this method).
+            add_coupling (bool): Flag to add coupling to the transmission matrix. Defaults to True.
+            method (str): Integration method to be used by the solver. Defaults to 'RK45'.
+            **kwargs (Dict[str, Any]): Additional keyword arguments to be passed to the solver.
 
-        :returns:   The amplitudes as a function of the distance in the coupler
-        :rtype:     numpy.ndarray
+        Returns:
+            Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]: A tuple containing the times of the solution,
+                                                       the solution array of amplitudes, and the interpolated
+                                                       index of refraction at those times.
         """
-        profile.initialize()
-
-        initial_amplitude = numpy.asarray(initial_amplitude).astype(complex)
+        initial_amplitude = numpy.asarray(initial_amplitude, dtype=complex)
 
         if max_step is None:
             max_step = self.parent_solver.wavelength / 200
 
         sub_distance, sub_itr_vector, sub_t_matrix = self.get_transmision_matrix_from_profile(
             profile=profile,
-            add_coupling=add_coupling,
+            add_coupling=add_coupling
         )
 
-        z_to_itr = interp1d(
-            profile.distance,
-            profile.itr_list,
-            bounds_error=False,
-            fill_value='extrapolate',
-            axis=-1
-        )
-
-        itr_to_t_matrix = interp1d(
-            sub_itr_vector,
-            sub_t_matrix,
-            bounds_error=False,
-            fill_value='extrapolate',
-            axis=-1
-        )
+        z_to_itr = interp1d(profile.distance, profile.itr_list, bounds_error=False, fill_value='extrapolate')
+        itr_to_t_matrix = interp1d(sub_itr_vector, sub_t_matrix, bounds_error=False, fill_value='extrapolate')
 
         def model(z, y):
             itr = z_to_itr(z)
-            return 1j * itr_to_t_matrix(itr).dot(y)
+            return 1j * itr_to_t_matrix(itr) @ y
 
         sol = solve_ivp(
-            model,
+            fun=model,
             y0=initial_amplitude,
             t_span=[0, profile.total_length],
+            method=method,
             vectorized=True,
             max_step=max_step,
-            method=method,
             **kwargs
         )
 
-        norm = (numpy.abs(sol.y)**2).sum(axis=0)
-
-        if not numpy.all(numpy.isclose(norm, 1.0, atol := 1e-1)):
-            logging.warning(f'Power conservation is not acheived [{atol = }]. You should consider reducing the max step size [{max_step = }]')
+        # Check power conservation across the propagation
+        norm = numpy.sum(numpy.abs(sol.y)**2, axis=0)
+        if not numpy.allclose(norm, 1.0, atol=1e-1):
+            logging.warning(f'Power conservation not achieved [{max_step = }, atol = 1e-1].')
 
         return sol.t, sol.y, z_to_itr(sol.t)
 
-    def interpret_initial_input(self, initial_amplitude: list) -> numpy.ndarray:
-        amplitude_size = len(initial_amplitude)
-        number_of_supermodes = len(self.supermodes)
-        assert len(initial_amplitude) == len(self.supermodes), f'Amplitudes size: {amplitude_size} do not match with the number of supermodes: {number_of_supermodes}'
+    def interpret_initial_input(self, initial_amplitude: list | SuperMode) -> numpy.ndarray:
+        """
+        Interprets the initial amplitude input, ensuring compatibility with the expected number of supermodes.
 
+        Args:
+            initial_amplitude (list | SuperMode): The initial amplitude as either a list of complex numbers or a SuperMode object.
+
+        Returns:
+            numpy.ndarray: The initial amplitudes as a NumPy array of complex numbers.
+
+        Raises:
+            ValueError: If the length of the initial amplitude list does not match the number of supermodes.
+        """
         if isinstance(initial_amplitude, SuperMode):
-            return initial_amplitude.amplitudes
+            amplitudes = initial_amplitude.amplitudes
         else:
-            return numpy.asarray(initial_amplitude).astype(complex)
+            amplitudes = initial_amplitude
+
+        amplitude_size = len(amplitudes)
+        number_of_supermodes = len(self.supermodes)
+
+        if amplitude_size != number_of_supermodes:
+            raise ValueError(f'Amplitudes size: {amplitude_size} does not match with the number of supermodes: {number_of_supermodes}')
+
+        return numpy.asarray(amplitudes, dtype=complex)
 
     def plot_propagation(
             self, *,
             profile: AlphaProfile,
             initial_amplitude,
-            max_step: float = None,
+            max_step: Optional[float] = None,
             add_coupling: bool = True,
             method: str = 'RK45',
             sub_sampling: int = 5,
             show_energy: bool = True,
             show_amplitudes: bool = True,
-            **kwargs) -> tuple:
+            **kwargs: dict) -> Tuple[SceneList, Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]]:
+        """
+        Plots the propagation of amplitudes over a given profile, showing energy and amplitude plots.
 
-        initial_amplitude = self.interpret_initial_input(
-            initial_amplitude=initial_amplitude
-        )
+        Args:
+            profile (AlphaProfile): The profile to propagate.
+            initial_amplitude: The initial amplitudes, either as a list or a SuperMode object.
+            max_step (Optional[float]): The maximum step size for the solver.
+            add_coupling (bool): Whether to add coupling in the transmission matrix.
+            method (str): Numerical method for solving the propagation.
+            sub_sampling (int): The factor for sub-sampling data for plotting.
+            show_energy (bool): Whether to plot the energy of the modes.
+            show_amplitudes (bool): Whether to plot the real part of the amplitudes.
+            **kwargs (Dict[str, Any]): Additional keyword arguments for solver.
+
+        Returns:
+            Tuple[SceneList, Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]]: A tuple containing the matplotlib figure object
+                                                                          and a tuple with propagation distances, amplitudes,
+                                                                          and inverse taper ratios.
+        """
+        initial_amplitude = self.interpret_initial_input(initial_amplitude)
 
         z, amplitudes, itr_list = self.propagate(
             initial_amplitude=initial_amplitude,
             profile=profile,
             add_coupling=add_coupling,
             max_step=max_step,
-            method=method
+            method=method,
+            **kwargs
         )
 
         figure = SceneList(unit_size=(12, 4))
-
-        ax = figure.append_ax(
-            line_width=2,
-            show_legend=True,
-            x_label='Propagation distance z',
-            y_label='Inverse taper ratio [ITR]'
-        )
+        ax = figure.append_ax(line_width=2, show_legend=True, x_label='Propagation distance z', y_label='Inverse taper ratio [ITR]')
 
         for idx, mode in enumerate(self.supermodes):
             color = f"C{idx}"
-            if show_energy:
-                ax.add_line(
-                    x=z[::sub_sampling],
-                    y=abs(amplitudes[idx, ::sub_sampling])**2,
-                    label=mode.stylized_label,
-                    line_width=2.0,
-                    line_style='-',
-                    color=color
-                )
+            x_values = z[::sub_sampling]
+            y_energy = numpy.abs(amplitudes[idx, ::sub_sampling])**2
+            y_amplitude = amplitudes[idx, ::sub_sampling].real
 
+            if show_energy:
+                ax.add_line(x=x_values, y=y_energy, label=mode.stylized_label, line_width=2.0, line_style='-', color=color)
             if show_amplitudes:
-                ax.add_line(
-                    x=z[::sub_sampling],
-                    y=amplitudes[idx, ::sub_sampling].real,
-                    label=mode.stylized_label,
-                    line_width=2.0,
-                    line_style='--',
-                    color=color
-                )
+                ax.add_line(x=x_values, y=y_amplitude, label=mode.stylized_label + ' Amplitude', line_width=2.0, line_style='--', color=color)
 
         if show_energy:
-            total_energy = abs(amplitudes)**2
-            total_energy = total_energy.sum(axis=0)
-            total_energy = numpy.sqrt(total_energy)
+            total_energy = numpy.sqrt(numpy.sum(numpy.abs(amplitudes)**2, axis=0))[::sub_sampling]
+            ax.add_line(x=x_values, y=total_energy, label='Total energy', line_width=3.0, line_style='--', color='black')
 
-            ax.add_line(
-                x=z[::sub_sampling],
-                y=total_energy[::sub_sampling],
-                label='Total energy',
-                line_width=3.0,
-                line_style='--',
-                color='black'
-            )
-
-        return figure, (z, amplitudes, itr_list)
+        return figure.fig, (z, amplitudes, itr_list)
 
     def generate_propagation_gif(
             self, *,
@@ -591,61 +583,60 @@ class SuperSet(object):
 
         plotter.close()
 
-    def _sorting_modes_(self, *ordering_list) -> None:
+    def _sort_modes(self, *ordering_keys) -> List[SuperMode]:
         """
-        Generic mode sorting method
+        Sorts supermodes using specified keys provided as tuples in ordering_keys.
 
-        :param      ordering_parameters:  The ordering list to sort the supermodes
-        :type       ordering_parameters:  list
+        Args:
+            ordering_keys (tuple): Tuple containing keys to sort by.
+
+        Returns:
+            List[SuperMode]: Sorted list of supermodes.
         """
-        order = numpy.lexsort(ordering_list)
+        order = numpy.lexsort(ordering_keys)
+        sorted_supermodes = [self.supermodes[idx] for idx in order]
+        for i, supermode in enumerate(sorted_supermodes):
+            supermode.mode_number = i
+        return sorted_supermodes
 
-        supermodes = [self.supermodes[idx] for idx in order]
-
-        for n, supermode in enumerate(supermodes):
-            supermode.mode_number = n
-
-        return supermodes
-
-    def sorting_modes_beta(self) -> None:
+    def sort_modes_by_beta(self) -> None:
         """
-        Re-order modes to sort them in descending value of propagation constant.
+        Sorts supermodes in descending order of their propagation constants (beta).
         """
-        return self._sorting_modes_([-mode.beta[-1] for mode in self.supermodes])
+        self.all_supermodes = self._sort_modes([-mode.beta[-1] for mode in self.supermodes])
 
-    def sorting_modes(self, *, sorting_method: str = "beta", keep_only: int = None) -> None:
+    def sort_modes(self, sorting_method: str = "beta", keep_only: Optional[int] = None) -> None:
         """
-        Re-order modes according to a sorting method, either "beta" or "symmetry+beta".
-        The final mode selection will also be filter to keep only a certain number of modes
-        """
-        assert sorting_method.lower() in ["beta", "symmetry+beta"], \
-            f"Unrecognized sortingmethod: {sorting_method}, accepted values are ['beta', 'symmetry+beta']"
+        Sorts supermodes according to the specified method, optionally limiting the number of modes retained.
 
+        Args:
+            sorting_method (str): Sorting method to use, either "beta" or "symmetry+beta".
+            keep_only (int, optional): Number of supermodes to retain after sorting.
+
+        Raises:
+            ValueError: If an unrecognized sorting method is provided.
+        """
         match sorting_method.lower():
-            case "beta":
-                supermodes = self.sorting_modes_beta()
-            case "symmetry+beta":
-                supermodes = self.sorting_modes_solver_beta()
+            case 'beta':
+                self.sort_modes_by_beta()
+            case 'symmetry+beta':
+                self.sort_modes_by_solver_and_beta()
+            case _:
+                raise ValueError(f"Unrecognized sorting method: {sorting_method}, accepted values are ['beta', 'symmetry+beta']")
 
-        self.all_supermodes = supermodes
+        self.supermodes = self.all_supermodes[:keep_only] if keep_only is not None else self.all_supermodes
 
-        self.supermodes = supermodes[:keep_only]
-
-    def sorting_modes_solver_beta(self) -> list[SuperMode]:
+    def sort_modes_by_solver_and_beta(self) -> None:
         """
-        Re-order modes to sort them in with two parameters:
-        ascending cpp_solver number and descending value of propagation constant.
-
-        :returns:   list of supermode in ordered beta
-        :rtype:     list[SuperMode]
+        Sorts supermodes primarily by solver number and secondarily by descending propagation constant (beta).
         """
-        return self._sorting_modes_(
-            [-mode.beta[-1] for mode in self.supermodes],
-            [mode.solver_number for mode in self.supermodes],
+        self.all_supermodes = self._sort_modes(
+            ([mode.solver_number for mode in self.supermodes],
+             [-mode.beta[-1] for mode in self.supermodes])
         )
 
     @staticmethod
-    def single_plot(plot_function):
+    def single_plot(plot_function) -> Callable:
         def wrapper(self, *args, mode_of_interest='all', **kwargs):
             mode_of_interest = interpret_mode_of_interest(
                 superset=self,
@@ -663,7 +654,7 @@ class SuperSet(object):
         return wrapper
 
     @staticmethod
-    def combination_plot(plot_function):
+    def combination_plot(plot_function) -> Callable:
         def wrapper(self, *args, mode_of_interest='all', mode_selection: str = 'pairs', **kwargs):
             mode_of_interest = interpret_mode_of_interest(
                 superset=self,
@@ -891,8 +882,8 @@ class SuperSet(object):
     def plot_field(
             self,
             mode_of_interest: list = 'all',
-            itr_list: list[float] = [],
-            slice_list: list[int] = [0, -1],
+            itr_list: list[float] = None,
+            slice_list: list[int] = None,
             show_mode_label: bool = True,
             show_itr: bool = True,
             show_slice: bool = True) -> SceneList:
@@ -922,10 +913,7 @@ class SuperSet(object):
 
         for m, mode in enumerate(mode_of_interest):
             for n, slice_number in enumerate(slice_list):
-                ax = figure.append_ax(
-                    row=n,
-                    column=m,
-                )
+                ax = figure.append_ax(row=n, column=m)
 
                 ax.set_style(**representation.field.Field.plot_style)
 

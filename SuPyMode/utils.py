@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from typing import Iterable
+from typing import Union, List, Iterable
 if TYPE_CHECKING:
     from SuPyMode.superset import SuperSet
     from SuPyMode.supermode import SuperMode
@@ -74,111 +74,93 @@ def test_valid_input(user_input, valid_inputs: list, variable_name: str = '') ->
 
 def itr_to_slice(itr_list: numpy.ndarray, itr: float | list) -> int | list:
     """
-    Convert itr value to slice number
+    Converts an inverse taper ratio (itr) or a list of itrs to their closest corresponding slice numbers
+    in the provided itr_list. If a single itr is provided, returns a single slice number. If a list of
+    itrs is provided, returns a list of slice numbers.
 
-    :param      itr_list:  The itr list
-    :type       itr_list:  numpy.ndarray
-    :param      itr:       The itr
-    :type       itr:       float | list
+    Parameters:
+        itr_list (np.ndarray): Array of itrs, typically representing a continuous range of values.
+        itr (Union[float, List[float]]): A single itr value or a list of itr values.
 
-    :returns:   The equivalent slice numbers
-    :rtype:     float | list
+    Returns:
+        Union[int, List[int]]: The closest slice number or list of slice numbers corresponding to the provided itr or itrs.
+
     """
-    return_scalar = False
-
     if numpy.isscalar(itr):
-        return_scalar = True
-        itr = [itr]
+        return numpy.argmin(abs(itr_list - itr))
 
-    slice_number = [
-        numpy.argmin(abs(itr_list - value)) for value in itr
-    ]
+    if isinstance(itr_list, Iterable):
+        return [numpy.argmin(abs(itr_list - value)) for value in itr]
 
-    if return_scalar:
-        return slice_number[0]
-
-    return slice_number
+    raise TypeError("itr must be a float or a list of floats.")
 
 
 def slice_to_itr(itr_list: numpy.ndarray, slice_number: int | list) -> float | list:
     """
-    Convert itr value to slice number
+    Converts a slice number or a list of slice numbers to their corresponding inverse taper ratios (itrs)
+    from the provided itr_list. If a single slice number is provided, returns a single itr value.
+    If a list of slice numbers is provided, returns a list of itr values.
 
-    :param      itr_list:      The itr list
-    :type       itr_list:      numpy.ndarray
-    :param      slice_number:  The itr
-    :type       slice_number:  int | list
+    Parameters:
+        - itr_list (np.ndarray): Array of itrs, typically representing a continuous range of values.
+        - slice_number (Union[int, List[int]]): A single slice index or a list of slice indices.
 
-    :returns:   The equivalent slice numbers
-    :rtype:     float | list
+    Returns:
+         - Union[float, List[float]]: The itr or list of itrs corresponding to the given slice numbers.
+
     """
-    return_scalar = False
-
     if numpy.isscalar(slice_number):
-        return_scalar = True
-        slice_number = [slice_number]
+        return itr_list[slice_number]
 
-    itr = itr_list[slice_number]
+    if isinstance(slice_number, Iterable):
+        return numpy.take(itr_list, slice_number)
 
-    if return_scalar:
-        return itr[0]
-
-    return itr
+    raise TypeError("itr_list must be an scalar or a list of scalar.")
 
 
 def interpret_slice_number_and_itr(
         itr_baseline: numpy.ndarray,
-        slice_list: int | list[int] = [],
-        itr_list: float | list[float] = [],
-        sort_slice_number: bool = False) -> tuple:
+        slice_list: Union[int, List[int], None] = None,
+        itr_list: Union[float, List[float], None] = None,
+        sort_slice_number: bool = True) -> tuple:
     """
     Interprets slice numbers and corresponding inverse taper ratios (ITRs), returning arrays of slice numbers
     and their respective ITRs based on the provided lists of slices and ITRs.
 
     Parameters:
-    - itr_baseline (numpy.ndarray): Array of baseline ITR values, typically equidistant, representing the full range.
-    - slice_list (Union[int, List[int]], optional): A single slice index or a list of slice indices. Default is an empty list.
-    - itr_list (Union[float, List[float]], optional): A single ITR value or a list of ITR values to be converted to slice indices. Default is an empty list.
-    - sort_slice_number (bool, optional): Whether to sort the resulting slice numbers and corresponding ITRs in descending order. Default is False.
+        - itr_baseline (numpy.ndarray): Array of baseline ITR values, typically equidistant, representing the full range.
+        - slice_list (Union[int, List[int]], optional): A single slice index or a list of slice indices. If None and itr_list is also None, defaults to [0, -1].
+        - itr_list (Union[float, List[float]], optional): A single ITR value or a list of ITR values to be converted to slice indices. If provided, slice_list defaults to an empty list unless specified.
+        - sort_slice_number (bool, optional): Whether to sort the resulting slice numbers and corresponding ITRs in descending order. Default is False.
 
     Returns:
-    - Tuple[numpy.ndarray, numpy.ndarray]: Two numpy arrays, the first containing slice indices and the second containing the corresponding ITR values.
+        - Tuple[numpy.ndarray, numpy.ndarray]: Two numpy arrays, the first containing slice indices and the second containing the corresponding ITR values.
 
     Raises:
-    - ValueError: If the provided ITRs or slice indices are outside the bounds of the baseline ITR array.
-
-    Note:
-    - This function assumes that the input ITRs and slice numbers are within the range covered by the `itr_baseline`.
-    - The function will also combine and sort the slice indices derived directly and those converted from the given ITRs if `sort_slice_number` is True.
+        - ValueError: If the provided ITRs or slice indices are outside the bounds of the baseline ITR array.
     """
-    return_as_iterable = False
 
-    if isinstance(slice_list, Iterable) or isinstance(itr_list, Iterable):
-        return_as_iterable = True
+    if slice_list is None and itr_list is None:
+        slice_list = [0, -1]
+    elif itr_list is not None and slice_list is None:
+        slice_list = []
 
     slice_list = numpy.atleast_1d(slice_list)
+    itr_list = numpy.atleast_1d(itr_list) if itr_list is not None else numpy.array([])
 
-    slice_from_itr = itr_to_slice(itr_baseline, itr=itr_list)
-
-    slice_from_itr = numpy.atleast_1d(slice_from_itr)
-
-    total_slice_list = [*slice_list, *slice_from_itr]
+    # Logic to convert ITRs to slice indices, and combine lists
+    slice_from_itr = itr_to_slice(itr_baseline, itr=itr_list) if itr_list.size > 0 else numpy.array([])
+    total_slice_list = numpy.concatenate([slice_list, slice_from_itr]).astype(int)
 
     total_itr_list = slice_to_itr(itr_baseline, slice_number=total_slice_list)
 
-    slice_list = numpy.asarray(total_slice_list)
-
-    itr_list = numpy.asarray(total_itr_list)
-
+    # Sort if required
     if sort_slice_number:
-        slice_list = numpy.sort(slice_list)[::-1]
+        indices = numpy.argsort(total_itr_list)
+        total_slice_list = total_slice_list[indices][::-1]  # Descending order
+        total_itr_list = total_itr_list[indices][::-1]
 
-        itr_list = numpy.sort(itr_list)[::-1]
-
-    if not return_as_iterable:
-        return slice_list[0], itr_list[0]
-
-    return slice_list, itr_list
+    return total_slice_list, total_itr_list
 
 
 def interpret_mode_of_interest(superset: SuperSet, mode_of_interest: str | SuperMode | list[SuperMode]) -> list[SuperMode]:

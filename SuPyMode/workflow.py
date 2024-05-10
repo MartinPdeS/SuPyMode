@@ -308,7 +308,7 @@ class Workflow():
                 auto_label=self.auto_label
             )
 
-        self.solver.superset.sorting_modes(sorting_method='beta')
+        self.solver.superset.sort_modes(sorting_method='beta')
 
     def get_superset(self):
         return self.solver.superset
