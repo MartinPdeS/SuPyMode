@@ -2,6 +2,7 @@
 
 #include "definitions.cpp"
 #include "supermode.h"
+#include <iostream>
 
 double
 get_trapz_integral(const Eigen::MatrixXd &mesh, double dx, double dy)
@@ -63,6 +64,8 @@ get_gradient_field_overlap(const SuperMode& mode_0, const SuperMode& mode_1, con
             model_parameters.dx_scaled[slice],
             model_parameters.dy_scaled[slice]
         );
+
+        std::cout<<"mode_0:"<<mode_0.mode_number<< "\t mode_1:"<<mode_1.mode_number <<"\t gradient overlap integral:"<<gradient_overlap<<"\n";
 
         output[slice] = gradient_overlap;
     }
