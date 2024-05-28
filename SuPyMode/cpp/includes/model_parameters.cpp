@@ -126,7 +126,7 @@ private:
         x_vector = convert_py_to_eigen<double>(x_vector_py, nx);
         y_vector = convert_py_to_eigen<double>(y_vector_py, ny);
         itr_list = convert_py_to_eigen<double>(itr_list_py, n_slice);
-        mesh_gradient = get_rho_gradient(mesh.cwiseProduct(mesh), x_vector, y_vector);
+        mesh_gradient = get_rho_gradient_time_rho(mesh.cwiseProduct(mesh), x_vector, y_vector);
         mesh_gradient_py = eigen_to_ndarray<double>(mesh_gradient, {nx, ny});
 
         compute_scaled_parameters();
