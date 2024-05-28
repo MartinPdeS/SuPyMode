@@ -87,11 +87,11 @@ ax = figure.append_ax(
 )
 
 
-def get_index_pyfibermodes(mode, itr_list, initial_fiber):
+def get_index_pyfibermodes(mode, itr_list, fiber):
     analytical = numpy.empty(itr_list.shape)
 
     for idx, itr in enumerate(itr_list):
-        tapered_fiber = initial_fiber.scale(factor=itr)
+        tapered_fiber = fiber.scale(factor=itr)
         analytical[idx] = tapered_fiber.get_effective_index(mode=PyFiberModes.LP01)
 
     return analytical

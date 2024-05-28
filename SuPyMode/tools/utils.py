@@ -41,15 +41,6 @@ def get_close_points(tolerane: float, y0: numpy.ndarray, y1: numpy.ndarray, x: n
     return y0[idx]
 
 
-def get_intersection_(y0: numpy.ndarray, y1: numpy.ndarray, x: numpy.ndarray = None):
-    idx = numpy.argwhere(numpy.diff(numpy.sign(y0 - y1))).flatten()
-
-    if x is not None:
-        return x[idx], y0[idx]
-
-    return y0[idx]
-
-
 def get_intersection(y0: numpy.ndarray, y1: numpy.ndarray, x: numpy.ndarray, average: bool = True):
 
     idx = numpy.argwhere(numpy.diff(numpy.sign(y0 - y1))).flatten()
