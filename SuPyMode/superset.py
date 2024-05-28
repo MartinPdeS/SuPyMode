@@ -130,26 +130,33 @@ class SuperSet(object):
         :type       tolerance:  float
 
         :returns:   List of the fundamental modes.
-        :rtype:     list
+        :rtype:     list[SuperMode]
         """
-        self.sorting_modes_beta()
+        self.sort_modes_by_beta()
 
         fundamental_supermodes = [self.supermodes[0]]
 
-        def coupling(mode_0: SuperMode, mode_1: SuperMode):
-            field_0 = numpy.abs(mode_0.field[0])
-            field_1 = numpy.abs(mode_1.field[0])
+        def absolute_overlap(mode_0: SuperMode, mode_1: SuperMode) -> float:
+            field_0 = numpy.abs(mode_0.field.data[0])
+            norm_0 = field_0.sum()
+            field_0 /= numpy.sqrt(norm_0)
 
-            return numpy.sum(field_0 * field_1)
+            field_1 = numpy.abs(mode_1.field.data[0])
+            norm_1 = field_1.sum()
+            field_1 /= numpy.sqrt(norm_1)
+
+            overlap = numpy.sum(field_0 * field_1)
+
+            return overlap
 
         for mode_0 in self.supermodes:
-            couplings = [
-                coupling(mode_0, mode_1) for mode_1 in fundamental_supermodes
+            abs_overlap = [
+                absolute_overlap(mode_0, mode_1) for mode_1 in fundamental_supermodes
             ]
 
-            couplings = numpy.asarray(couplings)
+            abs_overlaps = numpy.asarray(abs_overlap)
 
-            if numpy.any(couplings > tolerance):
+            if numpy.any(abs_overlaps > tolerance):
                 continue
 
             fundamental_supermodes.append(mode_0)
@@ -235,7 +242,7 @@ class SuperSet(object):
         self._transmission_matrix = numpy.zeros(shape)
 
         for mode in self.supermodes:
-            self._transmission_matrix[mode.mode_number, mode.mode_number, :] = mode.beta._data * 2.0 * numpy.pi
+            self._transmission_matrix[mode.mode_number, mode.mode_number, :] = mode.beta.data * 2.0 * numpy.pi
 
     def add_coupling_to_t_matrix(self, *, t_matrix: numpy.ndarray, adiabatic_factor: numpy.ndarray) -> numpy.ndarray:
         """
@@ -262,8 +269,10 @@ class SuperSet(object):
             t_matrix[mode_0.mode_number, mode_1.mode_number, :] = - coupling
             t_matrix[mode_1.mode_number, mode_0.mode_number, :] = + coupling
 
-        if numpy.isnan(t_matrix).any() or numpy.isinf(t_matrix).any():
-            raise ValueError('Nan or inf values detected in transmission matrix, verify that there is no hybrid mode in the computation.')
+        if numpy.isnan(t_matrix).any():
+            raise ValueError('Nan values detected in transmission matrix.')
+        if numpy.isinf(t_matrix).any():
+            raise ValueError('Inf values detected in transmission matrix, verify that there is no hybrid mode in the computation.')
 
         return t_matrix
 
@@ -603,7 +612,7 @@ class SuperSet(object):
         """
         Sorts supermodes in descending order of their propagation constants (beta).
         """
-        self.all_supermodes = self._sort_modes([-mode.beta[-1] for mode in self.supermodes])
+        self.all_supermodes = self._sort_modes([-mode.beta.data[-1] for mode in self.supermodes])
 
     def sort_modes(self, sorting_method: str = "beta", keep_only: Optional[int] = None) -> None:
         """
@@ -967,8 +976,8 @@ class SuperSet(object):
             self,
             filename: str = "report",
             directory: str = '.',
-            itr_list: list[float] = [],
-            slice_list: list[int] = [],
+            itr_list: list[float] | None = None,
+            slice_list: list[int] | None = None,
             dpi: int = 200,
             mode_of_interest: list = 'all',
             mode_selection: str = 'specific') -> None:
@@ -1015,7 +1024,7 @@ class SuperSet(object):
         for figure in figure_list:
             figure.close()
 
-    def save_instance(self, filename: str, directory: str = '.') -> Path:
+    def save_instance(self, filename: str, directory: str = 'auto') -> Path:
         """
         Saves the superset instance as a serialized pickle file.
 
@@ -1052,8 +1061,8 @@ class SuperSet(object):
         for mode_0, mode_1 in combination:
             x, y = get_intersection(
                 x=self.itr_list,
-                y0=getattr(mode_0, data_type)._data,
-                y1=getattr(mode_1, data_type)._data,
+                y0=getattr(mode_0, data_type).data,
+                y1=getattr(mode_1, data_type).data,
                 average=True
             )
 

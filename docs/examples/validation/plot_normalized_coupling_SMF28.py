@@ -7,13 +7,13 @@ Normalized coupling: SMF28
 # Imports
 # ~~~~~~~
 import numpy
-from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries
+from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries, configuration
 from PyFiberModes.__future__ import get_normalized_LP_coupling
 from PyFiberModes import LP01, LP02
 from PyFiberModes.fiber import load_fiber
 from MPSPlots.render2D import SceneList
 
-wavelength = 1550e-9
+wavelength = 350e-9
 fiber_name = 'SMF28'
 
 
@@ -22,13 +22,12 @@ fiber_name = 'SMF28'
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Here we define the cladding and fiber structure to model the problem
 supymode_fiber = fiber_catalogue.load_fiber(fiber_name, wavelength=wavelength)
-supymode_fiber = supymode_fiber.scale(10)
 
 
 # %%
 # Defining the boundaries of the system
 boundaries = [
-    Boundaries(right='symmetric', top='symmetric'),
+    Boundaries(right='symmetric', bottom='symmetric'),
 ]
 
 
@@ -39,23 +38,34 @@ boundaries = [
 workflow = Workflow(
     fiber_list=[supymode_fiber],    # List of fiber to be added in the mesh, the order matters.
     wavelength=wavelength,          # Wavelength used for the mode computation.
-    resolution=50,                 # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
-    x_bounds=[-200e-6, 0],          # Mesh x-boundary structure.
-    y_bounds=[-200e-6, 0],          # Mesh y-boundary structure.
+    clad_structure=configuration.ring.FusedProfile_01x01,
+    resolution=160,                 # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
+    x_bounds="left",                # Mesh x-boundary structure.
+    y_bounds="top",                 # Mesh y-boundary structure.
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=5,                # Total computed and sorted mode.
     n_added_mode=4,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
-    plot_geometry=True,             # Plot the geometry mesh before computation.
-    debug_mode=0,                   # Print the iteration step for the solver plus some other important steps.
+    # plot_geometry=True,             # Plot the geometry mesh before computation.
+    debug_mode=1,                   # Print the iteration step for the solver plus some other important steps.
     auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
-    itr_final=0.5,                  # Final value of inverse taper ratio to simulate
+    itr_final=0.9,                  # Final value of inverse taper ratio to simulate
     index_scrambling=0,             # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
-    n_step=100,
-    plot_field=True
+    n_step=20,
+    # plot_field=True
 )
 
 superset = workflow.get_superset()
-itr_list = superset.itr_list
+itr_list = superset.itr_list[::5]
+
+import matplotlib.pyplot as plt
+
+figure, ax = plt.subplots(1, 2)
+print(superset.model_parameters.mesh_gradient)
+ax[0].pcolormesh(superset.model_parameters.mesh)
+ax[1].pcolormesh(superset.model_parameters.mesh_gradient)
+
+
+plt.show()
 
 
 # %%
@@ -65,8 +75,6 @@ pyfibermodes_fiber = load_fiber(
     wavelength=wavelength,
     add_air_layer=False
 )
-
-pyfibermodes_fiber = pyfibermodes_fiber.scale(10)
 
 analytical = numpy.empty(itr_list.shape)
 for idx, itr in enumerate(itr_list):
@@ -101,9 +109,9 @@ ax.add_line(
     layer_position=1
 )
 
-simulation = -abs(superset.LP01.normalized_coupling.get_values(superset.LP02))
+simulation = superset.LP01.normalized_coupling.get_values(superset.LP02).imag
 ax.add_scatter(
-    x=itr_list,
+    x=superset.itr_list,
     y=simulation,
     label="SuPyMode",
     color='black',

@@ -26,6 +26,10 @@ profile.add_taper_segment(
     stretching_length=0.2e-3 * 20
 )
 
+profile.initialize()
+
+print(profile.adiabatic)
+
 profile.plot(show_adiabatic=False).show()
 
 # -

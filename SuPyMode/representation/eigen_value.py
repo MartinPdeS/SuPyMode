@@ -6,8 +6,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from SuPyMode.supermode import SuperMode
 
-import numpy
-
 from SuPyMode.representation.base import InheritFromSuperMode, BaseSingleModePlot
 from MPSPlots.render2D import SceneList, Axis
 
@@ -39,16 +37,7 @@ class EigenValue(InheritFromSuperMode, BaseSingleModePlot):
             parent_supermode (InheritFromSuperMode): A reference to the parent supermode object.
         """
         self.parent_supermode = parent_supermode
-        self._data = self.parent_supermode.binded_supermode.get_eigen_value()
-
-    def get_values(self) -> numpy.ndarray:
-        """
-        Retrieves the eigenvalues associated with the supermode.
-
-        Returns:
-            numpy.ndarray: An array of eigenvalues.
-        """
-        return self._data
+        self.data = self.parent_supermode.binded_supermode.get_eigen_value()
 
     def render_on_ax(self, ax: Axis) -> None:
         """
@@ -62,7 +51,7 @@ class EigenValue(InheritFromSuperMode, BaseSingleModePlot):
         """
         ax.add_line(
             x=self.itr_list,
-            y=self._data,
+            y=self.data,
             label=f'{self.stylized_label}'
         )
 

@@ -5,92 +5,134 @@
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 #include "numpy_interface.cpp"
-
+#include "mesh.cpp"
 
 #define PI 3.1415926535897932384626f
 
 
-class ModelParameters
-{
-    public:
-        double wavelength;
-        double wavenumber;
-        double dx;
-        double dy;
-        double ditr;
+class ModelParameters {
+public:
+    double wavelength;
+    double wavenumber;
+    double dx;
+    double dy;
+    double ditr;
+    std::string left_boundary;
+    std::string right_boundary;
+    std::string top_boundary;
+    std::string bottom_boundary;
+    size_t nx;
+    size_t ny;
+    size_t n_slice;
 
-        size_t nx;
-        size_t ny;
-        size_t n_slice;
-        size_t field_size;
+    pybind11::array_t<double> mesh_py;
+    pybind11::array_t<double> x_vector_py;
+    pybind11::array_t<double> y_vector_py;
+    pybind11::array_t<double> itr_list_py;
+    pybind11::array_t<double> mesh_gradient_py;
 
-        pybind11::array_t<double> itr_list_py;
-        pybind11::array_t<double> mesh_gradient_py;
+    Eigen::MatrixXd mesh;
+    Eigen::VectorXd x_vector;
+    Eigen::VectorXd y_vector;
+    Eigen::MatrixXd mesh_gradient;
+    Eigen::VectorXd itr_list;
+    Eigen::VectorXd dx_scaled;
+    Eigen::VectorXd dy_scaled;
+    Eigen::VectorXd wavenumber_scaled;
 
-        Eigen::MatrixXd mesh_gradient;
-        Eigen::VectorXd itr_list;
-        Eigen::VectorXd dx_scaled;
-        Eigen::VectorXd dy_scaled;
-        Eigen::VectorXd wavenumber_scaled;
+    int debug_mode = 0;
 
-        int debug_mode;
+    ModelParameters() = default;
 
-        ModelParameters() = default;
+    ModelParameters(const pybind11::array_t<double> &mesh_py,
+                    const pybind11::array_t<double> &x_vector_py,
+                    const pybind11::array_t<double> &y_vector_py,
+                    const pybind11::array_t<double> &itr_list_py,
+                    double wavelength,
+                    double dx,
+                    double dy,
+                    const std::string &left_boundary,
+                    const std::string &right_boundary,
+                    const std::string &top_boundary,
+                    const std::string &bottom_boundary,
+                    int debug_mode = 0)
+        : wavelength(wavelength), dx(dx), dy(dy),
+          left_boundary(left_boundary), right_boundary(right_boundary),
+          top_boundary(top_boundary), bottom_boundary(bottom_boundary),
+          debug_mode(debug_mode),
+          mesh_py(mesh_py), x_vector_py(x_vector_py),
+          y_vector_py(y_vector_py), itr_list_py(itr_list_py)
+    {
+        init();
+    }
 
-        ModelParameters(double wavelength, pybind11::array_t<double> mesh_gradient_py, pybind11::array_t<double> itr_list_py, double dx, double dy, int debug_mode = 0)
-        : wavelength(wavelength), itr_list_py(itr_list_py), mesh_gradient_py(mesh_gradient_py), dx(dx), dy(dy), debug_mode(debug_mode)
-        {
-            this->nx = mesh_gradient_py.request().shape[0];
-            this->ny = mesh_gradient_py.request().shape[1];
+    void compute_scaled_parameters() {
+        dx_scaled = itr_list * dx;
+        dy_scaled = itr_list * dy;
+        wavenumber_scaled = itr_list * wavenumber;
+    }
 
-            this->wavenumber = 2 * PI / this->wavelength;
-            this->field_size = nx * ny;
-            this->n_slice = itr_list_py.size();
+    static pybind11::tuple get_pickle(const ModelParameters &model_parameters) {
+        return pybind11::make_tuple(
+            model_parameters.mesh_py,
+            model_parameters.x_vector_py,
+            model_parameters.y_vector_py,
+            model_parameters.itr_list_py,
+            model_parameters.wavelength,
+            model_parameters.dx,
+            model_parameters.dy,
+            model_parameters.left_boundary,
+            model_parameters.right_boundary,
+            model_parameters.top_boundary,
+            model_parameters.bottom_boundary,
+            model_parameters.debug_mode
+        );
+    }
 
-            this->itr_list = convert_py_to_eigen<double>(itr_list_py, n_slice);
-            this->mesh_gradient = convert_py_to_eigen<double>(mesh_gradient_py, nx, ny);
+    static ModelParameters build_from_tuple(const pybind11::tuple &tuple) {
+        return ModelParameters{
+            tuple[0].cast<pybind11::array_t<double>>(),
+            tuple[1].cast<pybind11::array_t<double>>(),
+            tuple[2].cast<pybind11::array_t<double>>(),
+            tuple[3].cast<pybind11::array_t<double>>(),
+            tuple[4].cast<double>(),
+            tuple[5].cast<double>(),
+            tuple[6].cast<double>(),
+            tuple[7].cast<std::string>(),
+            tuple[8].cast<std::string>(),
+            tuple[9].cast<std::string>(),
+            tuple[10].cast<std::string>(),
+            tuple[11].cast<int>()
+        };
+    }
 
-            this->ditr = abs(itr_list[1] - itr_list[0]);
+    friend std::ostream &operator<<(std::ostream &os, const ModelParameters &params) {
+        os << "dx: " << params.dx
+           << " dy: " << params.dy
+           << " nx: " << params.nx
+           << " ny: " << params.ny
+           << " n_slice: " << params.n_slice;
+        return os;
+    }
 
-            this->compute_scaled_parameters();
-        }
+private:
+    void init() {
+        nx = mesh_py.request().shape[0];
+        ny = mesh_py.request().shape[1];
+        n_slice = itr_list_py.request().size;
+        wavenumber = 2 * PI / wavelength;
 
-        void compute_scaled_parameters()
-        {
-            this->dx_scaled = itr_list * dx;
-            this->dy_scaled = itr_list * dy;
-            this->wavenumber_scaled = itr_list * this->wavenumber;
-        }
+        mesh = convert_py_to_eigen<double>(mesh_py, nx, ny);
+        x_vector = convert_py_to_eigen<double>(x_vector_py, nx);
+        y_vector = convert_py_to_eigen<double>(y_vector_py, ny);
+        itr_list = convert_py_to_eigen<double>(itr_list_py, n_slice);
+        mesh_gradient = get_rho_gradient(mesh.cwiseProduct(mesh), x_vector, y_vector);
+        mesh_gradient_py = eigen_to_ndarray<double>(mesh_gradient, {nx, ny});
 
-        static pybind11::tuple get_pickle(ModelParameters &model_parameters)
-        {
-            return pybind11::make_tuple(
-                model_parameters.wavelength,
-                model_parameters.mesh_gradient_py,
-                model_parameters.itr_list_py,
-                model_parameters.dx,
-                model_parameters.dy,
-                model_parameters.n_slice
-            );
-        }
-
-        static ModelParameters build_from_tuple(pybind11::tuple tuple) {
-            return ModelParameters{
-                tuple[0].cast<double>(),                             // wavelength
-                tuple[1].cast<pybind11::array_t<double>>(),          // mesh_gradient_py,
-                tuple[2].cast<pybind11::array_t<double>>(),          // itr_list_py,
-                tuple[3].cast<double>(),                             // dx
-                tuple[4].cast<double>()                              // dy
-            }; // load
-        }
-
-        std::ostream &operator<<(std::ostream &os)
-        {
-            return os << 'dx: '<< this->dx
-                      << 'dy: '<< this->dy
-                      << 'nx: '<< this->nx
-                      << 'ny: '<< this->ny
-                      << 'n_slice: '<< this->n_slice;
-        }
-
+        compute_scaled_parameters();
+        ditr = std::abs(itr_list[1] - itr_list[0]);
+    }
 };
+
+
+// -

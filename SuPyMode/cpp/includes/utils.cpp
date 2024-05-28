@@ -6,25 +6,12 @@
 
 
 template <typename T>
-size_t get_index_of_max_value(std::vector<T> &vector)
-{
-  return std::max_element(vector.begin(), vector.end()) - vector.begin();
-}
+void inplace_reorder_vector(std::vector<T>& vector, std::vector<size_t>& order) {
+    std::vector<T> temp(vector.size());
+    for (size_t i = 0; i < order.size(); ++i)
+        temp[i] = vector[order[i]];
 
-template <typename T>
-void inplace_reorder_vector(std::vector<T>& vector, std::vector<size_t>& order)
-{
-    assert(vector.size() == order.size());
-
-    for( int i = 0; i < vector.size() - 1; ++i )
-    {
-        while( i != order[i] )
-        {
-            int alt = order[i];
-            std::swap( vector[i], vector[alt] );
-            std::swap( order[i], order[alt] );
-        }
-    }
+    vector.swap(temp);
 }
 
 template <typename T>
@@ -45,23 +32,6 @@ std::vector<size_t> sort_indexes(const std::vector<T> &v, bool reverse=true) {
       std::reverse(idx.begin(), idx.end());
 
   return idx;
-}
-
-Eigen::Matrix<double, Eigen::Dynamic, 1>
-GetRandomVector(size_t size){
-  Eigen::Matrix<double, Eigen::Dynamic, 1> Output = Eigen::Matrix<double, Eigen::Dynamic, 1>::Random(size);
-  Output.normalize();
-  return Output;
-}
-
-std::vector<size_t> get_range(size_t size){
-  std::vector<size_t> output;
-  output.reserve(size);
-
-  for (size_t i=0; i<size; ++i)
-    output.push_back(i);
-
-  return output;
 }
 
 double dydx(double x, double y)

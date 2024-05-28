@@ -20,7 +20,7 @@ public:
     pybind11::array_t<double> betas_py, pybind11::array_t<double> eigen_value_py, ModelParameters model_parameters) :
     mode_number(mode_number), model_parameters(model_parameters)
     {
-        fields = convert_py_to_eigen(fields_py, this->model_parameters.field_size, this->model_parameters.n_slice);
+        fields = convert_py_to_eigen(fields_py, this->model_parameters.nx * this->model_parameters.ny, this->model_parameters.n_slice);
         index = convert_py_to_eigen(index_py, this->model_parameters.n_slice, 1);
         betas = convert_py_to_eigen(betas_py, this->model_parameters.n_slice, 1);
         eigen_value = convert_py_to_eigen(eigen_value_py, this->model_parameters.n_slice, 1);
@@ -29,7 +29,7 @@ public:
     SuperMode(const size_t mode_number, const ModelParameters &model_parameters) : mode_number(mode_number)
     {
         this->model_parameters = model_parameters;
-        this->fields = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>(this->model_parameters.field_size, model_parameters.n_slice);
+        this->fields = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>(this->model_parameters.nx * this->model_parameters.ny, model_parameters.n_slice);
         this->eigen_value = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
         this->betas = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
         this->index = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
@@ -55,9 +55,8 @@ public:
 
     void normalize_fields();
     void arrange_fields();
-    void normalize_field_slice_l2(const size_t slice);
 
-    double get_field_slice_norm_custom(const size_t slice) const;
+    double get_field_slice_norm_l2(const size_t slice) const;
 
     double get_trapez_integral(const Eigen::VectorXd &mesh, const double &dx, const double &dy) const;
 
@@ -70,6 +69,20 @@ public:
     Eigen::VectorXd get_gradient_field_overlap(const SuperMode &other_supermode) const;
 
     double get_trapz_integral(const Eigen::MatrixXd& mesh, double dx, double dy) const;
+
+    bool is_same_symmetry(const SuperMode &other_supermode) const {
+        // Return True if all boundaries condition are the same else False
+        return
+            (this->model_parameters.left_boundary == other_supermode.model_parameters.left_boundary) &&
+            (this->model_parameters.right_boundary == other_supermode.model_parameters.right_boundary) &&
+            (this->model_parameters.top_boundary == other_supermode.model_parameters.top_boundary) &&
+            (this->model_parameters.bottom_boundary == other_supermode.model_parameters.bottom_boundary);
+    }
+
+    bool is_computation_compatible(const SuperMode &other_supermode) const {
+        // Return True if both mode have same boundary condisitons but are different
+        return (this->mode_number != other_supermode.mode_number) && (this->is_same_symmetry(other_supermode));
+    }
 
     pybind11::array_t<double> get_overlap_integrals_with_mode_py(const SuperMode& supermode) const {
         return eigen_to_ndarray<double>(this->get_overlap_integrals_with_mode(supermode), {model_parameters.n_slice});

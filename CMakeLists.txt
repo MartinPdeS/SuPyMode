@@ -59,7 +59,7 @@ target_link_libraries(ModelParameters PRIVATE "${STATIC_STDLIB}")
 target_include_directories(ModelParameters PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen")
 
 #Building test example----------------------------------------------
-pybind11_add_module(Example MODULE "${SUPYMODE_CXX_DIR}/mesh.cpp")
+pybind11_add_module(Example MODULE "${SUPYMODE_CXX_DIR}/includes/mesh.cpp")
 set_target_properties(Example PROPERTIES OUTPUT_NAME "Example")
 target_link_libraries(Example PRIVATE "${STATIC_STDLIB}")
 target_include_directories(Example PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen")

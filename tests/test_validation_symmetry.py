@@ -49,8 +49,8 @@ def test_symmetry(fiber_name: str = 'DCF1300S_33', wavelength: float = 1.55e-6, 
     )
 
     # Compare the effective index data between the two configurations
-    symmetric_index_data = symmetric_workflow.superset[0].index._data
-    asymmetric_index_data = asymmetric_workflow.superset[0].index._data
+    symmetric_index_data = symmetric_workflow.superset[0].index_data
+    asymmetric_index_data = asymmetric_workflow.superset[0].index.data
     discrepancy = numpy.isclose(
         symmetric_index_data,
         asymmetric_index_data,

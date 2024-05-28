@@ -24,6 +24,7 @@ PYBIND11_MODULE(SuperMode, module)
     .def("get_adiabatic_with_mode", &SuperMode::get_adiabatic_with_mode_py)
     .def("get_overlap_integrals_with_mode", &SuperMode::get_overlap_integrals_with_mode_py)
     .def("get_beating_length_with_mode", &SuperMode::get_beating_length_with_mode_py)
+    .def("is_computation_compatible", &SuperMode::is_computation_compatible)
     .def(pybind11::pickle(&SuperMode::get_pickle, &SuperMode::build_from_tuple))
     ;
 }

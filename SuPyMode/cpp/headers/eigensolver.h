@@ -7,12 +7,11 @@
 #include "supermode.cpp"
 #include "extrapolate.cpp"
 #include "progressbar.cpp"
-#include "laplacian.cpp"
 #include "utils.cpp"
 #include "numpy_interface.cpp"
+#include <iostream>
 
-
-class CppSolver : public BaseLaplacian
+class CppSolver
 {
     public:
         size_t n_computed_mode;
@@ -26,35 +25,47 @@ class CppSolver : public BaseLaplacian
         std::vector<SuperMode> sorted_supermodes;
 
         Eigen::MatrixXd previous_eigen_vectors;
-
         Eigen::VectorXd previous_eigen_values;
 
         std::vector<double> alpha_vector;
 
         ModelParameters model_parameters;
 
+        Eigen::SparseMatrix<double, Eigen::ColMajor> laplacian_matrix;
+        Eigen::SparseMatrix<double, Eigen::ColMajor> identity_matrix;
+        Eigen::SparseMatrix<double, Eigen::ColMajor> eigen_matrix;
+        Eigen::MatrixXd finit_difference_triplets;
+
+        double k_taper;
+
     CppSolver(
-        pybind11::array_t<double> &mesh_py,
-        pybind11::array_t<double> &mesh_gradient_py,
-        std::vector<std::vector<double>> &finit_difference_matrix,
-        pybind11::array_t<double> &itr_list_py,
+        const ModelParameters &model_parameters,
+        const pybind11::array_t<double> &finit_difference_triplets_py,
         size_t n_computed_mode,
         size_t n_sorted_mode,
         size_t max_iteration,
-        double tolerance,
-        double wavelength,
-        double dx,
-        double dy,
-        int debug_mode)
-        : BaseLaplacian(mesh_py, finit_difference_matrix),
+        double tolerance
+    )
+        : model_parameters(model_parameters),
+          n_computed_mode(n_computed_mode),
+          n_sorted_mode(n_sorted_mode),
           max_iteration(max_iteration),
           tolerance(tolerance),
-          n_sorted_mode(n_sorted_mode),
-          n_computed_mode(n_computed_mode),
-          model_parameters(wavelength, mesh_gradient_py, itr_list_py, dx, dy, debug_mode)
+          iteration(iteration),
+          k_taper(k_taper)
     {
+        this->finit_difference_triplets = convert_py_to_eigen<double>(
+            finit_difference_triplets_py,
+            finit_difference_triplets_py.request().shape[0],
+            finit_difference_triplets_py.request().shape[1]
+        );
+
         this->generate_mode_set();
     }
+
+    void compute_laplacian();
+
+    void compute_finit_diff_matrix();
 
     SuperMode &get_sorted_mode(size_t mode_number){ return sorted_supermodes[mode_number]; }
 

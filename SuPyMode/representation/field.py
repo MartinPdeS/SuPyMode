@@ -45,14 +45,8 @@ class Field(InheritFromSuperMode):
         """
         self.parent_supermode = parent_supermode
 
-    def get_values(self) -> numpy.ndarray:
-        """
-        Retrieve the raw field data from the parent supermode.
-
-        Returns:
-            numpy.ndarray: The field data as a numpy array.
-        """
-
+    @property
+    def data(self):
         return self.parent_supermode.binded_supermode.get_fields()
 
     def get_norm(self, slice_number: int) -> float:

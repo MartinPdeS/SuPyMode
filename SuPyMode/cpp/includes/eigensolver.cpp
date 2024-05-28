@@ -5,21 +5,46 @@
 #include "Spectra/MatOp/SparseGenRealShiftSolve.h"
 #include "eigensolver.h"
 
+void CppSolver::compute_laplacian() {
+    size_t number_of_triplet = finit_difference_triplets.cols();
+
+    this->identity_matrix = Eigen::SparseMatrix<double, Eigen::ColMajor>(model_parameters.mesh.size(), model_parameters.mesh.size());
+    this->laplacian_matrix = Eigen::SparseMatrix<double, Eigen::ColMajor>(model_parameters.mesh.size(), model_parameters.mesh.size());
+
+    this->identity_matrix.setIdentity();
+
+    this->laplacian_matrix.reserve(number_of_triplet);
+
+    // Populate the sparse matrix directly
+    for (size_t i = 0; i < number_of_triplet; ++i) {
+        int row = static_cast<int>(finit_difference_triplets(0, i));
+        int col = static_cast<int>(finit_difference_triplets(1, i));
+        double value = finit_difference_triplets(2, i);
+        this->laplacian_matrix.insert(col, row) = value;
+    }
+
+    this->eigen_matrix = -1.0 * laplacian_matrix;
+    }
+
+void CppSolver::compute_finit_diff_matrix() {
+    for (size_t index = 0; index < model_parameters.mesh.size(); ++index)
+        this->eigen_matrix.coeffRef(index, index) = - this->laplacian_matrix.coeffRef(index, index) - pow(model_parameters.mesh(index) * k_taper, 2);
+}
 
 void CppSolver::generate_mode_set()
 {
- for (int mode_number=0; mode_number < n_computed_mode; ++mode_number)
- {
-    SuperMode supermode = SuperMode(mode_number, this->model_parameters);
-    computed_supermodes.push_back(supermode);
- }
+    for (int mode_number=0; mode_number < n_computed_mode; ++mode_number)
+    {
+        SuperMode supermode = SuperMode(mode_number, this->model_parameters);
+        computed_supermodes.push_back(supermode);
+    }
 
 
- for (int mode_number=0; mode_number<n_sorted_mode; ++mode_number)
- {
-    SuperMode supermode = SuperMode(mode_number, this->model_parameters);
-    sorted_supermodes.push_back(supermode);
- }
+    for (int mode_number=0; mode_number<n_sorted_mode; ++mode_number)
+    {
+        SuperMode supermode = SuperMode(mode_number, this->model_parameters);
+        sorted_supermodes.push_back(supermode);
+    }
 
 }
 
@@ -45,8 +70,6 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd> CppSolver::compute_eigen_solution(c
         Spectra::SortRule::LargestMagn
     );
 
-    eigen_matrix.resize(0, 0);
-
     Eigen::MatrixXd eigen_vectors = eigs.eigenvectors().real();
     Eigen::VectorXd eigen_values = eigs.eigenvalues().real();
 
@@ -63,7 +86,7 @@ void CppSolver::sort_eigen_decomposition(Eigen::MatrixXd& eigen_vectors, Eigen::
         this->sort_eigen_with_fields(eigen_vectors, eigen_values);
 
     this->previous_eigen_values = eigen_values.block(0, 0, n_sorted_mode, 1);
-    this->previous_eigen_vectors = eigen_vectors.block(0, 0, this->model_parameters.field_size, n_sorted_mode);
+    this->previous_eigen_vectors = eigen_vectors.block(0, 0, this->model_parameters.nx * this->model_parameters.ny, n_sorted_mode);
 }
 
 void CppSolver::sort_eigen_with_fields(Eigen::MatrixXd& eigen_vectors, Eigen::VectorXd& eigen_values)
@@ -195,9 +218,9 @@ void CppSolver::normalize_mode_field()
 double CppSolver::compute_max_index()
 {
     double max_index = 0.0;
-    for (size_t i=0; i<size; ++i)
-        if (mesh_ptr[i] > max_index)
-            max_index = mesh_ptr[i];
+    for (size_t i=0; i<model_parameters.mesh.size(); ++i)
+        if (model_parameters.mesh(i) > max_index)
+            max_index = model_parameters.mesh(i);
 
     return max_index;
 }

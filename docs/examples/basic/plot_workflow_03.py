@@ -19,12 +19,18 @@ wavelength = 1550e-9
 # Here we define the cladding and fiber structure to model the problem
 clad_structure = configuration.ring.FusedProfile_03x03
 
-custom_fiber = fiber_catalogue.make_fiber(
-    wavelength=wavelength,
-    structure_list=[
-        {'name': 'inner-clad', 'index': 1.4456, 'radius': 20e-6},
-        {'name': 'core', 'index': 1.4486, 'radius': 8e-6}
-    ]
+custom_fiber = fiber_catalogue.CustomFiber(wavelength=1.55e-6)
+custom_fiber.add_silica_pure_cladding(radius=62.5e-6, name='outer-clad')
+
+custom_fiber.create_and_add_new_structure(
+    radius=40e-6 / 2,
+    NA=0.13,
+    name='inner-clad'
+)
+custom_fiber.create_and_add_new_structure(
+    radius=9.2e-6 / 2,
+    NA=0.13,
+    name='core'
 )
 
 fiber_list = [

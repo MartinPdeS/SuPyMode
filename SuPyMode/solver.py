@@ -13,8 +13,8 @@ from FiberFusing.coordinate_system import CoordinateSystem
 from SuPyMode.superset import SuperSet
 from SuPyMode.supermode import SuperMode
 from SuPyMode.binary.CppSolver import CppSolver
+from SuPyMode.binary.ModelParameters import ModelParameters
 from SuPyMode.binary.SuperMode import SuperMode as BindingSuperMode  # noqa: F401 It has to be imported in order for pybind11 to know the type
-from SuPyMode.binary.Example import get_rho_gradient_5p
 from SuPyMode.mode_label import ModeLabel
 
 
@@ -83,32 +83,33 @@ class SuPySolver(object):
             self.FD._triplet.array[:, 2]
         ]
 
-        rho_gradient = get_rho_gradient_5p(
-            self.mesh**2,
-            self.coordinate_system.x_vector,
-            self.coordinate_system.y_vector
-        ).T
-
-        mesh_gradient_term = rho_gradient * self.coordinate_system.rho_mesh
-
-        Solver = CppSolver(
-            mesh=self.mesh,
-            gradient=mesh_gradient_term,
+        self.model_parameters = ModelParameters(
+            dx=self.coordinate_system.dx,
+            dy=self.coordinate_system.dy,
+            wavelength=self.wavelength,
             itr_list=self.itr_list,
+            mesh=self.mesh,
+            x_vector=self.coordinate_system.x_vector,
+            y_vector=self.coordinate_system.y_vector,
+            left_boundary=boundaries.left,
+            right_boundary=boundaries.right,
+            top_boundary=boundaries.top,
+            bottom_boundary=boundaries.bottom,
+            debug_mode=self.debug_mode
+        )
+
+        solver = CppSolver(
+            model_parameters=self.model_parameters,
             finit_matrix=new_array.T,
             n_computed_mode=n_sorted_mode + n_added_mode,
             n_sorted_mode=n_sorted_mode,
             max_iter=self.max_iter,
-            tolerance=self.tolerance,
-            wavelength=self.wavelength,
-            debug_mode=self.debug_mode,
-            dx=self.coordinate_system.dx,
-            dy=self.coordinate_system.dy
+            tolerance=self.tolerance
         )
 
-        Solver.compute_laplacian()
+        solver.compute_laplacian()
 
-        return Solver
+        return solver
 
     def init_superset(self, wavelength: float, n_step: int = 300, itr_initial: float = 1.0, itr_final: float = 0.1) -> None:
         """
@@ -162,12 +163,9 @@ class SuPySolver(object):
             list: List of labels for the supermodes.
         """
         if auto_label:
-            mode_label = ModeLabel(boundaries=boundaries, n_mode=n_modes)
-            supermode_labels = mode_label.get_labels()
+            return [ModeLabel(boundaries=boundaries, mode_number=n).label for n in range(n_modes)]
         else:
-            supermode_labels = ["mode_" + "{" + str(n) + "}" for n in range(n_modes)]
-
-        return supermode_labels
+            return ["mode_" + "{" + str(n) + "}" for n in range(n_modes)]
 
     def add_modes(self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int = 4, index_guess: float = 0., auto_label: bool = True) -> None:
         """
@@ -190,6 +188,8 @@ class SuPySolver(object):
             n_added_mode=n_added_mode,
             n_sorted_mode=n_sorted_mode
         )
+
+        self.superset.model_parameters = self.model_parameters
 
         cpp_solver.loop_over_itr(
             extrapolation_order=self.extrapolation_order,

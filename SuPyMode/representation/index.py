@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from SuPyMode.supermode import SuperMode
 
-import numpy
 from SuPyMode.representation.base import InheritFromSuperMode, BaseSingleModePlot
 from MPSPlots.render2D import SceneList, Axis
 
@@ -39,16 +38,10 @@ class Index(InheritFromSuperMode, BaseSingleModePlot):
             parent_supermode (SuperMode): The parent supermode object that provides the base mode data.
         """
         self.parent_supermode = parent_supermode
-        self._data = self.parent_supermode.binded_supermode.get_index()
 
-    def get_values(self) -> numpy.ndarray:
-        """
-        Retrieves the effective refractive index values from the parent supermode.
-
-        Returns:
-            numpy.ndarray: An array of effective refractive index values.
-        """
-        return self._data
+    @property
+    def data(self):
+        return self.parent_supermode.binded_supermode.get_index()
 
     def render_on_ax(self, ax: Axis) -> None:
         """
@@ -62,7 +55,7 @@ class Index(InheritFromSuperMode, BaseSingleModePlot):
         """
         ax.add_line(
             x=self.itr_list,
-            y=self._data,
+            y=self.data,
             label=f'{self.stylized_label}'
         )
 
