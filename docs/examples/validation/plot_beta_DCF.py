@@ -97,7 +97,7 @@ ax.add_line(
 
 ax.add_scatter(
     x=itr_list,
-    y=supymode_mode.index.get_values(),
+    y=supymode_mode.index.data,
     label=supymode_mode,
     color='black',
     line_width=2,
