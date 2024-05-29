@@ -15,7 +15,7 @@ from MPSPlots.render2D import SceneList
 import itertools
 
 wavelength = 1550e-9
-fiber_name = 'SMF28'
+fiber_name = 'test_multimode_fiber'
 scale_factor = 4
 
 # %%
@@ -23,7 +23,6 @@ scale_factor = 4
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Here we define the cladding and fiber structure to model the problem
 fiber = fiber_catalogue.load_fiber(fiber_name, wavelength=wavelength, remove_cladding=False)
-fiber.structure_list[-1].scale(scale_factor)
 fiber_list = [fiber]
 
 
@@ -57,7 +56,7 @@ workflow = Workflow(
 
 superset = workflow.get_superset()
 
-superset.label_supermodes('LP01', 'LP21', 'LP02', 'LP22', 'LP03')
+superset.label_supermodes('LP01', 'LP21', 'LP02', 'LP03', 's')
 
 superset.plot(plot_type='field').show()
 
@@ -70,7 +69,6 @@ initial_fiber = load_fiber(
     wavelength=wavelength,
     add_air_layer=False
 )
-initial_fiber = initial_fiber.scale(scale_factor)
 
 
 # %%
@@ -92,7 +90,7 @@ def get_index_pyfibermodes(mode, itr_list, fiber):
 
     for idx, itr in enumerate(itr_list):
         tapered_fiber = fiber.scale(factor=itr)
-        analytical[idx] = tapered_fiber.get_effective_index(mode=PyFiberModes.LP01)
+        analytical[idx] = tapered_fiber.get_effective_index(mode=mode)
 
     return analytical
 
@@ -113,7 +111,7 @@ for idx, mode in enumerate(['LP01', 'LP02', 'LP03']):
         layer_position=2
     )
 
-    analytical = get_index_pyfibermodes(mode=getattr(PyFiberModes, mode), itr_list=itr_list, initial_fiber=initial_fiber)
+    analytical = get_index_pyfibermodes(mode=getattr(PyFiberModes, mode), itr_list=itr_list, fiber=initial_fiber)
 
     ax.add_line(
         x=itr_list,
@@ -149,7 +147,6 @@ initial_fiber = load_fiber(
     wavelength=wavelength,
     add_air_layer=False
 )
-initial_fiber = initial_fiber.scale(scale_factor)
 
 
 def get_normalized_coupling_pyfibermodes(mode_0, mode_1, itr_list, initial_fiber):
@@ -163,7 +160,8 @@ def get_normalized_coupling_pyfibermodes(mode_0, mode_1, itr_list, initial_fiber
     return analytical
 
 
-for mode_0, mode_1 in itertools.combinations(['LP01', 'LP02', 'LP03'], 2):
+for idx, (mode_0, mode_1) in enumerate(itertools.combinations(['LP01', 'LP02', 'LP03'], 2)):
+    color = f"C{idx}"
 
     analytical = get_normalized_coupling_pyfibermodes(
         mode_0=getattr(PyFiberModes, mode_0),
@@ -178,7 +176,7 @@ for mode_0, mode_1 in itertools.combinations(['LP01', 'LP02', 'LP03'], 2):
         label='Analytical',
         line_style='-',
         line_width=2,
-        color='red',
+        color=color,
         layer_position=1
     )
 
@@ -189,7 +187,7 @@ for mode_0, mode_1 in itertools.combinations(['LP01', 'LP02', 'LP03'], 2):
         y=abs(simulation),
         color='black',
         line_width=2,
-        edge_color='blue',
+        edge_color=color,
         marker_size=80,
         line_style='-',
         layer_position=2,
