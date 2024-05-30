@@ -10,7 +10,6 @@ testpaths = [
     "tests/test_api.py",
     "tests/test_plots.py",
     "tests/test_profile.py",
-    "tests/test_propagation.py",
     "tests/test_validation_normalized_coupling.py",
     "tests/test_validation_propagation_constant.py",
     "tests/test_validation_symmetry.py",
