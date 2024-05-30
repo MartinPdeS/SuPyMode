@@ -17,10 +17,7 @@ public:
     double dx;
     double dy;
     double ditr;
-    std::string left_boundary;
-    std::string right_boundary;
-    std::string top_boundary;
-    std::string bottom_boundary;
+
     size_t nx;
     size_t ny;
     size_t n_slice;
@@ -44,21 +41,16 @@ public:
 
     ModelParameters() = default;
 
-    ModelParameters(const pybind11::array_t<double> &mesh_py,
-                    const pybind11::array_t<double> &x_vector_py,
-                    const pybind11::array_t<double> &y_vector_py,
-                    const pybind11::array_t<double> &itr_list_py,
-                    double wavelength,
-                    double dx,
-                    double dy,
-                    const std::string &left_boundary,
-                    const std::string &right_boundary,
-                    const std::string &top_boundary,
-                    const std::string &bottom_boundary,
-                    int debug_mode = 0)
+    ModelParameters(
+        const pybind11::array_t<double> &mesh_py,
+        const pybind11::array_t<double> &x_vector_py,
+        const pybind11::array_t<double> &y_vector_py,
+        const pybind11::array_t<double> &itr_list_py,
+        const double wavelength,
+        const double dx,
+        const double dy,
+        const int debug_mode = 0)
         : wavelength(wavelength), dx(dx), dy(dy),
-          left_boundary(left_boundary), right_boundary(right_boundary),
-          top_boundary(top_boundary), bottom_boundary(bottom_boundary),
           debug_mode(debug_mode),
           mesh_py(mesh_py), x_vector_py(x_vector_py),
           y_vector_py(y_vector_py), itr_list_py(itr_list_py)
@@ -81,10 +73,6 @@ public:
             model_parameters.wavelength,
             model_parameters.dx,
             model_parameters.dy,
-            model_parameters.left_boundary,
-            model_parameters.right_boundary,
-            model_parameters.top_boundary,
-            model_parameters.bottom_boundary,
             model_parameters.debug_mode
         );
     }
@@ -98,11 +86,7 @@ public:
             tuple[4].cast<double>(),
             tuple[5].cast<double>(),
             tuple[6].cast<double>(),
-            tuple[7].cast<std::string>(),
-            tuple[8].cast<std::string>(),
-            tuple[9].cast<std::string>(),
-            tuple[10].cast<std::string>(),
-            tuple[11].cast<int>()
+            tuple[7].cast<int>()
         };
     }
 

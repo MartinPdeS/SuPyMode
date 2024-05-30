@@ -3,6 +3,16 @@
 
 #include "Spectra/GenEigsRealShiftSolver.h"
 #include "Spectra/MatOp/SparseGenRealShiftSolve.h"
+#include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+#include <pybind11/numpy.h>
+#include "supermode.cpp"
+#include "extrapolate.cpp"
+#include "progressbar.cpp"
+#include "utils.cpp"
+#include "numpy_interface.cpp"
+#include <iostream>
+
 #include "eigensolver.h"
 
 void CppSolver::compute_laplacian() {
@@ -35,14 +45,13 @@ void CppSolver::generate_mode_set()
 {
     for (int mode_number=0; mode_number < n_computed_mode; ++mode_number)
     {
-        SuperMode supermode = SuperMode(mode_number, this->model_parameters);
+        SuperMode supermode = SuperMode(mode_number, this->model_parameters, this->left_boundary, this->right_boundary, this->top_boundary, this->bottom_boundary);
         computed_supermodes.push_back(supermode);
     }
 
-
     for (int mode_number=0; mode_number<n_sorted_mode; ++mode_number)
     {
-        SuperMode supermode = SuperMode(mode_number, this->model_parameters);
+        SuperMode supermode = SuperMode(mode_number, this->model_parameters, this->left_boundary, this->right_boundary, this->top_boundary, this->bottom_boundary);
         sorted_supermodes.push_back(supermode);
     }
 

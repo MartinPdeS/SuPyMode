@@ -15,10 +15,23 @@ public:
     Eigen::VectorXd index, betas, eigen_value;
     ModelParameters model_parameters;
 
+    std::string left_boundary;
+    std::string right_boundary;
+    std::string top_boundary;
+    std::string bottom_boundary;
+
     SuperMode() = default;
-    SuperMode(size_t mode_number, pybind11::array_t<double> fields_py, pybind11::array_t<double> index_py,
-    pybind11::array_t<double> betas_py, pybind11::array_t<double> eigen_value_py, ModelParameters model_parameters) :
-    mode_number(mode_number), model_parameters(model_parameters)
+    SuperMode(
+        const size_t mode_number,
+        const pybind11::array_t<double> &fields_py,
+        const pybind11::array_t<double> &index_py,
+        const pybind11::array_t<double> &betas_py,
+        const pybind11::array_t<double> &eigen_value_py,
+        const ModelParameters &model_parameters,
+        const std::string &left_boundary,
+        const std::string &right_boundary,
+        const std::string &top_boundary,
+        const std::string &bottom_boundary) : mode_number(mode_number), model_parameters(model_parameters)
     {
         fields = convert_py_to_eigen(fields_py, this->model_parameters.nx * this->model_parameters.ny, this->model_parameters.n_slice);
         index = convert_py_to_eigen(index_py, this->model_parameters.n_slice, 1);
@@ -26,7 +39,13 @@ public:
         eigen_value = convert_py_to_eigen(eigen_value_py, this->model_parameters.n_slice, 1);
     }
 
-    SuperMode(const size_t mode_number, const ModelParameters &model_parameters) : mode_number(mode_number)
+    SuperMode(
+        const size_t mode_number,
+        const ModelParameters &model_parameters,
+        const std::string& left_boundary,
+        const std::string& right_boundary,
+        const std::string& top_boundary,
+        const std::string& bottom_boundary) : mode_number(mode_number)
     {
         this->model_parameters = model_parameters;
         this->fields = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>(this->model_parameters.nx * this->model_parameters.ny, model_parameters.n_slice);
@@ -73,10 +92,10 @@ public:
     bool is_same_symmetry(const SuperMode &other_supermode) const {
         // Return True if all boundaries condition are the same else False
         return
-            (this->model_parameters.left_boundary == other_supermode.model_parameters.left_boundary) &&
-            (this->model_parameters.right_boundary == other_supermode.model_parameters.right_boundary) &&
-            (this->model_parameters.top_boundary == other_supermode.model_parameters.top_boundary) &&
-            (this->model_parameters.bottom_boundary == other_supermode.model_parameters.bottom_boundary);
+            (this->left_boundary == other_supermode.left_boundary) &&
+            (this->right_boundary == other_supermode.right_boundary) &&
+            (this->top_boundary == other_supermode.top_boundary) &&
+            (this->bottom_boundary == other_supermode.bottom_boundary);
     }
 
     bool is_computation_compatible(const SuperMode &other_supermode) const {
@@ -136,7 +155,11 @@ public:
             supermode.get_index_py(),
             supermode.get_betas_py(),
             supermode.get_eigen_value_py(),
-            supermode.model_parameters
+            supermode.model_parameters,
+            supermode.left_boundary,
+            supermode.right_boundary,
+            supermode.top_boundary,
+            supermode.bottom_boundary
         );
     }
 
@@ -147,7 +170,11 @@ public:
             tuple[2].cast<pybind11::array_t<double>>(),          // index
             tuple[3].cast<pybind11::array_t<double>>(),          // betas
             tuple[4].cast<pybind11::array_t<double>>(),          // eigen_values
-            tuple[5].cast<ModelParameters>()                     // Model parameters
+            tuple[5].cast<ModelParameters>(),                    // Model parameters
+            tuple[6].cast<std::string>(),                        // left_boundary
+            tuple[7].cast<std::string>(),                        // right_boundary
+            tuple[8].cast<std::string>(),                        // top_boundary
+            tuple[9].cast<std::string>()                         // bottom_boundary
         }; // load
     }
 };

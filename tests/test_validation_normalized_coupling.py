@@ -5,7 +5,6 @@ import numpy
 from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries
 from PyFiberModes.__future__ import get_normalized_LP_coupling
 import PyFiberModes
-from MPSPlots.render2D import SceneList
 
 
 def test_normalized_coupling(
@@ -52,7 +51,7 @@ def test_normalized_coupling(
 
     superset = workflow.get_superset()
 
-    itr_list = superset.itr_list
+    itr_list = superset.model_parameters.itr_list
 
     # Load and scale the analytical fiber
     smf28 = PyFiberModes.fiber.load_fiber(fiber_name, wavelength=wavelength, add_air_layer=False)

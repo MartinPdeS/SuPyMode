@@ -4,7 +4,6 @@
 import numpy
 from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries
 import PyFiberModes
-from MPSPlots.render2D import SceneList
 
 
 def test_propagation_constant(
@@ -49,7 +48,7 @@ def test_propagation_constant(
     )
 
     superset = workflow.get_superset()
-    itr_list = superset.itr_list
+    itr_list = superset.model_parameters.itr_list
 
     # Load and scale the analytical fiber model
     pfm_fiber = PyFiberModes.fiber.load_fiber(

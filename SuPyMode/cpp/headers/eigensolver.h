@@ -1,16 +1,5 @@
 #pragma once
 
-
-#include <pybind11/numpy.h>
-#include <pybind11/stl.h>
-#include <pybind11/numpy.h>
-#include "supermode.cpp"
-#include "extrapolate.cpp"
-#include "progressbar.cpp"
-#include "utils.cpp"
-#include "numpy_interface.cpp"
-#include <iostream>
-
 class CppSolver
 {
     public:
@@ -20,6 +9,11 @@ class CppSolver
         size_t iteration;
 
         double tolerance;
+
+        std::string left_boundary;
+        std::string right_boundary;
+        std::string top_boundary;
+        std::string bottom_boundary;
 
         std::vector<SuperMode> computed_supermodes;
         std::vector<SuperMode> sorted_supermodes;
@@ -41,16 +35,22 @@ class CppSolver
     CppSolver(
         const ModelParameters &model_parameters,
         const pybind11::array_t<double> &finit_difference_triplets_py,
-        size_t n_computed_mode,
-        size_t n_sorted_mode,
-        size_t max_iteration,
-        double tolerance
+        const size_t n_computed_mode,
+        const size_t n_sorted_mode,
+        const size_t max_iteration,
+        const double tolerance,
+        const std::string &left_boundary,
+        const std::string &right_boundary,
+        const std::string &top_boundary,
+        const std::string &bottom_boundary
     )
         : model_parameters(model_parameters),
           n_computed_mode(n_computed_mode),
           n_sorted_mode(n_sorted_mode),
           max_iteration(max_iteration),
           tolerance(tolerance),
+          left_boundary(left_boundary), right_boundary(right_boundary),
+          top_boundary(top_boundary), bottom_boundary(bottom_boundary),
           iteration(iteration),
           k_taper(k_taper)
     {

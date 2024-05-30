@@ -83,28 +83,17 @@ class SuPySolver(object):
             self.FD._triplet.array[:, 2]
         ]
 
-        self.model_parameters = ModelParameters(
-            dx=self.coordinate_system.dx,
-            dy=self.coordinate_system.dy,
-            wavelength=self.wavelength,
-            itr_list=self.itr_list,
-            mesh=self.mesh,
-            x_vector=self.coordinate_system.x_vector,
-            y_vector=self.coordinate_system.y_vector,
-            left_boundary=boundaries.left,
-            right_boundary=boundaries.right,
-            top_boundary=boundaries.top,
-            bottom_boundary=boundaries.bottom,
-            debug_mode=self.debug_mode
-        )
-
         solver = CppSolver(
             model_parameters=self.model_parameters,
             finit_matrix=new_array.T,
             n_computed_mode=n_sorted_mode + n_added_mode,
             n_sorted_mode=n_sorted_mode,
             max_iter=self.max_iter,
-            tolerance=self.tolerance
+            tolerance=self.tolerance,
+            left_boundary=boundaries.left,
+            right_boundary=boundaries.right,
+            top_boundary=boundaries.top,
+            bottom_boundary=boundaries.bottom,
         )
 
         solver.compute_laplacian()
@@ -124,7 +113,19 @@ class SuPySolver(object):
         self.wavelength = wavelength
         self.wavenumber = 2 * numpy.pi / wavelength
         self.itr_list = numpy.linspace(itr_initial, itr_final, n_step)
-        self.superset = SuperSet(parent_solver=self, wavelength=wavelength)
+
+        self.model_parameters = ModelParameters(
+            dx=self.coordinate_system.dx,
+            dy=self.coordinate_system.dy,
+            wavelength=wavelength,
+            itr_list=self.itr_list,
+            mesh=self.mesh,
+            x_vector=self.coordinate_system.x_vector,
+            y_vector=self.coordinate_system.y_vector,
+            debug_mode=self.debug_mode
+        )
+
+        self.superset = SuperSet(geometry=self.geometry, wavelength=wavelength, model_parameters=self.model_parameters)
 
     def index_to_eigen_value(self, index: float) -> float:
         """

@@ -54,7 +54,7 @@ workflow = Workflow(
 )
 
 superset = workflow.get_superset()
-itr_list = superset.itr_list
+itr_list = superset.model_parameters.itr_list
 
 # %%
 # Computing the analytical values using FiberModes solver.

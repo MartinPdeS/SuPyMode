@@ -60,7 +60,7 @@ superset.label_supermodes('LP01', 'LP21', 'LP02', 'LP03', 's')
 
 superset.plot(plot_type='field').show()
 
-itr_list = superset.itr_list
+itr_list = superset.model_parameters.itr_list
 
 # %%
 # Computing the analytical values using FiberModes solver.
@@ -183,7 +183,7 @@ for idx, (mode_0, mode_1) in enumerate(itertools.combinations(['LP01', 'LP02', '
     simulation = getattr(superset, mode_0).normalized_coupling.get_values(getattr(superset, mode_1))
 
     ax.add_scatter(
-        x=superset.itr_list,
+        x=superset.model_parameters.itr_list,
         y=abs(simulation),
         color='black',
         line_width=2,

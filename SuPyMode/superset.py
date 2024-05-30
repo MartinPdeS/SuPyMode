@@ -10,6 +10,7 @@ from pathlib import Path
 from itertools import combinations, product
 from pathvalidate import sanitize_filepath
 from typing import Optional, Tuple, List, Callable
+from FiberFusing.geometry import Geometry
 
 # Third-party imports
 from scipy.interpolate import interp1d
@@ -17,6 +18,7 @@ from scipy.integrate import solve_ivp
 import pyvista
 
 # Local imports
+from SuPyMode.binary.ModelParameters import ModelParameters
 from SuPyMode.supermode import SuperMode
 from SuPyMode import representation
 from SuPyMode.utils import test_valid_input, get_intersection, interpret_slice_number_and_itr, interpret_mode_of_interest
@@ -32,17 +34,18 @@ class SuperSet(object):
     It facilitates operations on supermodes like sorting, plotting, and computations related to fiber optics simulations.
 
     Attributes:
-        parent_solver (object): The solver instance that generated this SuperSet.
+        model_parameters (ModelParameters):
         wavelength (float): The wavelength used in the solver, in meters.
+        geometry (object):
     """
-    parent_solver: object
+    model_parameters: ModelParameters
     wavelength: float
+    geometry: Geometry
 
     def __post_init__(self):
-        self.wavenumber = 2 * numpy.pi / self.wavelength
         self._transmission_matrix = None
         self.supermodes = []
-        self._itr_to_slice = interp1d(self.itr_list, numpy.arange(self.itr_list.size))
+        self._itr_to_slice = interp1d(self.model_parameters.itr_list, numpy.arange(self.model_parameters.n_slice))
 
     def __getitem__(self, idx: int) -> SuperMode:
         return self.supermodes[idx]
@@ -51,25 +54,11 @@ class SuperSet(object):
         self.supermodes[idx] = value
 
     @property
-    def geometry(self):
-        """
-        Return geometry of the coupler structure
-        """
-        return self.parent_solver.geometry
-
-    @property
-    def itr_list(self) -> numpy.ndarray:
-        """
-        Return list of itr value that are used to compute the supermodes
-        """
-        return self.parent_solver.itr_list
-
-    @property
     def coordinate_system(self):
         """
         Return axes object of the geometry
         """
-        return self.parent_solver.geometry.coordinate_system
+        return self.geometry.coordinate_system
 
     @property
     def fundamental_supermodes(self) -> list[SuperMode]:
@@ -211,21 +200,6 @@ class SuperSet(object):
         for n, super_mode in self:
             super_mode.label = f'mode_{n}'
 
-    def swap_supermode_order(self, idx0: int, idx1: int) -> "SuperSet":
-        """
-        Swap two supermodes.
-        it doesn't change any of their characteristic, it only changes the
-        order on whihc they will appear, notably for the plots.
-
-        :param      idx0:            Index of the first mode to swap
-        :type       idx0:            int
-        :param      idx1:            Index of the second mode to swap
-        :type       idx1:            int
-        """
-        self.supermodes[idx0], self.supermodes[idx1] = self.supermodes[idx1], self.supermodes[idx0]
-
-        return self
-
     def compute_transmission_matrix(self) -> None:
         """
         Calculates the transmission matrix with only the propagation constant included.
@@ -236,7 +210,7 @@ class SuperSet(object):
         shape = [
             len(self.supermodes),
             len(self.supermodes),
-            len(self.itr_list)
+            len(self.model_parameters.itr_list)
         ]
 
         self._transmission_matrix = numpy.zeros(shape)
@@ -290,9 +264,9 @@ class SuperSet(object):
         :rtype:     numpy.ndarray
         """
 
-        dx = coupler_length / (self.itr_list.size)
+        dx = coupler_length / (self.model_parameters.n_slice)
 
-        ditr = numpy.gradient(numpy.log(self.itr_list), axis=0)
+        ditr = numpy.gradient(numpy.log(self.model_parameters.itr_list), axis=0)
 
         return ditr / dx
 
@@ -311,7 +285,7 @@ class SuperSet(object):
 
         sub_t_matrix = self.transmission_matrix[..., :final_slice]
 
-        sub_itr_vector = self.itr_list[: final_slice]
+        sub_itr_vector = self.model_parameters.itr_list[: final_slice]
 
         if add_coupling:
             sub_t_matrix = self.add_coupling_to_t_matrix(
@@ -352,7 +326,7 @@ class SuperSet(object):
         initial_amplitude = numpy.asarray(initial_amplitude, dtype=complex)
 
         if max_step is None:
-            max_step = self.parent_solver.wavelength / 200
+            max_step = self.model_parameters.wavelength / 200
 
         sub_distance, sub_itr_vector, sub_t_matrix = self.get_transmision_matrix_from_profile(
             profile=profile,
@@ -435,9 +409,8 @@ class SuperSet(object):
             **kwargs (Dict[str, Any]): Additional keyword arguments for solver.
 
         Returns:
-            Tuple[SceneList, Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]]: A tuple containing the matplotlib figure object
-                                                                          and a tuple with propagation distances, amplitudes,
-                                                                          and inverse taper ratios.
+            Tuple[SceneList, Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]]:
+            A tuple containing the matplotlib figure object and a tuple with propagation distances, amplitudes, and inverse taper ratios.
         """
         initial_amplitude = self.interpret_initial_input(initial_amplitude)
 
@@ -910,7 +883,7 @@ class SuperSet(object):
         figure = SceneMatrix(unit_size=(3, 3))
 
         slice_list, itr_list = interpret_slice_number_and_itr(
-            itr_baseline=self.itr_list,
+            itr_baseline=self.model_parameters.itr_list,
             itr_list=itr_list,
             slice_list=slice_list
         )
@@ -1060,7 +1033,7 @@ class SuperSet(object):
 
         for mode_0, mode_1 in combination:
             x, y = get_intersection(
-                x=self.itr_list,
+                x=self.model_parameters.itr_list,
                 y0=getattr(mode_0, data_type).data,
                 y1=getattr(mode_1, data_type).data,
                 average=True

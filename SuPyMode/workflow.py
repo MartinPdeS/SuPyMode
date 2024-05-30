@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from typing import List, Union, Optional
-from dataclasses import dataclass
 from pathlib import Path
 
 from FiberFusing import Geometry, BackGround
+from FiberFusing.fiber.base_class import GenericFiber
 from SuPyMode.solver import SuPySolver
 from FiberFusing.fiber import catalogue as fiber_catalogue
 from SuPyMode.profiles import AlphaProfile  # noqa: F401
@@ -13,6 +13,7 @@ from FiberFusing import configuration  # noqa: F401
 
 from PyFinitDiff.finite_difference_2D import Boundaries
 from pathvalidate import sanitize_filepath
+from pydantic.dataclasses import dataclass
 
 
 def prepare_simulation_geometry(
@@ -56,14 +57,21 @@ def prepare_simulation_geometry(
 
     Returns:
         Geometry: Configured geometry object ready for simulation.
-    """
-    if isinstance(clad_index, str) and clad_index.lower() == 'silica':
-        index = fiber_catalogue.get_silica_index(wavelength=wavelength)
-    elif isinstance(clad_index, (float, int)):
-        index = clad_index
-    else:
-        raise ValueError("Invalid clad_index: must be either 'silica' or a numeric index value.")
 
+    Raises:
+        ValueError: If clad_index is not 'silica' or a numeric value.
+    """
+
+    def get_clad_index(clad_index: float, wavelength: float):
+        """Retrieve the cladding index based on the input type."""
+        if isinstance(clad_index, str) and clad_index.lower() == 'silica':
+            return fiber_catalogue.get_silica_index(wavelength=wavelength)
+        elif isinstance(clad_index, (float, int)):
+            return clad_index
+        else:
+            raise ValueError("Invalid clad_index: must be either 'silica' or a numeric index value.")
+
+    index = get_clad_index(clad_index, wavelength)
     background = BackGround(index=background_index)
 
     clad_instance = prepare_fused_structure(
@@ -103,28 +111,26 @@ def prepare_simulation_geometry(
 def prepare_fused_structure(
         clad_class: type,
         fiber_radius: float,
-        fusion_degree: float,
+        fusion_degree: float | str,
         index: float,
         core_position_scrambling: float,
-        rotation: float) -> object:
+        rotation: float) -> Optional[object]:
     """
-    Prepare and returns a clad instance according to the clad class given as input.
+    Prepares and returns a clad instance according to the provided clad class and configuration parameters.
 
-    :param      clad_class:                The clad class
-    :type       clad_class:                type
-    :param      fiber_radius:              The fiber radius
-    :type       fiber_radius:              float
-    :param      fusion_degree:             The fusion degree
-    :type       fusion_degree:             float
-    :param      index:                     The index
-    :type       index:                     float
-    :param      core_position_scrambling:  The core position scrambling
-    :type       core_position_scrambling:  float
-    :param      rotation:                  The rotation
-    :type       rotation:                  float
+    Args:
+        clad_class (type): The class representing the cladding structure.
+        fiber_radius (float): The radius of the fiber.
+        fusion_degree (float): The degree of fusion for the fibers.
+        index (float): The refractive index of the cladding material.
+        core_position_scrambling (float): Random displacement added to fiber core positions to simulate imperfections.
+        rotation (float): Rotation angle for the structure (in degrees).
 
-    :returns:   The clad instance
-    :rtype:     object
+    Returns:
+        Optional[object]: An instance of the clad structure configured with the provided parameters, or None if no clad class is provided.
+
+    Raises:
+        ValueError: If any of the required parameters are not provided or invalid.
     """
     if clad_class is None:
         return None
@@ -145,7 +151,7 @@ def prepare_fused_structure(
 @dataclass
 class Workflow():
     """
-    A class to configure and execute optical simulations using finite difference methods on specified fiber geometries.
+    Configures and executes optical simulations using finite difference methods on specified fiber geometries.
 
     Attributes:
         wavelength (float): Wavelength at which the simulation is evaluated.
@@ -163,17 +169,25 @@ class Workflow():
         auto_label (bool): If True, automatically labels supermodes.
         generate_report (bool): If True, generates a PDF report of the simulation results.
         save_superset (bool): If True, saves the computed superset instance for later use.
-        fiber_list (List[object]): List of fibers included in the optical structure.
+        fiber_list (List[GenericFiber]): List of fibers included in the optical structure.
         boundaries (List[Boundaries]): Boundary conditions applied to the simulation.
         capillary_tube (Optional[object]): Additional capillary structure to include in the simulation.
         clad_structure (Optional[object]): Initial optical structure used for the simulation.
-        x_bounds (str): Boundary conditions along the x-axis.
-        y_bounds (str): Boundary conditions along the y-axis.
+        x_bounds (Union[str, List[float]]): Boundary conditions along the x-axis.
+        y_bounds (Union[str, List[float]]): Boundary conditions along the y-axis.
         air_padding_factor (float): Factor for padding the structure with air to prevent boundary effects.
         gaussian_filter_factor (Optional[float]): Gaussian blurring factor applied to the structure for smoothing.
 
     Plotting Flags:
-        Various flags that determine which aspects of the simulation are plotted.
+        plot_geometry (bool): If True, plots the simulation geometry.
+        plot_cladding (bool): If True, plots the cladding structure.
+        plot_field (bool): If True, plots the field distribution.
+        plot_adiabatic (bool): If True, plots adiabatic transitions.
+        plot_coupling (bool): If True, plots coupling information.
+        plot_beating_length (bool): If True, plots the beating length.
+        plot_eigen_values (bool): If True, plots eigenvalues.
+        plot_index (bool): If True, plots the refractive index distribution.
+        plot_beta (bool): If True, plots propagation constants.
 
     Methods:
         __post_init__: Initializes the simulation geometry and solver upon object creation.
@@ -183,21 +197,22 @@ class Workflow():
         _get_auto_generated_filename: Generates a filename based on the simulation parameters.
     """
 
-    #  Geometry arguments --------------------------
+    # Geometry attributes
     wavelength: float
+    boundaries: List[Boundaries]
     clad_rotation: float = 0
-    capillary_tube: object = None
+    capillary_tube: Optional[object] = None
     resolution: int = 100
-    clad_structure: object = None
-    fiber_list: list = tuple()
+    clad_structure: Optional[object] = None
+    fiber_list: List[GenericFiber] = ()
     fiber_radius: float = 62.5e-6
-    fusion_degree: float = 'auto'
-    x_bounds: str = ''
-    y_bounds: str = ''
+    fusion_degree: Union[float, str] = 'auto'
+    x_bounds: Union[str, List[float]] = ''
+    y_bounds: Union[str, List[float]] = ''
     air_padding_factor: float = 1.2
-    gaussian_filter_factor: float = None
+    gaussian_filter_factor: Optional[float] = None
 
-    #  Solver arguments --------------------------
+    # Solver attributes
     n_sorted_mode: int = 4
     n_added_mode: int = 4
     itr_final: float = 0.05
@@ -206,10 +221,9 @@ class Workflow():
     extrapolation_order: int = 2
     core_position_scrambling: float = 0
     index_scrambling: float = 0
-    boundaries: list = (Boundaries(),)
     accuracy: int = 2
 
-    #  Plot arguments --------------------------
+    # Plotting flags
     plot_geometry: bool = False
     plot_cladding: bool = False
     plot_field: bool = False
@@ -220,15 +234,25 @@ class Workflow():
     plot_index: bool = False
     plot_beta: bool = False
 
-    #  Extra arguments --------------------------
+    # Extra attributes
     debug_mode: int = 1
     auto_label: bool = False
     generate_report: bool = False
     save_superset: bool = False
 
     def __post_init__(self):
-        """Initializes the simulation geometry and solver, and optionally plots the initial setup if enabled."""
-        self.geometry = prepare_simulation_geometry(
+        """
+        Initializes the simulation geometry and solver, and optionally plots the initial setup if enabled.
+        """
+        self.geometry = self.prepare_simulation_geometry()
+        self._plot_initial_setup()
+        self._initialize_solver()
+        self._plot_simulation_outputs()
+        self._finalize_workflow()
+
+    def prepare_simulation_geometry(self):
+        """Prepares the simulation geometry."""
+        return prepare_simulation_geometry(
             wavelength=self.wavelength,
             clad_structure=self.clad_structure,
             fiber_list=self.fiber_list,
@@ -242,48 +266,19 @@ class Workflow():
             gaussian_filter=self.gaussian_filter_factor
         )
 
-        if self.plot_cladding:
+    def _plot_initial_setup(self):
+        """Plots the initial simulation setup if the respective flags are enabled."""
+        if self.plot_cladding and self.clad_structure:
             self.clad_structure.plot().show()
-
         if self.plot_geometry:
             self.geometry.plot().show()
-
-        self._initialize_solver_()
-
-        if self.plot_field:
-            self.plot(plot_type='field').show()
-
-        if self.plot_adiabatic:
-            self.plot(plot_type='adiabatic').show()
-
-        if self.plot_coupling:
-            self.plot(plot_type='normalized-coupling').show()
-
-        if self.plot_beating_length:
-            self.plot(plot_type='beating-length').show()
-
-        if self.plot_eigen_values:
-            self.plot(plot_type='eigen-value').show()
-
-        if self.plot_index:
-            self.plot(plot_type='index').show()
-
-        if self.plot_beta:
-            self.plot(plot_type='beta').show()
-
-        if self.generate_report:
-            self.generate_pdf_report()
-
-        if self.save_superset:
-            self.save_superset_instance()
 
     @property
     def superset(self):
         return self.solver.superset
 
-    def _initialize_solver_(self) -> None:
+    def _initialize_solver(self):
         """Initializes the solver with the set geometry and starts the mode computation process."""
-
         self.solver = SuPySolver(
             geometry=self.geometry,
             tolerance=1e-20,
@@ -308,76 +303,87 @@ class Workflow():
                 auto_label=self.auto_label
             )
 
-        self.solver.superset.sort_modes(sorting_method='beta')
-
     def get_superset(self):
         return self.solver.superset
 
-    def _get_auto_generated_filename_(self) -> str:
-        """
-        Returns an auton-generated filename taking account for:
-        |  structure name
-        |  fiber names
-        |  resolution of the simulations
-        |  wavelength
+    def _plot_simulation_outputs(self):
+        """Plots the simulation outputs based on the respective flags."""
+        if self.plot_field:
+            self.plot('field').show()
+        if self.plot_adiabatic:
+            self.plot('adiabatic').show()
+        if self.plot_coupling:
+            self.plot('normalized-coupling').show()
+        if self.plot_beating_length:
+            self.plot('beating-length').show()
+        if self.plot_eigen_values:
+            self.plot('eigen-value').show()
+        if self.plot_index:
+            self.plot('index').show()
+        if self.plot_beta:
+            self.plot('beta').show()
 
-        :returns:   The automatic generated filename.
-        :rtype:     str
-        """
-        fiber_name = "".join(fiber.__class__.__name__ for fiber in self.fiber_list)
+    def _finalize_workflow(self):
+        """Finalizes the workflow by generating reports and saving superset if enabled."""
+        if self.generate_report:
+            self.generate_pdf_report()
+        if self.save_superset:
+            self.save_superset_instance()
 
-        filename = (
-            f"structure={self.clad_structure.__class__.__name__}_"
-            f"{fiber_name}_"
-            f"resolution={self.resolution}_"
-            f'wavelength={self.wavelength}'
-        )
-
-        return filename.replace('.', '_')
+    def plot(self, *args, **kwargs):
+        """Plots various types of data from the simulation based on the specified plot type."""
+        return self.solver.superset.plot(*args, **kwargs)
 
     def save_superset_instance(self, filename: str = 'auto', directory: str = 'auto') -> Path:
-        """Saves the superset instance to a file, defaulting to an auto-generated filename if not specified."""
+        """
+        Saves the superset instance to a file, defaulting to an auto-generated filename if not specified.
+
+        Args:
+            filename (str): Filename for the saved instance.
+            directory (str): Directory for saving the instance.
+
+        Returns:
+            Path: Path to the saved file.
+        """
         if filename == 'auto':
-            filename = self._get_auto_generated_filename_()
-
-        filename = Path(filename + '.pdf')
-
+            filename = self._get_auto_generated_filename()
+        filename = Path(filename + '.pdf').with_suffix('.pdf')
         filename = sanitize_filepath(filename)
-
-        self.solver.superset.save_instance(
-            filename=filename,
-            directory=directory
-        )
-
+        self.solver.superset.save_instance(filename=filename, directory=directory)
         return filename
 
     def generate_pdf_report(self, filename: str = 'auto', **kwargs) -> Path:
         """
-        Generate a pdf file compiling the essential computed components.
+        Generates a PDF report of all relevant simulation data and results.
 
-        :param      filename:  The filename
-        :type       filename:  str
-        :param      kwargs:    The keywords arguments
-        :type       kwargs:    dictionary
+        Args:
+            filename (str): Filename for the report.
+            **kwargs: Additional arguments for the report generation.
 
-        :returns:   The path directory of the report
-        :rtype:     Path
+        Returns:
+            Path: Path to the generated PDF report.
         """
         if filename == 'auto':
-            filename = self._get_auto_generated_filename_()
-
+            filename = self._get_auto_generated_filename()
         filename = Path(filename).with_suffix('.pdf')
-
         filename = sanitize_filepath(filename)
-
         self.solver.superset.generate_pdf_report(filename=filename, **kwargs)
-
         return filename
 
-    def plot(self, *args, **kwargs):
-        """Plots various types of data from the simulation based on the specified plot type."""
+    def _get_auto_generated_filename(self) -> str:
+        """
+        Generates a filename based on the simulation parameters.
 
-        return self.solver.superset.plot(*args, **kwargs)
-
+        Returns:
+            str: Automatically generated filename.
+        """
+        fiber_name = "".join(fiber.__class__.__name__ for fiber in self.fiber_list)
+        filename = (
+            f"structure={self.clad_structure.__class__.__name__}_"
+            f"{fiber_name}_"
+            f"resolution={self.resolution}_"
+            f"wavelength={self.wavelength}"
+        )
+        return filename.replace('.', '_')
 
 # -
