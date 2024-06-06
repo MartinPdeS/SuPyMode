@@ -36,13 +36,13 @@ class SuperMode():
     label: str = None
     ID: list = field_arg(init=False)
     # Other representations
-    field: representation.Field = field_arg(init=False)
-    index: representation.Index = field_arg(init=False)
-    beta: representation.Beta = field_arg(init=False)
-    normalized_coupling: representation.NormalizedCoupling = field_arg(init=False)
-    adiabatic: representation.Adiabatic = field_arg(init=False)
-    eigen_value: representation.EigenValue = field_arg(init=False)
-    beating_length: representation.BeatingLength = field_arg(init=False)
+    field: representation.Field = field_arg(init=False, repr=False)
+    index: representation.Index = field_arg(init=False, repr=False)
+    beta: representation.Beta = field_arg(init=False, repr=False)
+    normalized_coupling: representation.NormalizedCoupling = field_arg(init=False, repr=False)
+    adiabatic: representation.Adiabatic = field_arg(init=False, repr=False)
+    eigen_value: representation.EigenValue = field_arg(init=False, repr=False)
+    beating_length: representation.BeatingLength = field_arg(init=False, repr=False)
 
     def __post_init__(self):
         self.ID = [self.solver_number, self.binding_number]
