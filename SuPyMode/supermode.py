@@ -1,7 +1,6 @@
 # #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
 
-from typing import Self
 # Built-in imports
 import numpy
 from dataclasses import dataclass, field as field_arg
@@ -138,7 +137,7 @@ class SuperMode():
         else:
             return f"${self.label}$"
 
-    def is_computation_compatible(self, other: Self) -> bool:
+    def is_computation_compatible(self, other: 'SuperMode') -> bool:
         """
         Determines if another supermode is compatible for computation, based on unique
         identifiers and boundary conditions.
@@ -151,7 +150,7 @@ class SuperMode():
         """
         return self.binded_supermode.is_computation_compatible(other.binded_supermode)
 
-    def is_symmetry_compatible(self, other: Self) -> bool:
+    def is_symmetry_compatible(self, other: 'SuperMode') -> bool:
         """
         Determines whether the specified other supermode has same symmetry.
 
