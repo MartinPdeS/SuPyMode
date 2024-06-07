@@ -101,7 +101,7 @@ def prepare_simulation_geometry(
 
     if clad_instance is not None:
         for fiber, core in zip(fiber_list, clad_instance.cores):
-            fiber.set_position(core)
+            fiber.set_position((core.x, core.y))
 
     geometry.add_fiber(*fiber_list)
 
@@ -111,10 +111,10 @@ def prepare_simulation_geometry(
 def prepare_fused_structure(
         clad_class: type,
         fiber_radius: float,
-        fusion_degree: float | str,
+        fusion_degree: Union[float | str],
         index: float,
         core_position_scrambling: float,
-        rotation: float) -> Optional[object]:
+        rotation: float) -> object:
     """
     Prepares and returns a clad instance according to the provided clad class and configuration parameters.
 
