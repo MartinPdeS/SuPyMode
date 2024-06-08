@@ -102,7 +102,7 @@ for idx, mode in enumerate(['LP01', 'LP02', 'LP03']):
     ax.add_scatter(
         x=itr_list,
         y=supymode_mode.index.data,
-        label=supymode_mode,
+        label=str(supymode_mode),
         color='black',
         line_width=2,
         edge_color=color,
@@ -116,7 +116,7 @@ for idx, mode in enumerate(['LP01', 'LP02', 'LP03']):
     ax.add_line(
         x=itr_list,
         y=analytical,
-        label=mode,
+        label=str(mode),
         line_style='-',
         line_width=2,
         color=color,

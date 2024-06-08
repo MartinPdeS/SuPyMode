@@ -88,7 +88,7 @@ for idx, itr in enumerate(itr_list):
 ax.add_line(
     x=itr_list,
     y=analytical,
-    label=pyfibermodes_mode,
+    label=str(pyfibermodes_mode),
     line_style='-',
     line_width=2,
     color='red',
@@ -98,7 +98,7 @@ ax.add_line(
 ax.add_scatter(
     x=itr_list,
     y=supymode_mode.index.data,
-    label=supymode_mode,
+    label=str(supymode_mode),
     color='black',
     line_width=2,
     edge_color='blue',
