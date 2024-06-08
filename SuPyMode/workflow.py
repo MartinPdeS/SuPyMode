@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Tuple
 from pathlib import Path
 
 from FiberFusing import Geometry, BackGround
-from FiberFusing.fiber.base_class import GenericFiber
+from FiberFusing.fiber.generic_fiber import GenericFiber
 from SuPyMode.solver import SuPySolver
 from FiberFusing.fiber import catalogue as fiber_catalogue
 from SuPyMode.profiles import AlphaProfile  # noqa: F401
@@ -14,6 +14,15 @@ from FiberFusing import configuration  # noqa: F401
 from PyFinitDiff.finite_difference_2D import Boundaries
 from pathvalidate import sanitize_filepath
 from pydantic.dataclasses import dataclass
+from pydantic import ConfigDict
+
+config_dict = ConfigDict(
+    extra='forbid',
+    strict=True,
+    arbitrary_types_allowed=True,
+    kw_only=True,
+    frozen=True
+)
 
 
 def prepare_simulation_geometry(
@@ -23,8 +32,8 @@ def prepare_simulation_geometry(
         capillary_tube: Optional[object] = None,
         fusion_degree: Union[float, str] = 'auto',
         fiber_radius: Optional[float] = None,
-        x_bounds: Union[str, List[float]] = '',
-        y_bounds: Union[str, List[float]] = '',
+        x_bounds: Union[str, Tuple[float, float]] = '',
+        y_bounds: Union[str, Tuple[float, float]] = '',
         clad_index: Union[float, str] = 'silica',
         core_position_scrambling: float = 0,
         index_scrambling: float = 0,
@@ -148,7 +157,7 @@ def prepare_fused_structure(
     return clad_instance
 
 
-@dataclass
+@dataclass(config=config_dict)
 class Workflow():
     """
     Configures and executes optical simulations using finite difference methods on specified fiber geometries.
@@ -200,45 +209,45 @@ class Workflow():
     # Geometry attributes
     wavelength: float
     boundaries: List[Boundaries]
-    clad_rotation: float = 0
+    resolution: int
+    clad_rotation: Optional[float] = 0
     capillary_tube: Optional[object] = None
-    resolution: int = 100
     clad_structure: Optional[object] = None
-    fiber_list: List[GenericFiber] = ()
-    fiber_radius: float = 62.5e-6
-    fusion_degree: Union[float, str] = 'auto'
-    x_bounds: Union[str, List[float]] = ''
-    y_bounds: Union[str, List[float]] = ''
-    air_padding_factor: float = 1.2
+    fiber_list: Optional[List[GenericFiber]] = ()
+    fiber_radius: Optional[float] = 62.5e-6
+    fusion_degree: Optional[Union[float, str]] = 'auto'
+    x_bounds: Union[str, Tuple[float, float]] = ''
+    y_bounds: Union[str, Tuple[float, float]] = ''
+    air_padding_factor: Optional[float] = 1.2
     gaussian_filter_factor: Optional[float] = None
 
     # Solver attributes
     n_sorted_mode: int = 4
-    n_added_mode: int = 4
-    itr_final: float = 0.05
-    itr_initial: float = 1.0
     n_step: int = 500
-    extrapolation_order: int = 2
-    core_position_scrambling: float = 0
-    index_scrambling: float = 0
-    accuracy: int = 2
+    itr_final: float = 0.05
+    n_added_mode: Optional[int] = 4
+    itr_initial: Optional[float] = 1.0
+    extrapolation_order: Optional[int] = 2
+    core_position_scrambling: Optional[float] = 0
+    index_scrambling: Optional[float] = 0
+    accuracy: Optional[int] = 2
 
     # Plotting flags
-    plot_geometry: bool = False
-    plot_cladding: bool = False
-    plot_field: bool = False
-    plot_adiabatic: bool = False
-    plot_coupling: bool = False
-    plot_beating_length: bool = False
-    plot_eigen_values: bool = False
-    plot_index: bool = False
-    plot_beta: bool = False
+    plot_geometry: Optional[bool] = False
+    plot_cladding: Optional[bool] = False
+    plot_field: Optional[bool] = False
+    plot_adiabatic: Optional[bool] = False
+    plot_coupling: Optional[bool] = False
+    plot_beating_length: Optional[bool] = False
+    plot_eigen_values: Optional[bool] = False
+    plot_index: Optional[bool] = False
+    plot_beta: Optional[bool] = False
 
     # Extra attributes
-    debug_mode: int = 1
-    auto_label: bool = False
-    generate_report: bool = False
-    save_superset: bool = False
+    debug_mode: Optional[int] = 1
+    auto_label: Optional[bool] = False
+    generate_report: Optional[bool] = False
+    save_superset: Optional[bool] = False
 
     def __post_init__(self):
         """
