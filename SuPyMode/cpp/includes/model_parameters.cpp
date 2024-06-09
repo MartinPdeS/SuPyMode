@@ -7,6 +7,7 @@
 #include "numpy_interface.cpp"
 #include "mesh.cpp"
 
+
 #define PI 3.1415926535897932384626f
 
 
@@ -101,17 +102,17 @@ public:
 
 private:
     void init() {
-        nx = mesh_py.request().shape[0];
-        ny = mesh_py.request().shape[1];
+        nx = mesh_py.request().shape[1];
+        ny = mesh_py.request().shape[0];
         n_slice = itr_list_py.request().size;
         wavenumber = 2 * PI / wavelength;
 
-        mesh = convert_py_to_eigen<double>(mesh_py, nx, ny);
+        mesh = convert_py_to_eigen<double>(mesh_py, ny, nx);
         x_vector = convert_py_to_eigen<double>(x_vector_py, nx);
         y_vector = convert_py_to_eigen<double>(y_vector_py, ny);
         itr_list = convert_py_to_eigen<double>(itr_list_py, n_slice);
-        mesh_gradient = get_rho_gradient_time_rho(mesh.cwiseProduct(mesh), x_vector, y_vector);
-        mesh_gradient_py = eigen_to_ndarray<double>(mesh_gradient, {nx, ny});
+        mesh_gradient = get_rho_gradient_time_rho(mesh.cwiseProduct(mesh), y_vector, x_vector);
+        mesh_gradient_py = eigen_to_ndarray<double>(mesh_gradient, {ny, nx});
 
         compute_scaled_parameters();
         ditr = std::abs(itr_list[1] - itr_list[0]);

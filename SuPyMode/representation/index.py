@@ -41,7 +41,7 @@ class Index(InheritFromSuperMode, BaseSingleModePlot):
 
     @property
     def data(self):
-        return self.parent_supermode.binded_supermode.get_index()
+        return self.parent_supermode.binding.get_index()
 
     def render_on_ax(self, ax: Axis) -> None:
         """

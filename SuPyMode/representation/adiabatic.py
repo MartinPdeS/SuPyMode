@@ -53,7 +53,7 @@ class Adiabatic(InheritFromSuperMode, BaseMultiModePlot):
             numpy.ndarray: An array of adiabatic transition measures calculated between the two supermodes,
                            possibly adjusted by compatibility considerations.
         """
-        output = self.parent_supermode.binded_supermode.get_adiabatic_with_mode(other_supermode.binded_supermode)
+        output = self.parent_supermode.binding.get_adiabatic_with_mode(other_supermode.binding)
 
         if not self.parent_supermode.is_computation_compatible(other_supermode):
             output *= numpy.inf

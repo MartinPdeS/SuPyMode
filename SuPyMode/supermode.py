@@ -22,14 +22,14 @@ class SuperMode():
 
     Attributes:
         parent_set (None): The SuperSet instance associated with this supermode.
-        binded_supermode (None): The corresponding C++ bound supermode object.
+        binding (None): The corresponding C++ bound supermode object.
         solver_number (int): Identifier linking this supermode to a specific Python solver.
         mode_number (int): Unique identifier for this mode within a symmetry set.
         boundaries (dict): Specifications of the boundary conditions for the supermode.
         label (str, optional): An arbitrary descriptive label for the supermode.
     """
     parent_set: object
-    binded_supermode: object
+    binding: object
     solver_number: int
     mode_number: int
     boundaries: dict
@@ -62,12 +62,12 @@ class SuperMode():
         Returns:
             int: The hash value of the binded supermode object.
         """
-        return hash(self.binded_supermode)
+        return hash(self.binding)
 
     @property
     def binding_number(self) -> int:
         """Retrieves the binding number specific to the linked C++ solver."""
-        return self.binded_supermode.binding_number
+        return self.binding.binding_number
 
     @property
     def geometry(self) -> object:
@@ -92,7 +92,7 @@ class SuperMode():
     @property
     def itr_list(self) -> numpy.ndarray:
         """Provides a list of iteration parameters from the model."""
-        return self.binded_supermode.model_parameters.itr_list
+        return self.binding.model_parameters.itr_list
 
     @property
     def model_parameters(self) -> ModelParameters:
@@ -102,12 +102,12 @@ class SuperMode():
         Returns:
             ModelParameters: Computational parameters from the binded supermode.
         """
-        return self.binded_supermode.model_parameters
+        return self.binding.model_parameters
 
     @property
     def mesh_gradient(self) -> numpy.ndarray:
         """Accesses the gradient mesh associated with the supermode."""
-        return self.binded_supermode.mesh_gradient
+        return self.binding.mesh_gradient
 
     @property
     def amplitudes(self) -> numpy.ndarray:
@@ -148,7 +148,7 @@ class SuperMode():
         Returns:
             bool: True if the supermodes are compatible for computation, False otherwise.
         """
-        return self.binded_supermode.is_computation_compatible(other.binded_supermode)
+        return self.binding.is_computation_compatible(other.binding)
 
     def is_symmetry_compatible(self, other: 'SuperMode') -> bool:
         """

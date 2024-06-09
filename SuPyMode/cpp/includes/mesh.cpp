@@ -51,6 +51,7 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> compute_gradient_2p(const Eigen::Mat
     return {gradient_x, gradient_y};
 }
 
+// Rows is y-axis -- Cols is x--axis
 std::pair<Eigen::MatrixXd, Eigen::MatrixXd> compute_gradient_5p(const Eigen::MatrixXd& image, const double dx, const double dy) {
     int rows = image.rows();
     int cols = image.cols();
@@ -143,7 +144,7 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> compute_gradient_7p(const Eigen::Mat
 }
 
 
-Eigen::MatrixXd get_rho_gradient_time_rho(const Eigen::MatrixXd &mesh, const Eigen::VectorXd &x_vector, const Eigen::VectorXd &y_vector) {
+Eigen::MatrixXd get_rho_gradient_time_rho(const Eigen::MatrixXd &mesh, const Eigen::VectorXd &y_vector, const Eigen::VectorXd &x_vector) {
     size_t x_size = x_vector.size();
     size_t y_size = y_vector.size();
 
@@ -154,27 +155,28 @@ Eigen::MatrixXd get_rho_gradient_time_rho(const Eigen::MatrixXd &mesh, const Eig
     Eigen::MatrixXd gradient_x = gradients.first;
     Eigen::MatrixXd gradient_y = gradients.second;
 
-    Eigen::MatrixXd rho_gradient(x_size, y_size);
+    Eigen::MatrixXd rho_gradient(y_size, x_size);
 
     double angle, cos_angle, sin_angle;
 
-    for (int i = 0; i < x_size; ++i) {
-        for (int j = 0; j < y_size; ++j) {
-            double x = x_vector(i);
-            double y = y_vector(j);
+    for (int x_index = 0; x_index < x_size; ++x_index) {
+        for (int y_index = 0; y_index < y_size; ++y_index) {
+            double x = x_vector(x_index);
+            double y = y_vector(y_index);
             double rho = std::sqrt(pow(x, 2) + pow(y, 2));
 
             angle = std::atan2(x, y);
             cos_angle = std::cos(angle);
             sin_angle = std::sin(angle);
-            rho_gradient(i, j) = (gradient_x(i, j) * cos_angle + gradient_y(i, j) * sin_angle) * rho;
+
+            rho_gradient(y_index, x_index) = (gradient_x(y_index, x_index) * cos_angle + gradient_y(y_index, x_index) * sin_angle) * rho;
        }
     }
 
     return rho_gradient;
 }
 
-Eigen::MatrixXd get_rho_gradient(const Eigen::MatrixXd &mesh, const Eigen::VectorXd &x_vector, const Eigen::VectorXd &y_vector) {
+Eigen::MatrixXd get_rho_gradient(const Eigen::MatrixXd &mesh, const Eigen::VectorXd &y_vector, const Eigen::VectorXd &x_vector) {
     size_t x_size = x_vector.size();
     size_t y_size = y_vector.size();
 
@@ -185,19 +187,19 @@ Eigen::MatrixXd get_rho_gradient(const Eigen::MatrixXd &mesh, const Eigen::Vecto
     Eigen::MatrixXd gradient_x = gradients.first;
     Eigen::MatrixXd gradient_y = gradients.second;
 
-    Eigen::MatrixXd rho_gradient(x_size, y_size);
+    Eigen::MatrixXd rho_gradient(y_size, x_size);
 
     double angle, cos_angle, sin_angle;
 
-    for (int i = 0; i < x_size; ++i) {
-        for (int j = 0; j < y_size; ++j) {
-            double x = x_vector(i);
-            double y = y_vector(j);
+    for (int x_index = 0; x_index < x_size; ++x_index) {
+        for (int y_index = 0; y_index < y_size; ++y_index) {
+            double x = x_vector(x_index);
+            double y = y_vector(y_index);
 
             angle = std::atan2(x, y);
             cos_angle = std::cos(angle);
             sin_angle = std::sin(angle);
-            rho_gradient(i, j) = (gradient_x(i, j) * cos_angle + gradient_y(i, j) * sin_angle);
+            rho_gradient(y_index, x_index) = (gradient_x(y_index, x_index) * cos_angle + gradient_y(y_index, x_index) * sin_angle);
        }
     }
 
@@ -212,9 +214,9 @@ pybind11::array_t<double> get_rho_gradient_py(const pybind11::array_t<double> &m
 
     Eigen::VectorXd x_vector = convert_py_to_eigen(x_vector_py, x_size);
     Eigen::VectorXd y_vector = convert_py_to_eigen(y_vector_py, y_size);
-    Eigen::MatrixXd mesh = convert_py_to_eigen(mesh_py, x_size, y_size);
+    Eigen::MatrixXd mesh = convert_py_to_eigen(mesh_py, y_size, x_size);
 
-    Eigen::MatrixXd rho_gradient = get_rho_gradient(mesh, x_vector, y_vector);
+    Eigen::MatrixXd rho_gradient = get_rho_gradient(mesh, y_vector, x_vector);
 
     return eigen_to_ndarray<double>(rho_gradient, {y_size, x_size});
 }
@@ -225,9 +227,9 @@ pybind11::array_t<double> get_rho_gradient_time_rho_py(const pybind11::array_t<d
 
     Eigen::VectorXd x_vector = convert_py_to_eigen(x_vector_py, x_size);
     Eigen::VectorXd y_vector = convert_py_to_eigen(y_vector_py, y_size);
-    Eigen::MatrixXd mesh = convert_py_to_eigen(mesh_py, x_size, y_size);
+    Eigen::MatrixXd mesh = convert_py_to_eigen(mesh_py, y_size, x_size);
 
-    Eigen::MatrixXd rho_gradient = get_rho_gradient_time_rho(mesh, x_vector, y_vector);
+    Eigen::MatrixXd rho_gradient = get_rho_gradient_time_rho(mesh, y_vector, x_vector);
 
     return eigen_to_ndarray<double>(rho_gradient, {y_size, x_size});
 }

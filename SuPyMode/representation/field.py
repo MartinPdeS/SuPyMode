@@ -47,7 +47,7 @@ class Field(InheritFromSuperMode):
 
     @property
     def data(self):
-        return self.parent_supermode.binded_supermode.get_fields()
+        return self.parent_supermode.binding.get_fields()
 
     def get_norm(self, slice_number: int) -> float:
         """
@@ -59,7 +59,7 @@ class Field(InheritFromSuperMode):
         Returns:
             float: The norm of the field.
         """
-        return self.parent_supermode.binded_supermode.get_norm(slice_number)
+        return self.parent_supermode.binding.get_norm(slice_number)
 
     @property
     def itr_list(self) -> numpy.ndarray:
@@ -69,7 +69,7 @@ class Field(InheritFromSuperMode):
         Returns:
             numpy.ndarray: An array of iteration indices.
         """
-        return self.parent_supermode.binded_supermode.model_parameters.itr_list
+        return self.parent_supermode.binding.model_parameters.itr_list
 
     @property
     def parent_superset(self) -> object:
@@ -102,7 +102,8 @@ class Field(InheritFromSuperMode):
             slice_list=slice_number
         )
 
-        fields = self.parent_supermode.binded_supermode.get_fields()
+        fields = self.parent_supermode.binding.get_fields()
+
         fields = numpy.take(fields, slice_list, axis=0)
         if add_symmetries:
             fields = self._get_symmetrized_field(fields)
@@ -221,7 +222,7 @@ class Field(InheritFromSuperMode):
         Note:
             This method applies internal colormap settings and adjusts the axis based on the field data.
         """
-        field = self.parent_supermode.binded_supermode.get_field[slice]
+        field = self.parent_supermode.binding.get_field[slice]
 
         x, y, field = self._get_symmetrized_field_and_axis(field=field)
 

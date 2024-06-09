@@ -216,8 +216,8 @@ class Workflow():
     fiber_list: Optional[List[GenericFiber]] = ()
     fiber_radius: Optional[float] = 62.5e-6
     fusion_degree: Optional[Union[float, str]] = 'auto'
-    x_bounds: Union[str, Tuple[float, float]] = ''
-    y_bounds: Union[str, Tuple[float, float]] = ''
+    x_bounds: Union[str, Tuple[float, float]] = 'centering'
+    y_bounds: Union[str, Tuple[float, float]] = 'centering'
     air_padding_factor: Optional[float] = 1.2
     gaussian_filter_factor: Optional[float] = None
 

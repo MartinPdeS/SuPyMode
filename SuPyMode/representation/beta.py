@@ -43,7 +43,7 @@ class Beta(InheritFromSuperMode, BaseSingleModePlot):
 
     @property
     def data(self):
-        return self.parent_supermode.binded_supermode.get_betas()
+        return self.parent_supermode.binding.get_betas()
 
     def render_on_ax(self, ax: Axis) -> None:
         """

@@ -50,7 +50,7 @@ class BeatingLength(InheritFromSuperMode, BaseMultiModePlot):
         Returns:
             numpy.ndarray: An array of beating lengths calculated between the two supermodes.
         """
-        return self.parent_supermode.binded_supermode.get_beating_length_with_mode(other_supermode.binded_supermode)
+        return self.parent_supermode.binding.get_beating_length_with_mode(other_supermode.binding)
 
     def render_on_ax(self, ax: Axis, other_supermode: SuperMode) -> None:
         """

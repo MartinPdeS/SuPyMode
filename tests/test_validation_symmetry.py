@@ -5,7 +5,7 @@ import numpy
 from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries
 
 
-def test_symmetry(fiber_name: str = 'DCF1300S_33', wavelength: float = 1.55e-6, resolution: int = 160):
+def test_symmetry(fiber_name: str = 'DCF1300S_33', wavelength: float = 1.55e-6, resolution: int = 10):
     """
     Tests the effect of symmetric and asymmetric boundary conditions on the computed indices in a fiber modeling workflow.
 
@@ -16,48 +16,52 @@ def test_symmetry(fiber_name: str = 'DCF1300S_33', wavelength: float = 1.55e-6, 
     Raises:
         ValueError: If the mean discrepancy between symmetric and asymmetric configurations exceeds the tolerance threshold.
     """
-    # Setup for symmetric boundary conditions
-    symmetric_workflow = Workflow(
-        fiber_list=[fiber_catalogue.load_fiber(fiber_name, wavelength=wavelength)],
-        clad_structure=configuration.ring.FusedProfile_01x01,
+    kwargs = dict(
         wavelength=wavelength,
         resolution=resolution,
         n_step=10,
         itr_final=0.9,
-        x_bounds="left",  # Assuming symmetrically influenced by the 'left' boundary
-        y_bounds="centering",
-        boundaries=[Boundaries(right='symmetric')],
+        debug_mode=2,
         n_sorted_mode=1,
         n_added_mode=2,
-        debug_mode=0,
     )
 
     # Setup for asymmetric boundary conditions
-    asymmetric_workflow = Workflow(
+    reference_workflow = Workflow(
         fiber_list=[fiber_catalogue.load_fiber(fiber_name, wavelength=wavelength)],
         clad_structure=configuration.ring.FusedProfile_01x01,
-        wavelength=wavelength,
-        resolution=resolution,
-        n_step=10,
-        itr_final=0.9,
+        **kwargs,
         x_bounds="centering",  # Centered, implying no special treatment to symmetry
         y_bounds="centering",
         boundaries=[Boundaries()],  # No special symmetry boundaries
-        n_sorted_mode=1,
-        n_added_mode=2,
-        debug_mode=0,
     )
 
-    # Compare the effective index data between the two configurations
-    symmetric_index_data = symmetric_workflow.superset[0].index.data
-    asymmetric_index_data = asymmetric_workflow.superset[0].index.data
-    discrepancy = numpy.isclose(
-        symmetric_index_data,
-        asymmetric_index_data,
-        atol=1e-5,
-        rtol=1e-5
-    )
+    boundaries_dict_list = [
+        dict(x_bounds='left', boundaries=[Boundaries(right='symmetric')]),
+        dict(x_bounds='right', boundaries=[Boundaries(left='symmetric')]),
+        dict(y_bounds='top', boundaries=[Boundaries(bottom='symmetric')]),
+        dict(y_bounds='bottom', boundaries=[Boundaries(top='symmetric')]),
+    ]
 
-    if numpy.mean(discrepancy) <= 0.9:
-        raise ValueError(f"Symmetric and non-symmetric index data do not match sufficiently; mean error: {numpy.mean(discrepancy)}")
+    for boundaries_dict in boundaries_dict_list:
+
+        # Setup for symmetric boundary conditions
+        left_workflow = Workflow(
+            fiber_list=[fiber_catalogue.load_fiber(fiber_name, wavelength=wavelength)],
+            clad_structure=configuration.ring.FusedProfile_01x01,
+            **boundaries_dict,
+            **kwargs
+        )
+
+        # Compare the effective index data between the two configurations
+        discrepancy = numpy.isclose(
+            reference_workflow.superset[0].index.data,
+            left_workflow.superset[0].index.data,
+            atol=1e-10,
+            rtol=1e-10
+        )
+
+        if numpy.mean(discrepancy) <= 0.9:
+            raise ValueError("Mismatch between: non-symmetric and symmetric symmetry-based formulation of the numerical problem.")
+
 # -

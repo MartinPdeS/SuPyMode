@@ -50,7 +50,7 @@ class NormalizedCoupling(InheritFromSuperMode, BaseMultiModePlot):
         Returns:
             numpy.ndarray: An array of normalized mode coupling values, adjusted for computational compatibility.
         """
-        output = self.parent_supermode.binded_supermode.get_normalized_coupling_with_mode(other_supermode.binded_supermode)
+        output = self.parent_supermode.binding.get_normalized_coupling_with_mode(other_supermode.binding)
 
         if not self.parent_supermode.is_computation_compatible(other_supermode):
             output *= 0

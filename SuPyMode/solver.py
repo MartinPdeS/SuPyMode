@@ -206,7 +206,7 @@ class SuPySolver(object):
         for binding_number, label in enumerate(mode_labels):
             supermode = SuperMode(
                 parent_set=self.superset,
-                binded_supermode=cpp_solver.get_mode(binding_number),
+                binding=cpp_solver.get_mode(binding_number),
                 mode_number=self.mode_number,
                 solver_number=self.solver_number,
                 boundaries=boundaries,

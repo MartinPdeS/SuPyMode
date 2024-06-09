@@ -37,7 +37,7 @@ class EigenValue(InheritFromSuperMode, BaseSingleModePlot):
             parent_supermode (InheritFromSuperMode): A reference to the parent supermode object.
         """
         self.parent_supermode = parent_supermode
-        self.data = self.parent_supermode.binded_supermode.get_eigen_value()
+        self.data = self.parent_supermode.binding.get_eigen_value()
 
     def render_on_ax(self, ax: Axis) -> None:
         """

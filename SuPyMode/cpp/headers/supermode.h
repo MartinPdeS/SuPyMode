@@ -120,7 +120,7 @@ public:
     }
 
     pybind11::array_t<double> get_fields_py() const {
-        return eigen_to_ndarray<double>(this->fields, {model_parameters.n_slice, model_parameters.nx, model_parameters.ny});
+        return eigen_to_ndarray<double>(this->fields, {model_parameters.n_slice, model_parameters.ny, model_parameters.nx});
     }
 
     pybind11::array_t<double> get_index_py() const {
