@@ -6,45 +6,46 @@
 
 
 std::pair<Eigen::MatrixXd, Eigen::MatrixXd> compute_gradient_2p(const Eigen::MatrixXd& image, double dx, double dy) {
-    int rows = image.rows();
-    int cols = image.cols();
+    int y_size = image.rows();
+    int x_size = image.cols();
 
     // Initialize matrices to store the gradients in x and y directions
-    Eigen::MatrixXd gradient_x(rows, cols);
-    Eigen::MatrixXd gradient_y(rows, cols);
+    Eigen::MatrixXd gradient_x(y_size, x_size);
+    Eigen::MatrixXd gradient_y(y_size, x_size);
 
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
+    for (int y_index = 0; y_index < y_size; ++y_index) {
+        for (int x_index = 0; x_index < x_size; ++x_index) {
+
             // Compute dxVal
             double dxVal = 0.0;
-            if (j > 0 && j + 1 < cols) {
-                dxVal = (image(i, j + 1) - image(i, j - 1)) / (2 * dx);
-            } else if (j == 0 && j + 2 < cols) {  // Use forward difference at the left boundary
-                dxVal = (-3 * image(i, j) + 4 * image(i, j + 1) - image(i, j + 2)) / (2 * dx);
-            } else if (j == cols - 1 && j - 2 >= 0) {  // Use backward difference at the right boundary
-                dxVal = (3 * image(i, j) - 4 * image(i, j - 1) + image(i, j - 2)) / (2 * dx);
-            } else if (j == 0 && j + 1 < cols) {  // Forward difference when there is only one neighboring point
-                dxVal = (image(i, j + 1) - image(i, j)) / dx;
-            } else if (j == cols - 1 && j - 1 >= 0) {  // Backward difference when there is only one neighboring point
-                dxVal = (image(i, j) - image(i, j - 1)) / dx;
+            if (x_index> 0 && x_index + 1 < x_size) {
+                dxVal = (image(y_index, x_index + 1) - image(y_index, x_index - 1)) / (2 * dx);
+            } else if (x_index == 0 && x_index + 2 < x_size) {  // Use forward difference at the left boundary
+                dxVal = (-3 * image(y_index, x_index) + 4 * image(y_index, x_index + 1) - image(y_index, x_index + 2)) / (2 * dx);
+            } else if (x_index == x_size - 1 && x_index - 2 >= 0) {  // Use backward difference at the right boundary
+                dxVal = (3 * image(y_index, x_index) - 4 * image(y_index, x_index - 1) + image(y_index, x_index - 2)) / (2 * dx);
+            } else if (x_index == 0 && x_index + 1 < x_size) {  // Forward difference when there is only one neighboring point
+                dxVal = (image(y_index, x_index + 1) - image(y_index, x_index)) / dx;
+            } else if (x_index == x_size - 1 && x_index - 1 >= 0) {  // Backward difference when there is only one neighboring point
+                dxVal = (image(y_index, x_index) - image(y_index, x_index - 1)) / dx;
             }
 
             // Compute dyVal
             double dyVal = 0.0;
-            if (i > 0 && i + 1 < rows) {
-                dyVal = (image(i + 1, j) - image(i - 1, j)) / (2 * dy);
-            } else if (i == 0 && i + 2 < rows) {  // Use forward difference at the top boundary
-                dyVal = (-3 * image(i, j) + 4 * image(i + 1, j) - image(i + 2, j)) / (2 * dy);
-            } else if (i == rows - 1 && i - 2 >= 0) {  // Use backward difference at the bottom boundary
-                dyVal = (3 * image(i, j) - 4 * image(i - 1, j) + image(i - 2, j)) / (2 * dy);
-            } else if (i == 0 && i + 1 < rows) {  // Forward difference when there is only one neighboring point
-                dyVal = (image(i + 1, j) - image(i, j)) / dy;
-            } else if (i == rows - 1 && i - 1 >= 0) {  // Backward difference when there is only one neighboring point
-                dyVal = (image(i, j) - image(i - 1, j)) / dy;
+            if (y_index> 0 && y_index + 1 < y_size) {
+                dyVal = (image(y_index + 1, x_index) - image(y_index - 1, x_index)) / (2 * dy);
+            } else if (y_index == 0 && y_index + 2 < y_size) {  // Use forward difference at the top boundary
+                dyVal = (-3 * image(y_index, x_index) + 4 * image(y_index + 1, x_index) - image(y_index + 2, x_index)) / (2 * dy);
+            } else if (y_index == y_size - 1 && y_index - 2 >= 0) {  // Use backward difference at the bottom boundary
+                dyVal = (3 * image(y_index, x_index) - 4 * image(y_index - 1, x_index) + image(y_index - 2, x_index)) / (2 * dy);
+            } else if (y_index == 0 && y_index + 1 < y_size) {  // Forward difference when there is only one neighboring point
+                dyVal = (image(y_index + 1, x_index) - image(y_index, x_index)) / dy;
+            } else if (y_index == y_size - 1 && y_index - 1 >= 0) {  // Backward difference when there is only one neighboring point
+                dyVal = (image(y_index, x_index) - image(y_index - 1, x_index)) / dy;
             }
 
-            gradient_x(i, j) = dxVal;
-            gradient_y(i, j) = dyVal;
+            gradient_x(y_index, x_index) = dxVal;
+            gradient_y(y_index, x_index) = dyVal;
         }
     }
 
@@ -53,42 +54,42 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> compute_gradient_2p(const Eigen::Mat
 
 // Rows is y-axis -- Cols is x--axis
 std::pair<Eigen::MatrixXd, Eigen::MatrixXd> compute_gradient_5p(const Eigen::MatrixXd& image, const double dx, const double dy) {
-    int rows = image.rows();
-    int cols = image.cols();
+    int y_size = image.rows();
+    int x_size = image.cols();
 
     // Initialize matrices to store the gradients
-    Eigen::MatrixXd gradient_x(rows, cols);
-    Eigen::MatrixXd gradient_y(rows, cols);
+    Eigen::MatrixXd gradient_x(y_size, x_size);
+    Eigen::MatrixXd gradient_y(y_size, x_size);
 
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
+    for (int y_index = 0; y_index < y_size; ++y_index) {
+        for (int x_index = 0; x_index < x_size; ++x_index) {
             double dxVal = 0.0;
             double dyVal = 0.0;
 
             // Calculate dxVal
-            if (j >= 2 && j + 2 < cols) {
-                dxVal = (image(i, j - 2) - 8 * image(i, j - 1) + 8 * image(i, j + 1) - image(i, j + 2)) / (12 * dx);
-            } else if (j > 0 && j + 1 < cols) {
-                dxVal = (image(i, j + 1) - image(i, j - 1)) / (2 * dx);
-            } else if (j == 0 && j + 1 < cols) {
-                dxVal = (image(i, j + 1) - image(i, j)) / dx;
-            } else if (j == cols - 1 && j - 1 >= 0) {
-                dxVal = (image(i, j) - image(i, j - 1)) / dx;
+            if (x_index >= 2 && x_index + 2 < x_size) {
+                dxVal = (image(y_index, x_index - 2) - 8 * image(y_index, x_index - 1) + 8 * image(y_index, x_index + 1) - image(y_index, x_index + 2)) / (12 * dx);
+            } else if (x_index > 0 && x_index + 1 < x_size) {
+                dxVal = (image(y_index, x_index + 1) - image(y_index, x_index - 1)) / (2 * dx);
+            } else if (x_index == 0 && x_index + 1 < x_size) {
+                dxVal = (image(y_index, x_index + 1) - image(y_index, x_index)) / dx;
+            } else if (x_index == x_size - 1 && x_index - 1 >= 0) {
+                dxVal = (image(y_index, x_index) - image(y_index, x_index - 1)) / dx;
             }
 
             // Calculate dyVal
-            if (i >= 2 && i + 2 < rows) {
-                dyVal = (image(i - 2, j) - 8 * image(i - 1, j) + 8 * image(i + 1, j) - image(i + 2, j)) / (12 * dy);
-            } else if (i > 0 && i + 1 < rows) {
-                dyVal = (image(i + 1, j) - image(i - 1, j)) / (2 * dy);
-            } else if (i == 0 && i + 1 < rows) {
-                dyVal = (image(i + 1, j) - image(i, j)) / dy;
-            } else if (i == rows - 1 && i - 1 >= 0) {
-                dyVal = (image(i, j) - image(i - 1, j)) / dy;
+            if (y_index >= 2 && y_index + 2 < y_size) {
+                dyVal = (image(y_index - 2, x_index) - 8 * image(y_index - 1, x_index) + 8 * image(y_index + 1, x_index) - image(y_index + 2, x_index)) / (12 * dy);
+            } else if (y_index > 0 && y_index + 1 < y_size) {
+                dyVal = (image(y_index + 1, x_index) - image(y_index - 1, x_index)) / (2 * dy);
+            } else if (y_index == 0 && y_index + 1 < y_size) {
+                dyVal = (image(y_index + 1, x_index) - image(y_index, x_index)) / dy;
+            } else if (y_index == y_size - 1 && y_index - 1 >= 0) {
+                dyVal = (image(y_index, x_index) - image(y_index - 1, x_index)) / dy;
             }
 
-            gradient_x(i, j) = dxVal;
-            gradient_y(i, j) = dyVal;
+            gradient_x(y_index, x_index) = dxVal;
+            gradient_y(y_index, x_index) = dyVal;
         }
     }
 
@@ -96,47 +97,47 @@ std::pair<Eigen::MatrixXd, Eigen::MatrixXd> compute_gradient_5p(const Eigen::Mat
 }
 
 std::pair<Eigen::MatrixXd, Eigen::MatrixXd> compute_gradient_7p(const Eigen::MatrixXd& image, double dx, double dy) {
-    int rows = image.rows();
-    int cols = image.cols();
+    int y_size = image.rows();
+    int x_size = image.cols();
 
     // Initialize matrices to store the gradients
-    Eigen::MatrixXd gradient_x(rows, cols);
-    Eigen::MatrixXd gradient_y(rows, cols);
+    Eigen::MatrixXd gradient_x(y_size, x_size);
+    Eigen::MatrixXd gradient_y(y_size, x_size);
 
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
+    for (int y_index = 0; y_index < y_size; ++y_index) {
+        for (int x_index = 0; x_index < x_size; ++x_index) {
             double dxVal = 0.0;
-            if (j >= 3 && j + 3 < cols) {
-                dxVal = (-image(i, j - 3) + 9 * image(i, j - 2) - 45 * image(i, j - 1) + 45 * image(i, j + 1) - 9 * image(i, j + 2) + image(i, j + 3)) / (60 * dx);
-            } else if (j > 0 && j + 1 < cols) {
-                dxVal = (image(i, j + 1) - image(i, j - 1)) / (2 * dx);  // Central difference
-            } else if (j == 0 && j + 2 < cols) {  // Forward difference at the left boundary
-                dxVal = (-3 * image(i, j) + 4 * image(i, j + 1) - image(i, j + 2)) / (2 * dx);
-            } else if (j == cols - 1 && j - 2 >= 0) {  // Backward difference at the right boundary
-                dxVal = (3 * image(i, j) - 4 * image(i, j - 1) + image(i, j - 2)) / (2 * dx);
-            } else if (j == 0 && j + 1 < cols) {  // Forward difference with one neighboring point
-                dxVal = (image(i, j + 1) - image(i, j)) / dx;
-            } else if (j == cols - 1 && j - 1 >= 0) {  // Backward difference with one neighboring point
-                dxVal = (image(i, j) - image(i, j - 1)) / dx;
+            if (x_index>= 3 && x_index + 3 < x_size) {
+                dxVal = (-image(y_index, x_index - 3) + 9 * image(y_index, x_index - 2) - 45 * image(y_index, x_index - 1) + 45 * image(y_index, x_index + 1) - 9 * image(y_index, x_index + 2) + image(y_index, x_index + 3)) / (60 * dx);
+            } else if (x_index> 0 && x_index + 1 < x_size) {
+                dxVal = (image(y_index, x_index + 1) - image(y_index, x_index - 1)) / (2 * dx);  // Central difference
+            } else if (x_index == 0 && x_index + 2 < x_size) {  // Forward difference at the left boundary
+                dxVal = (-3 * image(y_index, x_index) + 4 * image(y_index, x_index + 1) - image(y_index, x_index + 2)) / (2 * dx);
+            } else if (x_index == x_size - 1 && x_index - 2 >= 0) {  // Backward difference at the right boundary
+                dxVal = (3 * image(y_index, x_index) - 4 * image(y_index, x_index - 1) + image(y_index, x_index - 2)) / (2 * dx);
+            } else if (x_index == 0 && x_index + 1 < x_size) {  // Forward difference with one neighboring point
+                dxVal = (image(y_index, x_index + 1) - image(y_index, x_index)) / dx;
+            } else if (x_index == x_size - 1 && x_index - 1 >= 0) {  // Backward difference with one neighboring point
+                dxVal = (image(y_index, x_index) - image(y_index, x_index - 1)) / dx;
             }
 
             double dyVal = 0.0;
-            if (i >= 3 && i + 3 < rows) {
-                dyVal = (-image(i - 3, j) + 9 * image(i - 2, j) - 45 * image(i - 1, j) + 45 * image(i + 1, j) - 9 * image(i + 2, j) + image(i + 3, j)) / (60 * dy);
-            } else if (i > 0 && i + 1 < rows) {
-                dyVal = (image(i + 1, j) - image(i - 1, j)) / (2 * dy);  // Central difference
-            } else if (i == 0 && i + 2 < rows) {  // Forward difference at the top boundary
-                dyVal = (-3 * image(i, j) + 4 * image(i + 1, j) - image(i + 2, j)) / (2 * dy);
-            } else if (i == rows - 1 && i - 2 >= 0) {  // Backward difference at the bottom boundary
-                dyVal = (3 * image(i, j) - 4 * image(i - 1, j) + image(i - 2, j)) / (2 * dy);
-            } else if (i == 0 && i + 1 < rows) {  // Forward difference with one neighboring point
-                dyVal = (image(i + 1, j) - image(i, j)) / dy;
-            } else if (i == rows - 1 && i - 1 >= 0) {  // Backward difference with one neighboring point
-                dyVal = (image(i, j) - image(i - 1, j)) / dy;
+            if (y_index>= 3 && y_index + 3 < y_size) {
+                dyVal = (-image(y_index - 3, x_index) + 9 * image(y_index - 2, x_index) - 45 * image(y_index - 1, x_index) + 45 * image(y_index + 1, x_index) - 9 * image(y_index + 2, x_index) + image(y_index + 3, x_index)) / (60 * dy);
+            } else if (y_index > 0 && y_index + 1 < y_size) {
+                dyVal = (image(y_index + 1, x_index) - image(y_index - 1, x_index)) / (2 * dy);  // Central difference
+            } else if (y_index == 0 && y_index + 2 < y_size) {  // Forward difference at the top boundary
+                dyVal = (-3 * image(y_index, x_index) + 4 * image(y_index + 1, x_index) - image(y_index + 2, x_index)) / (2 * dy);
+            } else if (y_index == y_size - 1 && y_index - 2 >= 0) {  // Backward difference at the bottom boundary
+                dyVal = (3 * image(y_index, x_index) - 4 * image(y_index - 1, x_index) + image(y_index - 2, x_index)) / (2 * dy);
+            } else if (y_index == 0 && y_index + 1 < y_size) {  // Forward difference with one neighboring point
+                dyVal = (image(y_index + 1, x_index) - image(y_index, x_index)) / dy;
+            } else if (y_index == y_size - 1 && y_index - 1 >= 0) {  // Backward difference with one neighboring point
+                dyVal = (image(y_index, x_index) - image(y_index - 1, x_index)) / dy;
             }
 
-            gradient_x(i, j) = dxVal;
-            gradient_y(i, j) = dyVal;
+            gradient_x(y_index, x_index) = dxVal;
+            gradient_y(y_index, x_index) = dyVal;
         }
     }
 
@@ -165,7 +166,7 @@ Eigen::MatrixXd get_rho_gradient_time_rho(const Eigen::MatrixXd &mesh, const Eig
             double y = y_vector(y_index);
             double rho = std::sqrt(pow(x, 2) + pow(y, 2));
 
-            angle = std::atan2(x, y);
+            angle = std::atan2(y, x);
             cos_angle = std::cos(angle);
             sin_angle = std::sin(angle);
 
@@ -196,7 +197,7 @@ Eigen::MatrixXd get_rho_gradient(const Eigen::MatrixXd &mesh, const Eigen::Vecto
             double x = x_vector(x_index);
             double y = y_vector(y_index);
 
-            angle = std::atan2(x, y);
+            angle = std::atan2(y, x);
             cos_angle = std::cos(angle);
             sin_angle = std::sin(angle);
             rho_gradient(y_index, x_index) = (gradient_x(y_index, x_index) * cos_angle + gradient_y(y_index, x_index) * sin_angle);

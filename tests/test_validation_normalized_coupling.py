@@ -42,7 +42,7 @@ def test_normalized_coupling(
         boundaries=[Boundaries(right='symmetric', top='symmetric')],
         n_sorted_mode=4,
         n_added_mode=8,
-        debug_mode=0,
+        debug_mode=1,
         auto_label=True,
         itr_final=itr_final,
         n_step=n_step,
@@ -78,4 +78,6 @@ def test_normalized_coupling(
     if mean_relative_error > 0.1:
         raise AssertionError(f"Discrepancy between computed and analytical normalized coupling: [Mean Error: {error.mean()}, Mean Relative Error: {mean_relative_error}]")
 
+
+test_normalized_coupling()
 # -
