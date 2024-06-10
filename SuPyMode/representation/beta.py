@@ -40,10 +40,7 @@ class Beta(InheritFromSuperMode, BaseSingleModePlot):
             parent_supermode (InheritFromSuperMode): The parent supermode object.
         """
         self.parent_supermode = parent_supermode
-
-    @property
-    def data(self):
-        return self.parent_supermode.binding.get_betas()
+        self.data = self.parent_supermode.binding.get_betas()
 
     def render_on_ax(self, ax: Axis) -> None:
         """

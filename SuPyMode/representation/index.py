@@ -38,10 +38,7 @@ class Index(InheritFromSuperMode, BaseSingleModePlot):
             parent_supermode (SuperMode): The parent supermode object that provides the base mode data.
         """
         self.parent_supermode = parent_supermode
-
-    @property
-    def data(self):
-        return self.parent_supermode.binding.get_index()
+        self.data = self.parent_supermode.binding.get_index()
 
     def render_on_ax(self, ax: Axis) -> None:
         """

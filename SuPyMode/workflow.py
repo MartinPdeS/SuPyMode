@@ -356,7 +356,7 @@ class Workflow():
         """
         if filename == 'auto':
             filename = self._get_auto_generated_filename()
-        filename = Path(filename + '.pdf').with_suffix('.pdf')
+        filename = Path(filename).with_suffix('.pickle')
         filename = sanitize_filepath(filename)
         self.solver.superset.save_instance(filename=filename, directory=directory)
         return filename

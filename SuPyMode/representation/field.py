@@ -44,10 +44,7 @@ class Field(InheritFromSuperMode):
             parent_supermode (InheritFromSuperMode): The parent supermode from which this field is derived.
         """
         self.parent_supermode = parent_supermode
-
-    @property
-    def data(self):
-        return self.parent_supermode.binding.get_fields()
+        self.data = self.parent_supermode.binding.get_fields()
 
     def get_norm(self, slice_number: int) -> float:
         """

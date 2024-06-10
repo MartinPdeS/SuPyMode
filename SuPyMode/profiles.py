@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Tuple, Callable
+from typing import Tuple, Callable, Optional
+from pydantic.dataclasses import dataclass
+from dataclasses import field
+from pydantic import ConfigDict
 import numpy
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
@@ -10,10 +13,17 @@ from SuPyMode import representation
 from MPSPlots.render2D import SceneList, Axis
 from matplotlib.animation import FuncAnimation, PillowWriter
 
-from dataclasses import dataclass, field
+
+config_dict = ConfigDict(
+    extra='forbid',
+    strict=True,
+    arbitrary_types_allowed=True,
+    kw_only=True,
+    frozen=True
+)
 
 
-@dataclass
+@dataclass(config=config_dict)
 class TaperSection():
     """
     A class to represent a taper section in optical fiber simulations.
@@ -35,8 +45,8 @@ class TaperSection():
 
     z_array: numpy.ndarray
     radius_array: numpy.ndarray
-    heating_length_initial: float = None
-    heating_length_final: float = None
+    heating_length_initial: Optional[float] = None
+    heating_length_final: Optional[float] = None
 
     @property
     def z_initial(self) -> float:
@@ -80,7 +90,7 @@ class TaperSection():
         )
 
 
-@dataclass
+@dataclass(config=config_dict)
 class AlphaProfile():
     r"""
     Represents a Gaussian profile for an optical fiber coupler.
@@ -100,13 +110,13 @@ class AlphaProfile():
         line_color (str): Line color for plots, not part of the main data model.
         line_style (str): Line style for plots, not part of the main data model.
     """
-    initial_radius: float = 1
-    n_point: int = 200
-    symmetric: bool = False
-    label: str = 'profile'
-    add_end_of_taper_section: bool = True
-    line_color: str = field(default='black', repr=False)
-    line_style: str = field(default='--', repr=False)
+    initial_radius: Optional[float] = 1
+    n_point: Optional[int] = 200
+    symmetric: Optional[bool] = False
+    label: Optional[str] = 'profile'
+    add_end_of_taper_section: Optional[bool] = True
+    line_color: Optional[str] = field(default='black', repr=False)
+    line_style: Optional[str] = field(default='--', repr=False)
 
     def __post_init__(self):
         """
