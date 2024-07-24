@@ -30,6 +30,6 @@ profile.initialize()
 
 print(profile.adiabatic)
 
-profile.plot(show_adiabatic=False).show()
+profile.plot(show_adiabatic=False)
 
 # -

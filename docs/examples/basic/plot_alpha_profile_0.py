@@ -28,6 +28,6 @@ profile.add_taper_segment(
 
 profile.initialize()
 
-profile.plot().show()
+profile.plot()
 
 # -

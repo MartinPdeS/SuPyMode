@@ -57,21 +57,21 @@ superset = workflow.get_superset()
 # %%
 # Field computation: :math:`E_{i,j}`
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-_ = superset.plot(plot_type='field', itr_list=[1.0, 0.05]).show()
+_ = superset.plot(plot_type='field', itr_list=[1.0, 0.05])
 
 # %%
 # Effective index: :math:`n^{eff}_{i,j}`
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-_ = superset.plot(plot_type='index').show()
+_ = superset.plot(plot_type='index')
 
 # %%
 # Modal normalized coupling: :math:`C_{i,j}`
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-_ = superset.plot(plot_type='normalized-coupling').show()
+_ = superset.plot(plot_type='normalized-coupling')
 
 # %%
 # Adiabatic criterion: :math:`\tilde{C}_{i,j}`
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-_ = superset.plot(plot_type='adiabatic').show()
+_ = superset.plot(plot_type='adiabatic')
 
 # -
