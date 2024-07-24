@@ -61,7 +61,7 @@ jobs:
 
     publish_wheel:
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        needs: [Windows_x86_64, ManyLinux_x86_64, macos_x86_64, publish_documentation, publish_coverage]
+        needs: [Windows_x86_64, ManyLinux_x86_64, macos_arm64, publish_documentation, publish_coverage]
         runs-on: ubuntu-latest
         steps:
           - uses: MartinPdeS/MPSActions/publish_pypi@master
