@@ -64,7 +64,7 @@ target_link_options(Example PUBLIC ${STATIC_LINK_OPTIONS})
 target_include_directories(Example PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen")
 
 install(
-    TARGETS EigenSolver SuperMode ModelParameters
+    TARGETS EigenSolver SuperMode ModelParameters Example
     DESTINATION "${SUPYMODE_BIN_DIR}"
     # RUNTIME_DEPENDENCIES # do not uncomment this as it will mixed dependencies that may not be manylinux-compatible
 )
