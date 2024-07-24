@@ -4,15 +4,10 @@
 import sys
 from sphinx_gallery.sorting import FileNameSortKey
 from sphinx_gallery.sorting import ExplicitOrder
-from packaging.version import parse
 from MPSPlots.styles import use_mpsplots_style
 import SuPyMode
 
-from SuPyMode.directories import (
-    project_path,
-    doc_css_path,
-    version_path,
-)
+from SuPyMode.directories import project_path, doc_css_path
 
 
 sys.path.insert(0, project_path)
@@ -44,11 +39,6 @@ copyright = '2021, Martin Poinsinet de Sivry-Houle'
 author = 'Martin Poinsinet de Sivry-Houle'
 
 version = SuPyMode.__version__
-
-
-with open(version_path, "r+") as f:
-    version = release = f.read()
-
 
 extensions = [
     'sphinx.ext.mathjax',
