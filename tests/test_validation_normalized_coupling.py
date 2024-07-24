@@ -78,6 +78,4 @@ def test_normalized_coupling(
     if mean_relative_error > 0.1:
         raise AssertionError(f"Discrepancy between computed and analytical normalized coupling: [Mean Error: {error.mean()}, Mean Relative Error: {mean_relative_error}]")
 
-
-test_normalized_coupling()
 # -

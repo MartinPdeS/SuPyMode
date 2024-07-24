@@ -11,7 +11,7 @@ from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries
 import PyFiberModes
 from PyFiberModes.fiber import load_fiber
 from PyFiberModes.__future__ import get_normalized_LP_coupling
-from MPSPlots.render2D import SceneList
+import matplotlib.pyplot as plt
 import itertools
 
 wavelength = 1550e-9
@@ -43,6 +43,7 @@ workflow = Workflow(
     resolution=180,                 # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
     x_bounds="left",                # Mesh x-boundary structure.
     y_bounds="top",                 # Mesh y-boundary structure.
+    air_padding_factor=4.0,
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=7,                # Total computed and sorted mode.
     n_added_mode=6,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
@@ -56,7 +57,7 @@ workflow = Workflow(
 
 superset = workflow.get_superset()
 
-superset.label_supermodes('LP01', 'LP21', 'LP02', 'LP03', 's')
+superset.label_supermodes('LP01', 'LP21', 'LP02', 'LP03', 'LP22', 'LP41')
 
 superset.plot(plot_type='field').show()
 
@@ -73,15 +74,11 @@ initial_fiber = load_fiber(
 
 # %%
 # Preparing the figure
-figure = SceneList(unit_size=(12, 4))
+figure, ax = plt.subplots(1, 1)
 
-ax = figure.append_ax(
-    x_label='Inverse taper ratio',
-    y_label='Effective index',
-    show_legend=True,
-    font_size=18,
-    tick_size=15,
-    legend_font_size=18
+ax.set(
+    xlabel='Inverse taper ratio',
+    ylabel='Effective index'
 )
 
 
@@ -99,45 +96,36 @@ for idx, mode in enumerate(['LP01', 'LP02', 'LP03']):
     color = f"C{idx}"
 
     supymode_mode = getattr(superset, mode)
-    ax.add_scatter(
-        x=itr_list,
-        y=supymode_mode.index.data,
+    ax.scatter(
+        itr_list,
+        supymode_mode.index.data,
         label=str(supymode_mode),
-        color='black',
-        line_width=2,
-        edge_color=color,
-        marker_size=80,
-        line_style='-',
-        layer_position=2
+        color=color,
+        s=80,
+        linestyle='-'
     )
 
     analytical = get_index_pyfibermodes(mode=getattr(PyFiberModes, mode), itr_list=itr_list, fiber=initial_fiber)
 
-    ax.add_line(
-        x=itr_list,
-        y=analytical,
+    ax.plot(
+        itr_list,
+        analytical,
         label=str(mode),
-        line_style='-',
-        line_width=2,
-        color=color,
-        layer_position=1
+        linestyle='-',
+        linewidth=2,
+        color=color
     )
 
-_ = figure.show()
+plt.show()
 
 
 # %%
 # Preparing the figure
-figure = SceneList(unit_size=(12, 4))
+figure, ax = plt.subplots(1, 1)
 
-
-ax = figure.append_ax(
-    x_label='Inverse taper ratio',
-    y_label='Normalized coupling',
-    show_legend=True,
-    font_size=18,
-    tick_size=15,
-    legend_font_size=18
+ax.set(
+    xlabel='Inverse taper ratio',
+    ylabel='Normalized coupling'
 )
 
 # %%
@@ -170,30 +158,26 @@ for idx, (mode_0, mode_1) in enumerate(itertools.combinations(['LP01', 'LP02', '
         initial_fiber=initial_fiber
     )
 
-    ax.add_line(
-        x=itr_list[::2],
-        y=abs(analytical),
+    ax.plot(
+        itr_list[::2],
+        abs(analytical),
         label='Analytical',
-        line_style='-',
-        line_width=2,
-        color=color,
-        layer_position=1
+        linestyle='-',
+        linewidth=2,
+        color=color
     )
 
     simulation = getattr(superset, mode_0).normalized_coupling.get_values(getattr(superset, mode_1))
 
-    ax.add_scatter(
-        x=superset.model_parameters.itr_list,
-        y=abs(simulation),
-        color='black',
-        line_width=2,
-        edge_color=color,
-        marker_size=80,
-        line_style='-',
-        layer_position=2,
+    ax.scatter(
+        superset.model_parameters.itr_list,
+        abs(simulation),
+        color=color,
+        s=80,
+        linestyle='-',
         label=mode_0 + '-' + mode_1
     )
 
-_ = figure.show()
+plt.show()
 
 # -
