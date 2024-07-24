@@ -7,9 +7,9 @@ if TYPE_CHECKING:
     from SuPyMode.supermode import SuperMode
 
 import numpy
-
+from typing import NoReturn
 from SuPyMode.representation.base import InheritFromSuperMode, BaseMultiModePlot
-from MPSPlots.render2D import SceneList, Axis
+import matplotlib.pyplot as plt
 
 
 class Adiabatic(InheritFromSuperMode, BaseMultiModePlot):
@@ -58,50 +58,10 @@ class Adiabatic(InheritFromSuperMode, BaseMultiModePlot):
         if not self.parent_supermode.is_computation_compatible(other_supermode):
             output *= numpy.inf
 
-        return output
+        return abs(output)
 
-    def render_on_ax(self, ax: Axis, other_supermode: SuperMode) -> None:
-        """
-        Renders adiabatic transition data as a line plot on the provided Axis object, comparing the parent supermode
-        with another supermode.
-
-        Args:
-            ax (Axis): The Axis object on which to plot the adiabatic transitions.
-            other_supermode (SuperMode): The other supermode to compare against.
-
-        Note:
-            This method is conditioned on computational compatibility between the supermodes.
-        """
-        if not self.parent_supermode.is_computation_compatible(other_supermode):
-            return
-
-        y = self.get_values(other_supermode=other_supermode)
-
-        ax.add_line(
-            x=self.itr_list,
-            y=numpy.abs(y),
-            label=f'{self.parent_supermode.stylized_label} - {other_supermode.stylized_label}'
-        )
-
-    def plot(self, other_supermode: SuperMode) -> SceneList:
-        """
-        Generates a plot of adiabatic transitions between the parent supermode and another specified supermode using a SceneList.
-
-        This method creates a single-axis plot showing the comparative adiabatic transitions as a function of the inverse taper ratio,
-        formatted according to the predefined plot style.
-
-        Args:
-            other_supermode (SuperMode): The supermode to compare against.
-
-        Returns:
-            SceneList: A scene list containing the plot of adiabatic transitions.
-        """
-        figure = SceneList()
-
-        ax = figure.append_ax(**self.plot_style)
-
-        self.render_on_ax(ax=ax, other_supermode=other_supermode)
-
-        return figure
+    def _dress_ax(self, ax: plt.Axes) -> NoReturn:
+        ax.set_xlabel('Inverse taper ratio')
+        ax.set_ylabel(r'Adiabatic criterion [$\mu$m$^{-1}$]')
 
 # -

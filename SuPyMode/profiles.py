@@ -9,8 +9,9 @@ import numpy
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 
-from SuPyMode import representation
+from typing import NoReturn
 from MPSPlots.render2D import SceneList, Axis
+import matplotlib.ticker as ticker
 from matplotlib.animation import FuncAnimation, PillowWriter
 
 
@@ -611,107 +612,117 @@ class AlphaProfile():
             Callable: A wrapped plotting function that integrates additional styling and annotations.
         """
 
-        def wrapper(self, ax: Axis, line_color: str = None, line_style: str = None, **kwargs):
+        def wrapper(self, ax: plt.Axes, line_color: str = None, line_style: str = None, **kwargs):
             line_style = self.line_style if line_style is None else line_style
             line_color = self.line_color if line_color is None else line_color
 
             x, y = function(self, ax=ax, line_color=line_color, line_style=line_style, **kwargs)
 
-            ax.add_line(x=x, y=y, label=self.label, line_style=line_style, color=line_color)
+            ax.plot(x, y, label=self.label, linestyle=line_style, color=line_color, linewidth=2)
 
         return wrapper
 
     @single_plot
-    def render_itr_vs_z_on_ax(self, ax: Axis, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
+    def render_itr_vs_z_on_ax(self, ax: plt.Axes, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
         """
         Renders a plot of inverse taper ratio (ITR) versus z-distance onto a given axis. This method is typically
         used for visualizing how the ITR changes along the length of the taper.
 
         Parameters:
-            ax (Axis): The matplotlib axis on which to plot.
+            ax (plt.Axes): The matplotlib axis on which to plot.
             line_style (str, optional): Line style for the plot, defaults to class attribute.
             line_color (str, optional): Line color for the plot, defaults to class attribute.
 
         Returns:
             tuple[numpy.ndarray, numpy.ndarray]
         """
-        ax.set_style(
-            show_legend=False,
-            y_limits=[0, None],
-            x_label='Z-propagation [mm]',
-            y_label='Inverse taper ratio [ITR]',
-            x_scale_factor=1e3,
-            y_scale="linear",
-            line_width=2
+        ax.set(
+            ylim=[0, None],
+            xlabel='Z-propagation [mm]',
+            ylabel='Inverse taper ratio [ITR]',
+            yscale="linear",
         )
 
-        return self.distance, self.itr_list
+        scale_x = 1e-3
+        ticks_x = ticker.FuncFormatter(lambda x, pos: '{0:g}'.format(x / scale_x))
+        ax.xaxis.set_major_formatter(ticks_x)
+
+        ax.legend()
+
+        return self.distance * 1e3, self.itr_list
 
     @single_plot
-    def render_taper_angle_vs_z_on_ax(self, ax: Axis, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
+    def render_taper_angle_vs_z_on_ax(self, ax: plt.Axes, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
         """
         Plots the taper angle as a function of z-distance on a provided axis. Useful for understanding the geometric
         changes in the taper profile over its length.
 
         Parameters:
-            ax (Axis): The matplotlib axis on which to plot.
+            ax (plt.Axes): The matplotlib axis on which to plot.
             line_style (str, optional): Specifies the style of the plot line, if different from the class default.
             line_color (str, optional): Specifies the color of the plot line, if different from the class default.
 
         Returns:
             tuple[numpy.ndarray, numpy.ndarray]
         """
-        ax.set_style(
-            show_legend=False,
-            y_limits=[0, None],
-            y_label='Taper angle [rad]',
-            x_label='Z-propagation [mm]',
-            x_scale_factor=1e3,
-            y_scale="linear",
-            line_width=2
+        ax.set(
+            xlabel='Z-propagation [mm]',
+            ylabel='Taper angle [rad]',
+            yscale="linear",
         )
 
-        return self.distance, self.taper_angle
+        scale_x = 1e-3
+        ticks_x = ticker.FuncFormatter(lambda x, pos: '{0:g}'.format(x / scale_x))
+        ax.xaxis.set_major_formatter(ticks_x)
+
+        ax.legend()
+
+        return self.distance * 1e3, self.taper_angle
 
     @single_plot
-    def render_adiabatic_factor_vs_z_on_ax(self, ax: Axis, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
+    def render_adiabatic_factor_vs_z_on_ax(self, ax: plt.Axes, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
         """
         Plots the adiabatic criterion versus z-distance on the specified axis. This plot helps assess the
         efficiency and effectiveness of the taper in maintaining adiabatic conditions throughout its course.
 
         Parameters:
-            ax (Axis): The matplotlib axis on which to plot.
+            ax (plt.Axes): The matplotlib axis on which to plot.
             line_style (str, optional): Line style for the plot, can override default.
             line_color (str, optional): Line color for the plot, can override default.
 
         Returns:
             tuple[numpy.ndarray, numpy.ndarray]
         """
-        ax.set_style(
-            y_scale='log',
-            y_label='Adiabatic criterion',
-            x_label='z-distance'
+
+        ax.set(
+            xlabel='Z-propagation [mm]',
+            ylabel='Adiabatic criterion',
+            yscale="linear",
         )
 
-        return self.distance, self.adiabatic
+        scale_x = 1e-3
+        ticks_x = ticker.FuncFormatter(lambda x, pos: '{0:g}'.format(x / scale_x))
+        ax.xaxis.set_major_formatter(ticks_x)
+
+        ax.legend()
+
+        return self.distance * 1e3, self.adiabatic
 
     @single_plot
-    def render_adiabatic_factor_vs_itr_on_ax(self, ax: Axis, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
+    def render_adiabatic_factor_vs_itr_on_ax(self, ax: plt.Axes, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
         """
         Add adiabatic criterion vs ITR plot to axis
 
         :param      ax:   The axis on which to add the plot
-        :type       ax:   Axis
+        :type       ax:   plt.Axes
         """
-        ax.set_style(**representation.adiabatic.Adiabatic.plot_style)
-
         return self.itr_list, self.adiabatic
 
     def plot(
             self,
             show_radius: bool = True,
             show_adiabatic: bool = True,
-            show_taper_angle: bool = True) -> SceneList:
+            show_taper_angle: bool = True) -> NoReturn:
         """
         Generates plots based on the current state of the taper profile. This can include plots of radius vs. z-distance,
         adiabatic factor vs. ITR, and taper angle vs. z-distance, based on the specified flags.
@@ -720,31 +731,20 @@ class AlphaProfile():
             show_radius (bool): If True, includes a plot of radius vs. z-distance.
             show_adiabatic (bool): If True, includes a plot of adiabatic factor vs. ITR.
             show_taper_angle (bool): If True, includes a plot of taper angle vs. z-distance.
-
-        Returns:
-            SceneList: A collection of matplotlib axes with the requested plots.
         """
-        figure = SceneList(
-            title=f'Minimum ITR: {self.smallest_itr:.4f}',
-            ax_orientation='vertical',
-            unit_size=(8, 3)
-        )
+        figure, ax = plt.subplots(1, 1)
+        ax.set_title(f'Minimum ITR: {self.smallest_itr:.4f}')
 
         if show_radius:
-            ax = figure.append_ax()
             self.render_itr_vs_z_on_ax(ax=ax)
 
         if show_taper_angle:
-            ax = figure.append_ax()
             self.render_taper_angle_vs_z_on_ax(ax=ax)
 
         if show_adiabatic:
-            ax = figure.append_ax()
             self.render_adiabatic_factor_vs_itr_on_ax(ax=ax)
 
-        figure.annotate_axis(position=(-0.15, 1.15))
-
-        return figure
+        plt.show()
 
     def generate_propagation_gif(
             self,
@@ -766,7 +766,7 @@ class AlphaProfile():
         Returns:
             None
         """
-        figure, ax = plt.subplots(figsize=(12, 6))
+        figure, ax = plt.subplots(1, 1, figsize=(12, 6))
         ax.set_xlabel('Propagation axis [mm]', color='white' if dark_background else 'black')
         style_context = "dark_background" if dark_background else "default"
 

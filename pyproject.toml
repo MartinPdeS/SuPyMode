@@ -91,13 +91,7 @@ addopts = [
     '-rw'
 ]
 
-testpaths = [
-    "tests/detectors",
-    "tests/scatterers",
-    "tests/experiments",
-    "tests/validation",
-    "tests/extra"
-]
+testpaths = ["tests"]
 
 [tool.cibuildwheel]
 build-frontend = "build"

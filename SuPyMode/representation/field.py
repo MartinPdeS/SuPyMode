@@ -6,11 +6,12 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from SuPyMode.supermode import SuperMode
 
+from typing import NoReturn
 import numpy
-from MPSPlots.render2D import Axis
 from MPSPlots import colormaps
-from MPSPlots.render2D import SceneMatrix
-
+import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib import colors
 from SuPyMode.utils import interpret_slice_number_and_itr, slice_to_itr
 
 from SuPyMode.representation.base import InheritFromSuperMode
@@ -26,15 +27,6 @@ class Field(InheritFromSuperMode):
     Attributes:
         parent_supermode (InheritFromSuperMode): Reference to the parent supermode object that provides source data.
     """
-
-    plot_style = dict(
-        show_legend=False,
-        x_label=r'',
-        y_label=r'',
-        show_ticks=False,
-        x_scale_factor=1e6,
-        y_scale_factor=1e6
-    )
 
     def __init__(self, parent_supermode: SuperMode):
         """
@@ -206,36 +198,6 @@ class Field(InheritFromSuperMode):
 
         return field
 
-    def _render_on_ax_(self, ax: Axis, slice: int) -> None:
-        """
-        Renders a specified slice of the field data on a provided Axis object.
-
-        This method is typically used to add a field mesh plot to a plotting axis as part of a larger figure or plot matrix.
-
-        Args:
-            ax (Axis): The plotting Axis object to render the field on.
-            slice (int): The slice index of the field data to render.
-
-        Note:
-            This method applies internal colormap settings and adjusts the axis based on the field data.
-        """
-        field = self.parent_supermode.binding.get_field[slice]
-
-        x, y, field = self._get_symmetrized_field_and_axis(field=field)
-
-        artist = ax.add_mesh(
-            x=x,
-            y=y,
-            scalar=field,
-        )
-
-        ax.add_colorbar(
-            artist=artist,
-            colormap=colormaps.blue_black_red,
-            symmetric=True,
-            position='right'
-        )
-
     def plot(
             self,
             itr_list: list[float] = [],
@@ -243,7 +205,8 @@ class Field(InheritFromSuperMode):
             add_symmetries: bool = True,
             show_mode_label: bool = True,
             show_itr: bool = True,
-            show_slice: bool = True) -> SceneMatrix:
+            show_colorbar: bool = False,
+            show_slice: bool = True) -> NoReturn:
         """
         Plot the field for specified iterations or slice numbers.
 
@@ -253,65 +216,59 @@ class Field(InheritFromSuperMode):
             add_symmetries (bool): Whether to include boundary symmetries in the plot.
             show_mode_label (bool): Whether to show the mode label.
             show_itr (bool): Whether to show the iteration value.
+            show_colorbar (bool): Whether to show the colorbar.
             show_slice (bool): Whether to show the slice number.
-
-        Returns:
-            SceneMatrix: A matrix scene containing the plots.
         """
-        figure = SceneMatrix(unit_size=(3, 3))
-
         slice_list, itr_list = interpret_slice_number_and_itr(
             itr_baseline=self.itr_list,
             itr_list=itr_list,
             slice_list=slice_list
         )
 
+        unit_size = numpy.array([len(slice_list), 1])
+        figure, axes = plt.subplots(*unit_size, figsize=3 * numpy.flip(unit_size))
+
         for n, (itr, slice_number) in enumerate(zip(itr_list, slice_list)):
-            ax = figure.append_ax(row=n, column=0)
-
-            ax.set_style(**self.plot_style)
-
             self.render_on_ax(
-                ax=ax,
+                ax=axes[n],
                 slice_number=slice_number,
-                add_symmetries=add_symmetries
+                add_symmetries=add_symmetries,
+                show_colorbar=show_colorbar
             )
 
-        return figure
+        plt.tight_layout()
+        plt.show()
 
     def render_on_ax(
             self,
-            ax: object,
+            ax: plt.Axes,
             slice_number: int,
             show_mode_label: bool = True,
             show_itr: bool = True,
             show_slice: bool = True,
-            add_symmetries: bool = True) -> None:
+            show_colorbar: bool = False,
+            add_symmetries: bool = True) -> NoReturn:
         """
-        Render the mode field at given slice number into input ax.
+        Render the mode field at the given slice number into the input axis.
 
-        :param      ax:               { parameter_description }
-        :type       ax:               object
-        :param      slice_number:     The slice number
-        :type       slice_number:     int
-        :param      show_mode_label:  The show mode label
-        :type       show_mode_label:  bool
-        :param      show_itr:         The show itr
-        :type       show_itr:         bool
-        :param      show_slice:       The show slice
-        :type       show_slice:       bool
-        :param      add_symmetries:   Indicates if the symmetries is added
-        :type       add_symmetries:   bool
-
-        :returns:   No returns
-        :rtype:     None
+        Args:
+            ax (plt.Axes): The matplotlib axis to render the field on.
+            slice_number (int): The slice number to render.
+            show_mode_label (bool): Whether to show the mode label.
+            show_itr (bool): Whether to show the iteration value.
+            show_slice (bool): Whether to show the slice number.
+            show_colorbar (bool): Whether to show the colorbar.
+            add_symmetries (bool): Whether to include boundary symmetries.
         """
-        ax.title = self.get_plot_mode_field_title(
+        title = self.get_plot_mode_field_title(
             slice_number=slice_number,
             show_mode_label=show_mode_label,
             show_itr=show_itr,
             show_slice=show_slice
         )
+
+        ax.set_title(title)
+        ax.set_aspect('equal')
 
         field = self.get_field(
             slice_number=slice_number,
@@ -323,17 +280,15 @@ class Field(InheritFromSuperMode):
             add_symmetries=add_symmetries
         )
 
-        artist = ax.add_mesh(
-            x=x,
-            y=y,
-            scalar=field,
-        )
+        mappable = ax.pcolormesh(x * 1e6, y * 1e6, field, cmap=colormaps.blue_black_red, norm=colors.CenteredNorm())
+        plt.setp(ax.get_xticklabels(), visible=False)
 
-        ax.add_colorbar(
-            artist=artist,
-            colormap=colormaps.blue_black_red,
-            symmetric=True
-        )
+        if show_colorbar:
+            divider = make_axes_locatable(ax)
+            cax = divider.append_axes('right', size='5%', pad=0.05)
+
+            figure = ax.get_figure()
+            figure.colorbar(mappable, cax=cax, orientation='vertical')
 
     def get_plot_mode_field_title(self, slice_number: int, show_mode_label: bool, show_itr: bool, show_slice: bool) -> str:
         """

@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from itertools import combinations, product
 from pathvalidate import sanitize_filepath
-from typing import Optional, Tuple, List, Callable
+from typing import Optional, List, Callable, NoReturn
 from FiberFusing.geometry import Geometry
 
 # Third-party imports
@@ -20,11 +20,129 @@ import pyvista
 # Local imports
 from SuPyMode.binary.ModelParameters import ModelParameters
 from SuPyMode.supermode import SuperMode
-from SuPyMode import representation
 from SuPyMode.utils import test_valid_input, get_intersection, interpret_slice_number_and_itr, interpret_mode_of_interest
 from SuPyMode.profiles import AlphaProfile
 from SuPyMode import directories
-from MPSPlots.render2D import SceneMatrix, SceneList, Axis, Multipage
+from MPSPlots.render2D import Multipage
+import matplotlib.pyplot as plt
+
+
+class Propagation:
+    def __init__(self, superset: object, distance: numpy.ndarray, profile: AlphaProfile, amplitudes: numpy.ndarray, itr: numpy.ndarray):
+        """
+        Args:
+            profile (AlphaProfile): The profile to propagate.
+            amplitude: The modes amplitudes.
+        """
+        self.superset = superset
+        self.supermodes = superset.supermodes
+        self.itr = itr
+        self.distance = distance
+        self.profile = profile
+        self.amplitudes = amplitudes
+
+    def plot(self, sub_sampling: int = 5, show_energy: bool = True, show_amplitudes: bool = True, **kwargs: dict) -> NoReturn:
+        """
+        Plots the propagation of amplitudes over a given profile, showing energy and amplitude plots.
+
+        Args:
+            sub_sampling (int): The factor for sub-sampling data for plotting.
+            show_energy (bool): Whether to plot the energy of the modes.
+            show_amplitudes (bool): Whether to plot the real part of the amplitudes.
+            **kwargs (dict): Additional keyword arguments for solver.
+
+        Returns:
+            Tuple[plt.Figure, Tuple[np.ndarray, np.ndarray, np.ndarray]]:
+            A tuple containing the matplotlib figure object and a tuple with propagation distances, amplitudes, and inverse taper ratios.
+        """
+        figure, ax = plt.subplots(1, 1)
+        ax.set_xlabel('Propagation distance z')
+        ax.set_ylabel('Inverse taper ratio [ITR]')
+
+        for idx, mode in enumerate(self.supermodes):
+            color = f"C{idx}"
+            x_values = self.distance[::sub_sampling]
+            y_energy = numpy.abs(self.amplitudes[idx, ::sub_sampling])**2
+            y_amplitude = self.amplitudes[idx, ::sub_sampling].real
+
+            if show_energy:
+                ax.plot(x_values, y_energy, label=mode.stylized_label, linewidth=2.0, linestyle='-', color=color)
+            if show_amplitudes:
+                ax.plot(x_values, y_amplitude, label=mode.stylized_label + ' Amplitude', linewidth=2.0, linestyle='--', color=color)
+
+        if show_energy:
+            total_energy = numpy.sqrt(numpy.sum(numpy.abs(self.amplitudes)**2, axis=0))[::sub_sampling]
+            ax.plot(x_values, total_energy, label='Total energy', linewidth=3.0, linestyle='--', color='black')
+
+        ax.legend()
+        plt.show()
+
+    def generate_gif(
+            self, *,
+            sub_sampling: int = 5,
+            mutliplicative_factor: float = -100,
+            delta_azimuth: float = 0,
+            save_directory: str = 'new_figure.gif',
+            colormap: str = 'bwr',
+            **kwargs) -> NoReturn:
+        """
+        Generates a gif video of the mode propagation.
+
+        Args:
+            sub_sampling (int): Propagation undersampling factor for the video production.
+            mutliplicative_factor (float): Multiplicative factor for scaling.
+            save_directory (str): Directory to save the generated GIF.
+            delta_azimuth (float): Azimuthal change per frame.
+            **kwargs (dict): Additional keyword arguments for solver.
+
+        Returns:
+            Tuple: Propagation distances, amplitudes, and ITR list.
+        """
+        amplitudes_list = self.amplitudes[:, ::sub_sampling]
+        itr_list = self.itr[::sub_sampling]
+        z_list = self.distance[::sub_sampling]
+
+        structure = self.superset.get_slice_structure(itr=1.0, add_symmetries=True)
+        total_field = structure.get_field_combination(amplitudes_list[:, 0], Linf_normalization=True) * mutliplicative_factor
+
+        x, y = numpy.mgrid[0: total_field.shape[0], 0: total_field.shape[1]]
+        grid = pyvista.StructuredGrid(x, y, total_field)
+
+        plotter = pyvista.Plotter(notebook=False, off_screen=True)
+        plotter.open_gif(save_directory, fps=20)
+        plotter.view_isometric()
+        # plotter.set_background('black', top='white')
+
+        plotter.add_mesh(
+            grid,
+            scalars=total_field,
+            style='surface',
+            show_edges=True,
+            edge_color='k',
+            colormap=colormap,
+            show_scalar_bar=False,
+            clim=[-100, 100]
+        )
+
+        pts = grid.points.copy()
+        azimuth = 0
+        for z, amplitudes, itr in zip(z_list, amplitudes_list.T, itr_list):
+            print(f'itr: {itr}')
+            plotter.camera.elevation = -20
+            plotter.camera.azimuth = azimuth
+            azimuth += delta_azimuth
+
+            structure = self.superset.get_slice_structure(itr=itr, add_symmetries=True)
+            total_field = structure.get_field_combination(amplitudes, Linf_normalization=True) * mutliplicative_factor
+
+            pts[:, -1] = total_field.T.ravel()
+            plotter.update_coordinates(pts, render=True)
+            plotter.update_scalars(total_field.T.ravel(), render=False)
+            plotter.add_title(f'ITR: {itr: .3f}\t  z: {z: .3e}', font='courier', color='w', font_size=20)
+
+            plotter.write_frame()
+
+        plotter.close()
 
 
 @dataclass
@@ -89,7 +207,7 @@ class SuperSet(object):
     @property
     def transmission_matrix(self) -> numpy.ndarray:
         """
-        Return supermode transfert matrix
+        Return the supermode transmission matrix.
         """
         if self._transmission_matrix is None:
             self.compute_transmission_matrix()
@@ -98,13 +216,13 @@ class SuperSet(object):
 
     def itr_to_slice(self, itr_list: list[float]) -> list[int]:
         """
-        Return slice number associated to itr value
+        Convert ITR values to corresponding slice numbers.
 
-        :param      itr_list:      Inverse taper ration value to evaluate the slice.
-        :type       itr_list:      list[float]
+        Args:
+            itr_list (list[float]): Inverse taper ratio values.
 
-        :returns:   List of itr values,
-        :rtype:     list[int]
+        Returns:
+            list[int]: List of slice numbers corresponding to the ITR values.
         """
         itr_list = numpy.asarray(itr_list)
 
@@ -112,14 +230,13 @@ class SuperSet(object):
 
     def get_fundamental_supermodes(self, *, tolerance: float = 0.1) -> list[SuperMode]:
         """
-        Returns list of modes that do not spatially overlap and that have the highest
-        propagation constant values.
+        Returns a list of fundamental supermodes with the highest propagation constant values and minimal spatial overlap.
 
-        :param      tolerance:  The tolerance to which consider the spatial overlap
-        :type       tolerance:  float
+        Args:
+            tolerance (float): Tolerance for spatial overlap.
 
-        :returns:   List of the fundamental modes.
-        :rtype:     list[SuperMode]
+        Returns:
+            list[SuperMode]: List of fundamental supermodes.
         """
         self.sort_modes_by_beta()
 
@@ -154,14 +271,13 @@ class SuperSet(object):
 
     def get_non_fundamental_supermodes(self, *, tolerance: float = 0.1) -> list[SuperMode]:
         """
-        Returns list of modes that do not spatially don't overlap with the fundamental modes.
-        Those mode are usually related to higher-order or cladding supermodes.
+        Returns a list of non-fundamental supermodes that do not overlap with the fundamental modes.
 
-        :param      tolerance:  The tolerance to which consider the spatial overlap
-        :type       tolerance:  float
+        Args:
+            tolerance (float): Tolerance for spatial overlap.
 
-        :returns:   List of the non-fundamental modes.
-        :rtype:     list
+        Returns:
+            list[SuperMode]: List of non-fundamental supermodes.
         """
         non_fundamental_supermodes = self.supermodes
 
@@ -172,10 +288,10 @@ class SuperSet(object):
 
     def get_mode_solver_classification(self) -> list[list[SuperMode]]:
         """
-        Returns a list containing the modes ordered per solver number.
+        Returns a list of modes classified by solver number.
 
-        :returns:   The mode solver classification.
-        :rtype:     list[list[SuperMode]]
+        Returns:
+            list[list[SuperMode]]: List of lists containing modes classified by solver number.
         """
         solver_numbers = [mode.solver_number for mode in self]
 
@@ -191,21 +307,27 @@ class SuperSet(object):
         return mode_solver_array
 
     def label_supermodes(self, *label_list) -> None:
+        """
+        Assigns labels to the supermodes.
+
+        Args:
+            label_list (tuple): Labels to assign to the supermodes.
+        """
         for n, label in enumerate(label_list):
             self[n].label = label
 
             setattr(self, label, self[n])
 
     def reset_labels(self) -> None:
+        """
+        Resets labels for all supermodes to default values.
+        """
         for n, super_mode in self:
             super_mode.label = f'mode_{n}'
 
     def compute_transmission_matrix(self) -> None:
         """
         Calculates the transmission matrix with only the propagation constant included.
-
-        :returns:   The transmission matrix.
-        :rtype:     numpy.ndarray
         """
         shape = [
             len(self.supermodes),
@@ -222,13 +344,12 @@ class SuperSet(object):
         """
         Add the coupling coefficients to the transmission matrix.
 
-        :param      t_matrix:          The t matrix to which add the coupling values
-        :type       t_matrix:          numpy.ndarray
-        :param      adiabatic_factor:  The adiabatic factor, if None, it is set to one meaning normalized coupling [z-independent]
-        :type       adiabatic_factor:  numpy.ndarray
+        Args:
+            t_matrix (np.ndarray): Transmission matrix to which coupling values are added.
+            adiabatic_factor (np.ndarray): Adiabatic factor, set to one if None (normalized coupling).
 
-        :returns:   The transmission matrix.
-        :rtype:     numpy.ndarray
+        Returns:
+            np.ndarray: Updated transmission matrix with coupling values.
         """
         size = t_matrix.shape[-1]
 
@@ -251,17 +372,17 @@ class SuperSet(object):
         return t_matrix
 
     def compute_coupling_factor(self, *, coupler_length: float) -> numpy.ndarray:
-        r"""
+        """
         Compute the coupling factor defined as:
 
         .. math::
             f_c = \frac{1}{\rho} \frac{d \rho}{d z}
 
-        :param      coupler_length:     The length of the coupler
-        :type       coupler_length:     float
+        Args:
+            coupler_length (float): Length of the coupler.
 
-        :returns:   The amplitudes as a function of the distance in the coupler
-        :rtype:     numpy.ndarray
+        Returns:
+            np.ndarray: Coupling factor as a function of distance in the coupler.
         """
 
         dx = coupler_length / (self.model_parameters.n_slice)
@@ -272,12 +393,14 @@ class SuperSet(object):
 
     def get_transmision_matrix_from_profile(self, *, profile: AlphaProfile, add_coupling: bool = True) -> tuple:
         """
-        Gets the transmision matrix from profile.
+        Get the transmission matrix from the profile.
 
-        :param      profile:          The z-profile of the coupler
-        :type       profile:          object
-        :param      add_coupling:     Add coupling to the transmission matrix
-        :type       add_coupling:     bool
+        Args:
+            profile (AlphaProfile): Z-profile of the coupler.
+            add_coupling (bool): Add coupling to the transmission matrix. Defaults to True.
+
+        Returns:
+            tuple: Distance, ITR vector, and transmission matrix.
         """
         profile.initialize()
 
@@ -305,7 +428,7 @@ class SuperSet(object):
             n_step: Optional[int] = None,
             add_coupling: bool = True,
             method: str = 'RK45',
-            **kwargs: dict) -> Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]:
+            **kwargs: dict) -> Propagation:
         """
         Propagates the amplitudes of the supermodes in a coupler based on a given profile.
 
@@ -355,7 +478,9 @@ class SuperSet(object):
         if not numpy.allclose(norm, 1.0, atol=1e-1):
             logging.warning(f'Power conservation not achieved [{max_step = }, atol = 1e-1].')
 
-        return sol.t, sol.y, z_to_itr(sol.t)
+        propagation = Propagation(superset=self, amplitudes=sol.y, distance=sol.t, profile=profile, itr=z_to_itr(sol.t))
+        return propagation
+        # return sol.t, sol.y, z_to_itr(sol.t)
 
     def interpret_initial_input(self, initial_amplitude: list | SuperMode) -> numpy.ndarray:
         """
@@ -365,7 +490,7 @@ class SuperSet(object):
             initial_amplitude (list | SuperMode): The initial amplitude as either a list of complex numbers or a SuperMode object.
 
         Returns:
-            numpy.ndarray: The initial amplitudes as a NumPy array of complex numbers.
+            np.ndarray: The initial amplitudes as a NumPy array of complex numbers.
 
         Raises:
             ValueError: If the length of the initial amplitude list does not match the number of supermodes.
@@ -382,188 +507,6 @@ class SuperSet(object):
             raise ValueError(f'Amplitudes size: {amplitude_size} does not match with the number of supermodes: {number_of_supermodes}')
 
         return numpy.asarray(amplitudes, dtype=complex)
-
-    def plot_propagation(
-            self, *,
-            profile: AlphaProfile,
-            initial_amplitude,
-            max_step: Optional[float] = None,
-            add_coupling: bool = True,
-            method: str = 'RK45',
-            sub_sampling: int = 5,
-            show_energy: bool = True,
-            show_amplitudes: bool = True,
-            **kwargs: dict) -> Tuple[SceneList, Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]]:
-        """
-        Plots the propagation of amplitudes over a given profile, showing energy and amplitude plots.
-
-        Args:
-            profile (AlphaProfile): The profile to propagate.
-            initial_amplitude: The initial amplitudes, either as a list or a SuperMode object.
-            max_step (Optional[float]): The maximum step size for the solver.
-            add_coupling (bool): Whether to add coupling in the transmission matrix.
-            method (str): Numerical method for solving the propagation.
-            sub_sampling (int): The factor for sub-sampling data for plotting.
-            show_energy (bool): Whether to plot the energy of the modes.
-            show_amplitudes (bool): Whether to plot the real part of the amplitudes.
-            **kwargs (Dict[str, Any]): Additional keyword arguments for solver.
-
-        Returns:
-            Tuple[SceneList, Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]]:
-            A tuple containing the matplotlib figure object and a tuple with propagation distances, amplitudes, and inverse taper ratios.
-        """
-        initial_amplitude = self.interpret_initial_input(initial_amplitude)
-
-        z, amplitudes, itr_list = self.propagate(
-            initial_amplitude=initial_amplitude,
-            profile=profile,
-            add_coupling=add_coupling,
-            max_step=max_step,
-            method=method,
-            **kwargs
-        )
-
-        figure = SceneList(unit_size=(12, 4))
-        ax = figure.append_ax(line_width=2, show_legend=True, x_label='Propagation distance z', y_label='Inverse taper ratio [ITR]')
-
-        for idx, mode in enumerate(self.supermodes):
-            color = f"C{idx}"
-            x_values = z[::sub_sampling]
-            y_energy = numpy.abs(amplitudes[idx, ::sub_sampling])**2
-            y_amplitude = amplitudes[idx, ::sub_sampling].real
-
-            if show_energy:
-                ax.add_line(x=x_values, y=y_energy, label=mode.stylized_label, line_width=2.0, line_style='-', color=color)
-            if show_amplitudes:
-                ax.add_line(x=x_values, y=y_amplitude, label=mode.stylized_label + ' Amplitude', line_width=2.0, line_style='--', color=color)
-
-        if show_energy:
-            total_energy = numpy.sqrt(numpy.sum(numpy.abs(amplitudes)**2, axis=0))[::sub_sampling]
-            ax.add_line(x=x_values, y=total_energy, label='Total energy', line_width=3.0, line_style='--', color='black')
-
-        return figure.fig, (z, amplitudes, itr_list)
-
-    def generate_propagation_gif(
-            self, *,
-            profile: AlphaProfile,
-            initial_amplitude,
-            max_step: float = None,
-            coupling: str = 'normalized',
-            method: str = 'RK45',
-            sub_sampling: int = 5,
-            mutliplicative_factor: float = 1,
-            save_directory: str = 'new_figure.gif',
-            delta_azimuth: float = 0,
-            **kwargs) -> tuple:
-        """
-        Generates a gif video of the mode propagation.
-
-        :param      initial_amplitude:  The initial amplitude
-        :type       initial_amplitude:  list
-        :param      coupler_length:     The length of the coupler
-        :type       coupler_length:     float
-        :param      max_step:           The maximum stride to use in the solver
-        :type       max_step:           float
-        :param      sub_sampling:       Propagation undersampling factor for the video production
-        :type       sub_sampling:       int
-        :param      kwargs:             The keywords arguments
-        :type       kwargs:             dictionary
-        """
-
-        initial_amplitude = self.interpret_initial_input(
-            initial_amplitude=initial_amplitude
-        )
-
-        z_list, amplitudes_list, itr_list = self.propagate(
-            initial_amplitude=initial_amplitude,
-            profile=profile,
-            coupling=coupling,
-            max_step=max_step,
-            method=method
-        )
-
-        self.generate_propagation_gif_from_values(
-            amplitudes_list=amplitudes_list,
-            itr_list=itr_list,
-            z_list=z_list,
-            mutliplicative_factor=mutliplicative_factor,
-            save_directory=save_directory,
-            delta_azimuth=delta_azimuth,
-            sub_sampling=sub_sampling
-        )
-
-        return z_list, amplitudes_list, itr_list
-
-    def generate_propagation_gif_from_values(
-            self, *,
-            amplitudes_list: numpy.ndarray,
-            itr_list: numpy.ndarray,
-            z_list: numpy.ndarray,
-            sub_sampling: int = 10000,
-            mutliplicative_factor: float = -100,
-            delta_azimuth: float = 0,
-            save_directory: str = 'new_figure.gif',
-            colormap: str = 'bwr',
-            **kwargs) -> None:
-        """
-        Generates a gif video of the mode propagation.
-
-        :param      initial_amplitude:  The initial amplitude
-        :type       initial_amplitude:  list
-        :param      coupler_length:     The length of the coupler
-        :type       coupler_length:     float
-        :param      max_step:           The maximum stride to use in the solver
-        :type       max_step:           float
-        :param      sub_sampling:       Propagation undersampling factor for the video production
-        :type       sub_sampling:       int
-        :param      kwargs:             The keywords arguments
-        :type       kwargs:             dictionary
-        """
-        amplitudes_list = amplitudes_list[:, ::sub_sampling]
-        itr_list = itr_list[::sub_sampling]
-        z_list = z_list[::sub_sampling]
-
-        structure = self.get_slice_structure(itr=1.0, add_symmetries=True)
-        total_field = structure.get_field_combination(amplitudes_list[:, 0], Linf_normalization=True) * mutliplicative_factor
-
-        x, y = numpy.mgrid[0: total_field.shape[0], 0: total_field.shape[1]]
-        grid = pyvista.StructuredGrid(x, y, total_field)
-
-        plotter = pyvista.Plotter(notebook=False, off_screen=True)
-        plotter.open_gif(save_directory, fps=20)
-        plotter.view_isometric()
-        # plotter.set_background('black', top='white')
-
-        plotter.add_mesh(
-            grid,
-            scalars=total_field,
-            style='surface',
-            show_edges=True,
-            edge_color='k',
-            colormap=colormap,
-            show_scalar_bar=False,
-            clim=[-100, 100]
-        )
-
-        pts = grid.points.copy()
-        azimuth = 0
-        for z, amplitudes, itr in zip(z_list, amplitudes_list.T, itr_list):
-            print(f'itr: {itr}')
-            plotter.camera.elevation = -20
-            plotter.camera.azimuth = azimuth
-            azimuth += delta_azimuth
-
-            structure = self.get_slice_structure(itr=itr, add_symmetries=True)
-            total_field = structure.get_field_combination(amplitudes, Linf_normalization=True) * mutliplicative_factor
-
-            pts[:, -1] = total_field.T.ravel()
-            plotter.update_coordinates(pts, render=True)
-            plotter.update_scalars(total_field.T.ravel(), render=False)
-            plotter.add_title(f'ITR: {itr: .3f}\t  z: {z: .3e}', font='courier', color='w', font_size=20)
-
-            plotter.write_frame()
-
-        plotter.close()
 
     def _sort_modes(self, *ordering_keys) -> List[SuperMode]:
         """
@@ -618,24 +561,6 @@ class SuperSet(object):
         )
 
     @staticmethod
-    def single_plot(plot_function) -> Callable:
-        def wrapper(self, *args, mode_of_interest='all', **kwargs):
-            mode_of_interest = interpret_mode_of_interest(
-                superset=self,
-                mode_of_interest=mode_of_interest
-            )
-
-            figure = SceneList(unit_size=(16, 6), ax_orientation='vertical')
-
-            ax = figure.append_ax()
-
-            plot_function(self, ax=ax, *args, mode_of_interest=mode_of_interest, **kwargs)
-
-            return figure
-
-        return wrapper
-
-    @staticmethod
     def combination_plot(plot_function) -> Callable:
         def wrapper(self, *args, mode_of_interest='all', mode_selection: str = 'pairs', **kwargs):
             mode_of_interest = interpret_mode_of_interest(
@@ -648,37 +573,51 @@ class SuperSet(object):
                 mode_selection=mode_selection
             )
 
-            figure = SceneList(unit_size=(16, 6), ax_orientation='vertical')
-
-            ax = figure.append_ax()
+            figure, ax = plt.subplots(1, 1)
 
             plot_function(self, ax=ax, *args, mode_of_interest=mode_of_interest, combination=combination, **kwargs)
 
-            return figure
+            plt.show()
+
+        return wrapper
+
+    @staticmethod
+    def single_plot(plot_function) -> Callable:
+        def wrapper(self, *args, mode_of_interest='all', **kwargs):
+            mode_of_interest = interpret_mode_of_interest(
+                superset=self,
+                mode_of_interest=mode_of_interest
+            )
+
+            figure, ax = plt.subplots(1, 1)
+
+            plot_function(self, ax=ax, *args, mode_of_interest=mode_of_interest, **kwargs)
+
+            ax.legend()
+            plt.show()
 
         return wrapper
 
     @single_plot
     def plot_index(
             self,
-            ax: Axis,
+            ax: plt.Axes,
             show_crossings: bool = False,
-            mode_of_interest: str | list[SuperMode] = 'all') -> SceneList:
+            mode_of_interest: str | list[SuperMode] = 'all') -> NoReturn:
         """
-        Plot effective index for each mode as a function of itr
+        Plot effective index for each mode as a function of itr.
 
-        :param      mode_of_interest:  The mode of interest
-        :type       mode_of_interest:  str
-        :param      artist_kwargs:     The keywords arguments
-        :type       artist_kwargs:     dictionary
+        Args:
+            ax (plt.Axes): The matplotlib axis to render the plot on.
+            show_crossings (bool): Whether to show crossings in the plot.
+            mode_of_interest (str | list[SuperMode]): The mode of interest.
 
-        :returns:   figure instance, to plot the show() method.
-        :rtype:     SceneList
+        Returns:
+            None
         """
-        ax.set_style(**representation.index.Index.plot_style)
-
         for mode in mode_of_interest:
             mode.index.render_on_ax(ax=ax)
+            mode.index._dress_ax(ax=ax)
 
         if show_crossings:
             self.add_crossings_to_ax(ax=ax, mode_of_interest=mode_of_interest, data_type='index')
@@ -686,24 +625,23 @@ class SuperSet(object):
     @single_plot
     def plot_beta(
             self,
-            ax: Axis,
+            ax: plt.Axes,
             show_crossings: bool = False,
-            mode_of_interest: str | list[SuperMode] = 'all') -> SceneList:
+            mode_of_interest: str | list[SuperMode] = 'all') -> NoReturn:
         """
-        Plot propagation constant for each mode as a function of itr
+        Plot propagation constant for each mode as a function of itr.
 
-        :param      mode_of_interest:  The mode of interest
-        :type       mode_of_interest:  str
-        :param      artist_kwargs:     The keywords arguments
-        :type       artist_kwargs:     dictionary
+        Args:
+            ax (plt.Axes): The matplotlib axis to render the plot on.
+            show_crossings (bool): Whether to show crossings in the plot.
+            mode_of_interest (str | list[SuperMode]): The mode of interest.
 
-        :returns:   figure instance, to plot the show() method.
-        :rtype:     SceneList
+        Returns:
+            None
         """
-        ax.set_style(**representation.beta.Beta.plot_style)
-
         for mode in mode_of_interest:
             mode.beta.render_on_ax(ax=ax)
+            mode.beta._dress_ax(ax=ax)
 
         if show_crossings:
             self.add_crossings_to_ax(ax=ax, mode_of_interest=mode_of_interest, data_type='beta')
@@ -711,24 +649,23 @@ class SuperSet(object):
     @single_plot
     def plot_eigen_value(
             self,
-            ax: Axis,
+            ax: plt.Axes,
             mode_of_interest: str | list[SuperMode] = 'all',
-            show_crossings: bool = False) -> SceneList:
+            show_crossings: bool = False) -> NoReturn:
         """
-        Plot propagation constant for each mode as a function of itr
+        Plot propagation constant for each mode as a function of itr.
 
-        :param      mode_of_interest:  The mode of interest
-        :type       mode_of_interest:  str
-        :param      artist_kwargs:     The keywords arguments
-        :type       artist_kwargs:     dictionary
+        Args:
+            ax (plt.Axes): The matplotlib axis to render the plot on.
+            mode_of_interest (str | list[SuperMode]): The mode of interest.
+            show_crossings (bool): Whether to show crossings in the plot.
 
-        :returns:   figure instance, to plot the show() method.
-        :rtype:     SceneList
+        Returns:
+            None
         """
-        ax.set_style(**representation.eigen_value.EigenValue.plot_style)
-
         for mode in mode_of_interest:
-            mode.index.render_on_ax(ax=ax)
+            mode.eigen_value.render_on_ax(ax=ax)
+            mode.eigen_value._dress_ax(ax=ax)
 
         if show_crossings:
             self.add_crossings_to_ax(ax=ax, mode_of_interest=mode_of_interest, data_type='eigen_value')
@@ -736,69 +673,67 @@ class SuperSet(object):
     @combination_plot
     def plot_normalized_coupling(
             self,
-            ax: Axis,
+            ax: plt.Axes,
             mode_of_interest: list[SuperMode],
-            combination: list) -> SceneList:
+            combination: list) -> NoReturn:
         """
         Plot normalized coupling value for each mode as a function of itr.
 
-        :param      mode_of_interest:  The mode of interest
-        :type       mode_of_interest:  str
-        :param      mode_selection:    The mode selection
-        :type       mode_selection:    str
-        :param      artist_kwargs:     The keywords arguments
-        :type       artist_kwargs:     dictionary
+        Args:
+            ax (plt.Axes): The matplotlib axis to render the plot on.
+            mode_of_interest (list[SuperMode]): The mode of interest.
+            combination (list): The mode combinations.
 
-        :returns:   figure instance, to plot the show() method.
-        :rtype:     SceneList
+        Returns:
+            None
         """
-        ax.set_style(**representation.normalized_coupling.NormalizedCoupling.plot_style)
-
         for mode_0, mode_1 in combination:
             mode_0.normalized_coupling.render_on_ax(ax=ax, other_supermode=mode_1)
+            mode_0.normalized_coupling._dress_ax(ax=ax)
 
     @combination_plot
     def plot_beating_length(
             self,
-            ax: Axis,
+            ax: plt.Axes,
             mode_of_interest: list[SuperMode],
-            combination: list) -> SceneList:
+            combination: list) -> NoReturn:
         """
-        Plot coupling value for each mode as a function of itr
+        Plot coupling value for each mode as a function of itr.
 
-        :param      mode_of_interest:  List of the mode that are to be considered in the adiabatic criterion plotting.
-        :type       mode_of_interest:  list
+        Args:
+            ax (plt.Axes): The matplotlib axis to render the plot on.
+            mode_of_interest (list[SuperMode]): The mode of interest.
+            combination (list): The mode combinations.
 
-        :returns:   figure instance, to plot the show() method.
-        :rtype:     SceneList
+        Returns:
+            None
         """
         for mode_0, mode_1 in combination:
-            ax.set_style(**mode_0.beating_length.BeatingLength.plot_style)
             mode_0.beating_length.render_on_ax(ax=ax, other_supermode=mode_1)
+            mode_0.beating_length._dress_ax(ax=ax)
 
     @combination_plot
     def plot_adiabatic(
             self,
-            ax: Axis,
+            ax: plt.Axes,
             mode_of_interest: list[SuperMode],
             combination: list,
-            add_profile: list[AlphaProfile] = []) -> SceneList:
+            add_profile: list[AlphaProfile] = []) -> NoReturn:
         """
-        Plot adiabatic criterion for each mode as a function of itr
+        Plot adiabatic criterion for each mode as a function of itr.
 
-        :param      pair_of_interest:  List of the mode that are to be considered in the adiabatic criterion plotting.
-        :type       pair_of_interest:  list
-        :param      mode_selection:    The type of combination to be plotted, either 'specific/all/pairs'
-        :type       mode_selection:    str
-        :param      artist_kwargs:     The keywords arguments
-        :type       artist_kwargs:     dictionary
+        Args:
+            ax (plt.Axes): The matplotlib axis to render the plot on.
+            mode_of_interest (list[SuperMode]): The mode of interest.
+            combination (list): The mode combinations.
+            add_profile (list[AlphaProfile]): List of profiles to add to the plot.
 
-        :returns:   figure instance, to plot the show() method.
-        :rtype:     SceneList
+        Returns:
+            None
         """
-        ax.set_style(**representation.adiabatic.Adiabatic.plot_style)
         for mode_0, mode_1 in combination:
             mode_0.adiabatic.render_on_ax(ax=ax, other_supermode=mode_1)
+            mode_0.adiabatic._dress_ax(ax=ax)
 
         for profile in numpy.atleast_1d(add_profile):
             profile.render_adiabatic_factor_vs_itr_on_ax(ax=ax, line_style='--')
@@ -807,24 +742,24 @@ class SuperSet(object):
         """
         Determines whether the specified pair of mode is compatible for computation.
 
-        :param      pair_of_mode:  The pair of mode
-        :type       pair_of_mode:  tuple
+        Args:
+            pair_of_mode (tuple): The pair of modes.
 
-        :returns:   True if the specified pair of mode is compute compatible, False otherwise.
-        :rtype:     bool
+        Returns:
+            bool: True if the pair of modes is compute compatible, False otherwise.
         """
         mode_0, mode_1 = pair_of_mode
         return mode_0.is_computation_compatible(mode_1)
 
     def remove_duplicate_combination(self, supermodes_list: list) -> list[SuperMode]:
         """
-        Removes a duplicate combination in the mode combination list irrespectively of the order.
+        Removes duplicate combinations in the mode combination list irrespective of the order.
 
-        :param      supermodes_list:  The supermodes list
-        :type       supermodes_list:  list
+        Args:
+            supermodes_list (list): List of mode combinations.
 
-        :returns:   The reduced supermode list
-        :rtype:     list
+        Returns:
+            list: Reduced list of unique supermode combinations.
         """
         output_list = []
 
@@ -836,12 +771,14 @@ class SuperSet(object):
 
     def interpret_mode_selection(self, mode_of_interest: list, mode_selection: str) -> set:
         """
-        Interpret user input for mode selection and return the combination of mode to consider.
+        Interpret user input for mode selection and return the combination of modes to consider.
 
-        :param      mode_of_interest:  The mode of interest
-        :type       mode_of_interest:  list
-        :param      mode_selection:    The mode selection
-        :type       mode_selection:    str
+        Args:
+            mode_of_interest (list): List of modes of interest.
+            mode_selection (str): Mode selection method.
+
+        Returns:
+            set: Set of mode combinations.
         """
         test_valid_input(
             variable_name='mode_selection',
@@ -868,20 +805,21 @@ class SuperSet(object):
             slice_list: list[int] = None,
             show_mode_label: bool = True,
             show_itr: bool = True,
-            show_slice: bool = True) -> SceneList:
+            show_slice: bool = True) -> plt.figure:
         """
-        Plot each of the mode field for different itr value or slice number.
+        Plot each mode field for different ITR values or slice numbers.
 
-        :param      itr_list:    List of itr value to evaluate the mode field
-        :type       itr_list:    list
-        :param      slice_list:  List of integer reprenting the slice where the mode field is evaluated
-        :type       slice_list:  list
+        Args:
+            mode_of_interest (list): List of modes of interest.
+            itr_list (list): List of ITR values to evaluate the mode field.
+            slice_list (list): List of slice numbers to evaluate the mode field.
+            show_mode_label (bool): Whether to show mode label.
+            show_itr (bool): Whether to show ITR.
+            show_slice (bool): Whether to show slice.
 
-        :returns:   The figure
-        :rtype:     SceneMatrix
+        Returns:
+            plt.Figure: The figure containing the plots.
         """
-        figure = SceneMatrix(unit_size=(3, 3))
-
         slice_list, itr_list = interpret_slice_number_and_itr(
             itr_baseline=self.model_parameters.itr_list,
             itr_list=itr_list,
@@ -893,32 +831,31 @@ class SuperSet(object):
             mode_of_interest=mode_of_interest
         )
 
+        unit_size = numpy.array([len(slice_list), len(mode_of_interest)])
+        figure, axes = plt.subplots(*unit_size, figsize=3 * numpy.flip(unit_size))
+
         for m, mode in enumerate(mode_of_interest):
             for n, slice_number in enumerate(slice_list):
-                ax = figure.append_ax(row=n, column=m)
-
-                ax.set_style(**representation.field.Field.plot_style)
-
                 mode.field.render_on_ax(
-                    ax=ax,
+                    ax=axes[n, m],
                     slice_number=slice_number,
                     show_mode_label=show_mode_label,
                     show_itr=show_itr,
                     show_slice=show_slice
                 )
 
+        figure.tight_layout()
+        plt.show()
+
         return figure
 
-    def plot(self, plot_type: str, **kwargs) -> SceneList:
+    def plot(self, plot_type: str, **kwargs) -> NoReturn:
         """
         General plotting function to handle different types of supermode plots.
 
         Args:
             plot_type (str): The type of plot to generate. Options include 'index', 'beta', 'eigen-value', etc.
             **kwargs: Additional keyword arguments for specific plot configurations.
-
-        Returns:
-            SceneList: The generated plot as a SceneList object.
 
         Raises:
             ValueError: If an unrecognized plot type is specified.
@@ -955,21 +892,19 @@ class SuperSet(object):
             mode_of_interest: list = 'all',
             mode_selection: str = 'specific') -> None:
         """
-        Generate a full report of the coupler properties as a .pdf file
+        Generate a full report of the coupler properties as a .pdf file.
 
-        :param      filename:          Name of the Report file to be outputed.
-        :type       filename:          str
-        :param      itr_list:          List of itr value to evaluate the mode field.
-        :type       itr_list:          Array
-        :param      slice_list:        List of slice value to evaluate the mode field.
-        :type       slice_list:        Array
-        :param      dpi:               Pixel density for the image included in the report.
-        :type       dpi:               int
-        :param      mode_of_interest:  List of the mode that are to be considered in the adiabatic criterion plotting.
-        :type       mode_of_interest:  list
+        Args:
+            filename (str): Name of the report file to be output.
+            directory (str): Directory to save the report.
+            itr_list (List[float]): List of ITR values to evaluate the mode field.
+            slice_list (List[int]): List of slice values to evaluate the mode field.
+            dpi (int): Pixel density for the images included in the report.
+            mode_of_interest (List): List of modes to consider in the adiabatic criterion plotting.
+            mode_selection (str): Method for selecting mode combinations.
 
-        :returns:   No return
-        :rtype:     None
+        Returns:
+            None
         """
         if directory == 'auto':
             directory = directories.reports_path
@@ -999,15 +934,14 @@ class SuperSet(object):
 
     def save_instance(self, filename: str, directory: str = 'auto') -> Path:
         """
-        Saves the superset instance as a serialized pickle file.
+        Saves the SuperSet instance as a serialized pickle file.
 
-        :param      filename:  The directory where to save the file, 'auto' options means the superset_instance folder
-        :type       filename:  str
-        :param      filename:  The filename
-        :type       filename:  str
+        Args:
+            filename (str): Filename for the serialized instance.
+            directory (str): Directory to save the file, 'auto' means the instance_directory.
 
-        :returns:   The path directory of the saved instance
-        :rtype:     Path
+        Returns:
+            Path: The path to the saved instance file.
         """
         if directory == 'auto':
             directory = directories.instance_directory
@@ -1025,7 +959,7 @@ class SuperSet(object):
 
         return filename
 
-    def add_crossings_to_ax(self, ax: Axis, mode_of_interest: list, data_type: str) -> None:
+    def add_crossings_to_ax(self, ax: plt.Axes, mode_of_interest: list, data_type: str) -> None:
         combination = self.interpret_mode_selection(
             mode_of_interest=mode_of_interest,
             mode_selection='pairs'
@@ -1040,14 +974,7 @@ class SuperSet(object):
             )
 
             if x is not None:
-                ax.add_scatter(
-                    x=x,
-                    y=y,
-                    marker='o',
-                    color='black',
-                    marker_size=20,
-                    label='mode crossing'
-                )
+                ax.scatter(x=x, y=y, marker='o', color='black', s=20, label='mode crossing')
 
 
 # -

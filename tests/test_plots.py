@@ -44,7 +44,7 @@ def test_superset_plot(mock_show, setup_workflow, plot_type):
         plot_type (str): Type of plot to generate and test.
     """
     superset = setup_workflow.superset
-    superset.plot(plot_type=plot_type).show()
+    superset.plot(plot_type=plot_type)
     mock_show.assert_called_once()
     mock_show.reset_mock()
 
@@ -67,10 +67,14 @@ def test_representation_plot(mock_show, setup_workflow, plot_type):
     # Handling for 'normalized-coupling' and 'adiabatic' which require another mode as a parameter
     if plot_type in ['normalized-coupling', 'adiabatic']:
         other_mode = setup_workflow.superset[1]  # Assuming at least two modes for these tests
-        mode.plot(plot_type=plot_type, other_supermode=other_mode).show()
+        mode.plot(plot_type=plot_type, other_supermode=other_mode)
     else:
-        mode.plot(plot_type=plot_type).show()
+        mode.plot(plot_type=plot_type)
 
     mock_show.assert_called_once()
     mock_show.reset_mock()
+
+
+if __name__ == "__main__":
+    pytest.main()
 # -

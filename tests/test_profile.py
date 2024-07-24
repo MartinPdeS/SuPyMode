@@ -21,7 +21,7 @@ def test_build_single_segment_profile(mock_show, alpha_profile):
         stretching_length=0.2e-3 * 200
     )
     alpha_profile.initialize()
-    alpha_profile.plot().show()
+    alpha_profile.plot()
 
     mock_show.assert_called_once()
 
@@ -42,7 +42,7 @@ def test_build_two_segment_profile(mock_show, alpha_profile):
         stretching_length=0.2e-3 * 200
     )
     alpha_profile.initialize()
-    alpha_profile.plot().show()
+    alpha_profile.plot()
 
     mock_show.assert_called_once()
 
@@ -59,7 +59,7 @@ def test_build_asymmetric_profile(mock_show):
         stretching_length=0.2e-3 * 200
     )
     asymmetric_profile.initialize()
-    asymmetric_profile.plot().show()
+    asymmetric_profile.plot()
 
     mock_show.assert_called_once()
 

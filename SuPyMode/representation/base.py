@@ -6,89 +6,95 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from SuPyMode.supermode import SuperMode
 
-
-import numpy
-from MPSPlots.render2D import SceneList, Axis
+from typing import NoReturn
+import matplotlib.pyplot as plt
 
 
 class BaseMultiModePlot():
-    def _render_on_ax_(self, ax: Axis, other_supermode: SuperMode = None):
-        if other_supermode is None:
-            other_supermode = self.parent_supermode.parent_set.supermodes
-        else:
-            other_supermode = numpy.atleast_1d(other_supermode)
-
-        for mode in other_supermode:
-            if mode.ID == self.ID or mode.solver_number != self.solver_number:
-                continue
-
-            ax.add_line(
-                x=self.itr_list,
-                y=self.get_values(mode),
-                label=f'{self.stylized_label} - {mode.stylized_label}'
-            )
-
-            ax.set_style(**self.plot_style)
-
-    def plot(
-            self,
-            other_supermode: SuperMode = None,
-            row: int = 0,
-            col: int = 0) -> None:
+    def render_on_ax(self, ax: plt.Axes, other_supermode: SuperMode) -> None:
         """
-        Plotting method for the index.
+        Renders normalized mode coupling data as a line plot on the provided Axes object, comparing the parent supermode
+        with another supermode.
 
-        :param      slice_list:  Value reprenting the slice where the mode field is evaluated.
-        :type       slice_list:  list
-        :param      itr_list:    Value of itr value to evaluate the mode field.
-        :type       itr_list:    list
+        Args:
+            ax (plt.Axes): The Axes object on which to plot the normalized mode coupling.
+            other_supermode (SuperMode): The other supermode to compare against.
 
-        :returns:   the figure containing all the plots.
-        :rtype:     SceneList
+        Note:
+            This method is conditioned on computational compatibility between the supermodes.
         """
-        figure = SceneList(unit_size=(10, 4), tight_layout=True)
+        if not self.parent_supermode.is_computation_compatible(other_supermode):
+            return
 
-        ax = figure.append_ax()
+        y = self.get_values(other_supermode=other_supermode)
 
-        self._render_on_ax_(ax=ax, other_supermode=other_supermode)
+        label = f'{self.parent_supermode.stylized_label} - {other_supermode.stylized_label}'
 
-        return figure
+        ax.plot(self.itr_list, abs(y), label=label, linewidth=2)
+
+    def plot(self, other_supermode: SuperMode) -> NoReturn:
+        """
+        Generates a plot of specific parameter coupling between the parent supermode and another specified supermode using a SceneList.
+
+        This method creates a single-axis plot showing the comparative mode couplings as a function of the inverse taper ratio,
+        formatted according to the predefined plot style.
+
+        Args:
+            other_supermode (SuperMode): The supermode to compare against.
+
+        Returns:
+            SceneList: A scene list containing the plot of normalized mode couplings.
+        """
+        figure, ax = plt.subplots(1, 1)
+
+        self._dress_ax(ax)
+
+        self.render_on_ax(ax=ax, other_supermode=other_supermode)
+
+        ax.legend()
+
+        figure.tight_layout()
+        plt.show()
 
 
 class BaseSingleModePlot():
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int):
         return self._data[idx]
 
-    def _render_on_ax_(self, ax: Axis) -> None:
-        self._set_axis_(ax)
-
-        ax.set_style(self.plot_style)
-
-        ax.add_line(x=self.itr_list, y=self._data, label=self.stylized_label)
-
-    def plot(self, row: int = 0, col: int = 0) -> None:
+    def render_on_ax(self, ax: plt.Axis) -> None:
         """
-        Plotting method for the index.
+        Renders the eigenvalues as a line plot on the provided Axis object.
 
-        :param      slice_list:  Value reprenting the slice where the mode field is evaluated.
-        :type       slice_list:  list
-        :param      itr_list:    Value of itr value to evaluate the mode field.
-        :type       itr_list:    list
+        Args:
+            ax (Axis): The Axis object on which the eigenvalues will be plotted.
 
-        :returns:   the figure containing all the plots.
-        :rtype:     SceneList
+        Note:
+            This method utilizes the plotting configuration set on the Axis to define the appearance of the plot.
         """
-        figure = SceneList(unit_size=(10, 4), tight_layout=True)
+        ax.plot(self.itr_list, self.data, label=f'{self.stylized_label}', linewidth=2)
 
-        ax = figure.append_ax()
+    def plot(self) -> NoReturn:
+        """
+        Generates a plot of the using matplotlib.
 
-        self._render_on_ax_(ax)
+        This method creates a single-axis plot showing the propagation constants as a function of the inverse taper ratio,
+        formatted according to the predefined plot style.
 
-        return figure
+        """
+        figure, ax = plt.subplots(1, 1)
+
+        self._dress_ax(ax)
+
+        self.render_on_ax(ax=ax)
+
+        ax.legend()
+
+        figure.tight_layout()
+        plt.show()
 
 
 class InheritFromSuperMode():
-    def _set_axis_(self, ax: Axis):
+    def _set_axis_(self, ax: plt.Axes):
         for element, value in self.plot_style.items():
             setattr(ax, element, value)
 
