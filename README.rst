@@ -29,7 +29,7 @@ To this day, SuPyMode as been proven a useful tool to develop very-short 2x1 and
 
 Documentation
 **************
-All the latest available documentation is available `here <https://supymodes.readthedocs.io/en/latest/>`_ or you can click the following badge:
+All the latest available documentation is available `here <https://supymode.readthedocs.io/en/latest/>`_ or you can click the following badge:
 
 |docs|
 
@@ -101,8 +101,8 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
 .. |python| image:: https://img.shields.io/badge/Made%20with-Python-1f425f.svg
    :target: https://www.python.org/
 
-.. |docs| image:: https://readthedocs.org/projects/supymodes/badge/?version=latest
-   :target: https://supymodes.readthedocs.io/en/latest/
+.. |docs| image:: https://readthedocs.org/projects/supymode/badge/?version=latest
+   :target: https://supymode.readthedocs.io/en/latest/
    :alt: Documentation Status
 
 .. |Citation| image:: https://zenodo.org/badge/366930899.svg

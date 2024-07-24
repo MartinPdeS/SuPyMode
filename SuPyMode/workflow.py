@@ -39,7 +39,7 @@ def prepare_simulation_geometry(
         index_scrambling: float = 0,
         resolution: int = 150,
         rotation: float = 0,
-        boundary_pad_factor: float = 1.2,
+        air_padding_factor: float = 1.2,
         gaussian_filter: float = 0,
         background_index: float = 1) -> Geometry:
     """
@@ -98,7 +98,7 @@ def prepare_simulation_geometry(
         y_bounds=y_bounds,
         resolution=resolution,
         index_scrambling=index_scrambling,
-        boundary_pad_factor=boundary_pad_factor,
+        boundary_pad_factor=air_padding_factor,
         gaussian_filter=gaussian_filter
     )
 
@@ -272,6 +272,7 @@ class Workflow():
             y_bounds=self.y_bounds,
             x_bounds=self.x_bounds,
             rotation=self.clad_rotation,
+            air_padding_factor=self.air_padding_factor,
             gaussian_filter=self.gaussian_filter_factor
         )
 

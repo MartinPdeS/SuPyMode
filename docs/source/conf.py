@@ -6,7 +6,7 @@ from sphinx_gallery.sorting import FileNameSortKey
 from sphinx_gallery.sorting import ExplicitOrder
 from packaging.version import parse
 from MPSPlots.styles import use_mpsplots_style
-
+import SuPyMode
 
 from SuPyMode.directories import (
     project_path,
@@ -42,6 +42,8 @@ autodoc_mock_imports = [
 project = 'SuPyMode'
 copyright = '2021, Martin Poinsinet de Sivry-Houle'
 author = 'Martin Poinsinet de Sivry-Houle'
+
+version = SuPyMode.__version__
 
 
 with open(version_path, "r+") as f:
@@ -117,15 +119,9 @@ pygments_style = "sphinx"
 
 # -- Sphinx-gallery configuration --------------------------------------------
 
-v = parse(release)
-if v.release is None:
-    raise ValueError(f"Ill-formed version: {version!r}. Version should follow PEP440")
+major, minor = version[:2]
+binder_branch = f"v{major}.{minor}.x"
 
-if v.is_devrelease:
-    binder_branch = "main"
-else:
-    major, minor = v.release[:2]
-    binder_branch = f"v{major}.{minor}.x"
 
 html_theme_options = {
     # Navigation bar

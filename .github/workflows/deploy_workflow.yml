@@ -3,8 +3,11 @@ name: Deploy
 on:
     push:
         branches: [ "master" ]
+        tags:
+          - '*'
     pull_request:
         branches: [ "master" ]
+
 
 permissions:
     contents: write
@@ -16,9 +19,12 @@ jobs:
           - uses: MartinPdeS/MPSActions/build_package_for_manylinux@master
 
 
-    macos_x86_64:
-        runs-on: macos-11
+    macos_arm64:
+        runs-on: macos-latest
         steps:
+          - uses: maxim-lobanov/setup-xcode@v1
+            with:
+                xcode-version: '15.3'
           - uses: MartinPdeS/MPSActions/build_package_for_MacOS@master
 
 
@@ -29,7 +35,7 @@ jobs:
 
 
     publish_coverage:
-        if: "contains(github.event.head_commit.message, '[publish]')"
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         needs: [ManyLinux_x86_64]
         runs-on: ubuntu-latest
         steps:
@@ -42,7 +48,7 @@ jobs:
 
 
     publish_documentation:
-        if: "contains(github.event.head_commit.message, '[publish]')"
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         needs: [ManyLinux_x86_64]
         runs-on: ubuntu-latest
         steps:
@@ -54,7 +60,7 @@ jobs:
 
 
     publish_wheel:
-        if: "contains(github.event.head_commit.message, '[publish]')"
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         needs: [Windows_x86_64, ManyLinux_x86_64, macos_x86_64, publish_documentation, publish_coverage]
         runs-on: ubuntu-latest
         steps:

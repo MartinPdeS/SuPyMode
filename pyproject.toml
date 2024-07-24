@@ -1,4 +1,89 @@
+[build-system]
+requires = ["scikit-build-core>=0.3.3", "pybind11", "setuptools_scm[toml]>=8.0"]
+build-backend = "scikit_build_core.build"
+
+[tool.scikit-build]
+metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
+cmake.verbose = false
+editable.verbose = false
+logging.level = "INFO"
+wheel.exclude = ["SuPyMode/cpp"]
+install.strip = false
+sdist.include = ["SuPyMode/binary/*"]
+sdist.exclude = [
+    "tests",
+    "docs",
+    ".git*",
+    "developments",
+]
+
+[project]
+name = "SuPyMode"
+dynamic = ["version"]
+description = "A package for light propagation in fiber optics."
+license = {file = "LICENSE"}
+documentation = 'https://supymode.readthedocs.io/'
+platforms = ['unix', 'linux', 'osx']
+readme = "README.rst"
+url = 'https://github.com/MartinPdeS/SuPyMode'
+requires-python = ">=3.10"
+authors = [{ name="Martin Poinsinet de Sivry-Houle", email="martin.poinsinet.de.sivry@gmail.com"}]
+classifiers = [
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: Implementation :: CPython',
+    'Development Status :: 4 - Beta',
+    'Topic :: Scientific/Engineering :: Physics',
+    'License :: OSI Approved :: MIT License',
+    'Intended Audience :: Science/Research',
+]
+keywords = [
+    "coupled-mode theory",
+    "waveguide",
+]
+dependencies = [
+    "setuptools_scm[toml]>=8.0",
+    "numpy>=1.26.0",
+    "MPSPlots==1.4.5",
+    "pydantic==2.6.3",
+    "PyFinitDiff==1.3.0",
+    "FiberFusing==1.3.3",
+    "scipy==1.11.3",
+    "pathvalidate==3.2.0",
+]
+
+[tool.setuptools_scm]
+write_to = "SuPyMode/_version.py"
+version_scheme = "post-release"
+local_scheme = "no-local-version"
+
+[project.optional-dependencies]
+testing = [
+    "pymiescatt",
+    "pytest>=0.6",
+    "pytest-cov>=2.0",
+    "pytest-json-report==1.5.0",
+    "mypy>=0.910",
+    "flake8>=3.9",
+    "tox>=3.24",
+    "coverage==6.5.0"
+]
+
+documentation = [
+    "pymiescatt",
+    "numpydoc==1.6.0",
+    "sphinx>=5.1.1",
+    "sphinx-gallery==0.15.0",
+    "sphinx-rtd-theme==2.0.0",
+    "pydata-sphinx-theme==0.14.1",
+]
+
 [tool.pytest.ini_options]
+minversion = "6.0"
+xfail_strict = true
+log_cli_level = "INFO"
 addopts = [
     "--import-mode=importlib",
     '-v',
@@ -7,22 +92,18 @@ addopts = [
 ]
 
 testpaths = [
-    "tests/test_api.py",
-    "tests/test_plots.py",
-    "tests/test_profile.py",
-    "tests/test_validation_normalized_coupling.py",
-    "tests/test_validation_propagation_constant.py",
-    "tests/test_validation_symmetry.py",
-    "tests/test_workflow.py"
+    "tests/detectors",
+    "tests/scatterers",
+    "tests/experiments",
+    "tests/validation",
+    "tests/extra"
 ]
 
-minversion = 6.0
-
 [tool.cibuildwheel]
-build-frontend = "pip"
-build-verbosity = 0
+build-frontend = "build"
+build-verbosity = 2
 before-test = ""
-test-command = "python -m pytest {project}/tests"
+test-command = "python -m pytest -rA {project}/tests --ignore={project}/tests/gui"
 test-extras = ["testing"]
 
 [tool.cibuildwheel.linux]
@@ -32,10 +113,10 @@ manylinux-x86_64-image = "manylinux2014"
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
-archs = ["arm64", "universal2", "x86_64"]
+environment = {MACOSX_DEPLOYMENT_TARGET = "15.0"}
+archs = ["arm64"]
 build = ["cp310-*", "cp311-*", "cp312-*"]
 repair-wheel-command = "delocate-wheel -w {dest_dir} -v {wheel}"
-test-skip = "*-macosx_arm64"
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
