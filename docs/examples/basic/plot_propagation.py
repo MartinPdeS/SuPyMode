@@ -70,5 +70,5 @@ profile.initialize()
 
 propagation = workflow.superset.propagate(add_coupling=False, profile=profile, initial_amplitude=[1, 0, 0])
 
-propagation.plot()
+propagation.generate_gif()
 # -

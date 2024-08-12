@@ -15,7 +15,6 @@ from FiberFusing.geometry import Geometry
 # Third-party imports
 from scipy.interpolate import interp1d
 from scipy.integrate import solve_ivp
-import pyvista
 
 # Local imports
 from SuPyMode.binary.ModelParameters import ModelParameters
@@ -25,124 +24,7 @@ from SuPyMode.profiles import AlphaProfile
 from SuPyMode import directories
 from MPSPlots.render2D import Multipage
 import matplotlib.pyplot as plt
-
-
-class Propagation:
-    def __init__(self, superset: object, distance: numpy.ndarray, profile: AlphaProfile, amplitudes: numpy.ndarray, itr: numpy.ndarray):
-        """
-        Args:
-            profile (AlphaProfile): The profile to propagate.
-            amplitude: The modes amplitudes.
-        """
-        self.superset = superset
-        self.supermodes = superset.supermodes
-        self.itr = itr
-        self.distance = distance
-        self.profile = profile
-        self.amplitudes = amplitudes
-
-    def plot(self, sub_sampling: int = 5, show_energy: bool = True, show_amplitudes: bool = True, **kwargs: dict) -> NoReturn:
-        """
-        Plots the propagation of amplitudes over a given profile, showing energy and amplitude plots.
-
-        Args:
-            sub_sampling (int): The factor for sub-sampling data for plotting.
-            show_energy (bool): Whether to plot the energy of the modes.
-            show_amplitudes (bool): Whether to plot the real part of the amplitudes.
-            **kwargs (dict): Additional keyword arguments for solver.
-
-        Returns:
-            Tuple[plt.Figure, Tuple[np.ndarray, np.ndarray, np.ndarray]]:
-            A tuple containing the matplotlib figure object and a tuple with propagation distances, amplitudes, and inverse taper ratios.
-        """
-        figure, ax = plt.subplots(1, 1)
-        ax.set_xlabel('Propagation distance z')
-        ax.set_ylabel('Inverse taper ratio [ITR]')
-
-        for idx, mode in enumerate(self.supermodes):
-            color = f"C{idx}"
-            x_values = self.distance[::sub_sampling]
-            y_energy = numpy.abs(self.amplitudes[idx, ::sub_sampling])**2
-            y_amplitude = self.amplitudes[idx, ::sub_sampling].real
-
-            if show_energy:
-                ax.plot(x_values, y_energy, label=mode.stylized_label, linewidth=2.0, linestyle='-', color=color)
-            if show_amplitudes:
-                ax.plot(x_values, y_amplitude, label=mode.stylized_label + ' Amplitude', linewidth=2.0, linestyle='--', color=color)
-
-        if show_energy:
-            total_energy = numpy.sqrt(numpy.sum(numpy.abs(self.amplitudes)**2, axis=0))[::sub_sampling]
-            ax.plot(x_values, total_energy, label='Total energy', linewidth=3.0, linestyle='--', color='black')
-
-        ax.legend()
-        plt.show()
-
-    def generate_gif(
-            self, *,
-            sub_sampling: int = 5,
-            mutliplicative_factor: float = -100,
-            delta_azimuth: float = 0,
-            save_directory: str = 'new_figure.gif',
-            colormap: str = 'bwr',
-            **kwargs) -> NoReturn:
-        """
-        Generates a gif video of the mode propagation.
-
-        Args:
-            sub_sampling (int): Propagation undersampling factor for the video production.
-            mutliplicative_factor (float): Multiplicative factor for scaling.
-            save_directory (str): Directory to save the generated GIF.
-            delta_azimuth (float): Azimuthal change per frame.
-            **kwargs (dict): Additional keyword arguments for solver.
-
-        Returns:
-            Tuple: Propagation distances, amplitudes, and ITR list.
-        """
-        amplitudes_list = self.amplitudes[:, ::sub_sampling]
-        itr_list = self.itr[::sub_sampling]
-        z_list = self.distance[::sub_sampling]
-
-        structure = self.superset.get_slice_structure(itr=1.0, add_symmetries=True)
-        total_field = structure.get_field_combination(amplitudes_list[:, 0], Linf_normalization=True) * mutliplicative_factor
-
-        x, y = numpy.mgrid[0: total_field.shape[0], 0: total_field.shape[1]]
-        grid = pyvista.StructuredGrid(x, y, total_field)
-
-        plotter = pyvista.Plotter(notebook=False, off_screen=True)
-        plotter.open_gif(save_directory, fps=20)
-        plotter.view_isometric()
-        # plotter.set_background('black', top='white')
-
-        plotter.add_mesh(
-            grid,
-            scalars=total_field,
-            style='surface',
-            show_edges=True,
-            edge_color='k',
-            colormap=colormap,
-            show_scalar_bar=False,
-            clim=[-100, 100]
-        )
-
-        pts = grid.points.copy()
-        azimuth = 0
-        for z, amplitudes, itr in zip(z_list, amplitudes_list.T, itr_list):
-            print(f'itr: {itr}')
-            plotter.camera.elevation = -20
-            plotter.camera.azimuth = azimuth
-            azimuth += delta_azimuth
-
-            structure = self.superset.get_slice_structure(itr=itr, add_symmetries=True)
-            total_field = structure.get_field_combination(amplitudes, Linf_normalization=True) * mutliplicative_factor
-
-            pts[:, -1] = total_field.T.ravel()
-            plotter.update_coordinates(pts, render=True)
-            plotter.update_scalars(total_field.T.ravel(), render=False)
-            plotter.add_title(f'ITR: {itr: .3f}\t  z: {z: .3e}', font='courier', color='w', font_size=20)
-
-            plotter.write_frame()
-
-        plotter.close()
+from SuPyMode.propagation import Propagation
 
 
 @dataclass
@@ -478,9 +360,13 @@ class SuperSet(object):
         if not numpy.allclose(norm, 1.0, atol=1e-1):
             logging.warning(f'Power conservation not achieved [{max_step = }, atol = 1e-1].')
 
-        propagation = Propagation(superset=self, amplitudes=sol.y, distance=sol.t, profile=profile, itr=z_to_itr(sol.t))
-        return propagation
-        # return sol.t, sol.y, z_to_itr(sol.t)
+        return Propagation(
+            superset=self,
+            amplitudes=sol.y,
+            distance=sol.t,
+            profile=profile,
+            z_to_itr=z_to_itr
+        )
 
     def interpret_initial_input(self, initial_amplitude: list | SuperMode) -> numpy.ndarray:
         """
