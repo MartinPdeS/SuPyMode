@@ -102,7 +102,7 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
    :target: https://www.python.org/
 
 .. |docs| image:: https://readthedocs.org/projects/supymode/badge/?version=latest
-   :target: https://supymode.readthedocs.io/en/latest/
+   :target: https://supymodes.readthedocs.io/en/latest/
    :alt: Documentation Status
 
 .. |Citation| image:: https://zenodo.org/badge/366930899.svg
