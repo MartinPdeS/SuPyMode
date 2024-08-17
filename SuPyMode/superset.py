@@ -25,10 +25,11 @@ from SuPyMode import directories
 from MPSPlots.render2D import Multipage
 import matplotlib.pyplot as plt
 from SuPyMode.propagation import Propagation
+from SuPyMode.superset_plots import SuperSetPlots
 
 
 @dataclass
-class SuperSet(object):
+class SuperSet(SuperSetPlots):
     """
     A class representing a set of supermodes calculated for a specific optical fiber configuration.
     It facilitates operations on supermodes like sorting, plotting, and computations related to fiber optics simulations.
@@ -446,184 +447,6 @@ class SuperSet(object):
              [-mode.beta[-1] for mode in self.supermodes])
         )
 
-    @staticmethod
-    def combination_plot(plot_function) -> Callable:
-        def wrapper(self, *args, mode_of_interest='all', mode_selection: str = 'pairs', **kwargs):
-            mode_of_interest = interpret_mode_of_interest(
-                superset=self,
-                mode_of_interest=mode_of_interest
-            )
-
-            combination = self.interpret_mode_selection(
-                mode_of_interest=mode_of_interest,
-                mode_selection=mode_selection
-            )
-
-            figure, ax = plt.subplots(1, 1)
-
-            plot_function(self, ax=ax, *args, mode_of_interest=mode_of_interest, combination=combination, **kwargs)
-
-            plt.show()
-
-        return wrapper
-
-    @staticmethod
-    def single_plot(plot_function) -> Callable:
-        def wrapper(self, *args, mode_of_interest='all', **kwargs):
-            mode_of_interest = interpret_mode_of_interest(
-                superset=self,
-                mode_of_interest=mode_of_interest
-            )
-
-            figure, ax = plt.subplots(1, 1)
-
-            plot_function(self, ax=ax, *args, mode_of_interest=mode_of_interest, **kwargs)
-
-            ax.legend()
-            plt.show()
-
-        return wrapper
-
-    @single_plot
-    def plot_index(
-            self,
-            ax: plt.Axes,
-            show_crossings: bool = False,
-            mode_of_interest: str | list[SuperMode] = 'all') -> NoReturn:
-        """
-        Plot effective index for each mode as a function of itr.
-
-        Args:
-            ax (plt.Axes): The matplotlib axis to render the plot on.
-            show_crossings (bool): Whether to show crossings in the plot.
-            mode_of_interest (str | list[SuperMode]): The mode of interest.
-
-        Returns:
-            None
-        """
-        for mode in mode_of_interest:
-            mode.index.render_on_ax(ax=ax)
-            mode.index._dress_ax(ax=ax)
-
-        if show_crossings:
-            self.add_crossings_to_ax(ax=ax, mode_of_interest=mode_of_interest, data_type='index')
-
-    @single_plot
-    def plot_beta(
-            self,
-            ax: plt.Axes,
-            show_crossings: bool = False,
-            mode_of_interest: str | list[SuperMode] = 'all') -> NoReturn:
-        """
-        Plot propagation constant for each mode as a function of itr.
-
-        Args:
-            ax (plt.Axes): The matplotlib axis to render the plot on.
-            show_crossings (bool): Whether to show crossings in the plot.
-            mode_of_interest (str | list[SuperMode]): The mode of interest.
-
-        Returns:
-            None
-        """
-        for mode in mode_of_interest:
-            mode.beta.render_on_ax(ax=ax)
-            mode.beta._dress_ax(ax=ax)
-
-        if show_crossings:
-            self.add_crossings_to_ax(ax=ax, mode_of_interest=mode_of_interest, data_type='beta')
-
-    @single_plot
-    def plot_eigen_value(
-            self,
-            ax: plt.Axes,
-            mode_of_interest: str | list[SuperMode] = 'all',
-            show_crossings: bool = False) -> NoReturn:
-        """
-        Plot propagation constant for each mode as a function of itr.
-
-        Args:
-            ax (plt.Axes): The matplotlib axis to render the plot on.
-            mode_of_interest (str | list[SuperMode]): The mode of interest.
-            show_crossings (bool): Whether to show crossings in the plot.
-
-        Returns:
-            None
-        """
-        for mode in mode_of_interest:
-            mode.eigen_value.render_on_ax(ax=ax)
-            mode.eigen_value._dress_ax(ax=ax)
-
-        if show_crossings:
-            self.add_crossings_to_ax(ax=ax, mode_of_interest=mode_of_interest, data_type='eigen_value')
-
-    @combination_plot
-    def plot_normalized_coupling(
-            self,
-            ax: plt.Axes,
-            mode_of_interest: list[SuperMode],
-            combination: list) -> NoReturn:
-        """
-        Plot normalized coupling value for each mode as a function of itr.
-
-        Args:
-            ax (plt.Axes): The matplotlib axis to render the plot on.
-            mode_of_interest (list[SuperMode]): The mode of interest.
-            combination (list): The mode combinations.
-
-        Returns:
-            None
-        """
-        for mode_0, mode_1 in combination:
-            mode_0.normalized_coupling.render_on_ax(ax=ax, other_supermode=mode_1)
-            mode_0.normalized_coupling._dress_ax(ax=ax)
-
-    @combination_plot
-    def plot_beating_length(
-            self,
-            ax: plt.Axes,
-            mode_of_interest: list[SuperMode],
-            combination: list) -> NoReturn:
-        """
-        Plot coupling value for each mode as a function of itr.
-
-        Args:
-            ax (plt.Axes): The matplotlib axis to render the plot on.
-            mode_of_interest (list[SuperMode]): The mode of interest.
-            combination (list): The mode combinations.
-
-        Returns:
-            None
-        """
-        for mode_0, mode_1 in combination:
-            mode_0.beating_length.render_on_ax(ax=ax, other_supermode=mode_1)
-            mode_0.beating_length._dress_ax(ax=ax)
-
-    @combination_plot
-    def plot_adiabatic(
-            self,
-            ax: plt.Axes,
-            mode_of_interest: list[SuperMode],
-            combination: list,
-            add_profile: list[AlphaProfile] = []) -> NoReturn:
-        """
-        Plot adiabatic criterion for each mode as a function of itr.
-
-        Args:
-            ax (plt.Axes): The matplotlib axis to render the plot on.
-            mode_of_interest (list[SuperMode]): The mode of interest.
-            combination (list): The mode combinations.
-            add_profile (list[AlphaProfile]): List of profiles to add to the plot.
-
-        Returns:
-            None
-        """
-        for mode_0, mode_1 in combination:
-            mode_0.adiabatic.render_on_ax(ax=ax, other_supermode=mode_1)
-            mode_0.adiabatic._dress_ax(ax=ax)
-
-        for profile in numpy.atleast_1d(add_profile):
-            profile.render_adiabatic_factor_vs_itr_on_ax(ax=ax, line_style='--')
-
     def is_compute_compatible(self, pair_of_mode: tuple) -> bool:
         """
         Determines whether the specified pair of mode is compatible for computation.
@@ -655,7 +478,7 @@ class SuperSet(object):
 
         return output_list
 
-    def interpret_mode_selection(self, mode_of_interest: list, mode_selection: str) -> set:
+    def interpret_combination(self, mode_of_interest: list, combination: str) -> set:
         """
         Interpret user input for mode selection and return the combination of modes to consider.
 
@@ -667,12 +490,12 @@ class SuperSet(object):
             set: Set of mode combinations.
         """
         test_valid_input(
-            variable_name='mode_selection',
-            user_input=mode_selection,
+            variable_name='combination',
+            user_input=combination,
             valid_inputs=['pairs', 'specific']
         )
 
-        match mode_selection:
+        match combination:
             case 'pairs':
                 mode_combinations = product(mode_of_interest, mode_of_interest)
             case 'specific':
@@ -683,140 +506,6 @@ class SuperSet(object):
         mode_combinations = self.remove_duplicate_combination(mode_combinations)
 
         return set(mode_combinations)
-
-    def plot_field(
-            self,
-            mode_of_interest: list = 'all',
-            itr_list: list[float] = None,
-            slice_list: list[int] = None,
-            show_mode_label: bool = True,
-            show_itr: bool = True,
-            show_slice: bool = True) -> plt.figure:
-        """
-        Plot each mode field for different ITR values or slice numbers.
-
-        Args:
-            mode_of_interest (list): List of modes of interest.
-            itr_list (list): List of ITR values to evaluate the mode field.
-            slice_list (list): List of slice numbers to evaluate the mode field.
-            show_mode_label (bool): Whether to show mode label.
-            show_itr (bool): Whether to show ITR.
-            show_slice (bool): Whether to show slice.
-
-        Returns:
-            plt.Figure: The figure containing the plots.
-        """
-        slice_list, itr_list = interpret_slice_number_and_itr(
-            itr_baseline=self.model_parameters.itr_list,
-            itr_list=itr_list,
-            slice_list=slice_list
-        )
-
-        mode_of_interest = interpret_mode_of_interest(
-            superset=self,
-            mode_of_interest=mode_of_interest
-        )
-
-        unit_size = numpy.array([len(slice_list), len(mode_of_interest)])
-        figure, axes = plt.subplots(*unit_size, figsize=3 * numpy.flip(unit_size))
-
-        for m, mode in enumerate(mode_of_interest):
-            for n, slice_number in enumerate(slice_list):
-                mode.field.render_on_ax(
-                    ax=axes[n, m],
-                    slice_number=slice_number,
-                    show_mode_label=show_mode_label,
-                    show_itr=show_itr,
-                    show_slice=show_slice
-                )
-
-        figure.tight_layout()
-        plt.show()
-
-        return figure
-
-    def plot(self, plot_type: str, **kwargs) -> NoReturn:
-        """
-        General plotting function to handle different types of supermode plots.
-
-        Args:
-            plot_type (str): The type of plot to generate. Options include 'index', 'beta', 'eigen-value', etc.
-            **kwargs: Additional keyword arguments for specific plot configurations.
-
-        Raises:
-            ValueError: If an unrecognized plot type is specified.
-        """
-        match plot_type.lower():
-            case 'index':
-                return self.plot_index(**kwargs)
-            case 'beta':
-                return self.plot_beta(**kwargs)
-            case 'eigen-value':
-                return self.plot_eigen_value(**kwargs)
-            case 'normalized-coupling':
-                return self.plot_normalized_coupling(**kwargs)
-            case 'overlap':
-                return self.plot_overlap(**kwargs)
-            case 'adiabatic':
-                return self.plot_adiabatic(**kwargs)
-            case 'field':
-                return self.plot_field(**kwargs)
-            case 'beating-length':
-                return self.plot_beating_length(**kwargs)
-            case 'normalized-adiabatic':
-                return self.plot_normalized_adiabatic(**kwargs)
-            case _:
-                raise ValueError(f'Invalid plot type: {plot_type}. Options are: index, beta, eigen-value, adiabatic, normalized-adiabatic, normalized-coupling, field, beating-length')
-
-    def generate_pdf_report(
-            self,
-            filename: str = "report",
-            directory: str = '.',
-            itr_list: list[float] | None = None,
-            slice_list: list[int] | None = None,
-            dpi: int = 200,
-            mode_of_interest: list = 'all',
-            mode_selection: str = 'specific') -> None:
-        """
-        Generate a full report of the coupler properties as a .pdf file.
-
-        Args:
-            filename (str): Name of the report file to be output.
-            directory (str): Directory to save the report.
-            itr_list (List[float]): List of ITR values to evaluate the mode field.
-            slice_list (List[int]): List of slice values to evaluate the mode field.
-            dpi (int): Pixel density for the images included in the report.
-            mode_of_interest (List): List of modes to consider in the adiabatic criterion plotting.
-            mode_selection (str): Method for selecting mode combinations.
-
-        Returns:
-            None
-        """
-        if directory == 'auto':
-            directory = directories.reports_path
-
-        filename = Path(directory).joinpath(filename).with_suffix('.pdf')
-
-        logging.info(f"Saving report pdf into: {filename}")
-
-        figure_list = []
-
-        figure_list.append(self.geometry.plot()._render_())
-
-        figure_list.append(self.plot_field(itr_list=itr_list, slice_list=slice_list)._render_())
-
-        figure_list.append(self.plot_index()._render_())
-
-        figure_list.append(self.plot_beta()._render_())
-
-        figure_list.append(self.plot_normalized_coupling(mode_of_interest=mode_of_interest, mode_selection=mode_selection)._render_())
-
-        figure_list.append(self.plot_adiabatic(mode_of_interest=mode_of_interest, mode_selection=mode_selection)._render_())
-
-        Multipage(filename, figs=figure_list, dpi=dpi)
-
-        for figure in figure_list:
-            figure.close()
 
     def save_instance(self, filename: str, directory: str = 'auto') -> Path:
         """
@@ -844,23 +533,6 @@ class SuperSet(object):
             pickle.dump(self, output_file, pickle.HIGHEST_PROTOCOL)
 
         return filename
-
-    def add_crossings_to_ax(self, ax: plt.Axes, mode_of_interest: list, data_type: str) -> None:
-        combination = self.interpret_mode_selection(
-            mode_of_interest=mode_of_interest,
-            mode_selection='pairs'
-        )
-
-        for mode_0, mode_1 in combination:
-            x, y = get_intersection(
-                x=self.model_parameters.itr_list,
-                y0=getattr(mode_0, data_type).data,
-                y1=getattr(mode_1, data_type).data,
-                average=True
-            )
-
-            if x is not None:
-                ax.scatter(x=x, y=y, marker='o', color='black', s=20, label='mode crossing')
 
 
 # -

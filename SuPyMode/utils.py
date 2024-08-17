@@ -180,6 +180,7 @@ def interpret_mode_of_interest(superset: SuperSet, mode_of_interest: str | Super
         - ValueError: If the mode_of_interest is not one of the expected types or if the string input does not match
         any known category.
     """
+    from SuPyMode.supermode import SuperMode
     if isinstance(mode_of_interest, str):
         match mode_of_interest:
             case 'fundamental':
