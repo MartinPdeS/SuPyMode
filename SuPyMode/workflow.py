@@ -279,9 +279,9 @@ class Workflow():
     def _plot_initial_setup(self):
         """Plots the initial simulation setup if the respective flags are enabled."""
         if self.plot_cladding and self.clad_structure:
-            self.clad_structure.plot().show()
+            self.clad_structure.plot()
         if self.plot_geometry:
-            self.geometry.plot().show()
+            self.geometry.plot()
 
     @property
     def superset(self):
@@ -319,19 +319,19 @@ class Workflow():
     def _plot_simulation_outputs(self):
         """Plots the simulation outputs based on the respective flags."""
         if self.plot_field:
-            self.plot('field').show()
+            self.plot('field')
         if self.plot_adiabatic:
-            self.plot('adiabatic').show()
+            self.plot('adiabatic')
         if self.plot_coupling:
-            self.plot('normalized-coupling').show()
+            self.plot('normalized-coupling')
         if self.plot_beating_length:
-            self.plot('beating-length').show()
+            self.plot('beating-length')
         if self.plot_eigen_values:
-            self.plot('eigen-value').show()
+            self.plot('eigen-value')
         if self.plot_index:
-            self.plot('index').show()
+            self.plot('index')
         if self.plot_beta:
-            self.plot('beta').show()
+            self.plot('beta')
 
     def _finalize_workflow(self):
         """Finalizes the workflow by generating reports and saving superset if enabled."""

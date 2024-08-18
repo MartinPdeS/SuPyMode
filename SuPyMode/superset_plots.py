@@ -7,15 +7,14 @@ import logging
 from pathlib import Path
 from typing import Callable, NoReturn
 from functools import wraps
+import MPSPlots
 
 # Local imports
 from SuPyMode.supermode import SuperMode
 from SuPyMode.utils import get_intersection, interpret_mode_of_interest, interpret_slice_number_and_itr
 from SuPyMode.profiles import AlphaProfile
 from SuPyMode import directories
-
 import matplotlib.pyplot as plt
-
 from matplotlib.backends.backend_pdf import PdfPages
 
 
@@ -77,10 +76,10 @@ class SuperSetPlots(object):
 
     @wraps(_logic_index)
     def plot_index(self, *args, **kwargs):
-        figure, ax = plt.subplots(1, 1)
-        self._logic_index(ax=ax, *args, **kwargs)
-        plt.show()
-        return figure
+         with plt.style.context(MPSPlots.styles.mps):
+            figure, ax = plt.subplots(1, 1)
+            self._logic_index(ax=ax, *args, **kwargs)
+            plt.show()
 
     # PROPAGATION CONSTANT -------------------------------------------------------
     @parse_mode_of_interest
@@ -115,10 +114,10 @@ class SuperSetPlots(object):
 
     @wraps(_logic_beta)
     def plot_beta(self, *args, **kwargs):
-        figure, ax = plt.subplots(1, 1)
-        self._logic_beta(ax=ax, *args, **kwargs)
-        plt.show()
-        return figure
+         with plt.style.context(MPSPlots.styles.mps):
+            figure, ax = plt.subplots(1, 1)
+            self._logic_beta(ax=ax, *args, **kwargs)
+            plt.show()
 
     # EIGEN-VALUE -------------------------------------------------------
     @parse_mode_of_interest
@@ -153,10 +152,10 @@ class SuperSetPlots(object):
 
     @wraps(_logic_eigen_value)
     def plot_eigen_value(self, *args, **kwargs):
-        figure, ax = plt.subplots(1, 1)
-        self._logic_eigen_value(ax=ax, *args, **kwargs)
-        plt.show()
-        return figure
+         with plt.style.context(MPSPlots.styles.mps):
+            figure, ax = plt.subplots(1, 1)
+            self._logic_eigen_value(ax=ax, *args, **kwargs)
+            plt.show()
 
     # BEATING LENGTH-------------------------------------------------------
     @parse_mode_of_interest
@@ -191,10 +190,10 @@ class SuperSetPlots(object):
 
     @wraps(_logic_beating_length)
     def plot_beating_length(self, *args, **kwargs):
-        figure, ax = plt.subplots(1, 1)
-        self._logic_beating_length(ax=ax, *args, **kwargs)
-        plt.show()
-        return figure
+         with plt.style.context(MPSPlots.styles.mps):
+            figure, ax = plt.subplots(1, 1)
+            self._logic_beating_length(ax=ax, *args, **kwargs)
+            plt.show()
 
 
     # NORMALIZED COUPLING-------------------------------------------------------
@@ -230,10 +229,10 @@ class SuperSetPlots(object):
 
     @wraps(_logic_normalized_coupling)
     def plot_normalized_coupling(self, *args, **kwargs):
-        figure, ax = plt.subplots(1, 1)
-        self._logic_normalized_coupling(ax=ax, *args, **kwargs)
-        plt.show()
-        return figure
+         with plt.style.context(MPSPlots.styles.mps):
+            figure, ax = plt.subplots(1, 1)
+            self._logic_normalized_coupling(ax=ax, *args, **kwargs)
+            plt.show()
 
 
     # ADIABATIC CRITERION-------------------------------------------------------
@@ -272,10 +271,10 @@ class SuperSetPlots(object):
 
     @wraps(_logic_adiabatic)
     def plot_adiabatic(self, *args, **kwargs):
-        figure, ax = plt.subplots(1, 1)
-        self._logic_adiabatic(ax=ax, *args, **kwargs)
-        plt.show()
-        return figure
+        with plt.style.context(MPSPlots.styles.mps):
+            figure, ax = plt.subplots(1, 1)
+            self._logic_adiabatic(ax=ax, *args, **kwargs)
+            plt.show()
 
     # FIELD -------------------------------------------------------
     @parse_mode_of_interest
@@ -338,9 +337,9 @@ class SuperSetPlots(object):
 
     @wraps(_logic_field)
     def plot_field(self, *args, **kwargs):
-        figure = self._logic_field(*args, **kwargs)
-        plt.show()
-        return figure
+         with plt.style.context(MPSPlots.styles.mps):
+            figure = self._logic_field(*args, **kwargs)
+            plt.show()
 
     def plot(self, plot_type: str, **kwargs) -> NoReturn:
         """
