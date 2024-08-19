@@ -17,8 +17,7 @@ from SuPyMode import directories
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from SuPyMode.utils import parse_mode_of_interest, parse_combination
-import MPSPlots.styles as styles
-plot_style = styles.mps
+from MPSPlots.styles import ggplot as plot_style
 
 class SuperSetPlots(object):
     # EFFECTIVE INDEX -------------------------------------------------------
