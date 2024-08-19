@@ -5,7 +5,7 @@
 import numpy
 import logging
 from pathlib import Path
-from typing import Callable, NoReturn
+from typing import NoReturn
 from functools import wraps
 import MPSPlots
 
@@ -17,6 +17,8 @@ from SuPyMode import directories
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from SuPyMode.utils import parse_mode_of_interest, parse_combination
+import MPSPlots.styles as styles
+plot_style = styles.mps
 
 class SuperSetPlots(object):
     # EFFECTIVE INDEX -------------------------------------------------------
@@ -52,7 +54,7 @@ class SuperSetPlots(object):
 
     @wraps(_logic_index)
     def plot_index(self, *args, **kwargs):
-         with plt.style.context(MPSPlots.styles.mps):
+         with plt.style.context(plot_style):
             figure, ax = plt.subplots(1, 1)
             self._logic_index(ax=ax, *args, **kwargs)
             plt.show()
@@ -90,7 +92,7 @@ class SuperSetPlots(object):
 
     @wraps(_logic_beta)
     def plot_beta(self, *args, **kwargs):
-         with plt.style.context(MPSPlots.styles.mps):
+         with plt.style.context(plot_style):
             figure, ax = plt.subplots(1, 1)
             self._logic_beta(ax=ax, *args, **kwargs)
             plt.show()
@@ -128,7 +130,7 @@ class SuperSetPlots(object):
 
     @wraps(_logic_eigen_value)
     def plot_eigen_value(self, *args, **kwargs):
-         with plt.style.context(MPSPlots.styles.mps):
+         with plt.style.context(plot_style):
             figure, ax = plt.subplots(1, 1)
             self._logic_eigen_value(ax=ax, *args, **kwargs)
             plt.show()
@@ -166,7 +168,7 @@ class SuperSetPlots(object):
 
     @wraps(_logic_beating_length)
     def plot_beating_length(self, *args, **kwargs):
-         with plt.style.context(MPSPlots.styles.mps):
+         with plt.style.context(plot_style):
             figure, ax = plt.subplots(1, 1)
             self._logic_beating_length(ax=ax, *args, **kwargs)
             plt.show()
@@ -205,7 +207,7 @@ class SuperSetPlots(object):
 
     @wraps(_logic_normalized_coupling)
     def plot_normalized_coupling(self, *args, **kwargs):
-         with plt.style.context(MPSPlots.styles.mps):
+         with plt.style.context(plot_style):
             figure, ax = plt.subplots(1, 1)
             self._logic_normalized_coupling(ax=ax, *args, **kwargs)
             plt.show()
@@ -247,7 +249,8 @@ class SuperSetPlots(object):
 
     @wraps(_logic_adiabatic)
     def plot_adiabatic(self, *args, **kwargs):
-        with plt.style.context(MPSPlots.styles.mps):
+        with plt.style.context(plot_style):
+            print('hello')
             figure, ax = plt.subplots(1, 1)
             self._logic_adiabatic(ax=ax, *args, **kwargs)
             plt.show()
@@ -313,7 +316,7 @@ class SuperSetPlots(object):
 
     @wraps(_logic_field)
     def plot_field(self, *args, **kwargs):
-         with plt.style.context(MPSPlots.styles.mps):
+         with plt.style.context(plot_style):
             figure = self._logic_field(*args, **kwargs)
             plt.show()
 

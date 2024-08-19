@@ -47,15 +47,15 @@ superset = workflow.get_superset()
 # print("Signature of wrapper_method:", signature)
 # print("Signature of wrapper_method:", superset.save_instance.__doc__)
 # superset.save_instance(filename='lol')
-superset.export_data(
-    filename='test',
-    combination='pairs',
-    mode_of_interest='all',
-    export_index=True,
-    export_beta=False,
-    export_eigen_value=False,
-    export_adiabatic=True
-)
+# superset.export_data(
+#     filename='test',
+#     combination='pairs',
+#     mode_of_interest='all',
+#     export_index=True,
+#     export_beta=False,
+#     export_eigen_value=False,
+#     export_adiabatic=True
+# )
 # help(superset.save_instance)
 # superset.plot_index()s
 
@@ -64,7 +64,7 @@ superset.export_data(
 
 # print(a)
 
-# superset.plot_adiabatic()
+superset.plot_adiabatic()
 # superset.lol_method()
 
 # superset.generate_pdf_report(filename='lol')

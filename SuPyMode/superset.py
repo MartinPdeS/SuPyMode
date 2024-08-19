@@ -27,7 +27,6 @@ from SuPyMode.propagation import Propagation
 from SuPyMode.superset_plots import SuperSetPlots
 from SuPyMode.utils import parse_mode_of_interest, parse_combination
 
-
 @dataclass
 class SuperSet(SuperSetPlots):
     """
