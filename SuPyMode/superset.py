@@ -8,10 +8,9 @@ import logging
 from dataclasses import dataclass
 from pathlib import Path
 from itertools import combinations, product
-from pathvalidate import sanitize_filepath
-from typing import Optional, List, Callable
+from typing import Optional, List
 from FiberFusing.geometry import Geometry
-from functools import wraps
+
 
 # Third-party imports
 from scipy.interpolate import interp1d
@@ -20,12 +19,10 @@ from scipy.integrate import solve_ivp
 # Local imports
 from SuPyMode.binary.ModelParameters import ModelParameters
 from SuPyMode.supermode import SuperMode
-from SuPyMode.utils import test_valid_input, get_intersection, interpret_slice_number_and_itr, interpret_mode_of_interest
 from SuPyMode.profiles import AlphaProfile
-from SuPyMode import directories
 from SuPyMode.propagation import Propagation
 from SuPyMode.superset_plots import SuperSetPlots
-from SuPyMode.utils import parse_mode_of_interest, parse_combination
+from SuPyMode.utils import test_valid_input, parse_mode_of_interest, parse_combination, parse_filename
 
 @dataclass
 class SuperSet(SuperSetPlots):
@@ -505,26 +502,6 @@ class SuperSet(SuperSetPlots):
         mode_combinations = self.remove_duplicate_combination(mode_combinations)
 
         return set(mode_combinations)
-
-    @staticmethod
-    def parse_filename(save_function: Callable) -> Callable:
-        @wraps(save_function)
-        def wrapper(self, filename: str, directory: str = 'auto', **kwargs):
-            if directory == 'auto':
-                directory = directories.instance_directory
-
-            filename = Path(filename)
-
-            filename = sanitize_filepath(filename)
-
-            filename = Path(directory).joinpath(filename)
-
-            save_function(self, filename=filename, **kwargs)
-
-            logging.info(f"Saving data into: {filename}")
-
-            return filename
-        return wrapper
 
     @parse_filename
     def save_instance(self, filename: str) -> Path:

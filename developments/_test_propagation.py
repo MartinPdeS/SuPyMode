@@ -46,7 +46,7 @@ superset = workflow.get_superset()
 # signature = inspect.signature(superset.save_instance)
 # print("Signature of wrapper_method:", signature)
 # print("Signature of wrapper_method:", superset.save_instance.__doc__)
-# superset.save_instance(filename='lol')
+superset.save_instance(filename='lol')
 # superset.export_data(
 #     filename='test',
 #     combination='pairs',

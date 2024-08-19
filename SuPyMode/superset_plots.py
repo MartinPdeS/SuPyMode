@@ -249,7 +249,6 @@ class SuperSetPlots(object):
     @wraps(_logic_adiabatic)
     def plot_adiabatic(self, *args, **kwargs):
         with plt.style.context(plot_style):
-            print('hello')
             figure, ax = plt.subplots(1, 1)
             self._logic_adiabatic(ax=ax, *args, **kwargs)
             plt.show()

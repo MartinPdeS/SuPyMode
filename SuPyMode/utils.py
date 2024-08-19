@@ -11,7 +11,10 @@ if TYPE_CHECKING:
 import numpy
 import pickle
 from pathlib import Path
-from SuPyMode.directories import instance_directory
+from SuPyMode.directories import user_data_directory
+from functools import wraps
+from pathvalidate import sanitize_filepath
+import logging
 
 
 def parse_mode_of_interest(plot_function: Callable) -> Callable:
@@ -37,6 +40,26 @@ def parse_combination(plot_function: Callable) -> Callable:
 
     return wrapper
 
+def parse_filename(save_function: Callable) -> Callable:
+    @wraps(save_function)
+    def wrapper(self, filename: str, directory: str = 'auto', **kwargs):
+        if directory == 'auto':
+            directory = user_data_directory
+
+        filename = Path(filename)
+
+        filename = sanitize_filepath(filename)
+
+        filename = Path(directory).joinpath(filename)
+
+        save_function(self, filename=filename, **kwargs)
+
+        logging.info(f"Saving data into: {filename}")
+
+        return filename
+    return wrapper
+
+
 
 def load_superset(filename: str, directory: str = 'auto'):
     """
@@ -46,7 +69,7 @@ def load_superset(filename: str, directory: str = 'auto'):
     :type       filename:  str
     """
     if directory == 'auto':
-        directory = instance_directory
+        directory = user_data_directory
 
     filename = Path(directory).joinpath(filename).with_suffix('.pickle')
 
