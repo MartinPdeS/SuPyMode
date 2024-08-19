@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from typing import Union, List, Iterable
+from typing import Union, List, Iterable, Callable
 if TYPE_CHECKING:
     from SuPyMode.superset import SuperSet
     from SuPyMode.supermode import SuperMode

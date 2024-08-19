@@ -23,6 +23,7 @@ perso/
 
 docs/source/gallery
 docs/source/api
+SuPyMode/superset_instances/*
 
 CMakeCache.txt
 CMakeFiles
