@@ -59,7 +59,7 @@ superset = workflow.get_superset()
 
 superset.label_supermodes('LP01', 'LP21', 'LP02', 'LP03', 'LP22', 'LP41')
 
-superset.plot(plot_type='field').show()
+superset.plot(plot_type='field')
 
 itr_list = superset.model_parameters.itr_list
 
