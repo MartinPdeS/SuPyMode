@@ -16,33 +16,9 @@ from SuPyMode.profiles import AlphaProfile
 from SuPyMode import directories
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
-
+from SuPyMode.utils import parse_mode_of_interest, parse_combination
 
 class SuperSetPlots(object):
-    @staticmethod
-    def parse_mode_of_interest(plot_function: Callable) -> Callable:
-        def wrapper(self, *args, mode_of_interest='all', **kwargs):
-            mode_of_interest = interpret_mode_of_interest(
-                superset=self,
-                mode_of_interest=mode_of_interest
-            )
-
-            return plot_function(self, *args, mode_of_interest=mode_of_interest, **kwargs)
-
-        return wrapper
-
-    @staticmethod
-    def parse_combination(plot_function: Callable) -> Callable:
-        def wrapper(self, *args, mode_of_interest='all', combination: str = 'pairs', **kwargs):
-            combination = self.interpret_combination(
-                mode_of_interest=mode_of_interest,
-                combination=combination
-            )
-
-            return plot_function(self, *args, mode_of_interest=mode_of_interest, combination=combination, **kwargs)
-
-        return wrapper
-
     # EFFECTIVE INDEX -------------------------------------------------------
     @parse_mode_of_interest
     def _logic_index(self,

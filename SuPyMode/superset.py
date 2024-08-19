@@ -9,8 +9,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from itertools import combinations, product
 from pathvalidate import sanitize_filepath
-from typing import Optional, List, Callable, NoReturn
+from typing import Optional, List, Callable
 from FiberFusing.geometry import Geometry
+from functools import wraps
 
 # Third-party imports
 from scipy.interpolate import interp1d
@@ -22,10 +23,9 @@ from SuPyMode.supermode import SuperMode
 from SuPyMode.utils import test_valid_input, get_intersection, interpret_slice_number_and_itr, interpret_mode_of_interest
 from SuPyMode.profiles import AlphaProfile
 from SuPyMode import directories
-from MPSPlots.render2D import Multipage
-import matplotlib.pyplot as plt
 from SuPyMode.propagation import Propagation
 from SuPyMode.superset_plots import SuperSetPlots
+from SuPyMode.utils import parse_mode_of_interest, parse_combination
 
 
 @dataclass
@@ -507,7 +507,28 @@ class SuperSet(SuperSetPlots):
 
         return set(mode_combinations)
 
-    def save_instance(self, filename: str, directory: str = 'auto') -> Path:
+    @staticmethod
+    def parse_filename(save_function: Callable) -> Callable:
+        @wraps(save_function)
+        def wrapper(self, filename: str, directory: str = 'auto', **kwargs):
+            if directory == 'auto':
+                directory = directories.instance_directory
+
+            filename = Path(filename)
+
+            filename = sanitize_filepath(filename)
+
+            filename = Path(directory).joinpath(filename)
+
+            save_function(self, filename=filename, **kwargs)
+
+            logging.info(f"Saving data into: {filename}")
+
+            return filename
+        return wrapper
+
+    @parse_filename
+    def save_instance(self, filename: str) -> Path:
         """
         Saves the SuperSet instance as a serialized pickle file.
 
@@ -518,21 +539,80 @@ class SuperSet(SuperSetPlots):
         Returns:
             Path: The path to the saved instance file.
         """
-        if directory == 'auto':
-            directory = directories.instance_directory
-
-        filename = Path(filename).with_suffix('.pickle')
-
-        filename = sanitize_filepath(filename)
-
-        filename = Path(directory).joinpath(filename)
-
-        logging.info(f"Saving pickled superset into: {filename}")
-
-        with open(filename, 'wb') as output_file:
+        with open(filename.with_suffix('.pickle'), 'wb') as output_file:
             pickle.dump(self, output_file, pickle.HIGHEST_PROTOCOL)
 
         return filename
+
+    @parse_mode_of_interest
+    @parse_combination
+    @parse_filename
+    def export_data(self,
+                    filename: str,
+                    mode_of_interest: list = 'all',
+                    combination: list = None,
+                    export_index: bool = True,
+                    export_beta: bool = True,
+                    export_eigen_value: bool = False,
+                    export_adiabatic: bool = True,
+                    export_beating_length: bool = True,
+                    export_normalized_coupling: bool = True) -> Path:
+        """
+        Export the SuperSet data as CSV files, saving specific attributes of the modes or combinations of modes.
+
+        Args:
+            filename (str): The directory where the files will be saved.
+            mode_of_interest (list): List of modes to be exported. Defaults to 'all'.
+            combination (list): List of mode combinations to be exported. Defaults to None.
+            export_index (bool): Whether to export the 'index' attribute. Defaults to True.
+            export_beta (bool): Whether to export the 'beta' attribute. Defaults to True.
+            export_eigen_value (bool): Whether to export the 'eigen_value' attribute. Defaults to False.
+            export_adiabatic (bool): Whether to export the 'adiabatic' attribute for combinations. Defaults to True.
+            export_beating_length (bool): Whether to export the 'beating_length' attribute for combinations. Defaults to True.
+            export_normalized_coupling (bool): Whether to export the 'normalized_coupling' attribute for combinations. Defaults to True.
+
+        Returns:
+            Path: The path to the directory where the files were saved.
+        """
+        from pathlib import Path
+        import numpy as np
+
+        # Create the directory if it doesn't exist
+        output_dir = Path(filename)
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        def _export_single_data(attribute_name: str):
+            """Helper function to export data for a single attribute for all modes of interest."""
+            for mode in mode_of_interest:
+                data = getattr(mode, attribute_name).data
+                sub_filename = output_dir / f"{attribute_name}_{mode.label}".replace("}", "").replace("{", "")
+                data = np.vstack([self.model_parameters.itr_list, data])
+                np.savetxt(fname=sub_filename, X=data, delimiter=',', header=f'ITR, {attribute_name}')
+
+        def _export_combination_data(attribute_name: str):
+            """Helper function to export data for a single attribute for all combinations of modes."""
+            for mode_0, mode_1 in combination:
+                data = getattr(mode_0, attribute_name).get_values(other_supermode=mode_1)
+                sub_filename = output_dir / f"{attribute_name}_{mode_0.label}_{mode_1.label}".replace("}", "").replace("{", "")
+                data = np.vstack([self.model_parameters.itr_list, data])
+                np.savetxt(fname=sub_filename, X=data, delimiter=',', header=f'ITR, {attribute_name}')
+
+        # Export single-mode attributes
+        if export_index:
+            _export_single_data('index')
+        if export_beta:
+            _export_single_data('beta')
+        if export_eigen_value:
+            _export_single_data('eigen_value')
+
+        # Export combination-mode attributes
+        if export_adiabatic:
+            _export_combination_data('adiabatic')
+        if export_beating_length:
+            _export_combination_data('beating_length')
+        if export_normalized_coupling:
+            _export_combination_data('normalized_coupling')
+
 
 
 # -

@@ -4,6 +4,7 @@
 from SuPyMode.workflow import Workflow, fiber_catalogue, configuration, Boundaries
 from SuPyMode.profiles import AlphaProfile
 
+
 # Predefine fibers to be used across tests
 fibers = [
     fiber_catalogue.load_fiber('DCF1300S_33', wavelength=1550e-9),
@@ -42,9 +43,20 @@ superset = workflow.get_superset()
 # superset.geometry.plot()
 
 
-signature = inspect.signature(superset.plot_beating_length)
-print("Signature of wrapper_method:", signature)
-
+# signature = inspect.signature(superset.save_instance)
+# print("Signature of wrapper_method:", signature)
+# print("Signature of wrapper_method:", superset.save_instance.__doc__)
+# superset.save_instance(filename='lol')
+superset.export_data(
+    filename='test',
+    combination='pairs',
+    mode_of_interest='all',
+    export_index=True,
+    export_beta=False,
+    export_eigen_value=False,
+    export_adiabatic=True
+)
+# help(superset.save_instance)
 # superset.plot_index()s
 
 # superset.wrapped(a=1)
@@ -52,7 +64,7 @@ print("Signature of wrapper_method:", signature)
 
 # print(a)
 
-superset.plot_adiabatic()
+# superset.plot_adiabatic()
 # superset.lol_method()
 
 # superset.generate_pdf_report(filename='lol')

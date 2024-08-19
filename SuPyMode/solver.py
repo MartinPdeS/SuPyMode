@@ -166,7 +166,7 @@ class SuPySolver(object):
         if auto_label:
             return [ModeLabel(boundaries=boundaries, mode_number=n).label for n in range(n_modes)]
         else:
-            return [f"mode_{{n}}" for n in range(n_modes)]
+            return [f"mode_{{{n}}}" for n in range(n_modes)]
 
     def add_modes(self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int = 4, index_guess: float = 0., auto_label: bool = True) -> None:
         """

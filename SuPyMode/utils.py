@@ -14,6 +14,30 @@ from pathlib import Path
 from SuPyMode.directories import instance_directory
 
 
+def parse_mode_of_interest(plot_function: Callable) -> Callable:
+    def wrapper(self, *args, mode_of_interest='all', **kwargs):
+        mode_of_interest = interpret_mode_of_interest(
+            superset=self,
+            mode_of_interest=mode_of_interest
+        )
+
+        return plot_function(self, *args, mode_of_interest=mode_of_interest, **kwargs)
+
+    return wrapper
+
+
+def parse_combination(plot_function: Callable) -> Callable:
+    def wrapper(self, *args, mode_of_interest='all', combination: str = 'pairs', **kwargs):
+        combination = self.interpret_combination(
+            mode_of_interest=mode_of_interest,
+            combination=combination
+        )
+
+        return plot_function(self, *args, mode_of_interest=mode_of_interest, combination=combination, **kwargs)
+
+    return wrapper
+
+
 def load_superset(filename: str, directory: str = 'auto'):
     """
     Saves the superset instance as a serialized pickle file.
