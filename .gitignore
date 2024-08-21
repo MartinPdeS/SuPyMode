@@ -19,11 +19,14 @@ build
 *.egg*
 *.whl
 .pdf
-Perso/
-Reports/*.pdf
-docs/source/ExampleGallery
+perso/
+
+docs/source/gallery
+docs/source/api
+SuPyMode/user_data/*
 
 CMakeCache.txt
 CMakeFiles
 install_manifest.txt
 cmake_install.cmake
+.coverage

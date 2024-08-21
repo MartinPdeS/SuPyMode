@@ -1,11 +1,12 @@
 #pragma once
 
-#include "definitions.cpp"
-
+#include <vector>
+#include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+#include <pybind11/numpy.h>
 
 template<typename T>
-std::vector<size_t>
-get_stride_from_dimension(std::vector<size_t> dimension)
+std::vector<size_t> get_stride_from_dimension(std::vector<size_t> dimension)
 {
   std::reverse(dimension.begin(), dimension.end());
 
@@ -20,60 +21,30 @@ get_stride_from_dimension(std::vector<size_t> dimension)
   return stride;
 }
 
-
-
-
-template<typename T>
-pybind11::array_t<T> templated_eigen_to_ndarray(
-    Eigen::Matrix<T, Eigen::Dynamic, 1> &&eigen3_vector,
-    std::vector<size_t> dimension)
+template<typename T, typename MatrixType>
+pybind11::array_t<T> eigen_to_ndarray(const MatrixType &eigen_matrix, const std::vector<size_t> &dimension)
 {
-    Eigen::Matrix<T, Eigen::Dynamic, 1> * vector_pointer = new Eigen::Matrix<T, Eigen::Dynamic, 1>;
-    (*vector_pointer) = eigen3_vector;
+    // Create a dynamic copy of the input Eigen matrix
+    MatrixType* matrix_pointer = new MatrixType;
+    *matrix_pointer = eigen_matrix;
 
+    // Calculate the stride from the given dimensions
     std::vector<size_t> stride = get_stride_from_dimension<T>(dimension);
 
+    // Define a capsule to manage memory. This lambda ensures the allocated matrix is properly deleted
     pybind11::capsule free_when_done(
-        vector_pointer->data(), [](void *f)
+        matrix_pointer->data(), [](void *f)
         {
-            T *foo = reinterpret_cast<T *>(f);
-            delete []foo;
+            T* data_pointer = reinterpret_cast<T*>(f);
+            delete[] data_pointer; // Make sure to delete the matrix data, not the matrix object itself
         }
     );
 
+    // Create a numpy array using the dimensions, stride, and data pointer
     pybind11::array_t<T> numpy_array = pybind11::array_t<T>(
         dimension,
         stride,
-        vector_pointer->data(),
-        free_when_done
-    );
-
-    return numpy_array;
-}
-
-
-template<typename T>
-pybind11::array_t<T> templated_eigen_to_ndarray_copy(
-    const Eigen::Matrix<T, Eigen::Dynamic, 1> &eigen3_vector,
-    std::vector<size_t> dimension)
-{
-    Eigen::Matrix<T, Eigen::Dynamic, 1> * vector_pointer = new Eigen::Matrix<T, Eigen::Dynamic, 1>;
-    (*vector_pointer) = eigen3_vector;
-
-    std::vector<size_t> stride = get_stride_from_dimension<T>(dimension);
-
-    pybind11::capsule free_when_done(
-        vector_pointer->data(), [](void *f)
-        {
-            T *foo = reinterpret_cast<T *>(f);
-            delete []foo;
-        }
-    );
-
-    pybind11::array_t<T> numpy_array = pybind11::array_t<T>(
-        dimension,
-        stride,
-        vector_pointer->data(),
+        matrix_pointer->data(),
         free_when_done
     );
 
@@ -81,159 +52,22 @@ pybind11::array_t<T> templated_eigen_to_ndarray_copy(
 }
 
 template<typename T>
-pybind11::array_t<T> templated_eigen_to_ndarray(
-    Eigen::Matrix<T, Eigen::Dynamic, 1> &eigen3_vector,
-    std::vector<size_t> dimension)
-{
-    Eigen::Matrix<T, Eigen::Dynamic, 1> * vector_pointer = new Eigen::Matrix<T, Eigen::Dynamic, 1>;
-    (*vector_pointer) = eigen3_vector;
-
-    std::vector<size_t> stride = get_stride_from_dimension<T>(dimension);
-
-    pybind11::capsule free_when_done(
-        vector_pointer->data(), [](void *f)
-        {
-            T *foo = reinterpret_cast<T *>(f);
-            delete []foo;
-        }
-    );
-
-    pybind11::array_t<T> numpy_array = pybind11::array_t<T>(
-        dimension,
-        stride,
-        vector_pointer->data(),
-        free_when_done
-    );
-
-    return numpy_array;
-}
-
-
-template<typename T>
-pybind11::array_t<T> templated_eigen_to_ndarray(
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &&eigen3_vector,
-    std::vector<size_t> dimension)
-{
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> * vector_pointer = new Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
-    (*vector_pointer) = eigen3_vector;
-
-    std::vector<size_t> stride = get_stride_from_dimension<T>(dimension);
-
-    pybind11::capsule free_when_done(
-        vector_pointer->data(), [](void *f)
-        {
-            T *foo = reinterpret_cast<T *>(f);
-            delete []foo;
-        }
-    );
-
-    pybind11::array_t<T> numpy_array = pybind11::array_t<T>(
-        dimension,
-        stride,
-        vector_pointer->data(),
-        free_when_done
-    );
-
-    return numpy_array;
+Eigen::MatrixXd convert_py_to_eigen(const pybind11::array_t<T> &array_py) {
+    auto info = array_py.request();
+    T* ptr = static_cast<T*>(info.ptr);
+    return Eigen::Map<Eigen::MatrixXd>(ptr, info.shape[0], info.shape[1]);
 }
 
 template<typename T>
-pybind11::array_t<T> templated_eigen_to_ndarray(
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &eigen3_vector,
-    std::vector<size_t> dimension)
-{
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> * vector_pointer = new Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
-    (*vector_pointer) = eigen3_vector;
-
-    std::vector<size_t> stride = get_stride_from_dimension<T>(dimension);
-
-    pybind11::capsule free_when_done(
-        vector_pointer->data(), [](void *f)
-        {
-            T *foo = reinterpret_cast<T *>(f);
-            delete []foo;
-        }
-    );
-
-    pybind11::array_t<T> numpy_array = pybind11::array_t<T>(
-        dimension,
-        stride,
-        vector_pointer->data(),
-        free_when_done
-    );
-
-    return numpy_array;
-}
-
-
-
-template<typename T>
-Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>
-templated_ndarray_to_eigen_copy(pybind11::array_t<T> array)
-{
-    double *p = (double*) array.request().ptr;
-
-    size_t nx = array.request().shape[0],
-           ny = array.request().shape[1];
-
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>> mapping(p, ny, nx);
-
-    return mapping;
+Eigen::MatrixXd convert_py_to_eigen(const pybind11::array_t<T> &array_py, const size_t rows, const size_t cols) {
+    auto info = array_py.request();
+    T* ptr = static_cast<T*>(info.ptr);
+    return Eigen::Map<Eigen::MatrixXd>(ptr, rows, cols);
 }
 
 template<typename T>
-Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>
-templated_ndarray_to_eigen(pybind11::array_t<T> &array)
-{
-    double *p = (double*) array.request().ptr;
-
-    size_t nx = array.request().shape[0],
-           ny = array.request().shape[1];
-
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>> mapping(p, ny, nx);
-
-    return mapping;
-}
-
-
-template<typename T>
-Eigen::Matrix<ScalarType, Eigen::Dynamic, 1>
-templated_ndarray_to_eigen_vector(pybind11::array_t<T> &array)
-{
-    double *p = (double*) array.request().ptr;
-
-    size_t nx = array.request().shape[0];
-
-    Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1>> mapping(p, nx);
-
-    return mapping;
-}
-
-
-template<typename T>
-pybind11::array_t<T> templated_eigen_to_ndarray_copy(
-    const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> eigen3_vector,
-    std::vector<size_t> dimension)
-{
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> * vector_pointer = new Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
-    (*vector_pointer) = eigen3_vector;
-
-    std::vector<size_t> stride = get_stride_from_dimension<T>(dimension);
-
-    pybind11::capsule free_when_done(
-        vector_pointer->data(), [](void *f)
-        {
-            T *foo = reinterpret_cast<T *>(f);
-            delete []foo;
-        }
-    );
-
-    pybind11::array_t<T> numpy_array = pybind11::array_t<T>(
-        dimension,
-        stride,
-        vector_pointer->data(),
-        free_when_done
-    );
-
-    return numpy_array;
+Eigen::VectorXd convert_py_to_eigen(const pybind11::array_t<T> &array_py, const size_t rows) {
+    auto info = array_py.request();
+    T* ptr = static_cast<T*>(info.ptr);
+    return Eigen::Map<Eigen::VectorXd>(ptr, rows);
 }

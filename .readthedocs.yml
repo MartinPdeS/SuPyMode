@@ -28,23 +28,20 @@ build:
     - xdotool
 
   tools:
-    python: "3.10"
+    python: "3.11"
   jobs:
     pre_install:
       - Xvfb :99 &
       - export DISPLAY=:99
       - cd docs && rm -rf source/Gallery
-      - mkdir build && cd build && cmake -G "Unix Makefiles" .. && make install
-      # - export DISPLAY=:99.0
-      # - export PYVISTA_OFF_SCREEN=true
-      # - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
       - sleep 3
 
 python:
   install:
-    - requirements: requirements-validation.txt
     - method: pip
       path: .
+      extra_requirements:
+        - documentation
 
 sphinx:
   builder: html

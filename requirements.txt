@@ -1,6 +1,0 @@
-MPSPlots
-PyFinitDiff
-FiberFusing
-numpy
-scipy
-matplotlib

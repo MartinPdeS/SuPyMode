@@ -3,14 +3,11 @@
 
 import sys
 from sphinx_gallery.sorting import FileNameSortKey
+from sphinx_gallery.sorting import ExplicitOrder
+from MPSPlots.styles import use_mpsplots_style
+import SuPyMode
 
-from SuPyMode.tools.directories import (
-    logo_path,
-    project_path,
-    doc_css_path,
-    version_path,
-    examples_path
-)
+from SuPyMode.directories import project_path, doc_css_path
 
 
 sys.path.insert(0, project_path)
@@ -32,8 +29,8 @@ autodoc_mock_imports = [
     'numpydoc',
     'MPSPlots',
     'FiberFusing',
-    'SuPyMode.Binary',
-    'SuPyMode.Tools'
+    'SuPyMode.binary',
+    'SuPyMode.tools'
 ]
 
 
@@ -41,10 +38,7 @@ project = 'SuPyMode'
 copyright = '2021, Martin Poinsinet de Sivry-Houle'
 author = 'Martin Poinsinet de Sivry-Houle'
 
-
-with open(version_path, "r+") as f:
-    version = release = f.read()
-
+version = SuPyMode.__version__
 
 extensions = [
     'sphinx.ext.mathjax',
@@ -53,25 +47,34 @@ extensions = [
     'pyvista.ext.plot_directive',
 ]
 
+
+def reset_mpl(gallery_conf, fname):
+    use_mpsplots_style()
+
+
 try:
     import pyvista
     if sys.platform in ["linux", "linux2"]:
         pyvista.start_xvfb()  # Works only on linux system!
 except ImportError:
-    print('Could not load pyvista library for 3D renderin')
+    print('Could not load pyvista library for 3D rendering')
+
+subsection_order = ExplicitOrder(
+    ["../examples/basic", "../examples/validation"]
+)
 
 sphinx_gallery_conf = {
-    'examples_dirs': [examples_path.joinpath('basic'), examples_path.joinpath('validation')],
-    'gallery_dirs': ["gallery/basic", "gallery/validation"],
+    'examples_dirs': '../examples',
+    'gallery_dirs': "gallery",
+    "subsection_order": subsection_order,
     'image_scrapers': ('matplotlib', 'pyvista'),
     'ignore_pattern': '/__',
     'plot_gallery': True,
     'thumbnail_size': [600, 600],
     'download_all_examples': False,
-    'line_numbers': True,
+    'reset_modules': reset_mpl,
+    'line_numbers': False,
     'remove_config_comments': True,
-    'default_thumb_file': logo_path,
-    'notebook_images': logo_path,
     'within_subsection_order': FileNameSortKey,
     'capture_repr': ('_repr_html_', '__repr__'),
     'nested_sections': True,
@@ -93,20 +96,53 @@ master_doc = 'index'
 
 language = 'en'
 
-exclude_patterns = []
-
-pygments_style = 'monokai'
-
 highlight_language = 'python3'
 
-html_theme = 'sphinxdoc'
+html_theme = "pydata_sphinx_theme"
 
-html_theme_options = {"sidebarwidth": 400}
+# -- Options for HTML output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
+
+exclude_trees = []
+default_role = "autolink"
+pygments_style = "sphinx"
+
+# -- Sphinx-gallery configuration --------------------------------------------
+
+major, minor = version[:2]
+binder_branch = f"v{major}.{minor}.x"
 
 
-html_static_path = ['_static']
-templates_path = ['_templates']
-html_css_files = ['default.css']
+html_theme_options = {
+    # Navigation bar
+    "logo": {
+        "alt_text": "SuPyMode's logo",
+        "text": "SuPyMode",
+        "link": "https://supymodes.readthedocs.io/en/latest/",
+    },
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/MartinPdeS/SuPyMode",
+            "icon": "fa-brands fa-github",
+        },
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/supymode/",
+            "icon": "fa-solid fa-box",
+        },
+    ],
+    "navbar_align": "left",
+    "navbar_end": ["version-switcher", "navbar-icon-links"],
+    "show_prev_next": False,
+    "show_version_warning_banner": True,
+    # Footer
+    "footer_start": ["copyright"],
+    "footer_end": ["sphinx-version", "theme-version"],
+    # Other
+    "pygment_light_style": "default",
+    "pygment_dark_style": "github-dark",
+}
 
 htmlhelp_basename = 'SuPyModedoc'
 
@@ -131,4 +167,7 @@ texinfo_documents = [
 
 epub_title = project
 
+html_static_path = ['_static']
+templates_path = ['_templates']
+html_css_files = ['default.css']
 epub_exclude_files = ['search.html']

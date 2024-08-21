@@ -1,23 +1,10 @@
-import pickle
-from pathlib import Path
-from SuPyMode.tools.directories import instance_directory
+from .utils import load_superset  # noqa: F401, W292
 
 
-def load_superset(filename: str, directory: str = '.'):
-    """
-    Saves the superset instance as a serialized pickle file.
+try:
+    from ._version import version as __version__  # noqa: F401
 
-    :param      filename:  The filename
-    :type       filename:  str
-    """
-    if directory == 'auto':
-        directory = instance_directory
-
-    filename = Path(directory).joinpath(filename).with_suffix('.pickle')
-
-    with open(filename, 'rb') as input_file:
-        superset = pickle.load(input_file)
-
-    return superset
+except ImportError:
+    __version__ = "0.0.0"
 
 # -
