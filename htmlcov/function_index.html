@@ -11,7 +11,7 @@
 <header>
     <div class="content">
         <h1>Coverage report:
-            <span class="pc_cov">0%</span>
+            <span class="pc_cov">55%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -27,6 +27,8 @@
                         <kbd>s</kbd>
                         <kbd>m</kbd>
                         <kbd>x</kbd>
+                        <kbd>b</kbd>
+                        <kbd>p</kbd>
                         <kbd>c</kbd>
                         &nbsp; change column sorting
                     </p>
@@ -55,7 +57,7 @@
         </h2>
         <p class="text">
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.1">coverage.py v7.6.1</a>,
-            created at 2024-08-28 22:45 +0000
+            created at 2024-08-28 22:50 +0000
         </p>
     </div>
 </header>
@@ -68,6 +70,8 @@
                 <th id="statements" aria-sort="none" data-default-sort-order="descending" data-shortcut="s">statements<span class="arrows"></span></th>
                 <th id="missing" aria-sort="none" data-default-sort-order="descending" data-shortcut="m">missing<span class="arrows"></span></th>
                 <th id="excluded" aria-sort="none" data-default-sort-order="descending" data-shortcut="x">excluded<span class="arrows"></span></th>
+                <th id="branches" aria-sort="none" data-default-sort-order="descending" data-shortcut="b">branches<span class="arrows"></span></th>
+                <th id="partial" aria-sort="none" data-default-sort-order="descending" data-shortcut="p">partial<span class="arrows"></span></th>
                 <th id="coverage" class="right" aria-sort="none" data-shortcut="c">coverage<span class="arrows"></span></th>
             </tr>
         </thead>
@@ -76,47 +80,59 @@
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html#t50">SuPyMode/mode_label.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html#t50"><data value='init__'>ModeLabel.__init__</data></a></td>
                 <td>3</td>
-                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="3 3">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html#t63">SuPyMode/mode_label.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html#t63"><data value='initialize'>ModeLabel.initialize</data></a></td>
                 <td>10</td>
-                <td>10</td>
+                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 10">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="8 12">67%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html#t79">SuPyMode/mode_label.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html#t79"><data value='get_filtered_mode_list'>ModeLabel.get_filtered_mode_list</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html#t82">SuPyMode/mode_label.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html#t82"><data value='get_x_parity'>ModeLabel._get_x_parity</data></a></td>
                 <td>5</td>
-                <td>5</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="7 9">78%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html#t96">SuPyMode/mode_label.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html#t96"><data value='get_y_parity'>ModeLabel._get_y_parity</data></a></td>
                 <td>5</td>
-                <td>5</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="7 9">78%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html#t110">SuPyMode/mode_label.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html#t110"><data value='repr__'>ModeLabel.__repr__</data></a></td>
                 <td>1</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
@@ -126,15 +142,19 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html">SuPyMode/mode_label.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_mode_label_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>10</td>
-                <td>10</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 10">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="10 10">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t52">SuPyMode/profiles.py</a></td>
@@ -142,23 +162,29 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t57">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t57"><data value='is_constant'>TaperSection.is_constant</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t62">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t62"><data value='z_final'>TaperSection.z_final</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t67">SuPyMode/profiles.py</a></td>
@@ -166,31 +192,39 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t72">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t72"><data value='radius_final'>TaperSection.radius_final</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t77">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t77"><data value='interpolation'>TaperSection.interpolation</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t121">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t121"><data value='post_init__'>AlphaProfile.__post_init__</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t130">SuPyMode/profiles.py</a></td>
@@ -198,15 +232,19 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t140">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t140"><data value='last_section'>AlphaProfile.last_section</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t149">SuPyMode/profiles.py</a></td>
@@ -214,29 +252,37 @@
                 <td>2</td>
                 <td>2</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 2">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t169">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t169"><data value='add_end_of_taper_segment'>AlphaProfile.add_end_of_taper_segment</data></a></td>
                 <td>5</td>
-                <td>5</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="5 7">71%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t194">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t194"><data value='get_constant_custom_section'>AlphaProfile.get_constant_custom_section</data></a></td>
                 <td>4</td>
-                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="4 4">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t223">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t223"><data value='evaluate_adiabatic_factor'>AlphaProfile.evaluate_adiabatic_factor</data></a></td>
                 <td>2</td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 2">0%</td>
             </tr>
@@ -246,63 +292,79 @@
                 <td>2</td>
                 <td>2</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 2">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t260">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t260"><data value='compute_radius_from_segment'>AlphaProfile.compute_radius_from_segment</data></a></td>
                 <td>10</td>
-                <td>10</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 10">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="10 12">83%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t306">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t306"><data value='assert_conditions'>AlphaProfile.assert_conditions</data></a></td>
                 <td>6</td>
-                <td>6</td>
+                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>6</td>
+                <td>3</td>
+                <td class="right" data-ratio="6 12">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t331">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t331"><data value='add_taper_custom_segment'>AlphaProfile.add_taper_custom_segment</data></a></td>
                 <td>7</td>
-                <td>7</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 7">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="7 7">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t379">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t379"><data value='compute_adiabatic'>AlphaProfile.compute_adiabatic</data></a></td>
                 <td>3</td>
-                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="3 3">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t400">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t400"><data value='compute_taper_angle'>AlphaProfile.compute_taper_angle</data></a></td>
                 <td>3</td>
-                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="3 3">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t424">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t424"><data value='smallest_itr'>AlphaProfile.smallest_itr</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t435">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t435"><data value='last_z'>AlphaProfile.last_z</data></a></td>
                 <td>3</td>
-                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="5 5">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t449">SuPyMode/profiles.py</a></td>
@@ -310,79 +372,99 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t460">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t460"><data value='last_radius'>AlphaProfile.last_radius</data></a></td>
                 <td>3</td>
-                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="5 5">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t472">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t472"><data value='initialize'>AlphaProfile.initialize</data></a></td>
                 <td>18</td>
-                <td>18</td>
+                <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 18">0%</td>
+                <td>4</td>
+                <td>2</td>
+                <td class="right" data-ratio="15 22">68%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t503">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t503"><data value='distance'>AlphaProfile.distance</data></a></td>
                 <td>4</td>
-                <td>4</td>
+                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 4">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t510">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t510"><data value='radius'>AlphaProfile.radius</data></a></td>
                 <td>4</td>
-                <td>4</td>
+                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 4">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t517">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t517"><data value='itr_list'>AlphaProfile.itr_list</data></a></td>
                 <td>4</td>
-                <td>4</td>
+                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 4">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t524">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t524"><data value='adiabatic'>AlphaProfile.adiabatic</data></a></td>
                 <td>4</td>
-                <td>4</td>
+                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 4">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t531">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t531"><data value='taper_angle'>AlphaProfile.taper_angle</data></a></td>
                 <td>4</td>
-                <td>4</td>
+                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 4">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t537">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t537"><data value='compute_radius_from_segment_from_interpolation'>AlphaProfile.compute_radius_from_segment_from_interpolation</data></a></td>
                 <td>6</td>
-                <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="8 8">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t557">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t557"><data value='add_taper_segment'>AlphaProfile.add_taper_segment</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t587">SuPyMode/profiles.py</a></td>
@@ -390,39 +472,49 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t602">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t602"><data value='single_plot'>AlphaProfile.single_plot</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t614">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t614"><data value='wrapper'>AlphaProfile.single_plot.wrapper</data></a></td>
                 <td>4</td>
-                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="4 4">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t625">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t625"><data value='render_itr_vs_z_on_ax'>AlphaProfile.render_itr_vs_z_on_ax</data></a></td>
                 <td>6</td>
-                <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="7 8">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t654">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t654"><data value='render_taper_angle_vs_z_on_ax'>AlphaProfile.render_taper_angle_vs_z_on_ax</data></a></td>
                 <td>6</td>
-                <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="7 8">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t682">SuPyMode/profiles.py</a></td>
@@ -430,61 +522,77 @@
                 <td>6</td>
                 <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 8">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t711">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t711"><data value='render_adiabatic_factor_vs_itr_on_ax'>AlphaProfile.render_adiabatic_factor_vs_itr_on_ax</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t720">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t720"><data value='plot'>AlphaProfile.plot</data></a></td>
                 <td>9</td>
-                <td>9</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 9">0%</td>
+                <td>0</td>
+                <td>6</td>
+                <td>3</td>
+                <td class="right" data-ratio="12 15">80%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t748">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t748"><data value='generate_propagation_gif'>AlphaProfile.generate_propagation_gif</data></a></td>
                 <td>12</td>
-                <td>12</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 12">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="14 14">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t779">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t779"><data value='init_func'>AlphaProfile.generate_propagation_gif.init_func</data></a></td>
                 <td>4</td>
-                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="4 4">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t793">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html#t793"><data value='animate'>AlphaProfile.generate_propagation_gif.animate</data></a></td>
                 <td>8</td>
-                <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="10 10">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html">SuPyMode/profiles.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_profiles_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>86</td>
-                <td>86</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 86">0%</td>
+                <td>0</td>
+                <td>46</td>
+                <td>21</td>
+                <td class="right" data-ratio="111 132">84%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_propagation_py.html#t14">SuPyMode/propagation.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_propagation_py.html#t14"><data value='init__'>Propagation.__init__</data></a></td>
                 <td>7</td>
                 <td>7</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 7">0%</td>
             </tr>
@@ -494,7 +602,9 @@
                 <td>16</td>
                 <td>16</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 16">0%</td>
+                <td>8</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 24">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_propagation_py.html#t64">SuPyMode/propagation.py</a></td>
@@ -502,7 +612,9 @@
                 <td>6</td>
                 <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 8">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_propagation_py.html#t75">SuPyMode/propagation.py</a></td>
@@ -510,63 +622,79 @@
                 <td>26</td>
                 <td>26</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 26">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 28">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_propagation_py.html">SuPyMode/propagation.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_propagation_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>10</td>
-                <td>10</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 10">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="10 10">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_adiabatic_py.html#t36">SuPyMode/representation/adiabatic.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_adiabatic_py.html#t36"><data value='init__'>Adiabatic.__init__</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_adiabatic_py.html#t45">SuPyMode/representation/adiabatic.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_adiabatic_py.html#t45"><data value='get_values'>Adiabatic.get_values</data></a></td>
                 <td>4</td>
-                <td>4</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="4 6">67%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_adiabatic_py.html#t63">SuPyMode/representation/adiabatic.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_adiabatic_py.html#t63"><data value='dress_ax'>Adiabatic._dress_ax</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_adiabatic_py.html">SuPyMode/representation/adiabatic.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_adiabatic_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>13</td>
-                <td>13</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 13">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="13 15">87%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t14">SuPyMode/representation/base.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t14"><data value='render_on_ax'>BaseMultiModePlot.render_on_ax</data></a></td>
                 <td>5</td>
-                <td>5</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="5 7">71%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t35">SuPyMode/representation/base.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t35"><data value='plot'>BaseMultiModePlot.plot</data></a></td>
                 <td>6</td>
-                <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t61">SuPyMode/representation/base.py</a></td>
@@ -574,23 +702,29 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t64">SuPyMode/representation/base.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t64"><data value='render_on_ax'>BaseSingleModePlot.render_on_ax</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t76">SuPyMode/representation/base.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t76"><data value='plot'>BaseSingleModePlot.plot</data></a></td>
                 <td>6</td>
-                <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t97">SuPyMode/representation/base.py</a></td>
@@ -598,13 +732,17 @@
                 <td>2</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 4">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t101">SuPyMode/representation/base.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t101"><data value='getitem__'>InheritFromSuperMode.__getitem__</data></a></td>
                 <td>1</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
@@ -614,6 +752,8 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
@@ -621,6 +761,8 @@
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t109"><data value='solver_number'>InheritFromSuperMode.solver_number</data></a></td>
                 <td>1</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
@@ -630,29 +772,37 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t117">SuPyMode/representation/base.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t117"><data value='boundaries'>InheritFromSuperMode.boundaries</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t121">SuPyMode/representation/base.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t121"><data value='itr_list'>InheritFromSuperMode.itr_list</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t125">SuPyMode/representation/base.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t125"><data value='ID'>InheritFromSuperMode.ID</data></a></td>
                 <td>1</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
@@ -662,21 +812,27 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t133">SuPyMode/representation/base.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t133"><data value='stylized_label'>InheritFromSuperMode.stylized_label</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t136">SuPyMode/representation/base.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t136"><data value='slice_to_itr'>InheritFromSuperMode.slice_to_itr</data></a></td>
                 <td>1</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
@@ -686,6 +842,8 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
@@ -693,6 +851,8 @@
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t142"><data value='get_symmetrize_vector'>InheritFromSuperMode._get_symmetrize_vector</data></a></td>
                 <td>1</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
@@ -702,37 +862,47 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t148">SuPyMode/representation/base.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html#t148"><data value='get_axis'>InheritFromSuperMode.get_axis</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html">SuPyMode/representation/base.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_base_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>37</td>
-                <td>37</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 37">0%</td>
+                <td>18</td>
+                <td>9</td>
+                <td class="right" data-ratio="45 55">82%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_beating_length_py.html#t34">SuPyMode/representation/beating_length.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_beating_length_py.html#t34"><data value='init__'>BeatingLength.__init__</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_beating_length_py.html#t43">SuPyMode/representation/beating_length.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_beating_length_py.html#t43"><data value='get_values'>BeatingLength.get_values</data></a></td>
                 <td>1</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
@@ -742,71 +912,89 @@
                 <td>2</td>
                 <td>2</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 2">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_beating_length_py.html">SuPyMode/representation/beating_length.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_beating_length_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>13</td>
-                <td>13</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 13">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="13 15">87%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_beta_py.html#t28">SuPyMode/representation/beta.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_beta_py.html#t28"><data value='init__'>Beta.__init__</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_beta_py.html#t38">SuPyMode/representation/beta.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_beta_py.html#t38"><data value='dress_ax'>Beta._dress_ax</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_beta_py.html">SuPyMode/representation/beta.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_beta_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>10</td>
-                <td>10</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 10">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="10 12">83%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_eigen_value_py.html#t25">SuPyMode/representation/eigen_value.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_eigen_value_py.html#t25"><data value='init__'>EigenValue.__init__</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_eigen_value_py.html#t35">SuPyMode/representation/eigen_value.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_eigen_value_py.html#t35"><data value='dress_ax'>EigenValue._dress_ax</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_eigen_value_py.html">SuPyMode/representation/eigen_value.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_eigen_value_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>10</td>
-                <td>10</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 10">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="10 12">83%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t31">SuPyMode/representation/field.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t31"><data value='init__'>Field.__init__</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t41">SuPyMode/representation/field.py</a></td>
@@ -814,15 +1002,19 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t54">SuPyMode/representation/field.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t54"><data value='itr_list'>Field.itr_list</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t64">SuPyMode/representation/field.py</a></td>
@@ -830,15 +1022,19 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t73">SuPyMode/representation/field.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t73"><data value='get_field'>Field.get_field</data></a></td>
                 <td>6</td>
-                <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="7 8">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t102">SuPyMode/representation/field.py</a></td>
@@ -846,7 +1042,9 @@
                 <td>17</td>
                 <td>17</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 17">0%</td>
+                <td>8</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 25">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t135">SuPyMode/representation/field.py</a></td>
@@ -854,173 +1052,217 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 3">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t154">SuPyMode/representation/field.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t154"><data value='get_symmetrized_field'>Field._get_symmetrized_field</data></a></td>
                 <td>25</td>
-                <td>25</td>
+                <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 25">0%</td>
+                <td>16</td>
+                <td>7</td>
+                <td class="right" data-ratio="24 41">59%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t201">SuPyMode/representation/field.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t201"><data value='plot'>Field.plot</data></a></td>
                 <td>7</td>
-                <td>7</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 7">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="9 9">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t242">SuPyMode/representation/field.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t242"><data value='render_on_ax'>Field.render_on_ax</data></a></td>
                 <td>12</td>
-                <td>12</td>
+                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 12">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="9 14">64%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t293">SuPyMode/representation/field.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html#t293"><data value='get_plot_mode_field_title'>Field.get_plot_mode_field_title</data></a></td>
                 <td>11</td>
-                <td>11</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 11">0%</td>
+                <td>0</td>
+                <td>8</td>
+                <td>4</td>
+                <td class="right" data-ratio="15 19">79%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html">SuPyMode/representation/field.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_field_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>26</td>
-                <td>26</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 26">0%</td>
+                <td>6</td>
+                <td>3</td>
+                <td class="right" data-ratio="28 32">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_index_py.html#t25">SuPyMode/representation/index.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_index_py.html#t25"><data value='init__'>Index.__init__</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_index_py.html#t35">SuPyMode/representation/index.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_index_py.html#t35"><data value='dress_ax'>Index._dress_ax</data></a></td>
                 <td>3</td>
-                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="3 3">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_index_py.html">SuPyMode/representation/index.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_index_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>10</td>
-                <td>10</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 10">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="10 12">83%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_normalized_coupling_py.html#t26">SuPyMode/representation/normalized_coupling.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_normalized_coupling_py.html#t26"><data value='init__'>NormalizedCoupling.__init__</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_normalized_coupling_py.html#t35">SuPyMode/representation/normalized_coupling.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_normalized_coupling_py.html#t35"><data value='get_values'>NormalizedCoupling.get_values</data></a></td>
                 <td>4</td>
-                <td>4</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="4 6">67%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_normalized_coupling_py.html#t52">SuPyMode/representation/normalized_coupling.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_normalized_coupling_py.html#t52"><data value='dress_ax'>NormalizedCoupling._dress_ax</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_8efdf6575ab486bf_normalized_coupling_py.html">SuPyMode/representation/normalized_coupling.py</a></td>
                 <td class="name left"><a href="z_8efdf6575ab486bf_normalized_coupling_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>12</td>
-                <td>12</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 12">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="12 14">86%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t44">SuPyMode/solver.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t44"><data value='post_init__'>SuPySolver.__post_init__</data></a></td>
                 <td>8</td>
-                <td>8</td>
+                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="7 10">70%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t56">SuPyMode/solver.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t56"><data value='initialize_binding'>SuPySolver.initialize_binding</data></a></td>
                 <td>6</td>
-                <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t103">SuPyMode/solver.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t103"><data value='init_superset'>SuPySolver.init_superset</data></a></td>
                 <td>5</td>
-                <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="5 5">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t130">SuPyMode/solver.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t130"><data value='index_to_eigen_value'>SuPySolver.index_to_eigen_value</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t142">SuPyMode/solver.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t142"><data value='eigen_value_to_index'>SuPySolver.eigen_value_to_index</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t154">SuPyMode/solver.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t154"><data value='get_supermode_labels'>SuPySolver.get_supermode_labels</data></a></td>
                 <td>3</td>
-                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="5 5">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t171">SuPyMode/solver.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html#t171"><data value='add_modes'>SuPySolver.add_modes</data></a></td>
                 <td>11</td>
-                <td>11</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 11">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="13 13">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html">SuPyMode/solver.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_solver_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>28</td>
-                <td>28</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 28">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="30 30">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_special_py.html#t10">SuPyMode/special.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_special_py.html#t10"><data value='get_3_figures'>get_3_figures</data></a></td>
                 <td>10</td>
                 <td>10</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 10">0%</td>
             </tr>
@@ -1030,13 +1272,17 @@
                 <td>7</td>
                 <td>7</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 7">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 9">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_special_py.html#t77">SuPyMode/special.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_special_py.html#t77"><data value='generate_profile_ax'>ModePropagationGifCreator.generate_profile_ax</data></a></td>
                 <td>8</td>
                 <td>8</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 8">0%</td>
             </tr>
@@ -1046,13 +1292,17 @@
                 <td>8</td>
                 <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 10">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_special_py.html#t99">SuPyMode/special.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_special_py.html#t99"><data value='generate_figure'>ModePropagationGifCreator.generate_figure</data></a></td>
                 <td>5</td>
                 <td>5</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 5">0%</td>
             </tr>
@@ -1062,7 +1312,9 @@
                 <td>6</td>
                 <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 8">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_special_py.html#t128">SuPyMode/special.py</a></td>
@@ -1070,13 +1322,17 @@
                 <td>7</td>
                 <td>7</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 7">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 9">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_special_py.html#t138">SuPyMode/special.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_special_py.html#t138"><data value='make_animation'>ModePropagationGifCreator.make_animation</data></a></td>
                 <td>5</td>
                 <td>5</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 5">0%</td>
             </tr>
@@ -1086,6 +1342,8 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 3">0%</td>
             </tr>
             <tr class="region">
@@ -1094,69 +1352,87 @@
                 <td>12</td>
                 <td>12</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 12">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t47">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t47"><data value='post_init__'>SuperMode.__post_init__</data></a></td>
                 <td>8</td>
-                <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="8 8">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t57">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t57"><data value='hash__'>SuperMode.__hash__</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t68">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t68"><data value='binding_number'>SuperMode.binding_number</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t73">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t73"><data value='geometry'>SuperMode.geometry</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t83">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t83"><data value='coordinate_system'>SuperMode.coordinate_system</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t93">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t93"><data value='itr_list'>SuperMode.itr_list</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t98">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t98"><data value='model_parameters'>SuperMode.model_parameters</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t108">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t108"><data value='mesh_gradient'>SuperMode.mesh_gradient</data></a></td>
                 <td>1</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
@@ -1166,23 +1442,29 @@
                 <td>4</td>
                 <td>4</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 4">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t127">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t127"><data value='stylized_label'>SuperMode.stylized_label</data></a></td>
                 <td>3</td>
-                <td>3</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="3 5">60%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t140">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t140"><data value='is_computation_compatible'>SuperMode.is_computation_compatible</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t153">SuPyMode/supermode.py</a></td>
@@ -1190,31 +1472,39 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t165">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t165"><data value='get_field_interpolation'>SuperMode.get_field_interpolation</data></a></td>
                 <td>10</td>
-                <td>10</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 10">0%</td>
+                <td>6</td>
+                <td>1</td>
+                <td class="right" data-ratio="14 16">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t204">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t204"><data value='get_axis_vector'>SuperMode._get_axis_vector</data></a></td>
                 <td>17</td>
-                <td>17</td>
+                <td>7</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 17">0%</td>
+                <td>10</td>
+                <td>5</td>
+                <td class="right" data-ratio="15 27">56%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t229">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t229"><data value='get_axis'>SuperMode.get_axis</data></a></td>
                 <td>3</td>
-                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="3 3">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t236">SuPyMode/supermode.py</a></td>
@@ -1222,39 +1512,49 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t239">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html#t239"><data value='plot'>SuperMode.plot</data></a></td>
                 <td>17</td>
-                <td>17</td>
+                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 17">0%</td>
+                <td>14</td>
+                <td>2</td>
+                <td class="right" data-ratio="26 31">84%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html">SuPyMode/supermode.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_supermode_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>47</td>
-                <td>47</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 47">0%</td>
+                <td>0</td>
+                <td>18</td>
+                <td>8</td>
+                <td class="right" data-ratio="57 65">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t42">SuPyMode/superset.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t42"><data value='post_init__'>SuperSet.__post_init__</data></a></td>
                 <td>3</td>
-                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="3 3">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t47">SuPyMode/superset.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t47"><data value='getitem__'>SuperSet.__getitem__</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t50">SuPyMode/superset.py</a></td>
@@ -1262,21 +1562,27 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t54">SuPyMode/superset.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t54"><data value='coordinate_system'>SuperSet.coordinate_system</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t61">SuPyMode/superset.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t61"><data value='fundamental_supermodes'>SuperSet.fundamental_supermodes</data></a></td>
                 <td>1</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
@@ -1286,6 +1592,8 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
@@ -1294,15 +1602,19 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 5">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t96">SuPyMode/superset.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t96"><data value='itr_to_slice'>SuperSet.itr_to_slice</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t110">SuPyMode/superset.py</a></td>
@@ -1310,13 +1622,17 @@
                 <td>10</td>
                 <td>10</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 10">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 14">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t124">SuPyMode/superset.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t124"><data value='absolute_overlap'>SuperSet.get_fundamental_supermodes.absolute_overlap</data></a></td>
                 <td>8</td>
                 <td>8</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 8">0%</td>
             </tr>
@@ -1326,7 +1642,9 @@
                 <td>4</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 6">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t168">SuPyMode/superset.py</a></td>
@@ -1334,7 +1652,9 @@
                 <td>6</td>
                 <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 8">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t188">SuPyMode/superset.py</a></td>
@@ -1342,7 +1662,9 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 5">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t200">SuPyMode/superset.py</a></td>
@@ -1350,7 +1672,9 @@
                 <td>2</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 4">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t207">SuPyMode/superset.py</a></td>
@@ -1358,7 +1682,9 @@
                 <td>4</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 6">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t222">SuPyMode/superset.py</a></td>
@@ -1366,13 +1692,17 @@
                 <td>12</td>
                 <td>12</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 12">0%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 18">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t253">SuPyMode/superset.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t253"><data value='compute_coupling_factor'>SuperSet.compute_coupling_factor</data></a></td>
                 <td>3</td>
                 <td>3</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 3">0%</td>
             </tr>
@@ -1382,7 +1712,9 @@
                 <td>8</td>
                 <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 10">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t302">SuPyMode/superset.py</a></td>
@@ -1390,13 +1722,17 @@
                 <td>12</td>
                 <td>12</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 12">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 16">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t341">SuPyMode/superset.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t341"><data value='model'>SuperSet.propagate.model</data></a></td>
                 <td>2</td>
                 <td>2</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 2">0%</td>
             </tr>
@@ -1406,7 +1742,9 @@
                 <td>8</td>
                 <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 12">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t394">SuPyMode/superset.py</a></td>
@@ -1414,13 +1752,17 @@
                 <td>5</td>
                 <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 7">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t410">SuPyMode/superset.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t410"><data value='sort_modes_by_beta'>SuperSet.sort_modes_by_beta</data></a></td>
                 <td>1</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
@@ -1430,7 +1772,9 @@
                 <td>8</td>
                 <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 12">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t437">SuPyMode/superset.py</a></td>
@@ -1438,31 +1782,39 @@
                 <td>1</td>
                 <td>1</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t446">SuPyMode/superset.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t446"><data value='is_compute_compatible'>SuperSet.is_compute_compatible</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t459">SuPyMode/superset.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t459"><data value='remove_duplicate_combination'>SuperSet.remove_duplicate_combination</data></a></td>
                 <td>5</td>
-                <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>0</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="9 9">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t477">SuPyMode/superset.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t477"><data value='interpret_combination'>SuperSet.interpret_combination</data></a></td>
                 <td>9</td>
-                <td>9</td>
+                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 9">0%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="8 13">62%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t507">SuPyMode/superset.py</a></td>
@@ -1470,7 +1822,9 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 5">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t526">SuPyMode/superset.py</a></td>
@@ -1478,7 +1832,9 @@
                 <td>18</td>
                 <td>18</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 18">0%</td>
+                <td>12</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 30">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t560">SuPyMode/superset.py</a></td>
@@ -1486,7 +1842,9 @@
                 <td>5</td>
                 <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 7">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html#t568">SuPyMode/superset.py</a></td>
@@ -1494,23 +1852,29 @@
                 <td>5</td>
                 <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 7">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html">SuPyMode/superset.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>57</td>
-                <td>57</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 57">0%</td>
+                <td>0</td>
+                <td>20</td>
+                <td>9</td>
+                <td class="right" data-ratio="68 77">88%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t25">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t25"><data value='logic_index'>SuperSetPlots._logic_index</data></a></td>
                 <td>6</td>
-                <td>6</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="8 10">80%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t49">SuPyMode/superset_plots.py</a></td>
@@ -1518,23 +1882,29 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 3">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t55">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t55"><data value='plot_index'>SuperSetPlots.plot_index</data></a></td>
                 <td>4</td>
-                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t63">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t63"><data value='logic_beta'>SuperSetPlots._logic_beta</data></a></td>
                 <td>6</td>
-                <td>6</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="8 10">80%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t87">SuPyMode/superset_plots.py</a></td>
@@ -1542,23 +1912,29 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 3">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t93">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t93"><data value='plot_beta'>SuperSetPlots.plot_beta</data></a></td>
                 <td>4</td>
-                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t101">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t101"><data value='logic_eigen_value'>SuperSetPlots._logic_eigen_value</data></a></td>
                 <td>6</td>
-                <td>6</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="8 10">80%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t125">SuPyMode/superset_plots.py</a></td>
@@ -1566,15 +1942,19 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 3">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t131">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t131"><data value='plot_eigen_value'>SuperSetPlots.plot_eigen_value</data></a></td>
                 <td>4</td>
-                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t140">SuPyMode/superset_plots.py</a></td>
@@ -1582,13 +1962,17 @@
                 <td>4</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 6">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t163">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t163"><data value='get_figure_normalized_coupling'>SuperSetPlots.get_figure_normalized_coupling</data></a></td>
                 <td>3</td>
                 <td>3</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 3">0%</td>
             </tr>
@@ -1598,15 +1982,19 @@
                 <td>4</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 6">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t179">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t179"><data value='logic_normalized_coupling'>SuperSetPlots._logic_normalized_coupling</data></a></td>
                 <td>4</td>
-                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t202">SuPyMode/superset_plots.py</a></td>
@@ -1614,23 +2002,29 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 3">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t208">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t208"><data value='plot_normalized_coupling'>SuperSetPlots.plot_normalized_coupling</data></a></td>
                 <td>4</td>
-                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t218">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t218"><data value='logic_adiabatic'>SuperSetPlots._logic_adiabatic</data></a></td>
                 <td>6</td>
-                <td>6</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="8 10">80%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t244">SuPyMode/superset_plots.py</a></td>
@@ -1638,23 +2032,29 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 3">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t250">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t250"><data value='plot_adiabatic'>SuperSetPlots.plot_adiabatic</data></a></td>
                 <td>4</td>
-                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t258">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t258"><data value='logic_field'>SuperSetPlots._logic_field</data></a></td>
                 <td>9</td>
-                <td>9</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 9">0%</td>
+                <td>0</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="13 13">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t311">SuPyMode/superset_plots.py</a></td>
@@ -1662,23 +2062,29 @@
                 <td>2</td>
                 <td>2</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 2">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t316">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t316"><data value='plot_field'>SuperSetPlots.plot_field</data></a></td>
                 <td>3</td>
-                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="5 5">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t321">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t321"><data value='plot'>SuperSetPlots.plot</data></a></td>
                 <td>21</td>
-                <td>21</td>
+                <td>7</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 21">0%</td>
+                <td>18</td>
+                <td>2</td>
+                <td class="right" data-ratio="26 39">67%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t354">SuPyMode/superset_plots.py</a></td>
@@ -1686,7 +2092,9 @@
                 <td>10</td>
                 <td>10</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 10">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 14">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html#t403">SuPyMode/superset_plots.py</a></td>
@@ -1694,21 +2102,27 @@
                 <td>5</td>
                 <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 9">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html">SuPyMode/superset_plots.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_superset_plots_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>63</td>
-                <td>63</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 63">0%</td>
+                <td>0</td>
+                <td>54</td>
+                <td>27</td>
+                <td class="right" data-ratio="90 117">77%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_special_py.html#t10">SuPyMode/tools/special.py</a></td>
                 <td class="name left"><a href="z_6fb7a612281ca84c_special_py.html#t10"><data value='get_3_figures'>get_3_figures</data></a></td>
                 <td>10</td>
                 <td>10</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 10">0%</td>
             </tr>
@@ -1718,13 +2132,17 @@
                 <td>7</td>
                 <td>7</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 7">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 9">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_special_py.html#t77">SuPyMode/tools/special.py</a></td>
                 <td class="name left"><a href="z_6fb7a612281ca84c_special_py.html#t77"><data value='generate_profile_ax'>ModePropagationGifCreator.generate_profile_ax</data></a></td>
                 <td>8</td>
                 <td>8</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 8">0%</td>
             </tr>
@@ -1734,13 +2152,17 @@
                 <td>8</td>
                 <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 10">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_special_py.html#t99">SuPyMode/tools/special.py</a></td>
                 <td class="name left"><a href="z_6fb7a612281ca84c_special_py.html#t99"><data value='generate_figure'>ModePropagationGifCreator.generate_figure</data></a></td>
                 <td>5</td>
                 <td>5</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 5">0%</td>
             </tr>
@@ -1750,7 +2172,9 @@
                 <td>6</td>
                 <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 8">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_special_py.html#t128">SuPyMode/tools/special.py</a></td>
@@ -1758,13 +2182,17 @@
                 <td>7</td>
                 <td>7</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 7">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 9">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_special_py.html#t138">SuPyMode/tools/special.py</a></td>
                 <td class="name left"><a href="z_6fb7a612281ca84c_special_py.html#t138"><data value='make_animation'>ModePropagationGifCreator.make_animation</data></a></td>
                 <td>5</td>
                 <td>5</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 5">0%</td>
             </tr>
@@ -1774,6 +2202,8 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
+                <td>0</td>
+                <td>0</td>
                 <td class="right" data-ratio="0 3">0%</td>
             </tr>
             <tr class="region">
@@ -1781,6 +2211,8 @@
                 <td class="name left"><a href="z_6fb7a612281ca84c_special_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>12</td>
                 <td>12</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 12">0%</td>
             </tr>
@@ -1790,7 +2222,9 @@
                 <td>6</td>
                 <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 10">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_utils_py.html#t35">SuPyMode/tools/utils.py</a></td>
@@ -1798,7 +2232,9 @@
                 <td>4</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 6">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_utils_py.html#t44">SuPyMode/tools/utils.py</a></td>
@@ -1806,7 +2242,9 @@
                 <td>8</td>
                 <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 12">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_utils_py.html#t61">SuPyMode/tools/utils.py</a></td>
@@ -1814,7 +2252,9 @@
                 <td>2</td>
                 <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 4">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_utils_py.html#t66">SuPyMode/tools/utils.py</a></td>
@@ -1822,7 +2262,9 @@
                 <td>8</td>
                 <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 12">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_utils_py.html#t94">SuPyMode/tools/utils.py</a></td>
@@ -1830,7 +2272,9 @@
                 <td>8</td>
                 <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 12">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_utils_py.html#t120">SuPyMode/tools/utils.py</a></td>
@@ -1838,7 +2282,9 @@
                 <td>16</td>
                 <td>16</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 16">0%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 22">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_utils_py.html#t175">SuPyMode/tools/utils.py</a></td>
@@ -1846,7 +2292,9 @@
                 <td>15</td>
                 <td>15</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 15">0%</td>
+                <td>13</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 28">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_utils_py.html#t212">SuPyMode/tools/utils.py</a></td>
@@ -1854,7 +2302,9 @@
                 <td>13</td>
                 <td>13</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 13">0%</td>
+                <td>6</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 19">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6fb7a612281ca84c_utils_py.html">SuPyMode/tools/utils.py</a></td>
@@ -1862,47 +2312,59 @@
                 <td>19</td>
                 <td>19</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 19">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 21">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t20">SuPyMode/utils.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t20"><data value='parse_mode_of_interest'>parse_mode_of_interest</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t21">SuPyMode/utils.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t21"><data value='wrapper'>parse_mode_of_interest.wrapper</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t32">SuPyMode/utils.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t32"><data value='parse_combination'>parse_combination</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t33">SuPyMode/utils.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t33"><data value='wrapper'>parse_combination.wrapper</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t43">SuPyMode/utils.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t43"><data value='parse_filename'>parse_filename</data></a></td>
                 <td>2</td>
-                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="3 4">75%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t45">SuPyMode/utils.py</a></td>
@@ -1910,7 +2372,9 @@
                 <td>8</td>
                 <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 10">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t64">SuPyMode/utils.py</a></td>
@@ -1918,7 +2382,9 @@
                 <td>6</td>
                 <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 10">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t82">SuPyMode/utils.py</a></td>
@@ -1926,7 +2392,9 @@
                 <td>4</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 6">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t91">SuPyMode/utils.py</a></td>
@@ -1934,7 +2402,9 @@
                 <td>4</td>
                 <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 6">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t100">SuPyMode/utils.py</a></td>
@@ -1942,15 +2412,19 @@
                 <td>8</td>
                 <td>8</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 8">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 12">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t117">SuPyMode/utils.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t117"><data value='test_valid_input'>test_valid_input</data></a></td>
                 <td>2</td>
-                <td>2</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 2">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="2 4">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t122">SuPyMode/utils.py</a></td>
@@ -1958,141 +2432,177 @@
                 <td>5</td>
                 <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 9">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t145">SuPyMode/utils.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t145"><data value='slice_to_itr'>slice_to_itr</data></a></td>
                 <td>5</td>
-                <td>5</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="7 9">78%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t168">SuPyMode/utils.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t168"><data value='interpret_slice_number_and_itr'>interpret_slice_number_and_itr</data></a></td>
                 <td>14</td>
-                <td>14</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 14">0%</td>
+                <td>6</td>
+                <td>2</td>
+                <td class="right" data-ratio="17 20">85%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t213">SuPyMode/utils.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t213"><data value='interpret_mode_of_interest'>interpret_mode_of_interest</data></a></td>
                 <td>16</td>
-                <td>16</td>
+                <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 16">0%</td>
+                <td>13</td>
+                <td>5</td>
+                <td class="right" data-ratio="18 29">62%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t251">SuPyMode/utils.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html#t251"><data value='get_symmetrized_vector'>get_symmetrized_vector</data></a></td>
                 <td>13</td>
-                <td>13</td>
+                <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 13">0%</td>
+                <td>6</td>
+                <td>3</td>
+                <td class="right" data-ratio="11 19">58%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html">SuPyMode/utils.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_utils_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>27</td>
-                <td>27</td>
+                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 27">0%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="26 29">90%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t28">SuPyMode/workflow.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t28"><data value='prepare_simulation_geometry'>prepare_simulation_geometry</data></a></td>
                 <td>14</td>
-                <td>14</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 14">0%</td>
+                <td>8</td>
+                <td>1</td>
+                <td class="right" data-ratio="20 22">91%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t74">SuPyMode/workflow.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t74"><data value='get_clad_index'>prepare_simulation_geometry.get_clad_index</data></a></td>
                 <td>5</td>
-                <td>5</td>
+                <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="3 9">33%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t120">SuPyMode/workflow.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t120"><data value='prepare_fused_structure'>prepare_fused_structure</data></a></td>
                 <td>6</td>
-                <td>6</td>
+                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="8 10">80%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t252">SuPyMode/workflow.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t252"><data value='post_init__'>Workflow.__post_init__</data></a></td>
                 <td>5</td>
-                <td>5</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 5">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="5 5">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t262">SuPyMode/workflow.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t262"><data value='prepare_simulation_geometry'>Workflow.prepare_simulation_geometry</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t279">SuPyMode/workflow.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t279"><data value='plot_initial_setup'>Workflow._plot_initial_setup</data></a></td>
                 <td>4</td>
-                <td>4</td>
+                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>4</td>
+                <td>2</td>
+                <td class="right" data-ratio="4 8">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t287">SuPyMode/workflow.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t287"><data value='superset'>Workflow.superset</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t290">SuPyMode/workflow.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t290"><data value='initialize_solver'>Workflow._initialize_solver</data></a></td>
                 <td>4</td>
-                <td>4</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t316">SuPyMode/workflow.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t316"><data value='get_superset'>Workflow.get_superset</data></a></td>
                 <td>1</td>
-                <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1">0%</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="1 1">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t319">SuPyMode/workflow.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t319"><data value='plot_simulation_outputs'>Workflow._plot_simulation_outputs</data></a></td>
                 <td>14</td>
-                <td>14</td>
+                <td>7</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 14">0%</td>
+                <td>14</td>
+                <td>7</td>
+                <td class="right" data-ratio="14 28">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t336">SuPyMode/workflow.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t336"><data value='finalize_workflow'>Workflow._finalize_workflow</data></a></td>
                 <td>4</td>
-                <td>4</td>
+                <td>2</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 4">0%</td>
+                <td>4</td>
+                <td>2</td>
+                <td class="right" data-ratio="4 8">50%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t343">SuPyMode/workflow.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t343"><data value='plot'>Workflow.plot</data></a></td>
                 <td>1</td>
                 <td>1</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 1">0%</td>
             </tr>
@@ -2102,7 +2612,9 @@
                 <td>6</td>
                 <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 8">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t365">SuPyMode/workflow.py</a></td>
@@ -2110,7 +2622,9 @@
                 <td>6</td>
                 <td>6</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 6">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 8">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html#t383">SuPyMode/workflow.py</a></td>
@@ -2118,15 +2632,19 @@
                 <td>3</td>
                 <td>3</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 3">0%</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="0 5">0%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html">SuPyMode/workflow.py</a></td>
                 <td class="name left"><a href="z_90f50aa8da0844fc_workflow_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>65</td>
-                <td>65</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 65">0%</td>
+                <td>0</td>
+                <td>4</td>
+                <td>1</td>
+                <td class="right" data-ratio="68 69">99%</td>
             </tr>
         </tbody>
         <tfoot>
@@ -2134,9 +2652,11 @@
                 <td class="name left">Total</td>
                 <td class="name left">&nbsp;</td>
                 <td>1721</td>
-                <td>1721</td>
+                <td>695</td>
                 <td>0</td>
-                <td class="right" data-ratio="0 1721">0%</td>
+                <td>612</td>
+                <td>160</td>
+                <td class="right" data-ratio="1289 2333">55%</td>
             </tr>
         </tfoot>
     </table>
@@ -2148,7 +2668,7 @@
     <div class="content">
         <p>
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.1">coverage.py v7.6.1</a>,
-            created at 2024-08-28 22:45 +0000
+            created at 2024-08-28 22:50 +0000
         </p>
     </div>
     <aside class="hidden">
