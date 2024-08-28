@@ -4,7 +4,7 @@ SuPyMode
 |python|
 |docs|
 |Citation|
-|Unittest|
+|coverage|
 |PyPi|
 |PyPi_download|
 |colab|
@@ -108,7 +108,9 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
 .. |Citation| image:: https://zenodo.org/badge/366930899.svg
    :target: https://zenodo.org/badge/latestdoi/366930899
 
-.. |Unittest| image:: https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/MartinPdeS/8e5ebf39ed694d3c90a790dffc0eff4f/raw
+.. |coverage| image:: https://raw.githubusercontent.com/MartinPdeS/SuPyMode/python-coverage-comment-action-data/badge.svg
+   :alt: Unittest coverage
+   :target: https://htmlpreview.github.io/?https://github.com/MartinPdeS/SuPyMode/blob/python-coverage-comment-action-data/htmlcov/index.html
 
 .. |PyPi| image:: https://badge.fury.io/py/SuPyMode.svg
    :target: https://pypi.org/project/SuPyMode/
