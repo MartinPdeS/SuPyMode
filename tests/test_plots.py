@@ -44,7 +44,7 @@ def test_superset_plot(mock_show, setup_workflow, plot_type):
         plot_type (str): Type of plot to generate and test.
     """
     superset = setup_workflow.superset
-    superset.plot(plot_type=plot_type)
+    superset.plot(plot_type=plot_type, mode_of_interest='fundamental')
     mock_show.assert_called_once()
     mock_show.reset_mock()
 
