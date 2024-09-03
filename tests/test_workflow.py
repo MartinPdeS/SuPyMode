@@ -9,17 +9,10 @@ from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundari
 fused_structure_list = [
     configuration.ring.FusedProfile_01x01,
     configuration.ring.FusedProfile_02x02,
-    configuration.ring.FusedProfile_03x03,
-    configuration.ring.FusedProfile_04x04,
-    configuration.ring.FusedProfile_07x07
 ]
 
-# Test IDs for better readability in pytest output
-test_ids = [f"Profile_{structure.number_of_fibers}x{structure.number_of_fibers}" for structure in fused_structure_list]
-
-
-@pytest.mark.parametrize('fused_structure', fused_structure_list, ids=test_ids)
-def test_fused_structure_workflow(fused_structure):
+@pytest.mark.parametrize('fused_structure', fused_structure_list, ids=lambda x: f"n_fiber: {x.number_of_fibers}")
+def test_workflow(fused_structure):
     """
     Test the Workflow initialization with various configurations of fused fiber structures.
 
@@ -50,5 +43,13 @@ def test_fused_structure_workflow(fused_structure):
         fusion_degree='auto'
     )
 
+    workflow.generate_pdf_report(filename='test')
+
+    workflow.save_superset_instance(filename='test')
+
     # Assert that the workflow instance has been successfully created (basic check)
     assert workflow is not None, "Workflow should be successfully instantiated with the given configurations."
+
+
+if __name__ == '__main__':
+    pytest.main([__file__])

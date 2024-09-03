@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import List, Union, Optional, Tuple
+from typing import List, Union, Optional, Tuple, Callable
 from pathlib import Path
 
 from FiberFusing import Geometry, BackGround
@@ -344,6 +344,21 @@ class Workflow():
         """Plots various types of data from the simulation based on the specified plot type."""
         return self.solver.superset.plot(*args, **kwargs)
 
+    @staticmethod
+    def _parse_filename(function: Callable) -> Callable:
+        def wrapper(*args, filename: str = 'auto', **kwargs):
+            if filename == 'auto':
+                filename = self._get_auto_generated_filename()
+
+            filename = Path(filename)
+
+            filename = sanitize_filepath(filename)
+
+            return function(*args, filename=filename, **kwargs)
+
+        return wrapper
+
+    @_parse_filename
     def save_superset_instance(self, filename: str = 'auto', directory: str = 'auto') -> Path:
         """
         Saves the superset instance to a file, defaulting to an auto-generated filename if not specified.
@@ -355,14 +370,15 @@ class Workflow():
         Returns:
             Path: Path to the saved file.
         """
-        if filename == 'auto':
-            filename = self._get_auto_generated_filename()
-        filename = Path(filename).with_suffix('.pickle')
-        filename = sanitize_filepath(filename)
-        self.solver.superset.save_instance(filename=filename, directory=directory)
+        self.solver.superset.save_instance(
+            filename=filename.with_suffix('.pickle'),
+            directory=directory
+        )
+
         return filename
 
-    def generate_pdf_report(self, filename: str = 'auto', **kwargs) -> Path:
+    @_parse_filename
+    def generate_pdf_report(self, filename: str = 'auto', directory: str = 'auto', **kwargs) -> Path:
         """
         Generates a PDF report of all relevant simulation data and results.
 
@@ -373,11 +389,12 @@ class Workflow():
         Returns:
             Path: Path to the generated PDF report.
         """
-        if filename == 'auto':
-            filename = self._get_auto_generated_filename()
-        filename = Path(filename).with_suffix('.pdf')
-        filename = sanitize_filepath(filename)
-        self.solver.superset.generate_pdf_report(filename=filename, **kwargs)
+        self.solver.superset.generate_pdf_report(
+            filename=filename.with_suffix('.pickle'),
+            directory=directory,
+            **kwargs
+        )
+
         return filename
 
     def _get_auto_generated_filename(self) -> str:
