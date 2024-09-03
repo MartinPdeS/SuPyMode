@@ -12,8 +12,8 @@
 coverage.json
 htmlcov
 *.pytest_cache
-SuPyMode/user_data/*
-SuPyMode/reports/*
+# SuPyMode/user_data/*
+!SuPyMode/user_data/__init__.py
 
 dist
 build
