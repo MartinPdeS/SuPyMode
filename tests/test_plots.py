@@ -3,7 +3,7 @@
 
 from unittest.mock import patch
 import pytest
-
+import matplotlib.pyplot as plt
 from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries
 
 
@@ -73,8 +73,9 @@ def test_representation_plot(mock_show, setup_workflow, plot_type):
 
     mock_show.assert_called_once()
     mock_show.reset_mock()
+    plt.close()
 
 
 if __name__ == "__main__":
-    pytest.main()
+    pytest.main([__file__])
 # -

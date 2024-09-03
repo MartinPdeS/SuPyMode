@@ -40,11 +40,28 @@ def parse_combination(plot_function: Callable) -> Callable:
 
     return wrapper
 
+def get_auto_generated_filename(superset) -> str:
+    """
+    Generates a filename based on the simulation parameters.
+
+    Returns:
+        str: Automatically generated filename.
+    """
+    fiber_name = "".join(fiber.__class__.__name__ for fiber in superset.fiber_list)
+    filename = (
+        f"structure={superset.clad_structure.__class__.__name__}_"
+        f"{fiber_name}_"
+        f"resolution={superset.resolution}_"
+        f"wavelength={superset.wavelength}"
+    )
+    return filename.replace('.', '_')
+
 def parse_filename(save_function: Callable) -> Callable:
     @wraps(save_function)
-    def wrapper(self, filename: str, directory: str = 'auto', **kwargs):
-        if directory == 'auto':
-            directory = user_data_directory
+    def wrapper(superset, filename: str = 'auto', directory: str = 'auto', **kwargs):
+        filename = get_auto_generated_filename(superset) if filename == 'auto' else filename
+
+        directory = user_data_directory if directory == 'auto' else directory
 
         filename = Path(filename)
 
@@ -52,7 +69,7 @@ def parse_filename(save_function: Callable) -> Callable:
 
         filename = Path(directory).joinpath(filename)
 
-        save_function(self, filename=filename, **kwargs)
+        save_function(superset, filename=filename, **kwargs)
 
         logging.info(f"Saving data into: {filename}")
 

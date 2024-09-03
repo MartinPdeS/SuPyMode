@@ -203,7 +203,6 @@ class Workflow():
         plot: Plots various simulation outputs based on the provided plot type.
         save_superset_instance: Saves the computed superset to a file for later use.
         generate_pdf_report: Generates a comprehensive PDF report of all relevant simulation data and results.
-        _get_auto_generated_filename: Generates a filename based on the simulation parameters.
     """
 
     # Geometry attributes
@@ -344,21 +343,6 @@ class Workflow():
         """Plots various types of data from the simulation based on the specified plot type."""
         return self.solver.superset.plot(*args, **kwargs)
 
-    @staticmethod
-    def _parse_filename(function: Callable) -> Callable:
-        def wrapper(*args, filename: str = 'auto', **kwargs):
-            if filename == 'auto':
-                filename = self._get_auto_generated_filename()
-
-            filename = Path(filename)
-
-            filename = sanitize_filepath(filename)
-
-            return function(*args, filename=filename, **kwargs)
-
-        return wrapper
-
-    @_parse_filename
     def save_superset_instance(self, filename: str = 'auto', directory: str = 'auto') -> Path:
         """
         Saves the superset instance to a file, defaulting to an auto-generated filename if not specified.
@@ -371,13 +355,12 @@ class Workflow():
             Path: Path to the saved file.
         """
         self.solver.superset.save_instance(
-            filename=filename.with_suffix('.pickle'),
+            filename=filename,
             directory=directory
         )
 
         return filename
 
-    @_parse_filename
     def generate_pdf_report(self, filename: str = 'auto', directory: str = 'auto', **kwargs) -> Path:
         """
         Generates a PDF report of all relevant simulation data and results.
@@ -390,27 +373,11 @@ class Workflow():
             Path: Path to the generated PDF report.
         """
         self.solver.superset.generate_pdf_report(
-            filename=filename.with_suffix('.pickle'),
+            filename=filename,
             directory=directory,
             **kwargs
         )
 
         return filename
-
-    def _get_auto_generated_filename(self) -> str:
-        """
-        Generates a filename based on the simulation parameters.
-
-        Returns:
-            str: Automatically generated filename.
-        """
-        fiber_name = "".join(fiber.__class__.__name__ for fiber in self.fiber_list)
-        filename = (
-            f"structure={self.clad_structure.__class__.__name__}_"
-            f"{fiber_name}_"
-            f"resolution={self.resolution}_"
-            f"wavelength={self.wavelength}"
-        )
-        return filename.replace('.', '_')
 
 # -
