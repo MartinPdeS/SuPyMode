@@ -99,7 +99,7 @@ class InheritFromSuperMode():
             setattr(ax, element, value)
 
     def __getitem__(self, idx):
-        return self._data[idx]
+        return self.data[idx]
 
     @property
     def mode_number(self) -> int:

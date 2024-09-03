@@ -391,7 +391,7 @@ class SuperSet(SuperSetPlots):
 
         return numpy.asarray(amplitudes, dtype=complex)
 
-    def _sort_modes(self, *ordering_keys) -> List[SuperMode]:
+    def _sort_modes(self, ordering_keys) -> List[SuperMode]:
         """
         Sorts supermodes using specified keys provided as tuples in ordering_keys.
 
@@ -411,7 +411,9 @@ class SuperSet(SuperSetPlots):
         """
         Sorts supermodes in descending order of their propagation constants (beta).
         """
-        self.all_supermodes = self._sort_modes([-mode.beta.data[-1] for mode in self.supermodes])
+        lexort_index = ([-mode.beta.data[-1] for mode in self.supermodes], )
+
+        self.all_supermodes = self._sort_modes(lexort_index)
 
     def sort_modes(self, sorting_method: str = "beta", keep_only: Optional[int] = None) -> None:
         """
@@ -438,10 +440,12 @@ class SuperSet(SuperSetPlots):
         """
         Sorts supermodes primarily by solver number and secondarily by descending propagation constant (beta).
         """
-        self.all_supermodes = self._sort_modes(
-            ([mode.solver_number for mode in self.supermodes],
-             [-mode.beta[-1] for mode in self.supermodes])
+        lexort_index = (
+            [mode.solver_number for mode in self.supermodes],
+            [-mode.beta.data[-1] for mode in self.supermodes]
         )
+
+        self.all_supermodes = self._sort_modes(lexort_index)
 
     def is_compute_compatible(self, pair_of_mode: tuple) -> bool:
         """
@@ -563,7 +567,7 @@ class SuperSet(SuperSetPlots):
                 data = getattr(mode, attribute_name).data
                 sub_filename = output_dir / f"{attribute_name}_{mode.label}".replace("}", "").replace("{", "")
                 data = np.vstack([self.model_parameters.itr_list, data])
-                np.savetxt(fname=sub_filename, X=data, delimiter=',', header=f'ITR, {attribute_name}')
+                np.savetxt(fname=sub_filename.with_suffix('.csv'), X=data, delimiter=',', header=f'ITR, {attribute_name}')
 
         def _export_combination_data(attribute_name: str):
             """Helper function to export data for a single attribute for all combinations of modes."""
@@ -571,7 +575,7 @@ class SuperSet(SuperSetPlots):
                 data = getattr(mode_0, attribute_name).get_values(other_supermode=mode_1)
                 sub_filename = output_dir / f"{attribute_name}_{mode_0.label}_{mode_1.label}".replace("}", "").replace("{", "")
                 data = np.vstack([self.model_parameters.itr_list, data])
-                np.savetxt(fname=sub_filename, X=data, delimiter=',', header=f'ITR, {attribute_name}')
+                np.savetxt(fname=sub_filename.with_suffix('.csv'), X=data, delimiter=',', header=f'ITR, {attribute_name}')
 
         # Export single-mode attributes
         if export_index:

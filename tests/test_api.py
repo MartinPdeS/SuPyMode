@@ -68,6 +68,12 @@ def test_superset_plot():
     workflow.superset.label_supermodes('a', 'b')
     workflow.superset.reset_labels()
 
+    workflow.superset.sort_modes('beta')
+
+    workflow.superset.sort_modes('symmetry+beta')
+
+    workflow.superset.export_data(filename='test_data')
+
 
 if __name__ == '__main__':
     pytest.main([__file__])
