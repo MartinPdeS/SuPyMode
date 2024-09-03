@@ -201,7 +201,7 @@ class SuperSet(SuperSetPlots):
         """
         Resets labels for all supermodes to default values.
         """
-        for n, super_mode in self:
+        for n, super_mode in enumerate(self.supermodes):
             super_mode.label = f'mode_{n}'
 
     def compute_transmission_matrix(self) -> None:
