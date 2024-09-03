@@ -77,7 +77,6 @@ def parse_filename(save_function: Callable) -> Callable:
     return wrapper
 
 
-
 def load_superset(filename: str, directory: str = 'auto'):
     """
     Saves the superset instance as a serialized pickle file.

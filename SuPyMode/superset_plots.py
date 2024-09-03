@@ -3,17 +3,13 @@
 
 # Built-in imports
 import numpy
-import logging
-from pathlib import Path
 from typing import NoReturn
 from functools import wraps
-import MPSPlots
 
 # Local imports
 from SuPyMode.supermode import SuperMode
-from SuPyMode.utils import get_intersection, interpret_mode_of_interest, interpret_slice_number_and_itr
+from SuPyMode.utils import get_intersection, interpret_mode_of_interest, interpret_slice_number_and_itr, parse_filename
 from SuPyMode.profiles import AlphaProfile
-from SuPyMode import directories
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from SuPyMode.utils import parse_mode_of_interest, parse_combination
@@ -351,9 +347,10 @@ class SuperSetPlots(object):
             case _:
                 raise ValueError(f'Invalid plot type: {plot_type}. Options are: index, beta, eigen-value, adiabatic, normalized-adiabatic, normalized-coupling, field, beating-length')
 
+    @parse_filename
     def generate_pdf_report(
             self,
-            filename: str = "report",
+            filename: str = "auto",
             directory: str = '.',
             itr_list: list[float] | None = None,
             slice_list: list[int] | None = None,
@@ -375,12 +372,6 @@ class SuperSetPlots(object):
         Returns:
             None
         """
-        if directory == 'auto':
-            directory = directories.reports_path
-
-        filename = Path(directory).joinpath(filename).with_suffix('.pdf')
-
-        logging.info(f"Saving report pdf into: {filename}")
 
         figure_list = [
             self.geometry.render_plot(),
@@ -391,7 +382,7 @@ class SuperSetPlots(object):
             self.get_figure_adiabatic(mode_of_interest=mode_of_interest, combination=combination)
         ]
 
-        pp = PdfPages(filename)
+        pp = PdfPages(filename.with_suffix('.pdf'))
 
         for fig in figure_list:
             fig.savefig(pp, format='pdf')

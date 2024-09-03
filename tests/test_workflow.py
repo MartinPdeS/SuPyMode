@@ -43,9 +43,9 @@ def test_workflow(fused_structure):
         fusion_degree='auto'
     )
 
-    workflow.generate_pdf_report(filename='test')
+    workflow.generate_pdf_report(filename='test_0')
 
-    workflow.save_superset_instance(filename='test')
+    workflow.save_superset_instance(filename='test_0')
 
     # Assert that the workflow instance has been successfully created (basic check)
     assert workflow is not None, "Workflow should be successfully instantiated with the given configurations."
