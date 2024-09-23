@@ -101,8 +101,8 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
 .. |python| image:: https://img.shields.io/badge/Made%20with-Python-1f425f.svg
    :target: https://www.python.org/
 
-.. |docs| image:: https://readthedocs.org/projects/supymode/badge/?version=latest
-   :target: https://supymodes.readthedocs.io/en/latest/
+.. |docs| image:: https://github.com/martinpdes/supymode/actions/workflows/deploy_documentation.yml/badge.svg
+   :target: https://martinpdes.github.io/SuPyMode/
    :alt: Documentation Status
 
 .. |Citation| image:: https://zenodo.org/badge/366930899.svg
@@ -120,6 +120,3 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
 
 .. |colab| image:: https://colab.research.google.com/assets/colab-badge.svg
    :target: https://colab.research.google.com/github/MartinPdeS/SuPyMode/blob/master/SuPyModes.ipynb
-
-
-
