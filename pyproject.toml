@@ -51,7 +51,7 @@ dependencies = [
     "pydantic==2.9.2",
     "PyFinitDiff",
     "FiberFusing",
-    "pathvalidate==3.2.0",
+    "pathvalidate==3.2.1",
 ]
 
 [tool.setuptools_scm]
