@@ -2,10 +2,12 @@
 name: Coverage
 
 on:
-  pull_request:
-    branches: "master"
   push:
-    branches: "master"
+    branches: [ "master" ]
+    tags:
+      - '*'
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   coverage:
@@ -14,6 +16,7 @@ jobs:
     permissions:
       pull-requests: write
       contents: write
+
     steps:
       - name: "Set-up: Python ${{ env.cp_python_version }}"
         uses: actions/setup-python@v4
