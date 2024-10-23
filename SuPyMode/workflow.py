@@ -1,18 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from typing import List, Union, Optional, Tuple, Callable
-from pathlib import Path
-
-from FiberFusing import Geometry, BackGround
-from FiberFusing.fiber.generic_fiber import GenericFiber
-from SuPyMode.solver import SuPySolver
-from FiberFusing.fiber import catalogue as fiber_catalogue
+from FiberFusing.fiber import catalogue as fiber_catalogue  # noqa:
 from SuPyMode.profiles import AlphaProfile  # noqa: F401
 from FiberFusing import configuration  # noqa: F401
 
+from typing import List, Union, Optional, Tuple
+from pathlib import Path
+from FiberFusing import Geometry, BackGround
+from FiberFusing.fiber.generic_fiber import GenericFiber
+from SuPyMode.solver import SuPySolver
+from PyOptik import MaterialBank
 from PyFinitDiff.finite_difference_2D import Boundaries
-from pathvalidate import sanitize_filepath
 from pydantic.dataclasses import dataclass
 from pydantic import ConfigDict
 
@@ -21,7 +19,6 @@ config_dict = ConfigDict(
     strict=True,
     arbitrary_types_allowed=True,
     kw_only=True,
-    frozen=True
 )
 
 
@@ -74,7 +71,7 @@ def prepare_simulation_geometry(
     def get_clad_index(clad_index: float, wavelength: float):
         """Retrieve the cladding index based on the input type."""
         if isinstance(clad_index, str) and clad_index.lower() == 'silica':
-            return fiber_catalogue.get_silica_index(wavelength=wavelength)
+            return MaterialBank.fused_silica.compute_refractive_index(wavelength)
         elif isinstance(clad_index, (float, int)):
             return clad_index
         else:

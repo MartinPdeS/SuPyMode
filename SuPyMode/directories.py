@@ -9,7 +9,6 @@ __all__ = [
     'root_path',
     'project_path',
     'test_path',
-    'instance_directory',
     'version_path',
     'validation_data_path',
     'doc_path',

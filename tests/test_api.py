@@ -5,28 +5,17 @@ import pytest
 from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries
 
 
-def test_superset_plot():
+@pytest.fixture(scope="module")
+def precomputed_workflow():
     """
-    Test the creation and manipulation of a mode superset in a SuPyMode workflow.
-
-    This function performs the following:
-    - Loads fibers from the fiber catalogue.
-    - Configures a fused structure for the fiber cladding.
-    - Initializes a workflow with specific parameters.
-    - Accesses and manipulates various solver and mode properties.
-    - Tests the labeling and resetting of supermodes.
+    Fixture to initialize the SuPyMode workflow for reuse across multiple tests.
     """
-
-    # Load two identical fibers from the catalogue
     fibers = [
         fiber_catalogue.load_fiber('SMF28', wavelength=1550e-9),
         fiber_catalogue.load_fiber('SMF28', wavelength=1550e-9),
     ]
-
-    # Define the cladding structure
     fused_structure = configuration.ring.FusedProfile_02x02
 
-    # Initialize the workflow
     workflow = Workflow(
         fiber_list=fibers,
         clad_structure=fused_structure,
@@ -40,40 +29,65 @@ def test_superset_plot():
         n_sorted_mode=2,
         n_added_mode=2,
     )
-
-    # Access the solver
-    solver = workflow.solver
-
-    # Example operation: convert eigenvalue to index
-    _ = solver.eigen_value_to_index(3e6)
-
-    # Access the solver's coordinate system
-    _ = solver.coordinate_system
-
-    # Access the first mode in the superset
-    mode = workflow.superset[0]
-
-    # Access various mode properties
-    _ = mode.geometry
-    _ = mode.coordinate_system
-    _ = mode.itr_list
-    _ = mode.model_parameters
-    _ = mode.binding_number
-
-    # Perform field interpolation for specific iterations and slices
-    _ = mode.get_field_interpolation(itr=1.0)
-    _ = mode.get_field_interpolation(slice_number=3)
-
-    # Label and reset labels for the supermodes
-    workflow.superset.label_supermodes('a', 'b')
-    workflow.superset.reset_labels()
-
-    workflow.superset.sort_modes('beta')
-
-    workflow.superset.sort_modes('symmetry+beta')
-
-    workflow.superset.export_data(filename='test_data')
+    return workflow
 
 
-if __name__ == '__main__':
-    pytest.main([__file__])
+def test_load_fibers(precomputed_workflow):
+    """
+    Test loading fibers from the fiber catalogue.
+    """
+    fibers = precomputed_workflow.fiber_list
+    assert fibers is not None, "Failed to load fibers from the catalogue."
+    assert len(fibers) == 2, "Incorrect number of fibers loaded."
+
+
+def test_initialize_workflow(precomputed_workflow):
+    """
+    Test initializing a SuPyMode workflow with specific parameters.
+    """
+    assert precomputed_workflow is not None, "Workflow initialization failed."
+
+
+def test_solver_properties(precomputed_workflow):
+    """
+    Test accessing solver properties and performing eigenvalue conversion.
+    """
+    solver = precomputed_workflow.solver
+    assert solver.eigen_value_to_index(3e6) is not None, "Eigenvalue conversion failed."
+    assert solver.coordinate_system is not None, "Solver coordinate system not accessible."
+
+
+def test_mode_properties(precomputed_workflow):
+    """
+    Test accessing and validating properties of the first mode in the superset.
+    """
+    mode = precomputed_workflow.superset[0]
+    assert mode.geometry is not None, "Mode geometry not accessible."
+    assert mode.coordinate_system is not None, "Mode coordinate system not accessible."
+    assert mode.itr_list is not None, "Mode ITR list not accessible."
+    assert mode.model_parameters is not None, "Mode model parameters not accessible."
+    assert mode.binding_number is not None, "Mode binding number not accessible."
+
+
+def test_field_interpolation(precomputed_workflow):
+    """
+    Test field interpolation for a mode using ITR and slice number.
+    """
+    mode = precomputed_workflow.superset[0]
+    assert mode.get_field_interpolation(itr=1.0) is not None, "Field interpolation by ITR failed."
+    assert mode.get_field_interpolation(slice_number=3) is not None, "Field interpolation by slice number failed."
+
+
+def test_superset_operations(precomputed_workflow):
+    """
+    Test labeling, resetting labels, sorting, and exporting supermodes.
+    """
+    precomputed_workflow.superset.label_supermodes('a', 'b')
+    precomputed_workflow.superset.reset_labels()
+    precomputed_workflow.superset.sort_modes('beta')
+    precomputed_workflow.superset.sort_modes('symmetry+beta')
+    precomputed_workflow.superset.export_data(filename='test_data')
+
+
+if __name__ == "__main__":
+    pytest.main(["-W error", __file__])

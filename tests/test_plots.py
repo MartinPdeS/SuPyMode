@@ -7,9 +7,25 @@ import matplotlib.pyplot as plt
 from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries
 
 
-@pytest.fixture
+PARAMETER_LIST = [
+    'index', 'beta', 'eigen-value', 'normalized-coupling', 'adiabatic', 'field'
+]
+
+
+@pytest.fixture(scope="module")
 def setup_workflow():
-    """ Fixture to set up the workflow with common settings for tests. """
+    """
+    Set up a common workflow instance for testing purposes.
+
+    This fixture initializes a Workflow instance using standard fibers and a specific fused structure.
+    The workflow is set up with common parameters such as resolution, wavelength, boundaries, etc.
+    It is used across multiple tests to avoid recomputation and ensure consistent test conditions.
+
+    Returns
+    -------
+    Workflow
+        An instance of the Workflow class configured with predefined parameters for testing.
+    """
     fibers = [fiber_catalogue.load_fiber('SMF28', wavelength=1550e-9) for _ in range(2)]
     fused_structure = configuration.ring.FusedProfile_02x02
 
@@ -27,40 +43,49 @@ def setup_workflow():
     )
 
 
-parameter_list = [
-    'index', 'beta', 'eigen-value', 'normalized-coupling', 'adiabatic', 'field'
-]
-
-
-@pytest.mark.parametrize("plot_type", parameter_list)
+@pytest.mark.parametrize("plot_type", PARAMETER_LIST)
 @patch("matplotlib.pyplot.show")
 def test_superset_plot(mock_show, setup_workflow, plot_type):
     """
-    Tests plotting functionalities for various superset properties using mocked display to verify plots are invoked without display.
+    Test plotting functionalities for various superset properties.
 
-    Args:
-        mock_show (MagicMock): Mock for matplotlib.pyplot.show to prevent GUI display during testing.
-        setup_workflow (Workflow): A Workflow instance set up via a fixture to standardize test setup.
-        plot_type (str): Type of plot to generate and test.
+    Uses a mocked display to verify that plots for different properties of the superset can be
+    invoked without actually displaying the GUI, ensuring that the plot functions are called correctly.
+
+    Parameters
+    ----------
+    mock_show : MagicMock
+        Mock for `matplotlib.pyplot.show` to prevent GUI display during testing.
+    setup_workflow : Workflow
+        A Workflow instance set up via a fixture to standardize test setup.
+    plot_type : str
+        Type of plot to generate and test (e.g., 'index', 'beta').
     """
     superset = setup_workflow.superset
     superset.plot(plot_type=plot_type, mode_of_interest='fundamental')
     mock_show.assert_called_once()
     mock_show.reset_mock()
+    plt.close()
 
 
-@pytest.mark.parametrize("plot_type", parameter_list)
+@pytest.mark.parametrize("plot_type", PARAMETER_LIST)
 @patch("matplotlib.pyplot.show")
 def test_representation_plot(mock_show, setup_workflow, plot_type):
     """
-    Tests individual mode plotting functionalities within the superset to ensure each plot type can be generated.
+    Test plotting functionalities for individual modes within the superset.
 
-    This function verifies that plots for each mode's specific attribute can be called and displayed (mocked).
+    This function ensures that each mode-specific attribute plot can be called and displayed.
+    For properties like 'normalized-coupling' and 'adiabatic', which require comparing two modes,
+    the test uses a second mode for completeness.
 
-    Args:
-        mock_show (MagicMock): Mock for matplotlib.pyplot.show to prevent GUI display during testing.
-        setup_workflow (Workflow): A Workflow instance set up via a fixture.
-        plot_type (str): Type of mode-specific plot to generate and test.
+    Parameters
+    ----------
+    mock_show : MagicMock
+        Mock for `matplotlib.pyplot.show` to prevent GUI display during testing.
+    setup_workflow : Workflow
+        A Workflow instance set up via a fixture.
+    plot_type : str
+        Type of mode-specific plot to generate and test (e.g., 'index', 'beta', 'normalized-coupling').
     """
     mode = setup_workflow.superset[0]  # Use the first mode from the superset
 
@@ -77,5 +102,4 @@ def test_representation_plot(mock_show, setup_workflow, plot_type):
 
 
 if __name__ == "__main__":
-    pytest.main([__file__])
-# -
+    pytest.main(["-W error", __file__])

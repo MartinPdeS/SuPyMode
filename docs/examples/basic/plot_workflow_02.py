@@ -37,13 +37,13 @@ workflow = Workflow(
     clad_structure=clad_structure,  # Cladding structure, if None provided then no cladding is set.
     fusion_degree=0.9,              # Degree of fusion of the structure if applicable.
     wavelength=wavelength,          # Wavelength used for the mode computation.
-    resolution=50,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
+    resolution=20,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
     x_bounds="left",                # Mesh x-boundary structure.
     y_bounds="bottom",              # Mesh y-boundary structure.
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
-    n_sorted_mode=4,                # Total computed and sorted mode.
+    n_sorted_mode=2,                # Total computed and sorted mode.
     n_added_mode=2,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
-    plot_geometry=True,             # Plot the geometry mesh before computation.
+    # plot_geometry=True,             # Plot the geometry mesh before computation.
     debug_mode=0,                   # Print the iteration step for the solver plus some other important steps.
     auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.1,                  # Final value of inverse taper ratio to simulate
@@ -53,25 +53,29 @@ workflow = Workflow(
 
 superset = workflow.get_superset()
 
+print(superset.supermodes)
+
+# superset[0].adiabatic.plot(superset[1])
+
 # %%
 # Field computation: :math:`E_{i,j}`
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-_ = superset.plot(plot_type='field', itr_list=[1.0, 0.1])
+# _ = superset.plot(plot_type='field', itr_list=[1.0, 0.1])
 
 # %%
 # Effective index: :math:`n^{eff}_{i,j}`
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-_ = superset.plot(plot_type='index')
+# _ = superset.plot(plot_type='beta')
 
-# %%
-# Modal normalized coupling: :math:`C_{i,j}`
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-_ = superset.plot(plot_type='normalized-coupling')
+# # %%
+# # Modal normalized coupling: :math:`C_{i,j}`
+# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# _ = superset.plot(plot_type='normalized-coupling')
 
 # %%
 # Adiabatic criterion: :math:`\tilde{C}_{i,j}`
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-_ = superset.plot(plot_type='adiabatic')
+# _ = superset.plot(plot_type='adiabatic')
 
 
 # -

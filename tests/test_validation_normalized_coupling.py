@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import pytest
 import numpy
 from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries
 from PyFiberModes.__future__ import get_normalized_LP_coupling
@@ -78,4 +78,6 @@ def test_normalized_coupling(
     if mean_relative_error > 0.1:
         raise AssertionError(f"Discrepancy between computed and analytical normalized coupling: [Mean Error: {error.mean()}, Mean Relative Error: {mean_relative_error}]")
 
-# -
+
+if __name__ == "__main__":
+    pytest.main(["-W error", __file__])

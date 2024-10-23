@@ -11,7 +11,6 @@ from itertools import combinations, product
 from typing import Optional, List
 from FiberFusing.geometry import Geometry
 
-
 # Third-party imports
 from scipy.interpolate import interp1d
 from scipy.integrate import solve_ivp
@@ -22,18 +21,26 @@ from SuPyMode.supermode import SuperMode
 from SuPyMode.profiles import AlphaProfile
 from SuPyMode.propagation import Propagation
 from SuPyMode.superset_plots import SuperSetPlots
-from SuPyMode.utils import test_valid_input, parse_mode_of_interest, parse_combination, parse_filename
+from SuPyMode.utils import test_valid_input, parse_filename
+from SuPyMode.helper import parse_mode_of_interest, parse_combination
+
 
 @dataclass
 class SuperSet(SuperSetPlots):
     """
-    A class representing a set of supermodes calculated for a specific optical fiber configuration.
-    It facilitates operations on supermodes like sorting, plotting, and computations related to fiber optics simulations.
+    A set of supermodes calculated for a specific optical fiber configuration.
 
-    Attributes:
-        model_parameters (ModelParameters):
-        wavelength (float): The wavelength used in the solver, in meters.
-        geometry (object):
+    This class manages operations on supermodes, including sorting, plotting, and calculations
+    related to fiber optics simulations.
+
+    Parameters
+    ----------
+    model_parameters : ModelParameters
+        Parameters defining the model for simulation.
+    wavelength : float
+        The wavelength used in the solver, in meters.
+    geometry : Geometry
+        The geometry of the optical structure.
     """
     model_parameters: ModelParameters
     wavelength: float
@@ -53,40 +60,48 @@ class SuperSet(SuperSetPlots):
     @property
     def coordinate_system(self):
         """
-        Return axes object of the geometry
+        Returns the coordinate system associated with the geometry.
+
+        Returns
+        -------
+        CoordinateSystem
+            The coordinate system of the geometry.
         """
         return self.geometry.coordinate_system
 
     @property
     def fundamental_supermodes(self) -> list[SuperMode]:
         """
-        Identifies and returns fundamental supermodes based on the highest beta values and minimal spatial overlap.
+        Returns the fundamental supermodes based on the highest beta values and minimal spatial overlap.
 
-        Args:
-            tolerance (float): The spatial overlap tolerance for mode distinction.
-
-        Returns:
-            list[SuperMode]: A list of fundamental supermodes.
+        Returns
+        -------
+        list of SuperMode
+            A list of fundamental supermodes.
         """
         return self.get_fundamental_supermodes(tolerance=1e-2)
 
     @property
     def non_fundamental_supermodes(self) -> list[SuperMode]:
         """
-        Identifies and returns non-fundamental supermodes based on the specified spatial overlap tolerance.
+        Returns the non-fundamental supermodes based on the specified spatial overlap tolerance.
 
-        Args:
-            tolerance (float): The spatial overlap tolerance for distinguishing between fundamental and other modes.
-
-        Returns:
-            list[SuperMode]: A list of non-fundamental supermodes.
+        Returns
+        -------
+        list of SuperMode
+            A list of non-fundamental supermodes.
         """
         return self.get_non_fundamental_supermodes(tolerance=1e-2)
 
     @property
     def transmission_matrix(self) -> numpy.ndarray:
         """
-        Return the supermode transmission matrix.
+        Returns the supermode transmission matrix.
+
+        Returns
+        -------
+        numpy.ndarray
+            The transmission matrix for the supermodes.
         """
         if self._transmission_matrix is None:
             self.compute_transmission_matrix()
@@ -97,11 +112,15 @@ class SuperSet(SuperSetPlots):
         """
         Convert ITR values to corresponding slice numbers.
 
-        Args:
-            itr_list (list[float]): Inverse taper ratio values.
+        Parameters
+        ----------
+        itr_list : list of float
+            Inverse taper ratio values.
 
-        Returns:
-            list[int]: List of slice numbers corresponding to the ITR values.
+        Returns
+        -------
+        list of int
+            List of slice numbers corresponding to the ITR values.
         """
         itr_list = numpy.asarray(itr_list)
 
@@ -111,11 +130,15 @@ class SuperSet(SuperSetPlots):
         """
         Returns a list of fundamental supermodes with the highest propagation constant values and minimal spatial overlap.
 
-        Args:
-            tolerance (float): Tolerance for spatial overlap.
+        Parameters
+        ----------
+        tolerance : float, optional
+            Tolerance for spatial overlap (default is 0.1).
 
-        Returns:
-            list[SuperMode]: List of fundamental supermodes.
+        Returns
+        -------
+        list of SuperMode
+            List of fundamental supermodes.
         """
         self.sort_modes_by_beta()
 
@@ -152,11 +175,15 @@ class SuperSet(SuperSetPlots):
         """
         Returns a list of non-fundamental supermodes that do not overlap with the fundamental modes.
 
-        Args:
-            tolerance (float): Tolerance for spatial overlap.
+        Parameters
+        ----------
+        tolerance : float, optional
+            Tolerance for spatial overlap (default is 0.1).
 
-        Returns:
-            list[SuperMode]: List of non-fundamental supermodes.
+        Returns
+        -------
+        list of SuperMode
+            List of non-fundamental supermodes.
         """
         non_fundamental_supermodes = self.supermodes
 
@@ -169,8 +196,10 @@ class SuperSet(SuperSetPlots):
         """
         Returns a list of modes classified by solver number.
 
-        Returns:
-            list[list[SuperMode]]: List of lists containing modes classified by solver number.
+        Returns
+        -------
+        list of list of SuperMode
+            List of lists containing modes classified by solver number.
         """
         solver_numbers = [mode.solver_number for mode in self]
 
@@ -187,10 +216,12 @@ class SuperSet(SuperSetPlots):
 
     def label_supermodes(self, *label_list) -> None:
         """
-        Assigns labels to the supermodes.
+        Assign labels to the supermodes.
 
-        Args:
-            label_list (tuple): Labels to assign to the supermodes.
+        Parameters
+        ----------
+        label_list : tuple
+            Labels to assign to the supermodes.
         """
         for n, label in enumerate(label_list):
             self[n].label = label
@@ -199,14 +230,14 @@ class SuperSet(SuperSetPlots):
 
     def reset_labels(self) -> None:
         """
-        Resets labels for all supermodes to default values.
+        Reset labels for all supermodes to default values.
         """
         for n, super_mode in enumerate(self.supermodes):
             super_mode.label = f'mode_{n}'
 
     def compute_transmission_matrix(self) -> None:
         """
-        Calculates the transmission matrix with only the propagation constant included.
+        Calculate the transmission matrix including only the propagation constant.
         """
         shape = [
             len(self.supermodes),
@@ -221,14 +252,19 @@ class SuperSet(SuperSetPlots):
 
     def add_coupling_to_t_matrix(self, *, t_matrix: numpy.ndarray, adiabatic_factor: numpy.ndarray) -> numpy.ndarray:
         """
-        Add the coupling coefficients to the transmission matrix.
+        Add coupling coefficients to the transmission matrix.
 
-        Args:
-            t_matrix (np.ndarray): Transmission matrix to which coupling values are added.
-            adiabatic_factor (np.ndarray): Adiabatic factor, set to one if None (normalized coupling).
+        Parameters
+        ----------
+        t_matrix : numpy.ndarray
+            Transmission matrix to which coupling values are added.
+        adiabatic_factor : numpy.ndarray
+            Adiabatic factor, set to one if None (normalized coupling).
 
-        Returns:
-            np.ndarray: Updated transmission matrix with coupling values.
+        Returns
+        -------
+        numpy.ndarray
+            Updated transmission matrix with coupling values.
         """
         size = t_matrix.shape[-1]
 
@@ -252,18 +288,18 @@ class SuperSet(SuperSetPlots):
 
     def compute_coupling_factor(self, *, coupler_length: float) -> numpy.ndarray:
         """
-        Compute the coupling factor defined as:
+        Compute the coupling factor defined by the derivative of the inverse taper ratio.
 
-        .. math::
-            f_c = \frac{1}{\rho} \frac{d \rho}{d z}
+        Parameters
+        ----------
+        coupler_length : float
+            Length of the coupler.
 
-        Args:
-            coupler_length (float): Length of the coupler.
-
-        Returns:
-            np.ndarray: Coupling factor as a function of distance in the coupler.
+        Returns
+        -------
+        numpy.ndarray
+            Coupling factor as a function of distance in the coupler.
         """
-
         dx = coupler_length / (self.model_parameters.n_slice)
 
         ditr = numpy.gradient(numpy.log(self.model_parameters.itr_list), axis=0)
@@ -272,14 +308,19 @@ class SuperSet(SuperSetPlots):
 
     def get_transmision_matrix_from_profile(self, *, profile: AlphaProfile, add_coupling: bool = True) -> tuple:
         """
-        Get the transmission matrix from the profile.
+        Get the transmission matrix from the given profile.
 
-        Args:
-            profile (AlphaProfile): Z-profile of the coupler.
-            add_coupling (bool): Add coupling to the transmission matrix. Defaults to True.
+        Parameters
+        ----------
+        profile : AlphaProfile
+            Z-profile of the coupler.
+        add_coupling : bool, optional
+            Whether to add coupling to the transmission matrix (default is True).
 
-        Returns:
-            tuple: Distance, ITR vector, and transmission matrix.
+        Returns
+        -------
+        tuple
+            Tuple containing distance, ITR vector, and transmission matrix.
         """
         profile.initialize()
 
@@ -309,21 +350,29 @@ class SuperSet(SuperSetPlots):
             method: str = 'RK45',
             **kwargs: dict) -> Propagation:
         """
-        Propagates the amplitudes of the supermodes in a coupler based on a given profile.
+        Propagate the amplitudes of the supermodes in a coupler based on the given profile.
 
-        Args:
-            profile (AlphaProfile): The z-profile of the coupler.
-            initial_amplitude (list): The initial amplitude as a list.
-            max_step (float, optional): The maximum step size used by the solver. Defaults to None.
-            n_step (int, optional): Number of steps used by the solver (not currently used in this method).
-            add_coupling (bool): Flag to add coupling to the transmission matrix. Defaults to True.
-            method (str): Integration method to be used by the solver. Defaults to 'RK45'.
-            **kwargs (Dict[str, Any]): Additional keyword arguments to be passed to the solver.
+        Parameters
+        ----------
+        profile : AlphaProfile
+            The z-profile of the coupler.
+        initial_amplitude : list
+            The initial amplitude as a list of complex numbers.
+        max_step : float, optional
+            The maximum step size used by the solver (default is None).
+        n_step : int, optional
+            Number of steps used by the solver (default is None).
+        add_coupling : bool, optional
+            Whether to add coupling to the transmission matrix (default is True).
+        method : str, optional
+            Integration method to be used by the solver (default is 'RK45').
+        **kwargs : dict
+            Additional keyword arguments to be passed to the solver.
 
-        Returns:
-            Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]: A tuple containing the times of the solution,
-                                                       the solution array of amplitudes, and the interpolated
-                                                       index of refraction at those times.
+        Returns
+        -------
+        Propagation
+            A Propagation object containing the results of the propagation.
         """
         initial_amplitude = numpy.asarray(initial_amplitude, dtype=complex)
 
@@ -367,16 +416,22 @@ class SuperSet(SuperSetPlots):
 
     def interpret_initial_input(self, initial_amplitude: list | SuperMode) -> numpy.ndarray:
         """
-        Interprets the initial amplitude input, ensuring compatibility with the expected number of supermodes.
+        Interpret the initial amplitude input to ensure compatibility with the expected number of supermodes.
 
-        Args:
-            initial_amplitude (list | SuperMode): The initial amplitude as either a list of complex numbers or a SuperMode object.
+        Parameters
+        ----------
+        initial_amplitude : list or SuperMode
+            The initial amplitude as either a list of complex numbers or a SuperMode object.
 
-        Returns:
-            np.ndarray: The initial amplitudes as a NumPy array of complex numbers.
+        Returns
+        -------
+        numpy.ndarray
+            The initial amplitudes as a NumPy array of complex numbers.
 
-        Raises:
-            ValueError: If the length of the initial amplitude list does not match the number of supermodes.
+        Raises
+        ------
+        ValueError
+            If the length of the initial amplitude list does not match the number of supermodes.
         """
         if isinstance(initial_amplitude, SuperMode):
             amplitudes = initial_amplitude.amplitudes
@@ -393,13 +448,17 @@ class SuperSet(SuperSetPlots):
 
     def _sort_modes(self, ordering_keys) -> List[SuperMode]:
         """
-        Sorts supermodes using specified keys provided as tuples in ordering_keys.
+        Sort supermodes using specified keys provided as tuples in `ordering_keys`.
 
-        Args:
-            ordering_keys (tuple): Tuple containing keys to sort by.
+        Parameters
+        ----------
+        ordering_keys : tuple
+            Tuple containing keys to sort by.
 
-        Returns:
-            List[SuperMode]: Sorted list of supermodes.
+        Returns
+        -------
+        list of SuperMode
+            Sorted list of supermodes.
         """
         order = numpy.lexsort(ordering_keys)
         sorted_supermodes = [self.supermodes[idx] for idx in order]
@@ -409,7 +468,7 @@ class SuperSet(SuperSetPlots):
 
     def sort_modes_by_beta(self) -> None:
         """
-        Sorts supermodes in descending order of their propagation constants (beta).
+        Sort supermodes in descending order of their propagation constants (beta).
         """
         lexort_index = ([-mode.beta.data[-1] for mode in self.supermodes], )
 
@@ -417,14 +476,19 @@ class SuperSet(SuperSetPlots):
 
     def sort_modes(self, sorting_method: str = "beta", keep_only: Optional[int] = None) -> None:
         """
-        Sorts supermodes according to the specified method, optionally limiting the number of modes retained.
+        Sort supermodes according to the specified method, optionally limiting the number of modes retained.
 
-        Args:
-            sorting_method (str): Sorting method to use, either "beta" or "symmetry+beta".
-            keep_only (int, optional): Number of supermodes to retain after sorting.
+        Parameters
+        ----------
+        sorting_method : str, optional
+            Sorting method to use, either "beta" or "symmetry+beta" (default is "beta").
+        keep_only : int, optional
+            Number of supermodes to retain after sorting (default is None).
 
-        Raises:
-            ValueError: If an unrecognized sorting method is provided.
+        Raises
+        ------
+        ValueError
+            If an unrecognized sorting method is provided.
         """
         match sorting_method.lower():
             case 'beta':
@@ -438,7 +502,7 @@ class SuperSet(SuperSetPlots):
 
     def sort_modes_by_solver_and_beta(self) -> None:
         """
-        Sorts supermodes primarily by solver number and secondarily by descending propagation constant (beta).
+        Sort supermodes primarily by solver number and secondarily by descending propagation constant (beta).
         """
         lexort_index = (
             [mode.solver_number for mode in self.supermodes],
@@ -449,26 +513,34 @@ class SuperSet(SuperSetPlots):
 
     def is_compute_compatible(self, pair_of_mode: tuple) -> bool:
         """
-        Determines whether the specified pair of mode is compatible for computation.
+        Determine whether the specified pair of modes is compatible for computation.
 
-        Args:
-            pair_of_mode (tuple): The pair of modes.
+        Parameters
+        ----------
+        pair_of_mode : tuple
+            The pair of modes to be checked.
 
-        Returns:
-            bool: True if the pair of modes is compute compatible, False otherwise.
+        Returns
+        -------
+        bool
+            True if the pair of modes is compatible for computation, False otherwise.
         """
         mode_0, mode_1 = pair_of_mode
         return mode_0.is_computation_compatible(mode_1)
 
     def remove_duplicate_combination(self, supermodes_list: list) -> list[SuperMode]:
         """
-        Removes duplicate combinations in the mode combination list irrespective of the order.
+        Remove duplicate combinations from the mode combination list irrespective of the order.
 
-        Args:
-            supermodes_list (list): List of mode combinations.
+        Parameters
+        ----------
+        supermodes_list : list of tuple
+            List of mode combinations.
 
-        Returns:
-            list: Reduced list of unique supermode combinations.
+        Returns
+        -------
+        list of tuple
+            Reduced list of unique supermode combinations.
         """
         output_list = []
 
@@ -482,12 +554,17 @@ class SuperSet(SuperSetPlots):
         """
         Interpret user input for mode selection and return the combination of modes to consider.
 
-        Args:
-            mode_of_interest (list): List of modes of interest.
-            mode_selection (str): Mode selection method.
+        Parameters
+        ----------
+        mode_of_interest : list
+            List of modes of interest.
+        combination : str
+            Mode selection method ('pairs' or 'specific').
 
-        Returns:
-            set: Set of mode combinations.
+        Returns
+        -------
+        set of tuple
+            Set of mode combinations.
         """
         test_valid_input(
             variable_name='combination',
@@ -510,14 +587,17 @@ class SuperSet(SuperSetPlots):
     @parse_filename
     def save_instance(self, filename: str) -> Path:
         """
-        Saves the SuperSet instance as a serialized pickle file.
+        Save the SuperSet instance as a serialized pickle file.
 
-        Args:
-            filename (str): Filename for the serialized instance.
-            directory (str): Directory to save the file, 'auto' means the instance_directory.
+        Parameters
+        ----------
+        filename : str
+            Filename for the serialized instance.
 
-        Returns:
-            Path: The path to the saved instance file.
+        Returns
+        -------
+        Path
+            The path to the saved instance file.
         """
         with open(filename.with_suffix('.pickle'), 'wb') as output_file:
             pickle.dump(self, output_file, pickle.HIGHEST_PROTOCOL)
@@ -540,19 +620,31 @@ class SuperSet(SuperSetPlots):
         """
         Export the SuperSet data as CSV files, saving specific attributes of the modes or combinations of modes.
 
-        Args:
-            filename (str): The directory where the files will be saved.
-            mode_of_interest (list): List of modes to be exported. Defaults to 'all'.
-            combination (list): List of mode combinations to be exported. Defaults to None.
-            export_index (bool): Whether to export the 'index' attribute. Defaults to True.
-            export_beta (bool): Whether to export the 'beta' attribute. Defaults to True.
-            export_eigen_value (bool): Whether to export the 'eigen_value' attribute. Defaults to False.
-            export_adiabatic (bool): Whether to export the 'adiabatic' attribute for combinations. Defaults to True.
-            export_beating_length (bool): Whether to export the 'beating_length' attribute for combinations. Defaults to True.
-            export_normalized_coupling (bool): Whether to export the 'normalized_coupling' attribute for combinations. Defaults to True.
+        Parameters
+        ----------
+        filename : str
+            The directory where the files will be saved.
+        mode_of_interest : list, optional
+            List of modes to be exported (default is 'all').
+        combination : list, optional
+            List of mode combinations to be exported (default is None).
+        export_index : bool, optional
+            Whether to export the 'index' attribute (default is True).
+        export_beta : bool, optional
+            Whether to export the 'beta' attribute (default is True).
+        export_eigen_value : bool, optional
+            Whether to export the 'eigen_value' attribute (default is False).
+        export_adiabatic : bool, optional
+            Whether to export the 'adiabatic' attribute for combinations (default is True).
+        export_beating_length : bool, optional
+            Whether to export the 'beating_length' attribute for combinations (default is True).
+        export_normalized_coupling : bool, optional
+            Whether to export the 'normalized_coupling' attribute for combinations (default is True).
 
-        Returns:
-            Path: The path to the directory where the files were saved.
+        Returns
+        -------
+        Path
+            The path to the directory where the files were saved.
         """
         from pathlib import Path
         import numpy as np
@@ -592,7 +684,3 @@ class SuperSet(SuperSetPlots):
             _export_combination_data('beating_length')
         if export_normalized_coupling:
             _export_combination_data('normalized_coupling')
-
-
-
-# -

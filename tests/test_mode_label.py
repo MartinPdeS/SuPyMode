@@ -23,4 +23,6 @@ def test_configurations(configuration: dict):
 
     assert mode_name == mode_label.raw_label, f"Mismatch between expected mode_label for auto-labeler: {mode_name} vs {mode_label.label}"
 
-# -
+
+if __name__ == "__main__":
+    pytest.main(["-W error", __file__])

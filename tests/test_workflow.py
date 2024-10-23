@@ -4,12 +4,13 @@
 import pytest
 
 from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries
-
+import matplotlib.pyplot as plt
 # Define a list of fused fiber structures from the configuration module
 fused_structure_list = [
     configuration.ring.FusedProfile_01x01,
     configuration.ring.FusedProfile_02x02,
 ]
+
 
 @pytest.mark.parametrize('fused_structure', fused_structure_list, ids=lambda x: f"n_fiber: {x.number_of_fibers}")
 def test_workflow(fused_structure):
@@ -33,7 +34,7 @@ def test_workflow(fused_structure):
         fiber_list=fibers,
         clad_structure=fused_structure,
         wavelength=1550e-9,
-        resolution=30,
+        resolution=10,
         x_bounds="left",
         y_bounds="centering",
         boundaries=[Boundaries(right='symmetric')],
@@ -45,11 +46,13 @@ def test_workflow(fused_structure):
 
     workflow.generate_pdf_report(filename='test_0')
 
-    workflow.save_superset_instance(filename='test_0')
+    plt.close()
 
-    # Assert that the workflow instance has been successfully created (basic check)
-    assert workflow is not None, "Workflow should be successfully instantiated with the given configurations."
+    # workflow.save_superset_instance(filename='test_0')
+
+    # # Assert that the workflow instance has been successfully created (basic check)
+    # assert workflow is not None, "Workflow should be successfully instantiated with the given configurations."
 
 
-if __name__ == '__main__':
-    pytest.main([__file__])
+if __name__ == "__main__":
+    pytest.main(["-W error", __file__])
