@@ -41,7 +41,7 @@ workflow = Workflow(
     x_bounds="left",                # Mesh x-boundary structure.
     y_bounds="bottom",              # Mesh y-boundary structure.
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
-    n_sorted_mode=2,                # Total computed and sorted mode.
+    n_sorted_mode=3,                # Total computed and sorted mode.
     n_added_mode=2,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
     # plot_geometry=True,             # Plot the geometry mesh before computation.
     debug_mode=0,                   # Print the iteration step for the solver plus some other important steps.
@@ -52,10 +52,6 @@ workflow = Workflow(
 )
 
 superset = workflow.get_superset()
-
-print(superset.supermodes)
-
-# superset[0].adiabatic.plot(superset[1])
 
 # %%
 # Field computation: :math:`E_{i,j}`
@@ -75,7 +71,7 @@ print(superset.supermodes)
 # %%
 # Adiabatic criterion: :math:`\tilde{C}_{i,j}`
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# _ = superset.plot(plot_type='adiabatic')
+_ = superset.plot(plot_type='adiabatic', save_filename='test')
 
 
 # -

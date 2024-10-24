@@ -183,7 +183,10 @@ class SuperSetPlots(object):
         for mode_0, mode_1 in combination:
             mode_0.normalized_coupling.plot(ax=ax, other_supermode=mode_1, show=False)
 
-        ax.legend()
+        ax.set(
+            yscale='linear',
+            ylim=[0, 10]
+        )
 
     @combination_plot_helper
     def plot_adiabatic(
@@ -217,7 +220,10 @@ class SuperSetPlots(object):
         for profile in numpy.atleast_1d(add_profile):
             profile.render_adiabatic_factor_vs_itr_on_ax(ax=ax, line_style='--')
 
-        ax.legend()
+        ax.set(
+            yscale='log',
+            ylim=[1e-5, 1]
+        )
 
     @parse_mode_of_interest
     def plot_field(
