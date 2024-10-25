@@ -89,27 +89,28 @@ def prepare_simulation_geometry(
         rotation=rotation
     )
 
+    structures = []
+    if capillary_tube is not None:
+        structures.append(capillary_tube)
+    if clad_instance is not None:
+        structures.append(clad_instance)
+
+    if clad_instance is not None:
+        for fiber, core in zip(fiber_list, clad_instance.cores):
+            fiber.set_position((core.x, core.y))
+
+    structures.extend(fiber_list)
+
     geometry = Geometry(
         background=background,
         x_bounds=x_bounds,
+        additional_structure_list=structures,
         y_bounds=y_bounds,
         resolution=resolution,
         index_scrambling=index_scrambling,
         boundary_pad_factor=air_padding_factor,
         gaussian_filter=gaussian_filter
     )
-
-    if capillary_tube is not None:
-        geometry.add_structure(capillary_tube)
-
-    if clad_instance is not None:
-        geometry.add_structure(clad_instance)
-
-    if clad_instance is not None:
-        for fiber, core in zip(fiber_list, clad_instance.cores):
-            fiber.set_position((core.x, core.y))
-
-    geometry.add_fiber(*fiber_list)
 
     return geometry
 
@@ -144,9 +145,10 @@ def prepare_fused_structure(
     clad_instance = clad_class(
         fiber_radius=fiber_radius,
         fusion_degree=fusion_degree,
-        index=index,
-        core_position_scrambling=core_position_scrambling
+        index=index
     )
+
+    clad_instance.randomize_core_position(random_factor=core_position_scrambling)
 
     if rotation != 0:
         clad_instance.rotate(rotation)

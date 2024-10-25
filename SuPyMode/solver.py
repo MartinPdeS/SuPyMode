@@ -53,13 +53,8 @@ class SuPySolver(object):
     coordinate_system: CoordinateSystem | None = None
 
     def __post_init__(self):
-        if isinstance(self.geometry, numpy.ndarray):
-            assert self.coordinate_system is not None, "Geometry provided without its coordinate system"
-            self.mesh = self.geometry
-        else:
-            self.geometry.generate_coordinate_mesh()
-            self.mesh = self.geometry.mesh
-            self.coordinate_system = self.geometry.coordinate_system
+        self.mesh = self.geometry.mesh
+        self.coordinate_system = self.geometry.coordinate_system
 
         self.mode_number = 0
         self.solver_number = 0
