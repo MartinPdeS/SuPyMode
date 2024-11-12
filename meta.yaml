@@ -1,0 +1,70 @@
+package:
+  name: supymode
+  version: "{{ GIT_DESCRIBE_TAG }}"
+
+source:
+  git_url: https://github.com/MartinPdeS/SuPyMode.git
+
+build:
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  number: 0
+
+requirements:
+  host:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - python {{ PY_VER }}*
+    - scikit-build-core ~=0.3
+    - pybind11 ~=2.13
+    - python-build ~=1.2
+    - setuptools_scm[toml] ~=8.0
+  run:
+    - python {{PY_VER}}*
+    - martinpdes::pyoptik
+    - martinpdes::mpsplots
+    - martinpdes::fiberfusing
+    - martinpdes::pyfinitdiff
+    - numpy ~=1.26
+    - pydantic ~=2.9.2
+    - tabulate ~=0.9
+    - scipy ~=1.14.0
+
+
+about:
+  home: https://github.com/MartinPdeS/SuPyMode
+  license: MIT
+  summary: "A package for light propagation in fiber optics component."
+  description: SuPyMode is a library that uses Finite-difference and coupled mode theory to simulate light propagation in fiber optics tapered components.
+  dev_url: https://github.com/MartinPdeS/SuPyMode
+  doc_url: https://martinpdes.github.io/SuPyMode/
+  license_file: LICENSE
+  keywords:
+    - optics
+    - fiber optics
+    - coupled mode theory
+    - finite difference
+    - physics
+    - computational optics
+    - simulation
+
+files:
+  include:
+    - "SuPyMode/binary/*.so"
+
+test:
+  imports:
+    - SuPyMode
+  requires:
+    - python {{PY_VER}}*
+    - pytest >=0.6
+    - pytest-cov >=2.0
+    - pytest-json-report ~=1.5.0
+    - coverage ~=7.6.1
+  commands:
+    - python -m pytest
+  source_files:
+    - tests
+
+extra:
+  recipe-maintainers:
+    - MartinPdeS

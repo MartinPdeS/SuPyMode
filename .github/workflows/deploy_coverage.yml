@@ -19,17 +19,18 @@ jobs:
 
     steps:
       - name: "Set-up: Python ${{ env.cp_python_version }}"
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         id: cp310
         with:
-            python-version: "3.10"
+            python-version: "3.11"
 
 
       - name: "Install: Dependencies for headless server"
         shell: bash
         run: |
             sudo apt-get update
-            sudo apt-get install libgl1-mesa-glx xvfb
+            # sudo apt-get install libgl1-mesa-glx xvfb
+            sudo apt-get install xvfb
 
       - name: "Checkout requirements and files for testing"
         uses: actions/checkout@v4
