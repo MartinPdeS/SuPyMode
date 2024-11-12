@@ -54,6 +54,7 @@ dependencies = [
     "pydantic==2.9.2",
     "PyFinitDiff",
     "FiberFusing",
+    "PyFiberModes",
     "pathvalidate==3.2.1",
 ]
 
