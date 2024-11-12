@@ -78,7 +78,6 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-[tool.pytest.ini_options]
 minversion = "6.0"
 xfail_strict = true
 log_cli_level = "INFO"
