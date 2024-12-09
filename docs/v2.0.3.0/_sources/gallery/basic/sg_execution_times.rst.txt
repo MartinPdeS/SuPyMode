@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**03:36.152** total execution time for 11 files **from gallery/basic**:
+**03:42.705** total execution time for 11 files **from gallery/basic**:
 
 .. container::
 
@@ -33,35 +33,35 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_gallery_basic_plot_workflow_08.py` (``plot_workflow_08.py``)
-     - 00:56.335
+     - 00:59.125
      - 0.0
    * - :ref:`sphx_glr_gallery_basic_plot_workflow_05.py` (``plot_workflow_05.py``)
-     - 00:37.843
+     - 00:38.538
      - 0.0
    * - :ref:`sphx_glr_gallery_basic_plot_workflow_07.py` (``plot_workflow_07.py``)
-     - 00:35.424
+     - 00:36.195
      - 0.0
    * - :ref:`sphx_glr_gallery_basic_plot_workflow_04.py` (``plot_workflow_04.py``)
-     - 00:30.270
+     - 00:31.402
      - 0.0
    * - :ref:`sphx_glr_gallery_basic_plot_propagation.py` (``plot_propagation.py``)
-     - 00:13.867
+     - 00:14.194
      - 0.0
    * - :ref:`sphx_glr_gallery_basic_plot_workflow_03.py` (``plot_workflow_03.py``)
-     - 00:13.850
+     - 00:14.165
      - 0.0
    * - :ref:`sphx_glr_gallery_basic_plot_workflow_01.py` (``plot_workflow_01.py``)
-     - 00:13.710
+     - 00:13.809
      - 0.0
    * - :ref:`sphx_glr_gallery_basic_plot_workflow_06.py` (``plot_workflow_06.py``)
-     - 00:10.721
+     - 00:10.893
      - 0.0
    * - :ref:`sphx_glr_gallery_basic_plot_workflow_02.py` (``plot_workflow_02.py``)
-     - 00:03.046
+     - 00:03.118
      - 0.0
    * - :ref:`sphx_glr_gallery_basic_plot_alpha_profile_0.py` (``plot_alpha_profile_0.py``)
-     - 00:00.904
+     - 00:01.020
      - 0.0
    * - :ref:`sphx_glr_gallery_basic_plot_alpha_profile_1.py` (``plot_alpha_profile_1.py``)
-     - 00:00.182
+     - 00:00.247
      - 0.0
