@@ -23,7 +23,7 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: Set up Conda environment
+      - name: Set up Conda  environment
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-activate-base: true
