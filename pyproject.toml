@@ -29,7 +29,7 @@ documentation = 'https://supymode.readthedocs.io/'
 platforms = ['unix', 'linux', 'osx']
 readme = "README.rst"
 url = 'https://github.com/MartinPdeS/SuPyMode'
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 authors = [{ name="Martin Poinsinet de Sivry-Houle", email="martin.poinsinet.de.sivry@gmail.com"}]
 classifiers = [
     'Programming Language :: Python',
