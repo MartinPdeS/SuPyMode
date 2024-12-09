@@ -23,6 +23,7 @@ requirements:
     - martinpdes::pyoptik
     - martinpdes::mpsplots
     - martinpdes::fiberfusing
+    - martinpdes::pyfibermodes
     - martinpdes::pyfinitdiff
     - numpy ~=1.26
     - pydantic ~=2.9.2
