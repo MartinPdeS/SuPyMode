@@ -28,7 +28,7 @@ jobs:
         with:
           auto-activate-base: true
           python-version: ${{ matrix.python-version }}
-          channels: conda-forge, martinpdes
+          channels: conda-forge, martinpdes, defaults
 
       - name: Install Conda tools
         run: |
