@@ -1,0 +1,1270 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SuPyMode.superset &#8212; SuPyMode  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/default.css?v=265c6c44" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/SuPyMode/superset';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/SuPyMode/documentation_page/version_switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v2.0.3.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = true;
+        </script>
+    <link rel="icon" href="../../_static/thumbnail.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/thumbnail.png" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="../../_static/thumbnail.png" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">SuPyMode</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory.html">
+    Theoretical background
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../code.html">
+    Source code
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MartinPdeS/SuPyMode" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/SuPyMode/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://anaconda.org/MartinPdeS/SuPyMode" title="Anaconda" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Anaconda</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory.html">
+    Theoretical background
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../code.html">
+    Source code
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MartinPdeS/SuPyMode" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/SuPyMode/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://anaconda.org/MartinPdeS/SuPyMode" title="Anaconda" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Anaconda</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">SuPyMode.superset</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for SuPyMode.superset</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Built-in imports</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span><span class="p">,</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">FiberFusing.geometry</span> <span class="kn">import</span> <span class="n">Geometry</span>
+
+<span class="c1"># Third-party imports</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
+
+<span class="c1"># Local imports</span>
+<span class="kn">from</span> <span class="nn">SuPyMode.binary.ModelParameters</span> <span class="kn">import</span> <span class="n">ModelParameters</span>
+<span class="kn">from</span> <span class="nn">SuPyMode.supermode</span> <span class="kn">import</span> <span class="n">SuperMode</span>
+<span class="kn">from</span> <span class="nn">SuPyMode.profiles</span> <span class="kn">import</span> <span class="n">AlphaProfile</span>
+<span class="kn">from</span> <span class="nn">SuPyMode.propagation</span> <span class="kn">import</span> <span class="n">Propagation</span>
+<span class="kn">from</span> <span class="nn">SuPyMode.superset_plots</span> <span class="kn">import</span> <span class="n">SuperSetPlots</span>
+<span class="kn">from</span> <span class="nn">SuPyMode.utils</span> <span class="kn">import</span> <span class="n">test_valid_input</span><span class="p">,</span> <span class="n">parse_filename</span>
+<span class="kn">from</span> <span class="nn">SuPyMode.helper</span> <span class="kn">import</span> <span class="n">parse_mode_of_interest</span><span class="p">,</span> <span class="n">parse_combination</span>
+
+
+<div class="viewcode-block" id="SuperSet">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">SuperSet</span><span class="p">(</span><span class="n">SuperSetPlots</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A set of supermodes calculated for a specific optical fiber configuration.</span>
+
+<span class="sd">    This class manages operations on supermodes, including sorting, plotting, and calculations</span>
+<span class="sd">    related to fiber optics simulations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_parameters : ModelParameters</span>
+<span class="sd">        Parameters defining the model for simulation.</span>
+<span class="sd">    wavelength : float</span>
+<span class="sd">        The wavelength used in the solver, in meters.</span>
+<span class="sd">    geometry : Geometry</span>
+<span class="sd">        The geometry of the optical structure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_parameters</span><span class="p">:</span> <span class="n">ModelParameters</span>
+    <span class="n">wavelength</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">Geometry</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_matrix</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_itr_to_slice</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">itr_list</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">n_slice</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SuperMode</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">SuperMode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coordinate_system</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the coordinate system associated with the geometry.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        CoordinateSystem</span>
+<span class="sd">            The coordinate system of the geometry.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">coordinate_system</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fundamental_supermodes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SuperMode</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the fundamental supermodes based on the highest beta values and minimal spatial overlap.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of SuperMode</span>
+<span class="sd">            A list of fundamental supermodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fundamental_supermodes</span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">non_fundamental_supermodes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SuperMode</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the non-fundamental supermodes based on the specified spatial overlap tolerance.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of SuperMode</span>
+<span class="sd">            A list of non-fundamental supermodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_non_fundamental_supermodes</span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">transmission_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the supermode transmission matrix.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The transmission matrix for the supermodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_matrix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute_transmission_matrix</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_matrix</span>
+
+<div class="viewcode-block" id="SuperSet.itr_to_slice">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.itr_to_slice">[docs]</a>
+    <span class="k">def</span> <span class="nf">itr_to_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">itr_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert ITR values to corresponding slice numbers.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        itr_list : list of float</span>
+<span class="sd">            Inverse taper ratio values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of int</span>
+<span class="sd">            List of slice numbers corresponding to the ITR values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">itr_list</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">itr_list</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_itr_to_slice</span><span class="p">(</span><span class="n">itr_list</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.get_fundamental_supermodes">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.get_fundamental_supermodes">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_fundamental_supermodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SuperMode</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of fundamental supermodes with the highest propagation constant values and minimal spatial overlap.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tolerance : float, optional</span>
+<span class="sd">            Tolerance for spatial overlap (default is 0.1).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of SuperMode</span>
+<span class="sd">            List of fundamental supermodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sort_modes_by_beta</span><span class="p">()</span>
+
+        <span class="n">fundamental_supermodes</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="k">def</span> <span class="nf">absolute_overlap</span><span class="p">(</span><span class="n">mode_0</span><span class="p">:</span> <span class="n">SuperMode</span><span class="p">,</span> <span class="n">mode_1</span><span class="p">:</span> <span class="n">SuperMode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="n">field_0</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">mode_0</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">norm_0</span> <span class="o">=</span> <span class="n">field_0</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">field_0</span> <span class="o">/=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">norm_0</span><span class="p">)</span>
+
+            <span class="n">field_1</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">mode_1</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">norm_1</span> <span class="o">=</span> <span class="n">field_1</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">field_1</span> <span class="o">/=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">norm_1</span><span class="p">)</span>
+
+            <span class="n">overlap</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">field_0</span> <span class="o">*</span> <span class="n">field_1</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">overlap</span>
+
+        <span class="k">for</span> <span class="n">mode_0</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">:</span>
+            <span class="n">abs_overlap</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">absolute_overlap</span><span class="p">(</span><span class="n">mode_0</span><span class="p">,</span> <span class="n">mode_1</span><span class="p">)</span> <span class="k">for</span> <span class="n">mode_1</span> <span class="ow">in</span> <span class="n">fundamental_supermodes</span>
+            <span class="p">]</span>
+
+            <span class="n">abs_overlaps</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">abs_overlap</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">abs_overlaps</span> <span class="o">&gt;</span> <span class="n">tolerance</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">fundamental_supermodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mode_0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fundamental_supermodes</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.get_non_fundamental_supermodes">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.get_non_fundamental_supermodes">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_non_fundamental_supermodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SuperMode</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of non-fundamental supermodes that do not overlap with the fundamental modes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tolerance : float, optional</span>
+<span class="sd">            Tolerance for spatial overlap (default is 0.1).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of SuperMode</span>
+<span class="sd">            List of non-fundamental supermodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">non_fundamental_supermodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span>
+
+        <span class="k">for</span> <span class="n">supermodes</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_fundamental_supermodes</span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">):</span>
+            <span class="n">non_fundamental_supermodes</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">supermodes</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">non_fundamental_supermodes</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.get_mode_solver_classification">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.get_mode_solver_classification">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_mode_solver_classification</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">SuperMode</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of modes classified by solver number.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of list of SuperMode</span>
+<span class="sd">            List of lists containing modes classified by solver number.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">solver_numbers</span> <span class="o">=</span> <span class="p">[</span><span class="n">mode</span><span class="o">.</span><span class="n">solver_number</span> <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
+
+        <span class="n">number_of_solvers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">solver_numbers</span><span class="p">))</span>
+
+        <span class="n">mode_solver_array</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_solvers</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">mode_solver_array</span><span class="p">[</span><span class="n">mode</span><span class="o">.</span><span class="n">solver_number</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mode_solver_array</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.label_supermodes">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.label_supermodes">[docs]</a>
+    <span class="k">def</span> <span class="nf">label_supermodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">label_list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assign labels to the supermodes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        label_list : tuple</span>
+<span class="sd">            Labels to assign to the supermodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">label_list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="n">n</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.reset_labels">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.reset_labels">[docs]</a>
+    <span class="k">def</span> <span class="nf">reset_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset labels for all supermodes to default values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">super_mode</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">):</span>
+            <span class="n">super_mode</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mode_</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.compute_transmission_matrix">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.compute_transmission_matrix">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_transmission_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the transmission matrix including only the propagation constant.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">),</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">),</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">itr_list</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_matrix</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_matrix</span><span class="p">[</span><span class="n">mode</span><span class="o">.</span><span class="n">mode_number</span><span class="p">,</span> <span class="n">mode</span><span class="o">.</span><span class="n">mode_number</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.add_coupling_to_t_matrix">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.add_coupling_to_t_matrix">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_coupling_to_t_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">t_matrix</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">adiabatic_factor</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add coupling coefficients to the transmission matrix.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t_matrix : numpy.ndarray</span>
+<span class="sd">            Transmission matrix to which coupling values are added.</span>
+<span class="sd">        adiabatic_factor : numpy.ndarray</span>
+<span class="sd">            Adiabatic factor, set to one if None (normalized coupling).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Updated transmission matrix with coupling values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">t_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">t_matrix</span> <span class="o">=</span> <span class="n">t_matrix</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">complex</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">mode_0</span><span class="p">,</span> <span class="n">mode_1</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+
+            <span class="n">coupling</span> <span class="o">=</span> <span class="n">mode_0</span><span class="o">.</span><span class="n">normalized_coupling</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span><span class="n">mode_1</span><span class="p">)[:</span><span class="n">size</span><span class="p">]</span>
+
+            <span class="n">coupling</span> <span class="o">*=</span> <span class="n">adiabatic_factor</span>
+
+            <span class="n">t_matrix</span><span class="p">[</span><span class="n">mode_0</span><span class="o">.</span><span class="n">mode_number</span><span class="p">,</span> <span class="n">mode_1</span><span class="o">.</span><span class="n">mode_number</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">coupling</span>
+            <span class="n">t_matrix</span><span class="p">[</span><span class="n">mode_1</span><span class="o">.</span><span class="n">mode_number</span><span class="p">,</span> <span class="n">mode_0</span><span class="o">.</span><span class="n">mode_number</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="o">+</span> <span class="n">coupling</span>
+
+        <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">t_matrix</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Nan values detected in transmission matrix.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">t_matrix</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Inf values detected in transmission matrix, verify that there is no hybrid mode in the computation.&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">t_matrix</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.compute_coupling_factor">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.compute_coupling_factor">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_coupling_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">coupler_length</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the coupling factor defined by the derivative of the inverse taper ratio.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coupler_length : float</span>
+<span class="sd">            Length of the coupler.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Coupling factor as a function of distance in the coupler.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">coupler_length</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">n_slice</span><span class="p">)</span>
+
+        <span class="n">ditr</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">itr_list</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ditr</span> <span class="o">/</span> <span class="n">dx</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.get_transmision_matrix_from_profile">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.get_transmision_matrix_from_profile">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_transmision_matrix_from_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">profile</span><span class="p">:</span> <span class="n">AlphaProfile</span><span class="p">,</span> <span class="n">add_coupling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the transmission matrix from the given profile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        profile : AlphaProfile</span>
+<span class="sd">            Z-profile of the coupler.</span>
+<span class="sd">        add_coupling : bool, optional</span>
+<span class="sd">            Whether to add coupling to the transmission matrix (default is True).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            Tuple containing distance, ITR vector, and transmission matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">profile</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+        <span class="n">final_slice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itr_to_slice</span><span class="p">(</span><span class="n">itr_list</span><span class="o">=</span><span class="n">profile</span><span class="o">.</span><span class="n">smallest_itr</span><span class="p">)</span>
+
+        <span class="n">sub_t_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transmission_matrix</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="n">final_slice</span><span class="p">]</span>
+
+        <span class="n">sub_itr_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">itr_list</span><span class="p">[:</span> <span class="n">final_slice</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">add_coupling</span><span class="p">:</span>
+            <span class="n">sub_t_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_coupling_to_t_matrix</span><span class="p">(</span>
+                <span class="n">t_matrix</span><span class="o">=</span><span class="n">sub_t_matrix</span><span class="p">,</span>
+                <span class="n">adiabatic_factor</span><span class="o">=</span><span class="n">profile</span><span class="o">.</span><span class="n">evaluate_adiabatic_factor</span><span class="p">(</span><span class="n">itr</span><span class="o">=</span><span class="n">sub_itr_vector</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">sub_distance</span> <span class="o">=</span> <span class="n">profile</span><span class="o">.</span><span class="n">evaluate_distance_vs_itr</span><span class="p">(</span><span class="n">sub_itr_vector</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sub_distance</span><span class="p">,</span> <span class="n">sub_itr_vector</span><span class="p">,</span> <span class="n">sub_t_matrix</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.propagate">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.propagate">[docs]</a>
+    <span class="k">def</span> <span class="nf">propagate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">profile</span><span class="p">:</span> <span class="n">AlphaProfile</span><span class="p">,</span>
+            <span class="n">initial_amplitude</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+            <span class="n">max_step</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">n_step</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">add_coupling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;RK45&#39;</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Propagation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Propagate the amplitudes of the supermodes in a coupler based on the given profile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        profile : AlphaProfile</span>
+<span class="sd">            The z-profile of the coupler.</span>
+<span class="sd">        initial_amplitude : list</span>
+<span class="sd">            The initial amplitude as a list of complex numbers.</span>
+<span class="sd">        max_step : float, optional</span>
+<span class="sd">            The maximum step size used by the solver (default is None).</span>
+<span class="sd">        n_step : int, optional</span>
+<span class="sd">            Number of steps used by the solver (default is None).</span>
+<span class="sd">        add_coupling : bool, optional</span>
+<span class="sd">            Whether to add coupling to the transmission matrix (default is True).</span>
+<span class="sd">        method : str, optional</span>
+<span class="sd">            Integration method to be used by the solver (default is &#39;RK45&#39;).</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional keyword arguments to be passed to the solver.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Propagation</span>
+<span class="sd">            A Propagation object containing the results of the propagation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">initial_amplitude</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">initial_amplitude</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">max_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">max_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">/</span> <span class="mi">200</span>
+
+        <span class="n">sub_distance</span><span class="p">,</span> <span class="n">sub_itr_vector</span><span class="p">,</span> <span class="n">sub_t_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_transmision_matrix_from_profile</span><span class="p">(</span>
+            <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span>
+            <span class="n">add_coupling</span><span class="o">=</span><span class="n">add_coupling</span>
+        <span class="p">)</span>
+
+        <span class="n">z_to_itr</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">distance</span><span class="p">,</span> <span class="n">profile</span><span class="o">.</span><span class="n">itr_list</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s1">&#39;extrapolate&#39;</span><span class="p">)</span>
+        <span class="n">itr_to_t_matrix</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">sub_itr_vector</span><span class="p">,</span> <span class="n">sub_t_matrix</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s1">&#39;extrapolate&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+            <span class="n">itr</span> <span class="o">=</span> <span class="n">z_to_itr</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">itr_to_t_matrix</span><span class="p">(</span><span class="n">itr</span><span class="p">)</span> <span class="o">@</span> <span class="n">y</span>
+
+        <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span>
+            <span class="n">fun</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">y0</span><span class="o">=</span><span class="n">initial_amplitude</span><span class="p">,</span>
+            <span class="n">t_span</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">profile</span><span class="o">.</span><span class="n">total_length</span><span class="p">],</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+            <span class="n">vectorized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">max_step</span><span class="o">=</span><span class="n">max_step</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Check power conservation across the propagation</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">norm</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">):</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Power conservation not achieved [</span><span class="si">{</span><span class="n">max_step</span><span class="w"> </span><span class="si">= }</span><span class="s1">, atol = 1e-1].&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Propagation</span><span class="p">(</span>
+            <span class="n">superset</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">amplitudes</span><span class="o">=</span><span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+            <span class="n">distance</span><span class="o">=</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span>
+            <span class="n">z_to_itr</span><span class="o">=</span><span class="n">z_to_itr</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.interpret_initial_input">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.interpret_initial_input">[docs]</a>
+    <span class="k">def</span> <span class="nf">interpret_initial_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_amplitude</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">SuperMode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interpret the initial amplitude input to ensure compatibility with the expected number of supermodes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        initial_amplitude : list or SuperMode</span>
+<span class="sd">            The initial amplitude as either a list of complex numbers or a SuperMode object.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The initial amplitudes as a NumPy array of complex numbers.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the length of the initial amplitude list does not match the number of supermodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">initial_amplitude</span><span class="p">,</span> <span class="n">SuperMode</span><span class="p">):</span>
+            <span class="n">amplitudes</span> <span class="o">=</span> <span class="n">initial_amplitude</span><span class="o">.</span><span class="n">amplitudes</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">amplitudes</span> <span class="o">=</span> <span class="n">initial_amplitude</span>
+
+        <span class="n">amplitude_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">amplitudes</span><span class="p">)</span>
+        <span class="n">number_of_supermodes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">amplitude_size</span> <span class="o">!=</span> <span class="n">number_of_supermodes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Amplitudes size: </span><span class="si">{</span><span class="n">amplitude_size</span><span class="si">}</span><span class="s1"> does not match with the number of supermodes: </span><span class="si">{</span><span class="n">number_of_supermodes</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">amplitudes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_sort_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ordering_keys</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">SuperMode</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sort supermodes using specified keys provided as tuples in `ordering_keys`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ordering_keys : tuple</span>
+<span class="sd">            Tuple containing keys to sort by.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of SuperMode</span>
+<span class="sd">            Sorted list of supermodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">lexsort</span><span class="p">(</span><span class="n">ordering_keys</span><span class="p">)</span>
+        <span class="n">sorted_supermodes</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">order</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">supermode</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sorted_supermodes</span><span class="p">):</span>
+            <span class="n">supermode</span><span class="o">.</span><span class="n">mode_number</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">return</span> <span class="n">sorted_supermodes</span>
+
+<div class="viewcode-block" id="SuperSet.sort_modes_by_beta">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.sort_modes_by_beta">[docs]</a>
+    <span class="k">def</span> <span class="nf">sort_modes_by_beta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sort supermodes in descending order of their propagation constants (beta).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lexort_index</span> <span class="o">=</span> <span class="p">([</span><span class="o">-</span><span class="n">mode</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">],</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_supermodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_modes</span><span class="p">(</span><span class="n">lexort_index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.sort_modes">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.sort_modes">[docs]</a>
+    <span class="k">def</span> <span class="nf">sort_modes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sorting_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;beta&quot;</span><span class="p">,</span> <span class="n">keep_only</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sort supermodes according to the specified method, optionally limiting the number of modes retained.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sorting_method : str, optional</span>
+<span class="sd">            Sorting method to use, either &quot;beta&quot; or &quot;symmetry+beta&quot; (default is &quot;beta&quot;).</span>
+<span class="sd">        keep_only : int, optional</span>
+<span class="sd">            Number of supermodes to retain after sorting (default is None).</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If an unrecognized sorting method is provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">match</span> <span class="n">sorting_method</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">case</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sort_modes_by_beta</span><span class="p">()</span>
+            <span class="k">case</span> <span class="s1">&#39;symmetry+beta&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sort_modes_by_solver_and_beta</span><span class="p">()</span>
+            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognized sorting method: </span><span class="si">{</span><span class="n">sorting_method</span><span class="si">}</span><span class="s2">, accepted values are [&#39;beta&#39;, &#39;symmetry+beta&#39;]&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_supermodes</span><span class="p">[:</span><span class="n">keep_only</span><span class="p">]</span> <span class="k">if</span> <span class="n">keep_only</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_supermodes</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.sort_modes_by_solver_and_beta">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.sort_modes_by_solver_and_beta">[docs]</a>
+    <span class="k">def</span> <span class="nf">sort_modes_by_solver_and_beta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sort supermodes primarily by solver number and secondarily by descending propagation constant (beta).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lexort_index</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span><span class="n">mode</span><span class="o">.</span><span class="n">solver_number</span> <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="n">mode</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_supermodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_modes</span><span class="p">(</span><span class="n">lexort_index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.is_compute_compatible">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.is_compute_compatible">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_compute_compatible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pair_of_mode</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine whether the specified pair of modes is compatible for computation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pair_of_mode : tuple</span>
+<span class="sd">            The pair of modes to be checked.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the pair of modes is compatible for computation, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mode_0</span><span class="p">,</span> <span class="n">mode_1</span> <span class="o">=</span> <span class="n">pair_of_mode</span>
+        <span class="k">return</span> <span class="n">mode_0</span><span class="o">.</span><span class="n">is_computation_compatible</span><span class="p">(</span><span class="n">mode_1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.remove_duplicate_combination">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.remove_duplicate_combination">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove_duplicate_combination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supermodes_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SuperMode</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove duplicate combinations from the mode combination list irrespective of the order.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        supermodes_list : list of tuple</span>
+<span class="sd">            List of mode combinations.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of tuple</span>
+<span class="sd">            Reduced list of unique supermode combinations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">mode0</span><span class="p">,</span> <span class="n">mode1</span> <span class="ow">in</span> <span class="n">supermodes_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">mode0</span><span class="p">,</span> <span class="n">mode1</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">output_list</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mode1</span><span class="p">,</span> <span class="n">mode0</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">output_list</span><span class="p">:</span>
+                <span class="n">output_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">mode0</span><span class="p">,</span> <span class="n">mode1</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">output_list</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.interpret_combination">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.interpret_combination">[docs]</a>
+    <span class="k">def</span> <span class="nf">interpret_combination</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode_of_interest</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">combination</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interpret user input for mode selection and return the combination of modes to consider.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mode_of_interest : list</span>
+<span class="sd">            List of modes of interest.</span>
+<span class="sd">        combination : str</span>
+<span class="sd">            Mode selection method (&#39;pairs&#39; or &#39;specific&#39;).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        set of tuple</span>
+<span class="sd">            Set of mode combinations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">test_valid_input</span><span class="p">(</span>
+            <span class="n">variable_name</span><span class="o">=</span><span class="s1">&#39;combination&#39;</span><span class="p">,</span>
+            <span class="n">user_input</span><span class="o">=</span><span class="n">combination</span><span class="p">,</span>
+            <span class="n">valid_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;pairs&#39;</span><span class="p">,</span> <span class="s1">&#39;specific&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">match</span> <span class="n">combination</span><span class="p">:</span>
+            <span class="k">case</span> <span class="s1">&#39;pairs&#39;</span><span class="p">:</span>
+                <span class="n">mode_combinations</span> <span class="o">=</span> <span class="n">product</span><span class="p">(</span><span class="n">mode_of_interest</span><span class="p">,</span> <span class="n">mode_of_interest</span><span class="p">)</span>
+            <span class="k">case</span> <span class="s1">&#39;specific&#39;</span><span class="p">:</span>
+                <span class="n">mode_combinations</span> <span class="o">=</span> <span class="n">product</span><span class="p">(</span><span class="n">mode_of_interest</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">supermodes</span><span class="p">)</span>
+
+        <span class="n">mode_combinations</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_compute_compatible</span><span class="p">,</span> <span class="n">mode_combinations</span><span class="p">)</span>
+
+        <span class="n">mode_combinations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_duplicate_combination</span><span class="p">(</span><span class="n">mode_combinations</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">mode_combinations</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SuperSet.save_instance">
+<a class="viewcode-back" href="../../code.html#SuPyMode.superset.SuperSet.save_instance">[docs]</a>
+    <span class="nd">@parse_filename</span>
+    <span class="k">def</span> <span class="nf">save_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the SuperSet instance as a serialized pickle file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            Filename for the serialized instance.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Path</span>
+<span class="sd">            The path to the saved instance file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.pickle&#39;</span><span class="p">),</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">filename</span></div>
+
+
+    <span class="nd">@parse_mode_of_interest</span>
+    <span class="nd">@parse_combination</span>
+    <span class="nd">@parse_filename</span>
+    <span class="k">def</span> <span class="nf">export_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                    <span class="n">mode_of_interest</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="s1">&#39;all&#39;</span><span class="p">,</span>
+                    <span class="n">combination</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">export_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="n">export_beta</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="n">export_eigen_value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="n">export_adiabatic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="n">export_beating_length</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="n">export_normalized_coupling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Export the SuperSet data as CSV files, saving specific attributes of the modes or combinations of modes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            The directory where the files will be saved.</span>
+<span class="sd">        mode_of_interest : list, optional</span>
+<span class="sd">            List of modes to be exported (default is &#39;all&#39;).</span>
+<span class="sd">        combination : list, optional</span>
+<span class="sd">            List of mode combinations to be exported (default is None).</span>
+<span class="sd">        export_index : bool, optional</span>
+<span class="sd">            Whether to export the &#39;index&#39; attribute (default is True).</span>
+<span class="sd">        export_beta : bool, optional</span>
+<span class="sd">            Whether to export the &#39;beta&#39; attribute (default is True).</span>
+<span class="sd">        export_eigen_value : bool, optional</span>
+<span class="sd">            Whether to export the &#39;eigen_value&#39; attribute (default is False).</span>
+<span class="sd">        export_adiabatic : bool, optional</span>
+<span class="sd">            Whether to export the &#39;adiabatic&#39; attribute for combinations (default is True).</span>
+<span class="sd">        export_beating_length : bool, optional</span>
+<span class="sd">            Whether to export the &#39;beating_length&#39; attribute for combinations (default is True).</span>
+<span class="sd">        export_normalized_coupling : bool, optional</span>
+<span class="sd">            Whether to export the &#39;normalized_coupling&#39; attribute for combinations (default is True).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Path</span>
+<span class="sd">            The path to the directory where the files were saved.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+        <span class="c1"># Create the directory if it doesn&#39;t exist</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_export_single_data</span><span class="p">(</span><span class="n">attribute_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Helper function to export data for a single attribute for all modes of interest.&quot;&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">mode_of_interest</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+                <span class="n">sub_filename</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">mode</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">itr_list</span><span class="p">,</span> <span class="n">data</span><span class="p">])</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">sub_filename</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">),</span> <span class="n">X</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;ITR, </span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_export_combination_data</span><span class="p">(</span><span class="n">attribute_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Helper function to export data for a single attribute for all combinations of modes.&quot;&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">mode_0</span><span class="p">,</span> <span class="n">mode_1</span> <span class="ow">in</span> <span class="n">combination</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mode_0</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">)</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span><span class="n">other_supermode</span><span class="o">=</span><span class="n">mode_1</span><span class="p">)</span>
+                <span class="n">sub_filename</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">mode_0</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">mode_1</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">itr_list</span><span class="p">,</span> <span class="n">data</span><span class="p">])</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">sub_filename</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">),</span> <span class="n">X</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;ITR, </span><span class="si">{</span><span class="n">attribute_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Export single-mode attributes</span>
+        <span class="k">if</span> <span class="n">export_index</span><span class="p">:</span>
+            <span class="n">_export_single_data</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">export_beta</span><span class="p">:</span>
+            <span class="n">_export_single_data</span><span class="p">(</span><span class="s1">&#39;beta&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">export_eigen_value</span><span class="p">:</span>
+            <span class="n">_export_single_data</span><span class="p">(</span><span class="s1">&#39;eigen_value&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Export combination-mode attributes</span>
+        <span class="k">if</span> <span class="n">export_adiabatic</span><span class="p">:</span>
+            <span class="n">_export_combination_data</span><span class="p">(</span><span class="s1">&#39;adiabatic&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">export_beating_length</span><span class="p">:</span>
+            <span class="n">_export_combination_data</span><span class="p">(</span><span class="s1">&#39;beating_length&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">export_normalized_coupling</span><span class="p">:</span>
+            <span class="n">_export_combination_data</span><span class="p">(</span><span class="s1">&#39;normalized_coupling&#39;</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Martin Poinsinet de Sivry-Houle.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
