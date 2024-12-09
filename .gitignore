@@ -26,3 +26,7 @@ PyOptik/data/**/example*
 # Override for documentation_build
 !documentation_build
 !documentation_build/**
+
+
+# Package specifics
+SuPyMode/user_data/*
