@@ -22,8 +22,6 @@ include_directories("${CMAKE_SOURCE_DIR}/SuPyMode/cpp/headers")
 include_directories("${CMAKE_SOURCE_DIR}/extern/eigen/Eigen")
 include_directories("${CMAKE_SOURCE_DIR}/extern/spectra")
 
-add_compile_options("-w" "-Wdeprecated-declarations")
-
 # Platform-specific settings for static linking
 if (WIN32)
     message("Windows OS detected")
