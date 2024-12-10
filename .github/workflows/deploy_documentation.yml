@@ -1,6 +1,5 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
-
+name: Deploy documentation to github page
 
 on:
   push:
@@ -20,3 +19,5 @@ permissions:
 jobs:
   ManyLinux_x86_64:
     uses: MartinPdeS/MPSActions/.github/workflows/publish_documentation.yml@master
+    with:
+      python-version: "3.11"

@@ -96,11 +96,11 @@ class BaseSingleModePlot():
         else:
             figure = ax.figure
 
-        self._dress_ax(ax)
-
         ax.plot(self.itr_list, self.data, label=f'{self.stylized_label}', linewidth=2)
 
         ax.legend()
+
+        self._dress_ax(ax)
 
         if show:
             plt.show()
