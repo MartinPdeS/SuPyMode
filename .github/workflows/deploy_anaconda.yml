@@ -1,4 +1,4 @@
-name: Deploy to Conda
+name: Deploy to PyPi
 
 on:
   push:
@@ -8,43 +8,14 @@ on:
   pull_request:
     branches: [ "master" ]
 
+permissions:
+    contents: write
+
 jobs:
-  conda_deployment:
-    name: OS [${{ matrix.os }}] -- Python [${{ matrix.python-version }}]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        python-version: ["3.11", "3.12"]
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-          fetch-depth: 0
-
-      - name: Set up Conda  environment
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-activate-base: true
-          python-version: ${{ matrix.python-version }}
-          channels: conda-forge, martinpdes, defaults
-
-      - name: Install Conda tools
-        run: |
-          conda install anaconda-client conda-build
-
-      - name: Configure Conda for Upload (if applicable)
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        run: |
-          conda config --set anaconda_upload true
-
-      - name: Configure Conda for No Upload (if applicable)
-        if: github.event_name != 'push' || !startsWith(github.ref, 'refs/tags/')
-        run: |
-          conda config --set anaconda_upload false
-
-      - name: Build Conda package
-        run: |
-          conda build . --python ${{ matrix.python-version }} --user martinpdes --token ${{ secrets.ANACONDA_API_TOKEN }}
+  ManyLinux_x86_64:
+    uses: MartinPdeS/MPSActions/.github/workflows/publish_compiled_package_to_anaconda.yml@master
+    with:
+      python-version: '["3.11", "3.12"]'
+    secrets:
+      ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
 
