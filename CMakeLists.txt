@@ -22,8 +22,6 @@ include_directories("${CMAKE_SOURCE_DIR}/SuPyMode/cpp/headers")
 include_directories("${CMAKE_SOURCE_DIR}/extern/eigen/Eigen")
 include_directories("${CMAKE_SOURCE_DIR}/extern/spectra")
 
-add_compile_options("-w" "-Wdeprecated-declarations")
-
 # Platform-specific settings for static linking
 if (WIN32)
     message("Windows OS detected")
@@ -42,7 +40,7 @@ message(STATUS "Binary will be installed in location: " ${SUPYMODE_BIN_DIR})
 #Building EigenSolver----------------------------------------------
 pybind11_add_module(EigenSolver MODULE "${SUPYMODE_CXX_DIR}/eigensolver_interface.cpp")
 set_target_properties(EigenSolver PROPERTIES OUTPUT_NAME "CppSolver")
-target_link_libraries(EigenSolver PRIVATE "${Eigen_LIBRARIES}")
+target_include_directories(EigenSolver PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen")
 target_link_options(EigenSolver PUBLIC ${STATIC_LINK_OPTIONS})
 target_include_directories(EigenSolver PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/extern/eigen")
 target_include_directories(EigenSolver PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/extern/spectra/include")

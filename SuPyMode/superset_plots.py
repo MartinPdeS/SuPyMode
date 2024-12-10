@@ -220,11 +220,6 @@ class SuperSetPlots(object):
         for profile in numpy.atleast_1d(add_profile):
             profile.render_adiabatic_factor_vs_itr_on_ax(ax=ax, line_style='--')
 
-        ax.set(
-            yscale='log',
-            ylim=[1e-5, 1]
-        )
-
     @parse_mode_of_interest
     def plot_field(
             self,

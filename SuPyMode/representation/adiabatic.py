@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 import numpy
 from SuPyMode.representation.base import InheritFromSuperMode, BaseMultiModePlot
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 
 class Adiabatic(InheritFromSuperMode, BaseMultiModePlot):
@@ -67,9 +68,16 @@ class Adiabatic(InheritFromSuperMode, BaseMultiModePlot):
             The axis object on which to set the labels.
         """
         ax.set(
+            yscale='log',
             xlabel='Inverse taper ratio',
             ylabel=r'Adiabatic criterion [$\mu$m$^{-1}$]',
-            ylim=[1e-5, 1],
+            ylim=[1e-5 * 1e6, 1 * 1e6],
         )
+
+        def log_scale_yaxis(value, tick_position):
+            return f'{value / 1e6:.0e}'
+
+        # Apply the custom formatter for log scale
+        ax.yaxis.set_major_formatter(ticker.FuncFormatter(log_scale_yaxis))
 
 # -

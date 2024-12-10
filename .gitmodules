@@ -1,6 +1,6 @@
 [submodule "extern/eigen"]
 	path = extern/eigen
-	url = https://github.com/libigl/eigen.git
+	url = https://gitlab.com/libeigen/eigen.git
 	ignore = dirty
 [submodule "extern/spectra"]
 	path = extern/spectra
