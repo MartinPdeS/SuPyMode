@@ -1,0 +1,928 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SuPyMode.supermode &#8212; SuPyMode  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/default.css?v=265c6c44" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/SuPyMode/supermode';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/SuPyMode/documentation_page/version_switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v2.0.3.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = true;
+        </script>
+    <link rel="icon" href="../../_static/thumbnail.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/thumbnail.png" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="../../_static/thumbnail.png" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">SuPyMode</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory.html">
+    Theoretical background
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../code.html">
+    Source code
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MartinPdeS/SuPyMode" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/SuPyMode/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://anaconda.org/MartinPdeS/SuPyMode" title="Anaconda" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Anaconda</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../theory.html">
+    Theoretical background
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../code.html">
+    Source code
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../references.html">
+    References
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MartinPdeS/SuPyMode" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/SuPyMode/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://anaconda.org/MartinPdeS/SuPyMode" title="Anaconda" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-python fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Anaconda</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">SuPyMode.supermode</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for SuPyMode.supermode</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Built-in imports</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span> <span class="k">as</span> <span class="n">field_arg</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">RectBivariateSpline</span>
+
+<span class="c1"># Local imports</span>
+<span class="kn">from</span> <span class="nn">SuPyMode</span> <span class="kn">import</span> <span class="n">representation</span>
+<span class="kn">from</span> <span class="nn">SuPyMode.binary.ModelParameters</span> <span class="kn">import</span> <span class="n">ModelParameters</span>
+<span class="kn">from</span> <span class="nn">SuPyMode.utils</span> <span class="kn">import</span> <span class="n">interpret_slice_number_and_itr</span><span class="p">,</span> <span class="n">get_symmetrized_vector</span>
+
+
+<div class="viewcode-block" id="SuperMode">
+<a class="viewcode-back" href="../../code.html#SuPyMode.supermode.SuperMode">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">SuperMode</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents supermodes within fiber optic structures. This class serves as a Python</span>
+<span class="sd">    counterpart to a C++ SuperMode class, facilitating integration and computation via</span>
+<span class="sd">    the SuPySolver. Instances of this class belong to a SuperSet, and each supermode</span>
+<span class="sd">    is uniquely identified within its symmetry set by a mode number.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    parent_set : object</span>
+<span class="sd">        The SuperSet instance associated with this supermode.</span>
+<span class="sd">    binding : object</span>
+<span class="sd">        The corresponding C++ bound supermode object.</span>
+<span class="sd">    solver_number : int</span>
+<span class="sd">        Identifier linking this supermode to a specific Python solver.</span>
+<span class="sd">    mode_number : int</span>
+<span class="sd">        Unique identifier for this mode within a symmetry set.</span>
+<span class="sd">    boundaries : dict</span>
+<span class="sd">        Specifications of the boundary conditions for the supermode.</span>
+<span class="sd">    label : str, optional</span>
+<span class="sd">        An arbitrary descriptive label for the supermode.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ID : list</span>
+<span class="sd">        Unique identifier for the solver and binding number.</span>
+<span class="sd">    field : Field</span>
+<span class="sd">        Field representation associated with the supermode.</span>
+<span class="sd">    index : Index</span>
+<span class="sd">        Index representation associated with the supermode.</span>
+<span class="sd">    beta : Beta</span>
+<span class="sd">        Beta representation associated with the supermode.</span>
+<span class="sd">    normalized_coupling : NormalizedCoupling</span>
+<span class="sd">        Normalized coupling representation of the supermode.</span>
+<span class="sd">    adiabatic : Adiabatic</span>
+<span class="sd">        Adiabatic representation of the supermode.</span>
+<span class="sd">    eigen_value : EigenValue</span>
+<span class="sd">        Eigenvalue representation of the supermode.</span>
+<span class="sd">    beating_length : BeatingLength</span>
+<span class="sd">        Beating length representation of the supermode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parent_set</span><span class="p">:</span> <span class="nb">object</span>
+    <span class="n">binding</span><span class="p">:</span> <span class="nb">object</span>
+    <span class="n">solver_number</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">mode_number</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">boundaries</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ID</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field_arg</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># Other representations</span>
+    <span class="n">field</span><span class="p">:</span> <span class="n">representation</span><span class="o">.</span><span class="n">Field</span> <span class="o">=</span> <span class="n">field_arg</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">index</span><span class="p">:</span> <span class="n">representation</span><span class="o">.</span><span class="n">Index</span> <span class="o">=</span> <span class="n">field_arg</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">beta</span><span class="p">:</span> <span class="n">representation</span><span class="o">.</span><span class="n">Beta</span> <span class="o">=</span> <span class="n">field_arg</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">normalized_coupling</span><span class="p">:</span> <span class="n">representation</span><span class="o">.</span><span class="n">NormalizedCoupling</span> <span class="o">=</span> <span class="n">field_arg</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">adiabatic</span><span class="p">:</span> <span class="n">representation</span><span class="o">.</span><span class="n">Adiabatic</span> <span class="o">=</span> <span class="n">field_arg</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">eigen_value</span><span class="p">:</span> <span class="n">representation</span><span class="o">.</span><span class="n">EigenValue</span> <span class="o">=</span> <span class="n">field_arg</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">beating_length</span><span class="p">:</span> <span class="n">representation</span><span class="o">.</span><span class="n">BeatingLength</span> <span class="o">=</span> <span class="n">field_arg</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ID</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">solver_number</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">binding_number</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field</span> <span class="o">=</span> <span class="n">representation</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">parent_supermode</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">representation</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">parent_supermode</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">representation</span><span class="o">.</span><span class="n">Beta</span><span class="p">(</span><span class="n">parent_supermode</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalized_coupling</span> <span class="o">=</span> <span class="n">representation</span><span class="o">.</span><span class="n">NormalizedCoupling</span><span class="p">(</span><span class="n">parent_supermode</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adiabatic</span> <span class="o">=</span> <span class="n">representation</span><span class="o">.</span><span class="n">Adiabatic</span><span class="p">(</span><span class="n">parent_supermode</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eigen_value</span> <span class="o">=</span> <span class="n">representation</span><span class="o">.</span><span class="n">EigenValue</span><span class="p">(</span><span class="n">parent_supermode</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beating_length</span> <span class="o">=</span> <span class="n">representation</span><span class="o">.</span><span class="n">BeatingLength</span><span class="p">(</span><span class="n">parent_supermode</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a hash value based on the bound supermode object.</span>
+
+<span class="sd">        This allows instances of this class to be used in hash-based collections</span>
+<span class="sd">        such as sets and dictionaries.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The hash value of the bound supermode object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binding</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">binding_number</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the binding number specific to the linked C++ solver.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The binding number from the associated C++ solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binding</span><span class="o">.</span><span class="n">binding_number</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provides access to the geometric configuration associated with the supermode.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        object</span>
+<span class="sd">            The geometry of the parent SuperSet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_set</span><span class="o">.</span><span class="n">geometry</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coordinate_system</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Accesses the coordinate system used by the supermode.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        object</span>
+<span class="sd">            The coordinate system of the parent SuperSet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_set</span><span class="o">.</span><span class="n">coordinate_system</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">itr_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provides a list of iteration parameters from the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Array of iteration parameters from the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binding</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">itr_list</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelParameters</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves parameters defining the model&#39;s computational aspects.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ModelParameters</span>
+<span class="sd">            Computational parameters from the bound supermode.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binding</span><span class="o">.</span><span class="n">model_parameters</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mesh_gradient</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Accesses the gradient mesh associated with the supermode.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The gradient mesh of the supermode.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binding</span><span class="o">.</span><span class="n">mesh_gradient</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">amplitudes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the amplitude array for this supermode, setting its own mode number</span>
+<span class="sd">        to 1 and all others to 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Array of complex numbers representing amplitudes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_mode</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_set</span><span class="o">.</span><span class="n">supermodes</span><span class="p">)</span>
+        <span class="n">amplitudes</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_mode</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+        <span class="n">amplitudes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mode_number</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">amplitudes</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stylized_label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provides a stylized label for the supermode. If no custom label is provided,</span>
+<span class="sd">        it defaults to a generic label with the mode ID.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The stylized or default label.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Mode: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ID</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">$&quot;</span>
+
+<div class="viewcode-block" id="SuperMode.is_computation_compatible">
+<a class="viewcode-back" href="../../code.html#SuPyMode.supermode.SuperMode.is_computation_compatible">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_computation_compatible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;SuperMode&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determines if another supermode is compatible for computation, based on unique</span>
+<span class="sd">        identifiers and boundary conditions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : SuperMode</span>
+<span class="sd">            The other supermode to compare.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the supermodes are compatible for computation, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binding</span><span class="o">.</span><span class="n">is_computation_compatible</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">binding</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SuperMode.is_symmetry_compatible">
+<a class="viewcode-back" href="../../code.html#SuPyMode.supermode.SuperMode.is_symmetry_compatible">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_symmetry_compatible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;SuperMode&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determines whether the specified other supermode has the same symmetry.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : SuperMode</span>
+<span class="sd">            The other supermode to compare.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the specified other is symmetry compatible, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundaries</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">boundaries</span></div>
+
+
+<div class="viewcode-block" id="SuperMode.get_field_interpolation">
+<a class="viewcode-back" href="../../code.html#SuPyMode.supermode.SuperMode.get_field_interpolation">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_field_interpolation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">itr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">slice_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RectBivariateSpline</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the field interpolation for a given iteration or slice number.</span>
+<span class="sd">        Requires exactly one of the parameters to be specified.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        itr : float, optional</span>
+<span class="sd">            The iteration number for which to compute the interpolation.</span>
+<span class="sd">        slice_number : int, optional</span>
+<span class="sd">            The slice number for which to compute the interpolation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        RectBivariateSpline</span>
+<span class="sd">            Interpolated field values over a grid.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If neither or both parameters are specified.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">itr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">slice_number</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Exactly one of itr or slice_number must be provided.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">slice_number</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">slice_number</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_set</span><span class="o">.</span><span class="n">itr_to_slice</span><span class="p">(</span><span class="n">itr_list</span><span class="o">=</span><span class="n">itr</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">itr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">slice_number</span><span class="p">,</span> <span class="n">itr</span> <span class="o">=</span> <span class="n">interpret_slice_number_and_itr</span><span class="p">(</span>
+                <span class="n">itr_baseline</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">itr_list</span><span class="p">,</span>
+                <span class="n">slice_list</span><span class="o">=</span><span class="n">slice_number</span>
+            <span class="p">)</span>
+
+        <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span><span class="n">slice_number</span><span class="o">=</span><span class="n">slice_number</span><span class="p">,</span> <span class="n">add_symmetries</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="n">x_axis</span><span class="p">,</span> <span class="n">y_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">slice_number</span><span class="o">=</span><span class="n">slice_number</span><span class="p">,</span> <span class="n">add_symmetries</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">field_interpolation</span> <span class="o">=</span> <span class="n">RectBivariateSpline</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">x_axis</span> <span class="o">*</span> <span class="n">itr</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">y_axis</span> <span class="o">*</span> <span class="n">itr</span><span class="p">,</span>
+            <span class="n">z</span><span class="o">=</span><span class="n">field</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">field_interpolation</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_axis_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">add_symmetries</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the full axis vectors, optionally including symmetries.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        add_symmetries : bool, optional, default=True</span>
+<span class="sd">            Whether to include symmetries when computing the axis vectors.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            A tuple containing the full x-axis and y-axis vectors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">full_x_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinate_system</span><span class="o">.</span><span class="n">x_vector</span>
+        <span class="n">full_y_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinate_system</span><span class="o">.</span><span class="n">y_vector</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">add_symmetries</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">full_x_axis</span><span class="p">,</span> <span class="n">full_y_axis</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">right</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;symmetric&#39;</span><span class="p">,</span> <span class="s1">&#39;anti-symmetric&#39;</span><span class="p">]:</span>
+            <span class="n">full_x_axis</span> <span class="o">=</span> <span class="n">get_symmetrized_vector</span><span class="p">(</span><span class="n">full_x_axis</span><span class="p">,</span> <span class="n">symmetry_type</span><span class="o">=</span><span class="s1">&#39;last&#39;</span><span class="p">)</span>
+            <span class="n">full_x_axis</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">left</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;symmetric&#39;</span><span class="p">,</span> <span class="s1">&#39;anti-symmetric&#39;</span><span class="p">]:</span>
+            <span class="n">full_x_axis</span> <span class="o">=</span> <span class="n">get_symmetrized_vector</span><span class="p">(</span><span class="n">full_x_axis</span><span class="p">,</span> <span class="n">symmetry_type</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span>
+            <span class="n">full_x_axis</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">top</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;symmetric&#39;</span><span class="p">,</span> <span class="s1">&#39;anti-symmetric&#39;</span><span class="p">]:</span>
+            <span class="n">full_y_axis</span> <span class="o">=</span> <span class="n">get_symmetrized_vector</span><span class="p">(</span><span class="n">full_y_axis</span><span class="p">,</span> <span class="n">symmetry_type</span><span class="o">=</span><span class="s1">&#39;last&#39;</span><span class="p">)</span>
+            <span class="n">full_y_axis</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundaries</span><span class="o">.</span><span class="n">bottom</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;symmetric&#39;</span><span class="p">,</span> <span class="s1">&#39;anti-symmetric&#39;</span><span class="p">]:</span>
+            <span class="n">full_y_axis</span> <span class="o">=</span> <span class="n">get_symmetrized_vector</span><span class="p">(</span><span class="n">full_y_axis</span><span class="p">,</span> <span class="n">symmetry_type</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)</span>
+            <span class="n">full_y_axis</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">full_x_axis</span><span class="p">,</span> <span class="n">full_y_axis</span>
+
+<div class="viewcode-block" id="SuperMode.get_axis">
+<a class="viewcode-back" href="../../code.html#SuPyMode.supermode.SuperMode.get_axis">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slice_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">add_symmetries</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the scaled axis vectors for a specific slice, optionally including symmetries.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        slice_number : int</span>
+<span class="sd">            The slice index for which to compute the axis vectors.</span>
+<span class="sd">        add_symmetries : bool, optional, default=True</span>
+<span class="sd">            Whether to include symmetries in the computed axis vectors.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            A tuple containing the scaled x-axis and y-axis vectors for the given slice.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">itr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">itr_list</span><span class="p">[</span><span class="n">slice_number</span><span class="p">]</span>
+        <span class="n">x_axis</span><span class="p">,</span> <span class="n">y_axis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_axis_vector</span><span class="p">(</span><span class="n">add_symmetries</span><span class="o">=</span><span class="n">add_symmetries</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x_axis</span> <span class="o">*</span> <span class="n">itr</span><span class="p">,</span> <span class="n">y_axis</span> <span class="o">*</span> <span class="n">itr</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provides a string representation of the supermode.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The label of the supermode.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
+
+<div class="viewcode-block" id="SuperMode.plot">
+<a class="viewcode-back" href="../../code.html#SuPyMode.supermode.SuperMode.plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots various properties of the supermode based on the specified type.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        plot_type : str</span>
+<span class="sd">            The type of plot to generate. Options include &#39;field&#39;, &#39;beta&#39;, &#39;index&#39;, &#39;eigen-value&#39;,</span>
+<span class="sd">            &#39;beating-length&#39;, &#39;adiabatic&#39;, and &#39;normalized-coupling&#39;.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional keyword arguments to pass to the plotting function.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        object</span>
+<span class="sd">            The result of the plotting function, typically a plot object.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If an invalid plot type is specified.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">match</span> <span class="n">plot_type</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">case</span> <span class="s1">&#39;field&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">case</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">case</span> <span class="s1">&#39;index&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">case</span> <span class="s1">&#39;eigen-value&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">eigen_value</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">case</span> <span class="s1">&#39;beating-length&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">beating_length</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">case</span> <span class="s1">&#39;adiabatic&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">adiabatic</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">case</span> <span class="s1">&#39;normalized-coupling&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalized_coupling</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid plot type: </span><span class="si">{</span><span class="n">plot_type</span><span class="si">}</span><span class="s1">. Options are: index, beta, eigen-value, field, beating-length, adiabatic, normalized-coupling&#39;</span><span class="p">)</span></div>
+</div>
+
+
+<span class="c1"># -</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Martin Poinsinet de Sivry-Houle.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.4.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
