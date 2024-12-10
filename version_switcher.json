@@ -1,25 +1,31 @@
 [
 {
+  "name": "v2.0.3.1",
+  "version": "v2.0.3.1",
+  "url": "https://martinpdes.github.io/LightWave2D/docs/v2.0.3.1"
+}
+,
+{
   "name": "v2.0.3.0",
   "version": "v2.0.3.0",
-  "url": "https://martinpdes.github.io/SuPyMode/docs/v2.0.3.0"
+  "url": "https://martinpdes.github.io/LightWave2D/docs/v2.0.3.0"
 }
 ,
 {
   "name": "v2.0.2",
   "version": "v2.0.2",
-  "url": "https://martinpdes.github.io/SuPyMode/docs/v2.0.2"
+  "url": "https://martinpdes.github.io/LightWave2D/docs/v2.0.2"
 }
 ,
 {
   "name": "empty.txt",
   "version": "empty.txt",
-  "url": "https://martinpdes.github.io/SuPyMode/docs/empty.txt"
+  "url": "https://martinpdes.github.io/LightWave2D/docs/empty.txt"
 }
 ,
 {
   "name": "0.0.0.0",
   "version": "0.0.0.0",
-  "url": "https://martinpdes.github.io/SuPyMode/docs/0.0.0.0"
+  "url": "https://martinpdes.github.io/LightWave2D/docs/0.0.0.0"
 }
 ]
