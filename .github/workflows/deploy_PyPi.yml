@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   ManyLinux_x86_64:
-    uses: MartinPdeS/MPSActions/publish_compiled_package_to_PyPi.yml@master
+    uses: MartinPdeS/MPSActions/.github/workflows/publish_compiled_package_to_PyPi.yml@master
     with:
       python-version: "3.11"
     secrets:
