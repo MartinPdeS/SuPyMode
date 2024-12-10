@@ -3,10 +3,12 @@ name: Deploy static content to Pages
 
 
 on:
-  workflow_run:
-    workflows: ["Documentation"]  # This references the name of the first workflow
-    types:
-      - completed  # Run when the Documentation workflow is completed successfully
+  push:
+    branches: [ "master" ]
+    tags:
+      - '*'
+  pull_request:
+    branches: [ "master" ]
 
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
