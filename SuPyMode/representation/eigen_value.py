@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from SuPyMode.supermode import SuperMode
 
-from typing import NoReturn
 from SuPyMode.representation.base import InheritFromSuperMode, BaseSingleModePlot
 import matplotlib.pyplot as plt
 
@@ -18,23 +17,35 @@ class EigenValue(InheritFromSuperMode, BaseSingleModePlot):
     This class extends from `InheritFromSuperMode` to access supermode-related data and from `BaseSingleModePlot`
     to provide plotting capabilities tailored to eigenvalue visualization.
 
-    Attributes:
-        parent_supermode (InheritFromSuperMode): The parent supermode object from which eigenvalue data is derived.
+    Attributes
+    ----------
+    parent_supermode : SuperMode
+        The parent supermode object from which eigenvalue data is derived.
+    data : numpy.ndarray
+        The eigenvalue data retrieved from the parent supermode binding.
     """
-
     def __init__(self, parent_supermode: SuperMode):
         """
-        Initializes an EigenValue object with a parent supermode reference.
+        Initialize an EigenValue object with a parent supermode reference.
 
-        Args:
-            parent_supermode (InheritFromSuperMode): A reference to the parent supermode object.
+        Parameters
+        ----------
+        parent_supermode : SuperMode
+            A reference to the parent supermode object that provides the base eigenvalue data.
         """
         self.parent_supermode = parent_supermode
         self.data = self.parent_supermode.binding.get_eigen_value()
 
-    def _dress_ax(self, ax: plt.Axis) -> NoReturn:
-        ax.set_xlabel('Inverse taper ratio')
-        ax.set_ylabel('Mode eigen values')
+    def _dress_ax(self, ax: plt.Axes) -> None:
+        """
+        Set axis labels for the eigenvalue plot.
 
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            The axis object on which to set the labels.
+        """
+        ax.set_xlabel('Inverse taper ratio')
+        ax.set_ylabel('Mode eigenvalues')
 
 # -

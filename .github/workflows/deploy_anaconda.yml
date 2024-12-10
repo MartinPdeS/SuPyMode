@@ -1,0 +1,21 @@
+name: Deploy Conda Packages
+
+on:
+  push:
+    branches: [ "master" ]
+    tags:
+      - '*'
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+    contents: write
+
+jobs:
+  ManyLinux_x86_64:
+    uses: MartinPdeS/MPSActions/.github/workflows/publish_compiled_package_to_anaconda.yml@master
+    with:
+      python-versions: '["3.11", "3.12"]'
+    secrets:
+      ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+

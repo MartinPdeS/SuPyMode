@@ -119,4 +119,4 @@ Email:`martin.poinsinet-de-sivry@polymtl.ca <mailto:martin.poinsinet-de-sivry@po
    :target: https://pypistats.org/packages/supymode
 
 .. |colab| image:: https://colab.research.google.com/assets/colab-badge.svg
-   :target: https://colab.research.google.com/github/MartinPdeS/SuPyMode/blob/master/SuPyModes.ipynb
+   :target: https://colab.research.google.com/github/MartinPdeS/SuPyMode/blob/master/notebook.ipynb

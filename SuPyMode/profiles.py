@@ -19,7 +19,6 @@ config_dict = ConfigDict(
     strict=True,
     arbitrary_types_allowed=True,
     kw_only=True,
-    frozen=True
 )
 
 
@@ -29,7 +28,7 @@ class TaperSection():
     A class to represent a taper section in optical fiber simulations.
 
     Attributes:
-        z_array (np.ndarray): The array of longitudinal positions along the taper (z-coordinates).
+        z_array  (np.ndarray): The array of longitudinal positions along the taper (z-coordinates).
         radius_array (np.ndarray): The array of taper radii corresponding to the z positions.
         heating_length_initial (float, optional): The initial heating length of the taper section.
         heating_length_final (float, optional): The final heating length of the taper section.

@@ -1,32 +1,32 @@
+# General patterns
 *.DS_store
 *.ipynb_checkpoints*
 *__pycache__*
 *.so
 *.a
-*.pdf
-*.pickle
-
-
-.tox
-.coverage.*
-coverage.json
-htmlcov
+.coverage*
 *.pytest_cache
-SuPyMode/user_data/*
-!SuPyMode/user_data/__init__.py
-
+htmlcov
 dist
 build
 *.egg*
 *.whl
-.pdf
-perso/
-
-docs/source/gallery
-docs/source/api
-
 CMakeCache.txt
 CMakeFiles
 install_manifest.txt
 cmake_install.cmake
-.coverage
+wheelhouse
+
+# Docs-specific patterns
+docs/source/gallery/*
+!docs/source/gallery/index.rst
+PyOptik/data/**/test*
+PyOptik/data/**/example*
+
+# Override for documentation_build
+!documentation_build
+!documentation_build/**
+
+
+# Package specifics
+SuPyMode/user_data/*

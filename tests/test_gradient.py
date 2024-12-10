@@ -50,4 +50,5 @@ def test_null_gradient(x_vector, y_vector, rho_mesh):
     assert numpy.all(condition), f"Error in constant (expected value: 0.0) gradient computation. Mean gradient value: {condition.mean()}"
 
 
-# -
+if __name__ == "__main__":
+    pytest.main(["-W error", __file__])

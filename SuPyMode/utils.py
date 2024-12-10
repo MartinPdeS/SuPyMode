@@ -17,29 +17,6 @@ from pathvalidate import sanitize_filepath
 import logging
 
 
-def parse_mode_of_interest(plot_function: Callable) -> Callable:
-    def wrapper(self, *args, mode_of_interest='all', **kwargs):
-        mode_of_interest = interpret_mode_of_interest(
-            superset=self,
-            mode_of_interest=mode_of_interest
-        )
-
-        return plot_function(self, *args, mode_of_interest=mode_of_interest, **kwargs)
-
-    return wrapper
-
-
-def parse_combination(plot_function: Callable) -> Callable:
-    def wrapper(self, *args, mode_of_interest='all', combination: str = 'pairs', **kwargs):
-        combination = self.interpret_combination(
-            mode_of_interest=mode_of_interest,
-            combination=combination
-        )
-
-        return plot_function(self, *args, mode_of_interest=mode_of_interest, combination=combination, **kwargs)
-
-    return wrapper
-
 def get_auto_generated_filename(superset) -> str:
     """
     Generates a filename based on the simulation parameters.
@@ -55,6 +32,7 @@ def get_auto_generated_filename(superset) -> str:
         f"wavelength={superset.wavelength}"
     )
     return filename.replace('.', '_')
+
 
 def parse_filename(save_function: Callable) -> Callable:
     @wraps(save_function)

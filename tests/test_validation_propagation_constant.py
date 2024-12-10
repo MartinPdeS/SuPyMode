@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import pytest
 import numpy
 from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries
 import PyFiberModes
@@ -69,4 +69,7 @@ def test_propagation_constant(
         error = numpy.abs(analytical - simulation)
         relative_error = error / numpy.abs(analytical)
         raise AssertionError(f"Discrepancy between computed and analytical propagation constants. Mean Error: {error.mean()}, Mean Relative Error: {relative_error.mean()}")
-# -
+
+
+if __name__ == "__main__":
+    pytest.main(["-W error", __file__])
