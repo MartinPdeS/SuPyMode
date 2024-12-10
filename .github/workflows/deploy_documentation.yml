@@ -62,48 +62,8 @@ jobs:
 
       - name: Scan, sort versions, and update version_switcher.json
         run: |
-          # Define the path to version_switcher.json
-          json_file="version_switcher.json"
-          rm $json_file
-          docs_path="docs"
-          base_url="https://martinpdes.github.io/SuPyMode"
-
-          # Start the JSON array
-          echo "[" > $json_file
-
-          # Get sorted version directories in descending order
-          version_dirs=$(ls -v $docs_path | sort -V -r)
-
-
-          # Loop over sorted versions and add to JSON file
-          first_entry=true
-          for version in $version_dirs; do
-            version_url="${base_url}/${docs_path}/${version}"
-
-            # Add a comma if it's not the first entry
-            if [ "$first_entry" = true ]; then
-              first_entry=false
-            else
-              echo "," >> $json_file
-            fi
-
-            # Append each version as a JSON entry
-            jq -n \
-              --arg name "$version" \
-              --arg version "$version" \
-              --arg url "$version_url" \
-              '{name: $name, version: $version, url: $url}' >> $json_file
-          done
-
-          # End the JSON array
-          echo "]" >> $json_file
-
-          # Add and commit the updated version_switcher.json
-          git add $json_file
-          echo $json_file
-          git add docs/
-          git commit --allow-empty -m "Update version_switcher.json"
-          git push origin HEAD
+          chmod +x ./scripts/update_version_switcher.sh
+          ./scripts/update_version_switcher.sh
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
