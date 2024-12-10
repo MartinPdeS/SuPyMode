@@ -45,18 +45,13 @@ jobs:
       - name: Get current tag
         id: get_tag
         run: |
-          # Fetch all tags to ensure they are available
+          # Fetch tags to ensure they are available locally
           git fetch --tags
-          git tag -l
 
-          # Get the latest tag by creation date
-          TAG=$(git tag --sort=-creatordate | head -n 1)
+          # Use git describe to find the latest tag
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0.0")
 
-          # Fallback to a default tag if no tag is found
-          if [ -z "$TAG" ]; then
-            TAG="0.0.0.0"
-          fi
-
+          # Output the tag to the environment
           echo "tag=$TAG" >> $GITHUB_ENV
           echo "Tag found or default: $TAG"
 
