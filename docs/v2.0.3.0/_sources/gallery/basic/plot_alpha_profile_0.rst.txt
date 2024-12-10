@@ -94,7 +94,7 @@ Adding a first taper segment with small initial heating length (i.e. steep reduc
 
  .. code-block:: none
 
-    /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/SuPyMode/profiles.py:648: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+    /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/SuPyMode/profiles.py:648: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
       ax.legend()
 
 
@@ -103,7 +103,7 @@ Adding a first taper segment with small initial heating length (i.e. steep reduc
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.963 seconds)
+   **Total running time of the script:** (0 minutes 0.904 seconds)
 
 
 .. _sphx_glr_download_gallery_basic_plot_alpha_profile_0.py:
