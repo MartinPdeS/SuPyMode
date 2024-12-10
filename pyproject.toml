@@ -77,7 +77,6 @@ documentation = [
 
 dev = [
     "flake8 ==7.1.1",
-
 ]
 
 [tool.pytest.ini_options]
