@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 from typing import NoReturn
 import matplotlib.ticker as ticker
 from matplotlib.animation import FuncAnimation, PillowWriter
+from SuPyMode.helper import simple_plot_helper
 
 
 config_dict = ConfigDict(
@@ -716,8 +717,10 @@ class AlphaProfile():
         """
         return self.itr_list, self.adiabatic
 
+    @simple_plot_helper
     def plot(
             self,
+            ax: plt.Axes,
             show_radius: bool = True,
             show_adiabatic: bool = True,
             show_taper_angle: bool = True) -> NoReturn:
@@ -730,7 +733,6 @@ class AlphaProfile():
             show_adiabatic (bool): If True, includes a plot of adiabatic factor vs. ITR.
             show_taper_angle (bool): If True, includes a plot of taper angle vs. z-distance.
         """
-        figure, ax = plt.subplots(1, 1)
         ax.set_title(f'Minimum ITR: {self.smallest_itr:.4f}')
 
         if show_radius:
@@ -741,8 +743,6 @@ class AlphaProfile():
 
         if show_adiabatic:
             self.render_adiabatic_factor_vs_itr_on_ax(ax=ax)
-
-        plt.show()
 
     def generate_propagation_gif(
             self,
