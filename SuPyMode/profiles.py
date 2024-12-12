@@ -648,7 +648,7 @@ class AlphaProfile():
 
         ax.legend()
 
-        return self.distance * 1e3, self.itr_list
+        return self.distance, self.itr_list
 
     @single_plot
     def render_taper_angle_vs_z_on_ax(self, ax: plt.Axes, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
@@ -676,7 +676,7 @@ class AlphaProfile():
 
         ax.legend()
 
-        return self.distance * 1e3, self.taper_angle
+        return self.distance, self.taper_angle
 
     @single_plot
     def render_adiabatic_factor_vs_z_on_ax(self, ax: plt.Axes, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
@@ -705,7 +705,7 @@ class AlphaProfile():
 
         ax.legend()
 
-        return self.distance * 1e3, self.adiabatic
+        return self.distance, self.adiabatic
 
     @single_plot
     def render_adiabatic_factor_vs_itr_on_ax(self, ax: plt.Axes, **kwargs) -> tuple[numpy.ndarray, numpy.ndarray]:
