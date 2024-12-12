@@ -67,7 +67,7 @@
             <a id="nextFileLink" class="nav" href="z_90f50aa8da0844fc_propagation_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-12-11 10:01 +0000
+            created at 2024-12-12 11:01 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -732,7 +732,7 @@
     <p class="pln"><span class="n"><a id="t648" href="#t648">648</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t649" href="#t649">649</a></span><span class="t">        <span class="nam">ax</span><span class="op">.</span><span class="nam">legend</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t650" href="#t650">650</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t651" href="#t651">651</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">distance</span> <span class="op">*</span> <span class="num">1e3</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">itr_list</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t651" href="#t651">651</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">distance</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">itr_list</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t652" href="#t652">652</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t653" href="#t653">653</a></span><span class="t">    <span class="op">@</span><span class="nam">single_plot</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t654" href="#t654">654</a></span><span class="t">    <span class="key">def</span> <span class="nam">render_taper_angle_vs_z_on_ax</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">ax</span><span class="op">:</span> <span class="nam">plt</span><span class="op">.</span><span class="nam">Axes</span><span class="op">,</span> <span class="op">**</span><span class="nam">kwargs</span><span class="op">)</span> <span class="op">-></span> <span class="nam">tuple</span><span class="op">[</span><span class="nam">numpy</span><span class="op">.</span><span class="nam">ndarray</span><span class="op">,</span> <span class="nam">numpy</span><span class="op">.</span><span class="nam">ndarray</span><span class="op">]</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -760,7 +760,7 @@
     <p class="pln"><span class="n"><a id="t676" href="#t676">676</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t677" href="#t677">677</a></span><span class="t">        <span class="nam">ax</span><span class="op">.</span><span class="nam">legend</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t678" href="#t678">678</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t679" href="#t679">679</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">distance</span> <span class="op">*</span> <span class="num">1e3</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">taper_angle</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t679" href="#t679">679</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">distance</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">taper_angle</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t680" href="#t680">680</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t681" href="#t681">681</a></span><span class="t">    <span class="op">@</span><span class="nam">single_plot</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t682" href="#t682">682</a></span><span class="t">    <span class="key">def</span> <span class="nam">render_adiabatic_factor_vs_z_on_ax</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">ax</span><span class="op">:</span> <span class="nam">plt</span><span class="op">.</span><span class="nam">Axes</span><span class="op">,</span> <span class="op">**</span><span class="nam">kwargs</span><span class="op">)</span> <span class="op">-></span> <span class="nam">tuple</span><span class="op">[</span><span class="nam">numpy</span><span class="op">.</span><span class="nam">ndarray</span><span class="op">,</span> <span class="nam">numpy</span><span class="op">.</span><span class="nam">ndarray</span><span class="op">]</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -789,7 +789,7 @@
     <p class="pln"><span class="n"><a id="t705" href="#t705">705</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t706" href="#t706">706</a></span><span class="t">        <span class="nam">ax</span><span class="op">.</span><span class="nam">legend</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t707" href="#t707">707</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t708" href="#t708">708</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">distance</span> <span class="op">*</span> <span class="num">1e3</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">adiabatic</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t708" href="#t708">708</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">distance</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">adiabatic</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t709" href="#t709">709</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t710" href="#t710">710</a></span><span class="t">    <span class="op">@</span><span class="nam">single_plot</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t711" href="#t711">711</a></span><span class="t">    <span class="key">def</span> <span class="nam">render_adiabatic_factor_vs_itr_on_ax</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">ax</span><span class="op">:</span> <span class="nam">plt</span><span class="op">.</span><span class="nam">Axes</span><span class="op">,</span> <span class="op">**</span><span class="nam">kwargs</span><span class="op">)</span> <span class="op">-></span> <span class="nam">tuple</span><span class="op">[</span><span class="nam">numpy</span><span class="op">.</span><span class="nam">ndarray</span><span class="op">,</span> <span class="nam">numpy</span><span class="op">.</span><span class="nam">ndarray</span><span class="op">]</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -912,7 +912,7 @@
             <a class="nav" href="z_90f50aa8da0844fc_propagation_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-12-11 10:01 +0000
+            created at 2024-12-12 11:01 +0000
         </p>
     </div>
 </footer>
