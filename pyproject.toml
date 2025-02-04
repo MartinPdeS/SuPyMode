@@ -55,7 +55,7 @@ dependencies = [
     "PyFinitDiff",
     "FiberFusing",
     "PyFiberModes",
-    "pathvalidate==3.2.1",
+    "pathvalidate==3.2.3",
 ]
 
 [project.optional-dependencies]
