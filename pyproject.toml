@@ -47,11 +47,11 @@ dependencies = [
     "setuptools_scm[toml]>=8.0",
     "numpy==2.2.4",
     "scipy==1.15.2",
-    "MPSPlots",
+    "MPSPlots==1.5.2",
     "pydantic==2.10.6",
-    "PyFinitDiff",
-    "FiberFusing",
-    "PyFiberModes",
+    "PyFinitDiff==2.1.6",
+    "FiberFusing==1.6.0.1",
+    "PyFiberModes==0.7.4",
     "pathvalidate==3.2.3",
 ]
 
