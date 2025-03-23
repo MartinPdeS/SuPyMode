@@ -47,7 +47,7 @@ dependencies = [
     "setuptools_scm[toml]>=8.0",
     "numpy==2.2.4",
     "scipy==1.15.2",
-    "MPSPlots==1.5.2",
+    "MPSPlots==1.6.1",
     "pydantic==2.10.6",
     "PyFinitDiff==2.1.6",
     "FiberFusing==1.6.0.1",
