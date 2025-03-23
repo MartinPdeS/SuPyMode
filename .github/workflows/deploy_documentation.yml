@@ -1,5 +1,5 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy documentation to github page
+name: Documentation
 
 on:
   push:
@@ -21,3 +21,4 @@ jobs:
     uses: MartinPdeS/MPSActions/.github/workflows/publish_documentation.yml@master
     with:
       python-version: "3.11"
+      package-name: "SuPyMode"
