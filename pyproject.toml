@@ -45,7 +45,7 @@ keywords = [
 ]
 dependencies = [
     "setuptools_scm[toml]>=8.0",
-    "numpynumpy==2.2.4",
+    "numpy==2.2.4",
     "scipy==1.15.2",
     "MPSPlots",
     "pydantic==2.10.6",
