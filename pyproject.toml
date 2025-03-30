@@ -48,7 +48,7 @@ dependencies = [
     "numpy==2.2.4",
     "scipy==1.15.2",
     "MPSPlots==1.6.2",
-    "pydantic==2.10.6",
+    "pydantic==2.11.1",
     "PyFinitDiff==2.1.6",
     "FiberFusing==1.7.0",
     "PyFiberModes==0.7.4",
