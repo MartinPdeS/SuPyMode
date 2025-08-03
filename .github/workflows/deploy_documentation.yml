@@ -4,8 +4,7 @@ name: Documentation
 on:
   push:
     branches: [ "master" ]
-    tags:
-      - '*'
+    tags: '*'
   pull_request:
     branches: [ "master" ]
 
@@ -22,3 +21,4 @@ jobs:
     with:
       python-version: "3.11"
       package-name: "SuPyMode"
+      apt-package: xvfb jq
