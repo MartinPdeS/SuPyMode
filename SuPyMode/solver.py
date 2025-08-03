@@ -12,9 +12,9 @@ from FiberFusing.coordinate_system import CoordinateSystem
 # Local imports
 from SuPyMode.superset import SuperSet
 from SuPyMode.supermode import SuperMode
-from SuPyMode.binary.CppSolver import CppSolver
-from SuPyMode.binary.ModelParameters import ModelParameters
-from SuPyMode.binary.SuperMode import SuperMode as BindingSuperMode  # noqa: F401 It has to be imported in order for pybind11 to know the type
+from SuPyMode.binary.interface_eigensolver import EIGENSOLVER as EigenSolver  # type: ignore
+from SuPyMode.binary.interface_model_parameters import MODELPARAMETERS as ModelParameters  # type: ignore
+from SuPyMode.binary.interface_supermode import SUPERMODE  # type: ignore
 from SuPyMode.mode_label import ModeLabel
 
 
@@ -59,7 +59,7 @@ class SuPySolver(object):
         self.mode_number = 0
         self.solver_number = 0
 
-    def initialize_binding(self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int) -> CppSolver:
+    def initialize_binding(self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int) -> EigenSolver:
         """
         Initialize and configure the C++ solver binding for eigenvalue computations.
 
@@ -74,7 +74,7 @@ class SuPySolver(object):
 
         Returns
         -------
-        CppSolver
+        EigenSolver
             Configured C++ solver instance.
         """
         self.FD = FiniteDifference(
@@ -95,7 +95,7 @@ class SuPySolver(object):
             self.FD._triplet.array[:, 2]
         ]
 
-        solver = CppSolver(
+        solver = EigenSolver(
             model_parameters=self.model_parameters,
             finit_matrix=new_array.T,
             n_computed_mode=n_sorted_mode + n_added_mode,

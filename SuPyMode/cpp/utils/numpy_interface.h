@@ -3,11 +3,10 @@
 #include <vector>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
-#include <pybind11/numpy.h>
+#include <Eigen/Core>
 
 template<typename T>
-std::vector<size_t> get_stride_from_dimension(std::vector<size_t> dimension)
-{
+std::vector<size_t> get_stride_from_dimension(std::vector<size_t> dimension) {
   std::reverse(dimension.begin(), dimension.end());
 
   std::vector<size_t> stride;
@@ -22,8 +21,7 @@ std::vector<size_t> get_stride_from_dimension(std::vector<size_t> dimension)
 }
 
 template<typename T, typename MatrixType>
-pybind11::array_t<T> eigen_to_ndarray(const MatrixType &eigen_matrix, const std::vector<size_t> &dimension)
-{
+pybind11::array_t<T> eigen_to_ndarray(const MatrixType &eigen_matrix, const std::vector<size_t> &dimension) {
     // Create a dynamic copy of the input Eigen matrix
     MatrixType* matrix_pointer = new MatrixType;
     *matrix_pointer = eigen_matrix;

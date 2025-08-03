@@ -16,7 +16,7 @@ from scipy.interpolate import interp1d
 from scipy.integrate import solve_ivp
 
 # Local imports
-from SuPyMode.binary.ModelParameters import ModelParameters
+from SuPyMode.binary.interface_model_parameters import MODELPARAMETERS as ModelParameters
 from SuPyMode.supermode import SuperMode
 from SuPyMode.profiles import AlphaProfile
 from SuPyMode.propagation import Propagation

@@ -5,7 +5,7 @@ from scipy.interpolate import RectBivariateSpline
 
 # Local imports
 from SuPyMode import representation
-from SuPyMode.binary.ModelParameters import ModelParameters
+from SuPyMode.binary.interface_model_parameters import MODELPARAMETERS as ModelParameters  # type: ignore
 from SuPyMode.utils import interpret_slice_number_and_itr, get_symmetrized_vector
 
 

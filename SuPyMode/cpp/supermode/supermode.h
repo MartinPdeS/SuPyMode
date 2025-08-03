@@ -1,14 +1,14 @@
 #pragma once
 
-
-#include "model_parameters.cpp"
-#include "numpy_interface.cpp"
+#include <complex>
+#include "../utils/utils.h"
+#include "../utils/numpy_interface.h"
+#include "../model_parameters/model_parameters.h"
 #include <Eigen/Core>
 
 typedef std::complex<double> complex128;
 
-class SuperMode
-{
+class SuperMode {
 public:
     size_t mode_number;
     Eigen::MatrixXd fields;
@@ -31,13 +31,8 @@ public:
         const std::string &left_boundary,
         const std::string &right_boundary,
         const std::string &top_boundary,
-        const std::string &bottom_boundary) : mode_number(mode_number), model_parameters(model_parameters)
-    {
-        fields = convert_py_to_eigen(fields_py, this->model_parameters.nx * this->model_parameters.ny, this->model_parameters.n_slice);
-        index = convert_py_to_eigen(index_py, this->model_parameters.n_slice, 1);
-        betas = convert_py_to_eigen(betas_py, this->model_parameters.n_slice, 1);
-        eigen_value = convert_py_to_eigen(eigen_value_py, this->model_parameters.n_slice, 1);
-    }
+        const std::string &bottom_boundary
+    );
 
     SuperMode(
         const size_t mode_number,
@@ -45,14 +40,8 @@ public:
         const std::string& left_boundary,
         const std::string& right_boundary,
         const std::string& top_boundary,
-        const std::string& bottom_boundary) : mode_number(mode_number)
-    {
-        this->model_parameters = model_parameters;
-        this->fields = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>(this->model_parameters.nx * this->model_parameters.ny, model_parameters.n_slice);
-        this->eigen_value = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
-        this->betas = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
-        this->index = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
-    }
+        const std::string& bottom_boundary
+    );
 
     double get_norm(const size_t &slice, const std::string &normalization_type) const;
 
@@ -89,14 +78,7 @@ public:
 
     double get_trapz_integral(const Eigen::MatrixXd& mesh, double dx, double dy) const;
 
-    bool is_same_symmetry(const SuperMode &other_supermode) const {
-        // Return True if all boundaries condition are the same else False
-        return
-            (this->left_boundary == other_supermode.left_boundary) &&
-            (this->right_boundary == other_supermode.right_boundary) &&
-            (this->top_boundary == other_supermode.top_boundary) &&
-            (this->bottom_boundary == other_supermode.bottom_boundary);
-    }
+    bool is_same_symmetry(const SuperMode &other_supermode) const;
 
     bool is_computation_compatible(const SuperMode &other_supermode) const {
         // Return True if both mode have same boundary condisitons but are different
@@ -148,35 +130,10 @@ public:
         return eigen_to_ndarray<double>(output, {this->model_parameters.nx, this->model_parameters.ny});
     }
 
-    static pybind11::tuple get_pickle(SuperMode &supermode) {
-        return pybind11::make_tuple(
-            supermode.mode_number,
-            supermode.get_fields_py(),
-            supermode.get_index_py(),
-            supermode.get_betas_py(),
-            supermode.get_eigen_value_py(),
-            supermode.model_parameters,
-            supermode.left_boundary,
-            supermode.right_boundary,
-            supermode.top_boundary,
-            supermode.bottom_boundary
-        );
-    }
+    static pybind11::tuple get_pickle(SuperMode &supermode);
 
-    static SuperMode build_from_tuple(pybind11::tuple tuple) {
-        return SuperMode{
-            tuple[0].cast<size_t>(),                             // mode_number
-            tuple[1].cast<pybind11::array_t<double>>(),          // fields
-            tuple[2].cast<pybind11::array_t<double>>(),          // index
-            tuple[3].cast<pybind11::array_t<double>>(),          // betas
-            tuple[4].cast<pybind11::array_t<double>>(),          // eigen_values
-            tuple[5].cast<ModelParameters>(),                    // Model parameters
-            tuple[6].cast<std::string>(),                        // left_boundary
-            tuple[7].cast<std::string>(),                        // right_boundary
-            tuple[8].cast<std::string>(),                        // top_boundary
-            tuple[9].cast<std::string>()                         // bottom_boundary
-        }; // load
-    }
+    static SuperMode build_from_tuple(pybind11::tuple tuple);
+
 };
 
 
