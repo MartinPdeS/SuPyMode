@@ -29,6 +29,7 @@ requirements:
     - scipy ==1.15.2
     - pydantic ~=2.9.2
     - tabulate ~=0.9
+    - pyvista
 
 
 

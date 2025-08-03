@@ -51,6 +51,7 @@ dependencies = [
     "pydantic==2.10.6",
     "PyFinitDiff==2.1.6",
     "FiberFusing==1.7.0",
+    "pyvista",
     # "PyFiberModes==0.7.4",
     "pathvalidate==3.2.3",
 ]
