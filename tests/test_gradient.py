@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from SuPyMode.binary.Example import get_rho_gradient_5p
+from SuPyMode.binary.interface_mesh import get_rho_gradient_5p
 
 import numpy
 import pytest

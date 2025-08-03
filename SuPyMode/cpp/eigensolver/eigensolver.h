@@ -6,6 +6,8 @@
 #include <pybind11/stl.h>
 #include "../supermode/supermode.h"
 #include "../utils/utils.h"
+#include "../utils/extrapolator.h"
+#include "../utils/progress_bar.h"
 #include "../utils/numpy_interface.h"
 #include <iostream>
 
