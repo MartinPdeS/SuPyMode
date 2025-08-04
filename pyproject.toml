@@ -48,12 +48,12 @@ dependencies = [
     "numpy>=2.0.0",
     "scipy",
     "MPSPlots",
-    "pydantic==2.10.6",
-    "PyFinitDiff==2.1.6",
-    "FiberFusing==1.7.0",
+    "pydantic=",
+    "PyFinitDiff",
+    "FiberFusing",
     "pyvista",
-    "PyFiberModes==0.7.4",
-    "pathvalidate==3.2.3",
+    "PyFiberModes",
+    "pathvalidate",
 ]
 
 [project.optional-dependencies]
