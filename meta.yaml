@@ -25,11 +25,10 @@ requirements:
     - martinpdes::fiberfusing
     - martinpdes::pyfibermodes
     - martinpdes::pyfinitdiff
-    - numpy ==2.2.4
-    - scipy ==1.15.2
-    - pydantic ~=2.9.2
-    - tabulate ~=0.9
-    - pyvista
+    - numpy >=2.2
+    - scipy
+    - pydantic
+    - tabulate
 
 
 
