@@ -30,6 +30,7 @@ requirements:
     - pydantic
     - tabulate
     - pathvalidate
+    - llvm-openmp # or libgomp
 
 
 
