@@ -48,7 +48,7 @@ dependencies = [
     "numpy>=2.0.0",
     "scipy",
     "MPSPlots",
-    "pydantic=",
+    "pydantic",
     "PyFinitDiff",
     "FiberFusing",
     "pyvista",
