@@ -29,6 +29,7 @@ requirements:
     - scipy
     - pydantic
     - tabulate
+    - pathvalidate
 
 
 
