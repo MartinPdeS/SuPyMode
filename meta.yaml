@@ -26,6 +26,7 @@ requirements:
     - martinpdes::pyfibermodes
     - martinpdes::pyfinitdiff
     - numpy >=2.2
+    - pyvista
     - scipy
     - pydantic
     - tabulate
