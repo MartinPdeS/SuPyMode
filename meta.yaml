@@ -18,6 +18,7 @@ requirements:
     - pybind11 ~=2.13
     - python-build ~=1.2
     - setuptools_scm[toml] ~=8.0
+    - llvm-openmp
   run:
     - python {{PY_VER}}*
     - martinpdes::pyoptik
