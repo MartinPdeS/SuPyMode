@@ -477,15 +477,15 @@ to download the full example code.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">workflow</span> <span class="o">=</span> <span class="n">Workflow</span><span class="p">(</span>
     <span class="n">fiber_list</span><span class="o">=</span><span class="n">fiber_list</span><span class="p">,</span>          <span class="c1"># List of fiber to be added in the mesh, the order matters.</span>
     <span class="n">clad_structure</span><span class="o">=</span><span class="n">clad_structure</span><span class="p">,</span>  <span class="c1"># Cladding structure, if None provided then no cladding is set.</span>
-    <span class="n">fusion_degree</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>              <span class="c1"># Degree of fusion of the structure if applicable.</span>
+    <span class="n">fusion_degree</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>              <span class="c1"># Degree of fusion of the structure if applicable.</span>
     <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>          <span class="c1"># Wavelength used for the mode computation.</span>
-    <span class="n">resolution</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>                  <span class="c1"># Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].</span>
+    <span class="n">resolution</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>                  <span class="c1"># Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].</span>
     <span class="n">x_bounds</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>                <span class="c1"># Mesh x-boundary structure.</span>
     <span class="n">y_bounds</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span>              <span class="c1"># Mesh y-boundary structure.</span>
     <span class="n">boundaries</span><span class="o">=</span><span class="n">boundaries</span><span class="p">,</span>          <span class="c1"># Set of symmetries to be evaluated, each symmetry add a round of simulation</span>
     <span class="n">n_sorted_mode</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>                <span class="c1"># Total computed and sorted mode.</span>
     <span class="n">n_added_mode</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>                 <span class="c1"># Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].</span>
-    <span class="c1"># plot_geometry=True,             # Plot the geometry mesh before computation.</span>
+    <span class="n">plot_geometry</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>             <span class="c1"># Plot the geometry mesh before computation.</span>
     <span class="n">debug_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>                   <span class="c1"># Print the iteration step for the solver plus some other important steps.</span>
     <span class="n">auto_label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                <span class="c1"># Auto labeling the mode. Label are not always correct and should be verified afterwards.</span>
     <span class="n">itr_final</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>                  <span class="c1"># Final value of inverse taper ratio to simulate</span>
@@ -496,21 +496,25 @@ to download the full example code.</p>
 <span class="n">superset</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">get_superset</span><span class="p">()</span>
 </pre></div>
 </div>
-</section>
+<img src="../../_images/sphx_glr_plot_workflow_02_001.png" srcset="../../_images/sphx_glr_plot_workflow_02_001.png" alt="Fiber structure, Fiber structure" class = "sphx-glr-single-img"/></section>
 <section id="field-computation-e-i-j">
 <h2>Field computation: <span class="math notranslate nohighlight">\(E_{i,j}\)</span><a class="headerlink" href="#field-computation-e-i-j" title="Link to this heading">#</a></h2>
-<p>_ = superset.plot(plot_type=’field’, itr_list=[1.0, 0.1])</p>
-</section>
-<section id="effective-index-n-eff-i-j">
-<h2>Effective index: <span class="math notranslate nohighlight">\(n^{eff}_{i,j}\)</span><a class="headerlink" href="#effective-index-n-eff-i-j" title="Link to this heading">#</a></h2>
-<p>_ = superset.plot(plot_type=’beta’)</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># # %%</span>
-<span class="c1"># # Modal normalized coupling: :math:`C_{i,j}`</span>
-<span class="c1"># # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
-<span class="c1"># _ = superset.plot(plot_type=&#39;normalized-coupling&#39;)</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">superset</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;field&#39;</span><span class="p">,</span> <span class="n">itr_list</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
 </pre></div>
 </div>
-</section>
+<img src="../../_images/sphx_glr_plot_workflow_02_002.png" srcset="../../_images/sphx_glr_plot_workflow_02_002.png" alt="$LP01$ slice: 0  itr: 1.000, $LP21_a$ slice: 0  itr: 1.000, $LP02$ slice: 0  itr: 1.000, $LP11_b$ slice: 0  itr: 1.000, $LP31_b$ slice: 0  itr: 1.000, $LP12_b$ slice: 0  itr: 1.000, $LP01$ slice: 499  itr: 0.100, $LP21_a$ slice: 499  itr: 0.100, $LP02$ slice: 499  itr: 0.100, $LP11_b$ slice: 499  itr: 0.100, $LP31_b$ slice: 499  itr: 0.100, $LP12_b$ slice: 499  itr: 0.100" class = "sphx-glr-single-img"/></section>
+<section id="effective-index-n-eff-i-j">
+<h2>Effective index: <span class="math notranslate nohighlight">\(n^{eff}_{i,j}\)</span><a class="headerlink" href="#effective-index-n-eff-i-j" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">superset</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_plot_workflow_02_003.png" srcset="../../_images/sphx_glr_plot_workflow_02_003.png" alt="plot workflow 02" class = "sphx-glr-single-img"/></section>
+<section id="modal-normalized-coupling-c-i-j">
+<h2>Modal normalized coupling: <span class="math notranslate nohighlight">\(C_{i,j}\)</span><a class="headerlink" href="#modal-normalized-coupling-c-i-j" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">superset</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;normalized-coupling&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_plot_workflow_02_004.png" srcset="../../_images/sphx_glr_plot_workflow_02_004.png" alt="plot workflow 02" class = "sphx-glr-single-img"/></section>
 <section id="adiabatic-criterion-tilde-c-i-j">
 <h2>Adiabatic criterion: <span class="math notranslate nohighlight">\(\tilde{C}_{i,j}\)</span><a class="headerlink" href="#adiabatic-criterion-tilde-c-i-j" title="Link to this heading">#</a></h2>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">superset</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;adiabatic&#39;</span><span class="p">,</span> <span class="n">save_filename</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
@@ -519,7 +523,7 @@ to download the full example code.</p>
 <span class="c1"># -</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_workflow_02_001.png" srcset="../../_images/sphx_glr_plot_workflow_02_001.png" alt="plot workflow 02" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.470 seconds)</p>
+<img src="../../_images/sphx_glr_plot_workflow_02_005.png" srcset="../../_images/sphx_glr_plot_workflow_02_005.png" alt="plot workflow 02" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 15.990 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-basic-plot-workflow-02-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/e983d324cc6e3bb41f721a8a5442703c/plot_workflow_02.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_workflow_02.ipynb</span></code></a></p>
@@ -562,6 +566,7 @@ to download the full example code.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-the-computing-workflow">Generating the computing workflow</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#field-computation-e-i-j">Field computation: <span class="math notranslate nohighlight">\(E_{i,j}\)</span></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#effective-index-n-eff-i-j">Effective index: <span class="math notranslate nohighlight">\(n^{eff}_{i,j}\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modal-normalized-coupling-c-i-j">Modal normalized coupling: <span class="math notranslate nohighlight">\(C_{i,j}\)</span></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adiabatic-criterion-tilde-c-i-j">Adiabatic criterion: <span class="math notranslate nohighlight">\(\tilde{C}_{i,j}\)</span></a></li>
 </ul>
   </nav></div>
