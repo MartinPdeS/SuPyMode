@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**01:16.028** total execution time for 3 files **from gallery/validation**:
+**01:19.618** total execution time for 3 files **from gallery/validation**:
 
 .. container::
 
@@ -33,11 +33,11 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_gallery_validation_plot_validation.py` (``plot_validation.py``)
-     - 00:33.973
+     - 00:35.833
      - 0.0
    * - :ref:`sphx_glr_gallery_validation_plot_beta_DCF.py` (``plot_beta_DCF.py``)
-     - 00:23.737
+     - 00:24.465
      - 0.0
    * - :ref:`sphx_glr_gallery_validation_plot_beta_SMF28.py` (``plot_beta_SMF28.py``)
-     - 00:18.318
+     - 00:19.319
      - 0.0
