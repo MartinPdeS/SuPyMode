@@ -3,23 +3,20 @@
 
 # Third-party imports
 import numpy
-from dataclasses import dataclass, field
 from PyFinitDiff.finite_difference_2D import FiniteDifference
 from PyFinitDiff.finite_difference_2D import Boundaries
 from FiberFusing.geometry import Geometry
-from FiberFusing.coordinate_system import CoordinateSystem
 
 # Local imports
 from SuPyMode.superset import SuperSet
 from SuPyMode.supermode import SuperMode
-from SuPyMode.binary.interface_eigensolver import EIGENSOLVER as EigenSolver  # type: ignore
-from SuPyMode.binary.interface_model_parameters import MODELPARAMETERS as ModelParameters  # type: ignore
 from SuPyMode.binary.interface_supermode import SUPERMODE  # type: ignore
+from SuPyMode.binary.interface_eigensolver import EIGENSOLVER  # type: ignore
+from SuPyMode.binary.interface_model_parameters import MODELPARAMETERS  # type: ignore
 from SuPyMode.mode_label import ModeLabel
 
 
-@dataclass()
-class SuPySolver(object):
+class SuPySolver(EIGENSOLVER):
     """
     A solver for computing eigenvalues and supermodes of optical fiber geometries using a C++ eigensolver.
 
@@ -44,22 +41,37 @@ class SuPySolver(object):
     coordinate_system : CoordinateSystem, optional
         The coordinate system linked with the geometry. Must be provided if geometry is given as an array.
     """
-    geometry: Geometry | numpy.ndarray = field(repr=False)
-    tolerance: float = 1e-8
-    max_iter: int = 10_000
-    accuracy: int = 2
-    extrapolation_order: int = 2
-    debug_mode: int = 1
-    coordinate_system: CoordinateSystem | None = None
 
-    def __post_init__(self):
-        self.mesh = self.geometry.mesh
+    def __init__(self,
+        geometry: Geometry | numpy.ndarray,
+        tolerance: float = 1e-8,
+        max_iter: int = 10_000,
+        accuracy: int = 2,
+        extrapolation_order: int = 2,
+        debug_mode: int = 1) -> None:
+        """
+        Initialize the solver with the given parameters.
+        """
+        self.geometry = geometry
+        self.tolerance = tolerance
+        self.max_iter = max_iter
+        self.accuracy = accuracy
+        self.extrapolation_order = extrapolation_order
+        self.debug_mode = debug_mode
+
+        if isinstance(geometry, Geometry):
+            self.mesh = self.geometry.mesh
+        else:
+            self.mesh = geometry
+
         self.coordinate_system = self.geometry.coordinate_system
 
         self.mode_number = 0
         self.solver_number = 0
 
-    def initialize_binding(self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int) -> EigenSolver:
+        super().__init__()
+
+    def initialize_binding(self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int) -> None:
         """
         Initialize and configure the C++ solver binding for eigenvalue computations.
 
@@ -95,7 +107,7 @@ class SuPySolver(object):
             self.FD._triplet.array[:, 2]
         ]
 
-        solver = EigenSolver(
+        self._cpp_initialize(
             model_parameters=self.model_parameters,
             finit_matrix=new_array.T,
             n_computed_mode=n_sorted_mode + n_added_mode,
@@ -107,10 +119,7 @@ class SuPySolver(object):
             top_boundary=boundaries.top,
             bottom_boundary=boundaries.bottom,
         )
-
-        solver.compute_laplacian()
-
-        return solver
+        self._cpp_compute_laplacian()
 
     def init_superset(self, wavelength: float, n_step: int = 300, itr_initial: float = 1.0, itr_final: float = 0.1) -> None:
         """
@@ -131,7 +140,7 @@ class SuPySolver(object):
         self.wavenumber = 2 * numpy.pi / wavelength
         self.itr_list = numpy.linspace(itr_initial, itr_final, n_step)
 
-        self.model_parameters = ModelParameters(
+        self.model_parameters = MODELPARAMETERS(
             dx=self.coordinate_system.dx,
             dy=self.coordinate_system.dy,
             wavelength=wavelength,
@@ -221,9 +230,9 @@ class SuPySolver(object):
         None
             This method updates the solver's internal state but does not return any value.
         """
-        alpha = self.index_to_eigen_value(index_guess)
+        beta_guess = self.index_to_eigen_value(index_guess)
 
-        cpp_solver = self.initialize_binding(
+        self.initialize_binding(
             boundaries=boundaries,
             n_added_mode=n_added_mode,
             n_sorted_mode=n_sorted_mode
@@ -231,9 +240,9 @@ class SuPySolver(object):
 
         self.superset.model_parameters = self.model_parameters
 
-        cpp_solver.loop_over_itr(
+        self._cpp_loop_over_itr(
             extrapolation_order=self.extrapolation_order,
-            alpha=alpha
+            alpha=beta_guess
         )
 
         mode_labels = self.get_supermode_labels(
@@ -245,7 +254,7 @@ class SuPySolver(object):
         for binding_number, label in enumerate(mode_labels):
             supermode = SuperMode(
                 parent_set=self.superset,
-                binding=cpp_solver.get_mode(binding_number),
+                binding=self._cpp_get_mode(binding_number),
                 mode_number=self.mode_number,
                 solver_number=self.solver_number,
                 boundaries=boundaries,

@@ -41,6 +41,41 @@ class EigenSolver
 
         double k_taper;
 
+    EigenSolver() = default;
+
+    void initialize(
+        const ModelParameters &model_parameters,
+        const pybind11::array_t<double> &finit_difference_triplets_py,
+        const size_t n_computed_mode,
+        const size_t n_sorted_mode,
+        const size_t max_iteration,
+        const double tolerance,
+        const std::string &left_boundary,
+        const std::string &right_boundary,
+        const std::string &top_boundary,
+        const std::string &bottom_boundary) {
+
+    this->model_parameters = model_parameters;
+    this->n_computed_mode = n_computed_mode;
+    this->n_sorted_mode = n_sorted_mode;
+    this->max_iteration = max_iteration;
+    this->tolerance = tolerance;
+
+    this->left_boundary = left_boundary;
+    this->right_boundary = right_boundary;
+    this->top_boundary = top_boundary;
+    this->bottom_boundary = bottom_boundary;
+
+    this->finit_difference_triplets = numy_interface::convert_py_to_eigen<double>(
+        finit_difference_triplets_py,
+        finit_difference_triplets_py.request().shape[0],
+        finit_difference_triplets_py.request().shape[1]
+    );
+
+    this->generate_mode_set();
+
+    }
+
     EigenSolver(
         const ModelParameters &model_parameters,
         const pybind11::array_t<double> &finit_difference_triplets_py,

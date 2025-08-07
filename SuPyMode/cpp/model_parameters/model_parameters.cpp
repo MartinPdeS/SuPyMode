@@ -74,14 +74,14 @@ void ModelParameters::init() {
     n_slice = itr_list_py.request().size;
     wavenumber = 2 * PI / wavelength;
 
-    mesh = convert_py_to_eigen<double>(mesh_py, ny, nx);
-    x_vector = convert_py_to_eigen<double>(x_vector_py, nx);
-    y_vector = convert_py_to_eigen<double>(y_vector_py, ny);
-    itr_list = convert_py_to_eigen<double>(itr_list_py, n_slice);
+    mesh = numy_interface::convert_py_to_eigen<double>(mesh_py, ny, nx);
+    x_vector = numy_interface::convert_py_to_eigen<double>(x_vector_py, nx);
+    y_vector = numy_interface::convert_py_to_eigen<double>(y_vector_py, ny);
+    itr_list = numy_interface::convert_py_to_eigen<double>(itr_list_py, n_slice);
     mesh_gradient = get_rho_gradient_time_rho(mesh.cwiseProduct(mesh), y_vector, x_vector);
-    mesh_gradient_py = eigen_to_ndarray<double>(mesh_gradient, {ny, nx});
+    mesh_gradient_py = numy_interface::eigen_to_ndarray<double>(mesh_gradient, {ny, nx});
 
-    compute_scaled_parameters();
+    this->compute_scaled_parameters();
     ditr = std::abs(itr_list[1] - itr_list[0]);
 }
 

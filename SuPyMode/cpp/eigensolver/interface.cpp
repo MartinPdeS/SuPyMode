@@ -36,34 +36,17 @@ PYBIND11_MODULE(interface_eigensolver, module)
             - Various boundary conditions (PML, PEC, PMC)
             - Efficient sparse matrix operations
             - Mode sorting and selection
-
-            Examples
-            --------
-            >>> solver = EigenSolver(
-            ...     model_parameters=params,
-            ...     finit_matrix=matrix,
-            ...     n_computed_mode=10,
-            ...     n_sorted_mode=5,
-            ...     max_iter=1000,
-            ...     tolerance=1e-12,
-            ...     left_boundary="PML",
-            ...     right_boundary="PML",
-            ...     top_boundary="PML",
-            ...     bottom_boundary="PML"
-            ... )
         )pbdoc")
-    .def(
-        pybind11::init<
-            const ModelParameters&,
-            const pybind11::array_t<double>&,
-            const size_t,
-            const size_t,
-            const size_t,
-            const double,
-            const std::string&,
-            const std::string&,
-            const std::string&,
-            const std::string&>(),
+    .def(pybind11::init<>(),
+        R"pbdoc(
+            Default constructor for EigenSolver.
+
+            Initializes an empty solver instance. Use the initialize method to set
+            parameters before solving eigenvalue problems.
+        )pbdoc"
+    )
+    .def("_cpp_initialize",
+        &EigenSolver::initialize,
         pybind11::arg("model_parameters"),
         pybind11::arg("finit_matrix"),
         pybind11::arg("n_computed_mode"),
@@ -75,58 +58,43 @@ PYBIND11_MODULE(interface_eigensolver, module)
         pybind11::arg("top_boundary"),
         pybind11::arg("bottom_boundary"),
         R"pbdoc(
-            Initialize the EigenSolver with computational parameters.
+            Initialize the eigenvalue solver with the provided parameters.
+
+            This method sets up the solver with the necessary parameters and
+            prepares it for mode computation. It should be called before any
+            eigenvalue solving methods.
 
             Parameters
             ----------
             model_parameters : ModelParameters
-                Physical and geometric parameters of the waveguide model,
-                including refractive index profile, wavelength, and grid spacing.
+                Physical and geometric parameters of the waveguide model.
             finit_matrix : numpy.ndarray
                 Finite difference matrix representing the discretized wave equation.
-                Should be a sparse, square matrix of size (n_points, n_points).
             n_computed_mode : int
-                Number of eigenmodes to compute. Higher values provide more modes
-                but increase computational cost. Typical range: 10-100.
+                Number of eigenmodes to compute.
             n_sorted_mode : int
                 Number of modes to keep after sorting by effective index.
-                Should be <= n_computed_mode. These are the modes returned by get_mode().
             max_iter : int
                 Maximum number of iterations for the eigenvalue solver.
-                Typical values: 1000-10000 depending on problem complexity.
             tolerance : float
                 Convergence tolerance for the eigenvalue solver.
-                Smaller values give more accurate results but require more iterations.
-                Typical range: 1e-10 to 1e-15.
             left_boundary : str
-                Boundary condition for the left edge. Options:
-                - "PML": Perfectly Matched Layer (absorbing boundary)
-                - "PEC": Perfect Electric Conductor
-                - "PMC": Perfect Magnetic Conductor
+                Boundary condition for the left edge.
             right_boundary : str
-                Boundary condition for the right edge. Same options as left_boundary.
+                Boundary condition for the right edge.
             top_boundary : str
-                Boundary condition for the top edge. Same options as left_boundary.
+                Boundary condition for the top edge.
             bottom_boundary : str
-                Boundary condition for the bottom edge. Same options as left_boundary.
+                Boundary condition for the bottom edge.
 
             Raises
             ------
             ValueError
-                If boundary condition strings are not recognized.
-            RuntimeError
-                If matrix dimensions are incompatible or memory allocation fails.
-
-            Notes
-            -----
-            The solver uses the ARPACK library for eigenvalue computation, which
-            is particularly efficient for large sparse matrices. PML boundaries
-            are recommended for most applications as they minimize reflections.
+                If boundary conditions are not recognized or parameters are invalid.
         )pbdoc"
     )
-
     .def(
-        "loop_over_itr",
+        "_cpp_loop_over_itr",
         &EigenSolver::loop_over_itr,
         pybind11::arg("extrapolation_order"),
         pybind11::arg("alpha"),
@@ -170,7 +138,7 @@ PYBIND11_MODULE(interface_eigensolver, module)
         )pbdoc"
     )
     .def(
-        "compute_laplacian",
+        "_cpp_compute_laplacian",
         &EigenSolver::compute_laplacian,
         R"pbdoc(
             Compute the Laplacian operator matrix for the finite difference grid.
@@ -202,7 +170,7 @@ PYBIND11_MODULE(interface_eigensolver, module)
         )pbdoc"
     )
     .def(
-        "get_mode",
+        "_cpp_get_mode",
         &EigenSolver::get_sorted_mode,
         R"pbdoc(
             Retrieve computed and sorted eigenmodes.

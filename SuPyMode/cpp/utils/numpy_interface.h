@@ -5,6 +5,8 @@
 #include <pybind11/stl.h>
 #include <Eigen/Core>
 
+namespace numy_interface {
+
 template<typename T>
 std::vector<size_t> get_stride_from_dimension(std::vector<size_t> dimension) {
   std::reverse(dimension.begin(), dimension.end());
@@ -68,4 +70,6 @@ Eigen::VectorXd convert_py_to_eigen(const pybind11::array_t<T> &array_py, const 
     auto info = array_py.request();
     T* ptr = static_cast<T*>(info.ptr);
     return Eigen::Map<Eigen::VectorXd>(ptr, rows);
+}
+
 }

@@ -7,9 +7,14 @@ import matplotlib.pyplot as plt
 from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries
 
 
-PARAMETER_LIST = [
-    'index', 'beta', 'eigen-value', 'normalized-coupling', 'adiabatic', 'field'
+SINGULAR_PLOTS = [
+    'index', 'beta', 'field', 'eigen_value',
 ]
+
+COUPLED_PLOTS = [
+    'normalized_coupling', 'adiabatic', 'beating_length'
+]
+
 
 
 @pytest.fixture(scope="module")
@@ -43,7 +48,7 @@ def setup_workflow():
     )
 
 
-@pytest.mark.parametrize("plot_type", PARAMETER_LIST)
+@pytest.mark.parametrize("plot_type", SINGULAR_PLOTS)
 @patch("matplotlib.pyplot.show")
 def test_superset_plot(mock_show, setup_workflow, plot_type):
     """
@@ -62,13 +67,14 @@ def test_superset_plot(mock_show, setup_workflow, plot_type):
         Type of plot to generate and test (e.g., 'index', 'beta').
     """
     superset = setup_workflow.superset
+
     superset.plot(plot_type=plot_type, mode_of_interest='fundamental')
     mock_show.assert_called_once()
     mock_show.reset_mock()
     plt.close()
 
 
-@pytest.mark.parametrize("plot_type", PARAMETER_LIST)
+@pytest.mark.parametrize("plot_type", SINGULAR_PLOTS)
 @patch("matplotlib.pyplot.show")
 def test_representation_plot(mock_show, setup_workflow, plot_type):
     """
@@ -89,12 +95,40 @@ def test_representation_plot(mock_show, setup_workflow, plot_type):
     """
     mode = setup_workflow.superset[0]  # Use the first mode from the superset
 
-    # Handling for 'normalized-coupling' and 'adiabatic' which require another mode as a parameter
-    if plot_type in ['normalized-coupling', 'adiabatic']:
-        other_mode = setup_workflow.superset[1]  # Assuming at least two modes for these tests
-        mode.plot(plot_type=plot_type, other_supermode=other_mode)
-    else:
-        mode.plot(plot_type=plot_type)
+    representation = getattr(mode, plot_type, None)
+
+    representation.plot()
+
+    mock_show.assert_called_once()
+    mock_show.reset_mock()
+    plt.close()
+
+@pytest.mark.parametrize("plot_type", COUPLED_PLOTS)
+@patch("matplotlib.pyplot.show")
+def test_representation_plot(mock_show, setup_workflow, plot_type):
+    """
+    Test plotting functionalities for individual modes within the superset.
+
+    This function ensures that each mode-specific attribute plot can be called and displayed.
+    For properties like 'normalized-coupling' and 'adiabatic', which require comparing two modes,
+    the test uses a second mode for completeness.
+
+    Parameters
+    ----------
+    mock_show : MagicMock
+        Mock for `matplotlib.pyplot.show` to prevent GUI display during testing.
+    setup_workflow : Workflow
+        A Workflow instance set up via a fixture.
+    plot_type : str
+        Type of mode-specific plot to generate and test (e.g., 'index', 'beta', 'normalized-coupling').
+    """
+    mode = setup_workflow.superset[0]  # Use the first mode from the superset
+
+    representation = getattr(mode, plot_type, None)
+
+    other_mode = setup_workflow.superset[1]
+    representation.plot(other_supermode=other_mode)
+
 
     mock_show.assert_called_once()
     mock_show.reset_mock()

@@ -314,7 +314,7 @@ class SuperSetPlots(object):
         >>> superset_plots.plot(plot_type='invalid')
         ValueError: Invalid plot type: invalid. Options are: index, beta, eigen-value, adiabatic, normalized-adiabatic, normalized-coupling, field, beating-length.
         """
-        match plot_type.lower():
+        match plot_type.lower().replace('_', '-'):
             case 'index':
                 return self.plot_index(**kwargs)
             case 'beta':

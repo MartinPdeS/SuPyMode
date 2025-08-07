@@ -32,24 +32,6 @@ class SuperMode():
     label : str, optional
         An arbitrary descriptive label for the supermode.
 
-    Attributes
-    ----------
-    ID : list
-        Unique identifier for the solver and binding number.
-    field : Field
-        Field representation associated with the supermode.
-    index : Index
-        Index representation associated with the supermode.
-    beta : Beta
-        Beta representation associated with the supermode.
-    normalized_coupling : NormalizedCoupling
-        Normalized coupling representation of the supermode.
-    adiabatic : Adiabatic
-        Adiabatic representation of the supermode.
-    eigen_value : EigenValue
-        Eigenvalue representation of the supermode.
-    beating_length : BeatingLength
-        Beating length representation of the supermode.
     """
     parent_set: object
     binding: object
@@ -58,24 +40,93 @@ class SuperMode():
     boundaries: dict
     label: str = None
     ID: list = field_arg(init=False)
-    # Other representations
-    field: representation.Field = field_arg(init=False, repr=False)
-    index: representation.Index = field_arg(init=False, repr=False)
-    beta: representation.Beta = field_arg(init=False, repr=False)
-    normalized_coupling: representation.NormalizedCoupling = field_arg(init=False, repr=False)
-    adiabatic: representation.Adiabatic = field_arg(init=False, repr=False)
-    eigen_value: representation.EigenValue = field_arg(init=False, repr=False)
-    beating_length: representation.BeatingLength = field_arg(init=False, repr=False)
 
     def __post_init__(self):
         self.ID = [self.solver_number, self.binding_number]
-        self.field = representation.Field(parent_supermode=self)
-        self.index = representation.Index(parent_supermode=self)
-        self.beta = representation.Beta(parent_supermode=self)
-        self.normalized_coupling = representation.NormalizedCoupling(parent_supermode=self)
-        self.adiabatic = representation.Adiabatic(parent_supermode=self)
-        self.eigen_value = representation.EigenValue(parent_supermode=self)
-        self.beating_length = representation.BeatingLength(parent_supermode=self)
+
+    @property
+    def field(self) -> representation.Field:
+        """
+        Accesses the field representation associated with the supermode.
+
+        Returns
+        -------
+        Field
+            The field representation of the supermode.
+        """
+        return representation.Field(parent_supermode=self)
+
+    @property
+    def index(self) -> representation.Index:
+        """
+        Accesses the index representation associated with the supermode.
+
+        Returns
+        -------
+        Index
+            The index representation of the supermode.
+        """
+        return representation.Index(parent_supermode=self)
+
+    @property
+    def beta(self) -> representation.Beta:
+        """
+        Accesses the beta representation associated with the supermode.
+
+        Returns
+        -------
+        Beta
+            The beta representation of the supermode.
+        """
+        return representation.Beta(parent_supermode=self)
+
+    @property
+    def normalized_coupling(self) -> representation.NormalizedCoupling:
+        """
+        Accesses the normalized coupling representation associated with the supermode.
+
+        Returns
+        -------
+        NormalizedCoupling
+            The normalized coupling representation of the supermode.
+        """
+        return representation.NormalizedCoupling(parent_supermode=self)
+
+    @property
+    def adiabatic(self) -> representation.Adiabatic:
+        """
+        Accesses the adiabatic representation associated with the supermode.
+
+        Returns
+        -------
+        Adiabatic
+            The adiabatic representation of the supermode.
+        """
+        return representation.Adiabatic(parent_supermode=self)
+
+    @property
+    def eigen_value(self) -> representation.EigenValue:
+        """
+        Accesses the eigenvalue representation associated with the supermode.
+
+        Returns
+        -------
+        EigenValue
+            The eigenvalue representation of the supermode.
+        """
+        return representation.EigenValue(parent_supermode=self)
+
+    @property
+    def beating_length(self) -> representation.BeatingLength:
+        """
+        Accesses the beating length representation associated with the supermode.
+
+        Returns
+        -------
+        BeatingLength
+            The beating length representation of the supermode.
+        """
+        return representation.BeatingLength(parent_supermode=self)
 
     def __hash__(self):
         """
@@ -342,45 +393,5 @@ class SuperMode():
             The label of the supermode.
         """
         return self.label
-
-    def plot(self, plot_type: str, **kwargs):
-        """
-        Plots various properties of the supermode based on the specified type.
-
-        Parameters
-        ----------
-        plot_type : str
-            The type of plot to generate. Options include 'field', 'beta', 'index', 'eigen-value',
-            'beating-length', 'adiabatic', and 'normalized-coupling'.
-        **kwargs : dict
-            Additional keyword arguments to pass to the plotting function.
-
-        Returns
-        -------
-        object
-            The result of the plotting function, typically a plot object.
-
-        Raises
-        ------
-        ValueError
-            If an invalid plot type is specified.
-        """
-        match plot_type.lower():
-            case 'field':
-                return self.field.plot(**kwargs)
-            case 'beta':
-                return self.beta.plot(**kwargs)
-            case 'index':
-                return self.index.plot(**kwargs)
-            case 'eigen-value':
-                return self.eigen_value.plot(**kwargs)
-            case 'beating-length':
-                return self.beating_length.plot(**kwargs)
-            case 'adiabatic':
-                return self.adiabatic.plot(**kwargs)
-            case 'normalized-coupling':
-                return self.normalized_coupling.plot(**kwargs)
-            case _:
-                raise ValueError(f'Invalid plot type: {plot_type}. Options are: index, beta, eigen-value, field, beating-length, adiabatic, normalized-coupling')
 
 # -

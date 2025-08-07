@@ -24,7 +24,7 @@ EigenSolver::EigenSolver(
     top_boundary(top_boundary),
     bottom_boundary(bottom_boundary)
 {
-    this->finit_difference_triplets = convert_py_to_eigen<double>(
+    this->finit_difference_triplets = numy_interface::convert_py_to_eigen<double>(
         finit_difference_triplets_py,
         finit_difference_triplets_py.request().shape[0],
         finit_difference_triplets_py.request().shape[1]

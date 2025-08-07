@@ -217,13 +217,13 @@ get_rho_gradient_py(const pybind11::array_t<double> &mesh_py, const pybind11::ar
     size_t x_size = x_vector_py.request().size;
     size_t y_size = y_vector_py.request().size;
 
-    Eigen::VectorXd x_vector = convert_py_to_eigen(x_vector_py, x_size);
-    Eigen::VectorXd y_vector = convert_py_to_eigen(y_vector_py, y_size);
-    Eigen::MatrixXd mesh = convert_py_to_eigen(mesh_py, y_size, x_size);
+    Eigen::VectorXd x_vector = numy_interface::convert_py_to_eigen(x_vector_py, x_size);
+    Eigen::VectorXd y_vector = numy_interface::convert_py_to_eigen(y_vector_py, y_size);
+    Eigen::MatrixXd mesh = numy_interface::convert_py_to_eigen(mesh_py, y_size, x_size);
 
     Eigen::MatrixXd rho_gradient = get_rho_gradient(mesh, y_vector, x_vector);
 
-    return eigen_to_ndarray<double>(rho_gradient, {y_size, x_size});
+    return numy_interface::eigen_to_ndarray<double>(rho_gradient, {y_size, x_size});
 }
 
 
@@ -232,13 +232,13 @@ get_rho_gradient_time_rho_py(const pybind11::array_t<double> &mesh_py, const pyb
     size_t x_size = x_vector_py.request().size;
     size_t y_size = y_vector_py.request().size;
 
-    Eigen::VectorXd x_vector = convert_py_to_eigen(x_vector_py, x_size);
-    Eigen::VectorXd y_vector = convert_py_to_eigen(y_vector_py, y_size);
-    Eigen::MatrixXd mesh = convert_py_to_eigen(mesh_py, y_size, x_size);
+    Eigen::VectorXd x_vector = numy_interface::convert_py_to_eigen(x_vector_py, x_size);
+    Eigen::VectorXd y_vector = numy_interface::convert_py_to_eigen(y_vector_py, y_size);
+    Eigen::MatrixXd mesh = numy_interface::convert_py_to_eigen(mesh_py, y_size, x_size);
 
     Eigen::MatrixXd rho_gradient = get_rho_gradient_time_rho(mesh, y_vector, x_vector);
 
-    return eigen_to_ndarray<double>(rho_gradient, {y_size, x_size});
+    return numy_interface::eigen_to_ndarray<double>(rho_gradient, {y_size, x_size});
 }
 
 
