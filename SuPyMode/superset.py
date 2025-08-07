@@ -608,15 +608,15 @@ class SuperSet(SuperSetPlots):
     @parse_combination
     @parse_filename
     def export_data(self,
-                    filename: str,
-                    mode_of_interest: list = 'all',
-                    combination: list = None,
-                    export_index: bool = True,
-                    export_beta: bool = True,
-                    export_eigen_value: bool = False,
-                    export_adiabatic: bool = True,
-                    export_beating_length: bool = True,
-                    export_normalized_coupling: bool = True) -> Path:
+        filename: str,
+        mode_of_interest: list = 'all',
+        combination: list = None,
+        export_index: bool = True,
+        export_beta: bool = True,
+        export_eigen_value: bool = False,
+        export_adiabatic: bool = True,
+        export_beating_length: bool = True,
+        export_normalized_coupling: bool = True) -> Path:
         """
         Export the SuperSet data as CSV files, saving specific attributes of the modes or combinations of modes.
 

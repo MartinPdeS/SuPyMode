@@ -9,7 +9,6 @@ import numpy
 from scipy.interpolate import interp1d
 import matplotlib.pyplot as plt
 
-from typing import NoReturn
 import matplotlib.ticker as ticker
 from matplotlib.animation import FuncAnimation, PillowWriter
 from SuPyMode.helper import simple_plot_helper
@@ -723,7 +722,7 @@ class AlphaProfile():
             ax: plt.Axes,
             show_radius: bool = True,
             show_adiabatic: bool = True,
-            show_taper_angle: bool = True) -> NoReturn:
+            show_taper_angle: bool = True) -> None:
         """
         Generates plots based on the current state of the taper profile. This can include plots of radius vs. z-distance,
         adiabatic factor vs. ITR, and taper angle vs. z-distance, based on the specified flags.
