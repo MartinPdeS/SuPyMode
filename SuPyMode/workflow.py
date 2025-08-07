@@ -290,7 +290,7 @@ class Workflow():
         self.solver = SuPySolver(
             geometry=self.geometry,
             tolerance=1e-20,
-            max_iter=5000,
+            max_iteration=5000,
             accuracy=self.accuracy,
             debug_mode=self.debug_mode,
             extrapolation_order=self.extrapolation_order

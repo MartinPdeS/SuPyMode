@@ -20,10 +20,10 @@ SuperMode::SuperMode(
         top_boundary(top_boundary),
         bottom_boundary(bottom_boundary)
 {
-    fields = numy_interface::convert_py_to_eigen(fields_py, this->model_parameters.nx * this->model_parameters.ny, this->model_parameters.n_slice);
-    index = numy_interface::convert_py_to_eigen(index_py, this->model_parameters.n_slice, 1);
-    betas = numy_interface::convert_py_to_eigen(betas_py, this->model_parameters.n_slice, 1);
-    eigen_value = numy_interface::convert_py_to_eigen(eigen_value_py, this->model_parameters.n_slice, 1);
+    fields = NumpyInterface::convert_py_to_eigen(fields_py, this->model_parameters.nx * this->model_parameters.ny, this->model_parameters.n_slice);
+    index = NumpyInterface::convert_py_to_eigen(index_py, this->model_parameters.n_slice, 1);
+    betas = NumpyInterface::convert_py_to_eigen(betas_py, this->model_parameters.n_slice, 1);
+    eigen_value = NumpyInterface::convert_py_to_eigen(eigen_value_py, this->model_parameters.n_slice, 1);
 }
 
 SuperMode::SuperMode(

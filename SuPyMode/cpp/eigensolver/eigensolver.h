@@ -4,6 +4,7 @@
 #include "Spectra/MatOp/SparseGenRealShiftSolve.h"
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
+#include "../mesh/mesh.h"
 #include "../supermode/supermode.h"
 #include "../utils/utils.h"
 #include "../utils/extrapolator.h"
@@ -33,7 +34,7 @@ class EigenSolver
 
         std::vector<double> alpha_vector;
 
-
+    public:
         Eigen::SparseMatrix<double, Eigen::ColMajor> laplacian_matrix;
         Eigen::SparseMatrix<double, Eigen::ColMajor> identity_matrix;
         Eigen::SparseMatrix<double, Eigen::ColMajor> eigen_matrix;
@@ -41,53 +42,24 @@ class EigenSolver
 
         double k_taper;
 
-    EigenSolver() = default;
+    EigenSolver(const size_t max_iteration, const double tolerance);
 
     void initialize(
         const ModelParameters &model_parameters,
         const pybind11::array_t<double> &finit_difference_triplets_py,
         const size_t n_computed_mode,
-        const size_t n_sorted_mode,
-        const size_t max_iteration,
-        const double tolerance,
-        const std::string &left_boundary,
-        const std::string &right_boundary,
-        const std::string &top_boundary,
-        const std::string &bottom_boundary) {
+        const size_t n_sorted_mode);
 
-    this->model_parameters = model_parameters;
-    this->n_computed_mode = n_computed_mode;
-    this->n_sorted_mode = n_sorted_mode;
-    this->max_iteration = max_iteration;
-    this->tolerance = tolerance;
 
-    this->left_boundary = left_boundary;
-    this->right_boundary = right_boundary;
-    this->top_boundary = top_boundary;
-    this->bottom_boundary = bottom_boundary;
-
-    this->finit_difference_triplets = numy_interface::convert_py_to_eigen<double>(
-        finit_difference_triplets_py,
-        finit_difference_triplets_py.request().shape[0],
-        finit_difference_triplets_py.request().shape[1]
-    );
-
-    this->generate_mode_set();
-
-    }
-
-    EigenSolver(
-        const ModelParameters &model_parameters,
-        const pybind11::array_t<double> &finit_difference_triplets_py,
-        const size_t n_computed_mode,
-        const size_t n_sorted_mode,
-        const size_t max_iteration,
-        const double tolerance,
-        const std::string &left_boundary,
-        const std::string &right_boundary,
-        const std::string &top_boundary,
-        const std::string &bottom_boundary
-    );
+    /**
+     * \brief Sets up the boundary conditions for the eigenvalue solver.
+     *
+     * \param left The boundary condition for the left edge.
+     * \param right The boundary condition for the right edge.
+     * \param top The boundary condition for the top edge.
+     * \param bottom The boundary condition for the bottom edge.
+     */
+    void setup_boundaries(const std::string &left, const std::string &right, const std::string &top, const std::string &bottom);
 
 
     /**

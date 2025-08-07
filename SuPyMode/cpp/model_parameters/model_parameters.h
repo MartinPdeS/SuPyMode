@@ -3,6 +3,7 @@
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
 #include "../mesh/mesh.h"
+#include "../utils/numpy_interface.h"
 
 
 #define PI 3.1415926535897932384626f

@@ -5,7 +5,7 @@
 #include <pybind11/stl.h>
 #include <Eigen/Core>
 
-namespace numy_interface {
+namespace NumpyInterface {
 
 template<typename T>
 std::vector<size_t> get_stride_from_dimension(std::vector<size_t> dimension) {
@@ -57,6 +57,21 @@ Eigen::MatrixXd convert_py_to_eigen(const pybind11::array_t<T> &array_py) {
     T* ptr = static_cast<T*>(info.ptr);
     return Eigen::Map<Eigen::MatrixXd>(ptr, info.shape[0], info.shape[1]);
 }
+
+template<typename T>
+Eigen::MatrixXd convert_py_to_eigen_matrix(const pybind11::array_t<T> &array_py) {
+    auto info = array_py.request();
+    T* ptr = static_cast<T*>(info.ptr);
+    return Eigen::Map<Eigen::MatrixXd>(ptr, info.shape[0], info.shape[1]);
+}
+
+template<typename T>
+Eigen::MatrixXd convert_py_to_eigen_vector(const pybind11::array_t<T> &array_py) {
+    auto info = array_py.request();
+    T* ptr = static_cast<T*>(info.ptr);
+    return Eigen::Map<Eigen::VectorXd>(ptr, info.shape[0]);
+}
+
 
 template<typename T>
 Eigen::MatrixXd convert_py_to_eigen(const pybind11::array_t<T> &array_py, const size_t rows, const size_t cols) {

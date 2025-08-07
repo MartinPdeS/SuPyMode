@@ -289,7 +289,7 @@ public:
      * @return Python numpy array of overlap integrals
      */
     pybind11::array_t<double> get_overlap_integrals_with_mode_py(const SuperMode& supermode) const {
-        return numy_interface::eigen_to_ndarray<double>(this->get_overlap_integrals_with_mode(supermode), {model_parameters.n_slice});
+        return NumpyInterface::eigen_to_ndarray<double>(this->get_overlap_integrals_with_mode(supermode), {model_parameters.n_slice});
     }
 
     /**
@@ -299,7 +299,7 @@ public:
      * @return Python numpy array of complex coupling coefficients
      */
     pybind11::array_t<std::complex<double>> get_normalized_coupling_with_mode_py(const SuperMode& supermode) const {
-        return numy_interface::eigen_to_ndarray<complex128>(this->get_normalized_coupling_with_mode(supermode), {model_parameters.n_slice});
+        return NumpyInterface::eigen_to_ndarray<complex128>(this->get_normalized_coupling_with_mode(supermode), {model_parameters.n_slice});
     }
 
     /**
@@ -309,7 +309,7 @@ public:
      * @return Python numpy array of adiabatic parameters
      */
     pybind11::array_t<double> get_adiabatic_with_mode_py(const SuperMode& supermode) const {
-        return numy_interface::eigen_to_ndarray<double>(this->get_adiabatic_with_mode(supermode), {model_parameters.n_slice});
+        return NumpyInterface::eigen_to_ndarray<double>(this->get_adiabatic_with_mode(supermode), {model_parameters.n_slice});
     }
 
     /**
@@ -319,7 +319,7 @@ public:
      * @return Python numpy array of beating lengths
      */
     pybind11::array_t<double> get_beating_length_with_mode_py(const SuperMode& supermode) const {
-        return numy_interface::eigen_to_ndarray<double>(this->get_beating_length_with_mode(supermode), {model_parameters.n_slice});
+        return NumpyInterface::eigen_to_ndarray<double>(this->get_beating_length_with_mode(supermode), {model_parameters.n_slice});
     }
 
     /**
@@ -328,7 +328,7 @@ public:
      * @return Python numpy array of field data with shape [n_slice, ny, nx]
      */
     pybind11::array_t<double> get_fields_py() const {
-        return numy_interface::eigen_to_ndarray<double>(this->fields, {model_parameters.n_slice, model_parameters.ny, model_parameters.nx});
+        return NumpyInterface::eigen_to_ndarray<double>(this->fields, {model_parameters.n_slice, model_parameters.ny, model_parameters.nx});
     }
 
     /**
@@ -337,7 +337,7 @@ public:
      * @return Python numpy array of refractive indices with shape [n_slice]
      */
     pybind11::array_t<double> get_index_py() const {
-        return numy_interface::eigen_to_ndarray<double>(this->index, {model_parameters.n_slice});
+        return NumpyInterface::eigen_to_ndarray<double>(this->index, {model_parameters.n_slice});
     }
 
     /**
@@ -346,7 +346,7 @@ public:
      * @return Python numpy array of eigenvalues with shape [n_slice]
      */
     pybind11::array_t<double> get_eigen_value_py() const {
-        return numy_interface::eigen_to_ndarray<double>(this->eigen_value, {model_parameters.n_slice});
+        return NumpyInterface::eigen_to_ndarray<double>(this->eigen_value, {model_parameters.n_slice});
     }
 
     /**
@@ -355,7 +355,7 @@ public:
      * @return Python numpy array of beta values with shape [n_slice]
      */
     pybind11::array_t<double> get_betas_py() const {
-        return numy_interface::eigen_to_ndarray<double>(this->betas, {model_parameters.n_slice});
+        return NumpyInterface::eigen_to_ndarray<double>(this->betas, {model_parameters.n_slice});
     }
 
     /**
@@ -364,7 +364,7 @@ public:
      * @return Python numpy array of iteration values
      */
     pybind11::array_t<double> get_itr_list() const {
-        return numy_interface::eigen_to_ndarray<double>(this->model_parameters.itr_list, {model_parameters.n_slice});
+        return NumpyInterface::eigen_to_ndarray<double>(this->model_parameters.itr_list, {model_parameters.n_slice});
     }
 
     /**
@@ -373,7 +373,7 @@ public:
      * @return Python numpy array of mesh gradient with shape [nx, ny]
      */
     pybind11::array_t<double> get_mesh_gradient() const {
-        return numy_interface::eigen_to_ndarray<double>(this->model_parameters.mesh_gradient, {this->model_parameters.nx, this->model_parameters.ny});
+        return NumpyInterface::eigen_to_ndarray<double>(this->model_parameters.mesh_gradient, {this->model_parameters.nx, this->model_parameters.ny});
     }
 
     /**
@@ -384,7 +384,7 @@ public:
      */
     pybind11::array_t<double> get_field_py(const size_t index) const {
         Eigen::MatrixXd output = this->fields.col(index);
-        return numy_interface::eigen_to_ndarray<double>(output, {this->model_parameters.nx, this->model_parameters.ny});
+        return NumpyInterface::eigen_to_ndarray<double>(output, {this->model_parameters.nx, this->model_parameters.ny});
     }
 
     // Serialization methods for Python pickling

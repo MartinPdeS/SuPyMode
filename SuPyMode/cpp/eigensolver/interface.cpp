@@ -37,12 +37,52 @@ PYBIND11_MODULE(interface_eigensolver, module)
             - Efficient sparse matrix operations
             - Mode sorting and selection
         )pbdoc")
-    .def(pybind11::init<>(),
+    .def(pybind11::init<const size_t, const double>(),
+        pybind11::arg("max_iteration") = 10'000,
+        pybind11::arg("tolerance") = 1e-8,
         R"pbdoc(
             Default constructor for EigenSolver.
 
             Initializes an empty solver instance. Use the initialize method to set
             parameters before solving eigenvalue problems.
+
+            Parameters
+            ----------
+            max_iteration : int
+                Maximum number of iterations for the eigenvalue solver.
+            tolerance : float
+                Convergence tolerance for the eigenvalue solver.
+
+        )pbdoc"
+    )
+    .def("_cpp_set_boundaries",
+        &EigenSolver::setup_boundaries,
+        pybind11::arg("left"),
+        pybind11::arg("right"),
+        pybind11::arg("top"),
+        pybind11::arg("bottom"),
+        R"pbdoc(
+            Set the boundary conditions for the eigenvalue solver.
+
+            This method configures the boundary conditions for the waveguide
+            model. It should be called after initializing the solver and before
+            running the eigenvalue computation.
+
+            Parameters
+            ----------
+            left : str
+                Boundary condition for the left edge.
+            right : str
+                Boundary condition for the right edge.
+            top : str
+                Boundary condition for the top edge.
+            bottom : str
+                Boundary condition for the bottom edge.
+
+            Raises
+            ------
+            ValueError
+                If boundary conditions are not recognized.
         )pbdoc"
     )
     .def("_cpp_initialize",
@@ -51,12 +91,6 @@ PYBIND11_MODULE(interface_eigensolver, module)
         pybind11::arg("finit_matrix"),
         pybind11::arg("n_computed_mode"),
         pybind11::arg("n_sorted_mode"),
-        pybind11::arg("max_iter"),
-        pybind11::arg("tolerance"),
-        pybind11::arg("left_boundary"),
-        pybind11::arg("right_boundary"),
-        pybind11::arg("top_boundary"),
-        pybind11::arg("bottom_boundary"),
         R"pbdoc(
             Initialize the eigenvalue solver with the provided parameters.
 
@@ -73,19 +107,6 @@ PYBIND11_MODULE(interface_eigensolver, module)
             n_computed_mode : int
                 Number of eigenmodes to compute.
             n_sorted_mode : int
-                Number of modes to keep after sorting by effective index.
-            max_iter : int
-                Maximum number of iterations for the eigenvalue solver.
-            tolerance : float
-                Convergence tolerance for the eigenvalue solver.
-            left_boundary : str
-                Boundary condition for the left edge.
-            right_boundary : str
-                Boundary condition for the right edge.
-            top_boundary : str
-                Boundary condition for the top edge.
-            bottom_boundary : str
-                Boundary condition for the bottom edge.
 
             Raises
             ------

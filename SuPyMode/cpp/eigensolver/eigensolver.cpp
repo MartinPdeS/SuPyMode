@@ -1,36 +1,34 @@
 #include "eigensolver.h"
 
+EigenSolver::EigenSolver(const size_t max_iteration, const double tolerance)
+: max_iteration(max_iteration), tolerance(tolerance) {}
 
-EigenSolver::EigenSolver(
+void EigenSolver::initialize(
     const ModelParameters &model_parameters,
     const pybind11::array_t<double> &finit_difference_triplets_py,
     const size_t n_computed_mode,
-    const size_t n_sorted_mode,
-    const size_t max_iteration,
-    const double tolerance,
-    const std::string &left_boundary,
-    const std::string &right_boundary,
-    const std::string &top_boundary,
-    const std::string &bottom_boundary
-)
-    :
-    model_parameters(model_parameters),
-    n_computed_mode(n_computed_mode),
-    n_sorted_mode(n_sorted_mode),
-    max_iteration(max_iteration),
-    tolerance(tolerance),
-    left_boundary(left_boundary),
-    right_boundary(right_boundary),
-    top_boundary(top_boundary),
-    bottom_boundary(bottom_boundary)
-{
-    this->finit_difference_triplets = numy_interface::convert_py_to_eigen<double>(
+    const size_t n_sorted_mode) {
+
+    this->model_parameters = model_parameters;
+    this->n_computed_mode = n_computed_mode;
+    this->n_sorted_mode = n_sorted_mode;
+
+    this->finit_difference_triplets = NumpyInterface::convert_py_to_eigen<double>(
         finit_difference_triplets_py,
         finit_difference_triplets_py.request().shape[0],
         finit_difference_triplets_py.request().shape[1]
     );
 
     this->generate_mode_set();
+
+}
+
+
+void EigenSolver::setup_boundaries(const std::string &left, const std::string &right, const std::string &top, const std::string &bottom) {
+    this->left_boundary = left;
+    this->right_boundary = right;
+    this->top_boundary = top;
+    this->bottom_boundary = bottom;
 }
 
 void EigenSolver::compute_laplacian() {

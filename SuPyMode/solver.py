@@ -13,6 +13,7 @@ from SuPyMode.supermode import SuperMode
 from SuPyMode.binary.interface_supermode import SUPERMODE  # type: ignore
 from SuPyMode.binary.interface_eigensolver import EIGENSOLVER  # type: ignore
 from SuPyMode.binary.interface_model_parameters import MODELPARAMETERS  # type: ignore
+from SuPyMode.binary.interface_mesh import GEOMETRY
 from SuPyMode.mode_label import ModeLabel
 
 
@@ -30,7 +31,7 @@ class SuPySolver(EIGENSOLVER):
         The refractive index geometry of the optical structure.
     tolerance : float, optional
         Absolute tolerance for the propagation constant computation (default is 1e-8).
-    max_iter : int, optional
+    max_iteration : int, optional
         Maximum iterations for the C++ eigensolver (default is 10,000).
     accuracy : int, optional
         Accuracy level of the finite difference method (default is 2).
@@ -38,14 +39,12 @@ class SuPySolver(EIGENSOLVER):
         Order of Taylor series used to extrapolate eigenvalues (default is 2).
     debug_mode : int, optional
         Debug output level from the C++ binding, where 0 is no output and higher values provide more detail (default is 1).
-    coordinate_system : CoordinateSystem, optional
-        The coordinate system linked with the geometry. Must be provided if geometry is given as an array.
     """
 
     def __init__(self,
         geometry: Geometry | numpy.ndarray,
         tolerance: float = 1e-8,
-        max_iter: int = 10_000,
+        max_iteration: int = 10_000,
         accuracy: int = 2,
         extrapolation_order: int = 2,
         debug_mode: int = 1) -> None:
@@ -53,8 +52,6 @@ class SuPySolver(EIGENSOLVER):
         Initialize the solver with the given parameters.
         """
         self.geometry = geometry
-        self.tolerance = tolerance
-        self.max_iter = max_iter
         self.accuracy = accuracy
         self.extrapolation_order = extrapolation_order
         self.debug_mode = debug_mode
@@ -69,7 +66,16 @@ class SuPySolver(EIGENSOLVER):
         self.mode_number = 0
         self.solver_number = 0
 
-        super().__init__()
+        # self._geometry = GEOMETRY(
+        #     mesh=self.mesh,
+        #     x=self.coordinate_system.x_vector,
+        #     y=self.coordinate_system.y_vector
+        # )
+
+        super().__init__(
+            max_iteration=max_iteration,
+            tolerance=tolerance
+        )
 
     def initialize_binding(self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int) -> None:
         """
@@ -107,18 +113,20 @@ class SuPySolver(EIGENSOLVER):
             self.FD._triplet.array[:, 2]
         ]
 
+        self._cpp_set_boundaries(
+            left=boundaries.left,
+            right=boundaries.right,
+            top=boundaries.top,
+            bottom=boundaries.bottom
+        )
+
         self._cpp_initialize(
             model_parameters=self.model_parameters,
             finit_matrix=new_array.T,
             n_computed_mode=n_sorted_mode + n_added_mode,
             n_sorted_mode=n_sorted_mode,
-            max_iter=self.max_iter,
-            tolerance=self.tolerance,
-            left_boundary=boundaries.left,
-            right_boundary=boundaries.right,
-            top_boundary=boundaries.top,
-            bottom_boundary=boundaries.bottom,
         )
+
         self._cpp_compute_laplacian()
 
     def init_superset(self, wavelength: float, n_step: int = 300, itr_initial: float = 1.0, itr_final: float = 0.1) -> None:
