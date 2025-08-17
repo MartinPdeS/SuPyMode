@@ -7,7 +7,7 @@ from scipy.interpolate import RectBivariateSpline
 from SuPyMode import representation
 from SuPyMode.binary.interface_model_parameters import MODELPARAMETERS as ModelParameters  # type: ignore
 from SuPyMode.utils import interpret_slice_number_and_itr, get_symmetrized_vector
-
+from PyFinitDiff import BoundaryValue
 
 @dataclass(kw_only=True)
 class SuperMode():
@@ -345,19 +345,19 @@ class SuperMode():
         if not add_symmetries:
             return full_x_axis, full_y_axis
 
-        if self.boundaries.right in ['symmetric', 'anti-symmetric']:
+        if self.boundaries.right in [BoundaryValue.SYMMETRIC, BoundaryValue.ANTI_SYMMETRIC]:
             full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type='last')
             full_x_axis.sort()
 
-        if self.boundaries.left in ['symmetric', 'anti-symmetric']:
+        if self.boundaries.left in [BoundaryValue.SYMMETRIC, BoundaryValue.ANTI_SYMMETRIC]:
             full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type='first')
             full_x_axis.sort()
 
-        if self.boundaries.top in ['symmetric', 'anti-symmetric']:
+        if self.boundaries.top in [BoundaryValue.SYMMETRIC, BoundaryValue.ANTI_SYMMETRIC]:
             full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type='last')
             full_y_axis.sort()
 
-        if self.boundaries.bottom in ['symmetric', 'anti-symmetric']:
+        if self.boundaries.bottom in [BoundaryValue.SYMMETRIC, BoundaryValue.ANTI_SYMMETRIC]:
             full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type='first')
             full_y_axis.sort()
 

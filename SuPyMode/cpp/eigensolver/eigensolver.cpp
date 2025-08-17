@@ -25,6 +25,14 @@ void EigenSolver::initialize(
 
 
 void EigenSolver::setup_boundaries(const std::string &left, const std::string &right, const std::string &top, const std::string &bottom) {
+    if (this->model_parameters.debug_mode > 0)
+        std::cout
+            << "Setting up boundaries."
+            << "Left: " << left << ", "
+            << "Right: " << right << ", "
+            << "Top: " << top << ", "
+            << "Bottom: " << bottom << std::endl;
+
     this->left_boundary = left;
     this->right_boundary = right;
     this->top_boundary = top;
@@ -152,6 +160,9 @@ void EigenSolver::populate_sorted_supermodes(size_t slice, Eigen::MatrixXd &eige
 
 void EigenSolver::loop_over_itr(size_t extrapolation_order, double alpha)
 {
+    if (this->model_parameters.debug_mode > 0)
+        std::cout << "Starting iterative eigenvalue computation with extrapolation order: " << extrapolation_order << ", alpha: " << alpha << std::endl;
+
     this->iteration = 0;
 
     Eigen::MatrixXd eigen_vectors;
@@ -175,7 +186,7 @@ void EigenSolver::loop_over_itr(size_t extrapolation_order, double alpha)
 
         std::tie(eigen_vectors, eigen_values) = this->compute_eigen_solution(alpha);
 
-        if (this->model_parameters.debug_mode > 2)
+        if (this->model_parameters.debug_mode > 0)
         {
             std::cout.precision(16);
             std::cout<<" alpha guess: "<<alpha<<"\t"

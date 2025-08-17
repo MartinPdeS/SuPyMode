@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from FiberFusing.fiber import catalogue as fiber_catalogue  # noqa:
+from FiberFusing.fiber import FiberLoader  # noqa:
 from SuPyMode.profiles import AlphaProfile  # noqa: F401
-from FiberFusing import configuration  # noqa: F401
+from FiberFusing.profile import Profile, StructureType # noqa: F401
+from PyFinitDiff import BoundaryValue  # noqa: F401
 
+from FiberFusing import DomainAlignment
 from typing import List, Union, Optional, Tuple
 from pathlib import Path
 from FiberFusing import Geometry, BackGround
@@ -13,6 +15,8 @@ from PyOptik import MaterialBank
 from PyFinitDiff.finite_difference_2D import Boundaries
 from pydantic.dataclasses import dataclass
 from pydantic import ConfigDict
+
+fiber_loader = FiberLoader()
 
 config_dict = ConfigDict(
     extra='forbid',
@@ -27,11 +31,8 @@ def prepare_simulation_geometry(
         clad_structure: object,
         fiber_list: List[object],
         capillary_tube: Optional[object] = None,
-        fusion_degree: Union[float, str] = 'auto',
-        fiber_radius: Optional[float] = None,
         x_bounds: Union[str, Tuple[float, float]] = '',
         y_bounds: Union[str, Tuple[float, float]] = '',
-        clad_index: Union[float, str] = 'silica',
         core_position_scrambling: float = 0,
         index_scrambling: float = 0,
         resolution: int = 150,
@@ -48,8 +49,6 @@ def prepare_simulation_geometry(
         clad_structure (object): Cladding or structural template for fibers.
         fiber_list (List[object]): List of fibers to be included in the simulation.
         capillary_tube (Optional[object]): Optional capillary structure to add.
-        fusion_degree (Union[float, str]): Degree of fusion, specifying overlap between fibers.
-        fiber_radius (Optional[float]): Uniform radius for all fibers, if specified.
         x_bounds (Union[str, List[float]]): X-axis boundary conditions or limits.
         y_bounds (Union[str, List[float]]): Y-axis boundary conditions or limits.
         clad_index (Union[float, str]): Refractive index for the cladding material, can be a known string identifier.
@@ -67,24 +66,10 @@ def prepare_simulation_geometry(
     Raises:
         ValueError: If clad_index is not 'silica' or a numeric value.
     """
-
-    def get_clad_index(clad_index: float, wavelength: float):
-        """Retrieve the cladding index based on the input type."""
-        if isinstance(clad_index, str) and clad_index.lower() == 'silica':
-            return MaterialBank.fused_silica.compute_refractive_index(wavelength)
-        elif isinstance(clad_index, (float, int)):
-            return clad_index
-        else:
-            raise ValueError("Invalid clad_index: must be either 'silica' or a numeric index value.")
-
-    index = get_clad_index(clad_index, wavelength)
-    background = BackGround(index=background_index)
+    background = BackGround(refractive_index=background_index)
 
     clad_instance = prepare_fused_structure(
         clad_class=clad_structure,
-        fiber_radius=fiber_radius,
-        fusion_degree=fusion_degree,
-        index=index,
         core_position_scrambling=core_position_scrambling,
         rotation=rotation
     )
@@ -102,9 +87,7 @@ def prepare_simulation_geometry(
     structures.extend(fiber_list)
 
     geometry = Geometry(
-        background=background,
         x_bounds=x_bounds,
-        additional_structure_list=structures,
         y_bounds=y_bounds,
         resolution=resolution,
         index_scrambling=index_scrambling,
@@ -112,14 +95,15 @@ def prepare_simulation_geometry(
         gaussian_filter=gaussian_filter
     )
 
+    geometry.add_structure(background, *structures)
+
+    geometry.initialize()
+
     return geometry
 
 
 def prepare_fused_structure(
         clad_class: type,
-        fiber_radius: float,
-        fusion_degree: Union[float | str],
-        index: float,
         core_position_scrambling: float,
         rotation: float) -> object:
     """
@@ -127,9 +111,6 @@ def prepare_fused_structure(
 
     Args:
         clad_class (type): The class representing the cladding structure.
-        fiber_radius (float): The radius of the fiber.
-        fusion_degree (float): The degree of fusion for the fibers.
-        index (float): The refractive index of the cladding material.
         core_position_scrambling (float): Random displacement added to fiber core positions to simulate imperfections.
         rotation (float): Rotation angle for the structure (in degrees).
 
@@ -142,13 +123,9 @@ def prepare_fused_structure(
     if clad_class is None:
         return None
 
-    clad_instance = clad_class(
-        fiber_radius=fiber_radius,
-        fusion_degree=fusion_degree,
-        index=index
-    )
+    clad_instance = clad_class
 
-    clad_instance.randomize_core_position(random_factor=core_position_scrambling)
+    clad_instance.randomize_core_positions(random_factor=core_position_scrambling)
 
     if rotation != 0:
         clad_instance.rotate(rotation)
@@ -164,13 +141,11 @@ class Workflow():
     Attributes:
         wavelength (float): Wavelength at which the simulation is evaluated.
         resolution (int): Resolution of the simulation mesh.
-        fiber_radius (float): Radius for the fused clad structure.
         n_sorted_mode (int): Number of modes that are computed and sorted.
         n_added_mode (int): Additional modes computed beyond the sorted modes for increased accuracy.
         itr_final (float): Final Inverse Taper Ratio (ITR) for mode evaluation.
         itr_initial (float): Initial ITR for mode evaluation.
         n_step (int): Number of steps to iterate through the ITR section.
-        fusion_degree (Union[float, str]): Fusion degree for the clad fused structure; 'auto' for automatic calculation.
         clad_rotation (float): Rotation of the clad structure in degrees.
         accuracy (int): Accuracy level of the finite difference method.
         debug_mode (int): Debug mode level for verbose output during computations.
@@ -212,10 +187,8 @@ class Workflow():
     capillary_tube: Optional[object] = None
     clad_structure: Optional[object] = None
     fiber_list: Optional[List[GenericFiber]] = ()
-    fiber_radius: Optional[float] = 62.5e-6
-    fusion_degree: Optional[Union[float, str]] = 'auto'
-    x_bounds: Union[str, Tuple[float, float]] = 'centering'
-    y_bounds: Union[str, Tuple[float, float]] = 'centering'
+    x_bounds: Union[DomainAlignment, Tuple[float, float]] = DomainAlignment.CENTERING
+    y_bounds: Union[DomainAlignment, Tuple[float, float]] = DomainAlignment.CENTERING
     air_padding_factor: Optional[float] = 1.2
     gaussian_filter_factor: Optional[float] = None
 
@@ -264,8 +237,6 @@ class Workflow():
             clad_structure=self.clad_structure,
             fiber_list=self.fiber_list,
             capillary_tube=self.capillary_tube,
-            fusion_degree=self.fusion_degree,
-            fiber_radius=self.fiber_radius,
             resolution=self.resolution,
             y_bounds=self.y_bounds,
             x_bounds=self.x_bounds,

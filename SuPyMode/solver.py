@@ -72,6 +72,7 @@ class SuPySolver(EIGENSOLVER):
         #     y=self.coordinate_system.y_vector
         # )
 
+
         super().__init__(
             max_iteration=max_iteration,
             tolerance=tolerance
@@ -95,7 +96,7 @@ class SuPySolver(EIGENSOLVER):
         EigenSolver
             Configured C++ solver instance.
         """
-        self.FD = FiniteDifference(
+        finit_diff_matrix = FiniteDifference(
             n_x=self.coordinate_system.nx,
             n_y=self.coordinate_system.ny,
             dx=self.coordinate_system.dx,
@@ -105,19 +106,19 @@ class SuPySolver(EIGENSOLVER):
             boundaries=boundaries
         )
 
-        self.FD.construct_triplet()
+        finit_diff_matrix.construct_triplet()
 
         new_array = numpy.c_[
-            self.FD._triplet.array[:, 1],
-            self.FD._triplet.array[:, 0],
-            self.FD._triplet.array[:, 2]
+            finit_diff_matrix._triplet.array[:, 1],
+            finit_diff_matrix._triplet.array[:, 0],
+            finit_diff_matrix._triplet.array[:, 2]
         ]
 
         self._cpp_set_boundaries(
-            left=boundaries.left,
-            right=boundaries.right,
-            top=boundaries.top,
-            bottom=boundaries.bottom
+            left=boundaries.left.value.lower(),
+            right=boundaries.right.value.lower(),
+            top=boundaries.top.value.lower(),
+            bottom=boundaries.bottom.value.lower()
         )
 
         self._cpp_initialize(
@@ -212,7 +213,9 @@ class SuPySolver(EIGENSOLVER):
             List of labels for the supermodes.
         """
         if auto_label:
-            return [ModeLabel(boundaries=boundaries, mode_number=n).label for n in range(n_modes)]
+            return [
+                ModeLabel(boundaries=boundaries, mode_number=n).label for n in range(n_modes)
+            ]
         else:
             return [f"mode_{{{n}}}" for n in range(n_modes)]
 
@@ -238,7 +241,10 @@ class SuPySolver(EIGENSOLVER):
         None
             This method updates the solver's internal state but does not return any value.
         """
+
+
         beta_guess = self.index_to_eigen_value(index_guess)
+        self._cpp_reset_solver()
 
         self.initialize_binding(
             boundaries=boundaries,

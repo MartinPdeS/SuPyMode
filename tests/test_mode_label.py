@@ -3,14 +3,14 @@
 
 import pytest
 
-from SuPyMode.workflow import Boundaries
+from SuPyMode.workflow import Boundaries, BoundaryValue
 from SuPyMode.mode_label import ModeLabel
 
 configuration_list = [
-    dict(boundaries=Boundaries(left='symmetric', top='symmetric'), mode_number=0, name='LP01'),
-    dict(boundaries=Boundaries(left='symmetric', top='symmetric'), mode_number=1, name='LP21'),
-    dict(boundaries=Boundaries(left='symmetric'), mode_number=1, name='LP11'),
-    dict(boundaries=Boundaries(left='symmetric'), mode_number=2, name='LP21'),
+    dict(boundaries=Boundaries(left=BoundaryValue.SYMMETRIC, top=BoundaryValue.SYMMETRIC), mode_number=0, name='LP01'),
+    dict(boundaries=Boundaries(left=BoundaryValue.SYMMETRIC, top=BoundaryValue.SYMMETRIC), mode_number=1, name='LP21'),
+    dict(boundaries=Boundaries(left=BoundaryValue.SYMMETRIC), mode_number=1, name='LP11'),
+    dict(boundaries=Boundaries(left=BoundaryValue.SYMMETRIC), mode_number=2, name='LP21'),
     dict(boundaries=Boundaries(), mode_number=5, name='LP02')
 ]
 

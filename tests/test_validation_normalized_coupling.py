@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 import numpy
-from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries
+from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, DomainAlignment, BoundaryValue
 from PyFiberModes.__future__ import get_normalized_LP_coupling
 import PyFiberModes
 
@@ -30,16 +30,16 @@ def test_normalized_coupling(
         y_bounds (list | str): Vertical bounds for the simulation.
         **kwargs: Additional keyword arguments to pass to the Workflow.
     """
-    fiber = fiber_catalogue.load_fiber(fiber_name, wavelength=wavelength, remove_cladding=False)
+    fiber = fiber_loader.load_fiber(fiber_name, clad_refractive_index=1.4444, remove_cladding=False)
 
     # Set up the workflow with specified parameters and boundaries
     workflow = Workflow(
         fiber_list=[fiber],
         wavelength=wavelength,
         resolution=resolution,
-        x_bounds='left',
-        y_bounds='bottom',
-        boundaries=[Boundaries(right='symmetric', top='symmetric')],
+        x_bounds=DomainAlignment.LEFT,
+        y_bounds=DomainAlignment.BOTTOM,
+        boundaries=[Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.SYMMETRIC)],
         n_sorted_mode=4,
         n_added_mode=8,
         debug_mode=1,
@@ -69,6 +69,11 @@ def test_normalized_coupling(
     analytical = numpy.abs(analytical)
     # Extract the simulation data
     simulation = numpy.abs(superset.LP01.normalized_coupling.get_values(superset.LP02))
+
+    # import matplotlib.pyplot as plt
+    # plt.plot(itr_list, analytical, label='Analytical')
+    # plt.plot(itr_list, 1 -simulation, label='Simulation')
+    # plt.show()
 
     # Calculate error metrics and validate against acceptable threshold
     error = numpy.abs(analytical - simulation)

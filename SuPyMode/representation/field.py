@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib import colors
 from SuPyMode.utils import interpret_slice_number_and_itr, slice_to_itr
-
+from PyFinitDiff import BoundaryValue
 from SuPyMode.representation.base import InheritFromSuperMode
 
 
@@ -206,33 +206,33 @@ class Field(InheritFromSuperMode):
         assert field.ndim == 2, f"Expected a 2-dimensional array, but got {field.ndim}-dimensional."
 
         symmetric_field = field[:, -2::-1]
-        match self.boundaries.left.lower():
-            case 'symmetric':
+        match self.boundaries.left:
+            case BoundaryValue.SYMMETRIC:
                 field = numpy.c_[symmetric_field, field]
 
-            case 'anti-symmetric':
+            case BoundaryValue.ANTI_SYMMETRIC:
                 field = numpy.c_[-symmetric_field, field]
 
-        match self.boundaries.right.lower():
-            case 'symmetric':
+        match self.boundaries.right:
+            case BoundaryValue.SYMMETRIC:
                 field = numpy.c_[field, symmetric_field]
 
-            case 'anti-symmetric':
+            case BoundaryValue.ANTI_SYMMETRIC:
                 field = numpy.c_[field, -symmetric_field]
 
         symmetric_field = field[-2::-1, :]
-        match self.boundaries.top.lower():
-            case 'symmetric':
+        match self.boundaries.top:
+            case BoundaryValue.SYMMETRIC:
                 field = numpy.r_[field, symmetric_field]
 
-            case 'anti-symmetric':
+            case BoundaryValue.ANTI_SYMMETRIC:
                 field = numpy.r_[field, -symmetric_field]
 
-        match self.boundaries.bottom.lower():
-            case 'symmetric':
+        match self.boundaries.bottom:
+            case BoundaryValue.SYMMETRIC:
                 field = numpy.r_[symmetric_field, field]
 
-            case 'anti-symmetric':
+            case BoundaryValue.ANTI_SYMMETRIC:
                 field = numpy.r_[-symmetric_field, field]
 
         return field

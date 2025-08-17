@@ -127,4 +127,4 @@ def test_generate_propagation_gif(alpha_profile):
 
 
 if __name__ == "__main__":
-    pytest.main(["-W error", __file__])
+    pytest.main([__file__])

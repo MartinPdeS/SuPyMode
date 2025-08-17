@@ -3,16 +3,38 @@
 
 import pytest
 
-from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries
+from SuPyMode.workflow import Profile, Workflow, fiber_loader, Boundaries, DomainAlignment, BoundaryValue, StructureType
 import matplotlib.pyplot as plt
 # Define a list of fused fiber structures from the configuration module
-fused_structure_list = [
-    configuration.ring.FusedProfile_01x01,
-    configuration.ring.FusedProfile_02x02,
-]
+
+clad_structure_0 = Profile()
+
+clad_structure_0.add_structure(
+    structure_type=StructureType.CIRCULAR,
+    number_of_fibers=2,
+    fusion_degree=0.3,
+    fiber_radius=62.5e-6,
+    compute_fusing=True
+)
+
+clad_structure_0.refractive_index = 1.4444
+
+clad_structure_1 = Profile()
+
+clad_structure_1.add_structure(
+    structure_type=StructureType.CIRCULAR,
+    number_of_fibers=3,
+    fusion_degree=0.3,
+    fiber_radius=62.5e-6,
+    compute_fusing=True
+)
+
+clad_structure_1.refractive_index = 1.4444
+
+fused_structure_list = [clad_structure_0, clad_structure_1]
 
 
-@pytest.mark.parametrize('fused_structure', fused_structure_list, ids=lambda x: f"n_fiber: {x.number_of_fibers}")
+@pytest.mark.parametrize('fused_structure', fused_structure_list, ids=lambda x: f"n_fiber: {len(x.cores)}")
 def test_workflow(fused_structure):
     """
     Test the Workflow initialization with various configurations of fused fiber structures.
@@ -25,8 +47,8 @@ def test_workflow(fused_structure):
     """
     # Load fibers based on the number required by the fused structure, all with the same specified wavelength
     fibers = [
-        fiber_catalogue.load_fiber('DCF1300S_33', wavelength=1550e-9)
-        for _ in range(fused_structure.number_of_fibers)
+        fiber_loader.load_fiber('DCF1300S_33', clad_refractive_index=1.4444)
+        for _ in range(len(fused_structure.cores))
     ]
 
     # Instantiate the Workflow with the given configuration
@@ -35,13 +57,12 @@ def test_workflow(fused_structure):
         clad_structure=fused_structure,
         wavelength=1550e-9,
         resolution=10,
-        x_bounds="left",
-        y_bounds="centering",
-        boundaries=[Boundaries(right='symmetric')],
+        x_bounds=DomainAlignment.LEFT,
+        y_bounds=DomainAlignment.CENTERING,
+        boundaries=[Boundaries(right=BoundaryValue.SYMMETRIC)],
         n_sorted_mode=2,
         n_added_mode=2,
         debug_mode=0,
-        fusion_degree='auto'
     )
 
     workflow.generate_pdf_report(filename='test_0')
@@ -50,8 +71,8 @@ def test_workflow(fused_structure):
 
     # workflow.save_superset_instance(filename='test_0')
 
-    # # Assert that the workflow instance has been successfully created (basic check)
-    # assert workflow is not None, "Workflow should be successfully instantiated with the given configurations."
+    # Assert that the workflow instance has been successfully created (basic check)
+    assert workflow is not None, "Workflow should be successfully instantiated with the given configurations."
 
 
 if __name__ == "__main__":

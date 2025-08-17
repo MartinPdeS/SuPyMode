@@ -2,18 +2,44 @@
 # -*- coding: utf-8 -*-
 import pytest
 import numpy
-from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries
+from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, Profile, DomainAlignment, BoundaryValue, StructureType
 
 BOUNDARIES_LIST = [
-    dict(x_bounds='left', boundaries=[Boundaries(right='symmetric')]),
-    dict(x_bounds='right', boundaries=[Boundaries(left='symmetric')]),
-    dict(y_bounds='top', boundaries=[Boundaries(bottom='symmetric')]),
-    dict(y_bounds='bottom', boundaries=[Boundaries(top='symmetric')]),
+    dict(x_bounds=DomainAlignment.LEFT, boundaries=[Boundaries(right=BoundaryValue.SYMMETRIC)]),
+    dict(x_bounds=DomainAlignment.RIGHT, boundaries=[Boundaries(left=BoundaryValue.SYMMETRIC)]),
+    dict(y_bounds=DomainAlignment.TOP, boundaries=[Boundaries(bottom=BoundaryValue.SYMMETRIC)]),
+    dict(y_bounds=DomainAlignment.BOTTOM, boundaries=[Boundaries(top=BoundaryValue.SYMMETRIC)]),
 ]
 
 
+@pytest.fixture
+def reference_clad():
+    clad_structure = Profile()
+    clad_structure.add_structure(
+        structure_type=StructureType.CIRCULAR,
+        number_of_fibers=4,
+        fusion_degree=0.3,
+        fiber_radius=62.5e-6,
+        compute_fusing=True
+    )
+    clad_structure.refractive_index = 1.4444
+    return clad_structure
+
+@pytest.fixture
+def symmetric_clad():
+    clad_structure = Profile()
+    clad_structure.add_structure(
+        structure_type=StructureType.CIRCULAR,
+        number_of_fibers=4,
+        fusion_degree=0.3,
+        fiber_radius=62.5e-6,
+        compute_fusing=True
+    )
+    clad_structure.refractive_index = 1.4444
+    return clad_structure
+
 @pytest.mark.parametrize('boundaries', BOUNDARIES_LIST)
-def test_symmetry(boundaries, fiber_name: str = 'DCF1300S_33', wavelength: float = 1.55e-6, resolution: int = 21):
+def test_symmetry(boundaries, reference_clad, symmetric_clad, fiber_name: str = 'DCF1300S_33', wavelength: float = 1.55e-6, resolution: int = 61):
     """
     Tests the effect of symmetric and asymmetric boundary conditions on the computed indices in a fiber modeling workflow.
 
@@ -34,23 +60,24 @@ def test_symmetry(boundaries, fiber_name: str = 'DCF1300S_33', wavelength: float
         n_added_mode=2,
     )
 
-    fiber_list = [fiber_catalogue.load_fiber(fiber_name, wavelength=wavelength)]
-    clad_structure = configuration.ring.FusedProfile_01x01
+    fiber_list = [
+        fiber_loader.load_fiber(fiber_name, clad_refractive_index=1.4444, position=core) for core in reference_clad.cores
+    ]
 
     # Setup for asymmetric boundary conditions
     reference_workflow = Workflow(
         fiber_list=fiber_list,
-        clad_structure=clad_structure,
+        clad_structure=reference_clad,
         **kwargs,
-        x_bounds="centering",
-        y_bounds="centering",
+        x_bounds=DomainAlignment.CENTERING,
+        y_bounds=DomainAlignment.CENTERING,
         boundaries=[Boundaries()],
     )
 
     # Setup for symmetric boundary conditions
     left_workflow = Workflow(
         fiber_list=fiber_list,
-        clad_structure=clad_structure,
+        clad_structure=symmetric_clad,
         **boundaries,
         **kwargs
     )

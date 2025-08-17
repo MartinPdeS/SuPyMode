@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 import numpy
-from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries
+from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, DomainAlignment, BoundaryValue
 import PyFiberModes
 
 
@@ -28,16 +28,16 @@ def test_propagation_constant(
         **kwargs: Additional keyword arguments to pass to the Workflow.
     """
     # Load and scale the reference fiber
-    fiber = fiber_catalogue.load_fiber(fiber_name, wavelength=wavelength)
+    fiber = fiber_loader.load_fiber(fiber_name, clad_refractive_index=1.4444)
 
     # Initialize the simulation workflow
     workflow = Workflow(
         fiber_list=[fiber],
         wavelength=wavelength,
         resolution=resolution,
-        x_bounds='left',
-        y_bounds='bottom',
-        boundaries=[Boundaries(right='symmetric', top='symmetric')],
+        x_bounds=DomainAlignment.LEFT,
+        y_bounds=DomainAlignment.BOTTOM,
+        boundaries=[Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.SYMMETRIC)],
         n_sorted_mode=4,
         n_added_mode=8,
         debug_mode=0,

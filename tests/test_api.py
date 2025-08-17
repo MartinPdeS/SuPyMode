@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries
+from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, BoundaryValue, Profile, StructureType, DomainAlignment
 
 
 @pytest.fixture(scope="module")
@@ -11,21 +11,31 @@ def precomputed_workflow():
     Fixture to initialize the SuPyMode workflow for reuse across multiple tests.
     """
     fibers = [
-        fiber_catalogue.load_fiber('SMF28', wavelength=1550e-9),
-        fiber_catalogue.load_fiber('SMF28', wavelength=1550e-9),
+        fiber_loader.load_fiber('SMF28', clad_refractive_index=1.4444),
+        fiber_loader.load_fiber('SMF28', clad_refractive_index=1.4444),
     ]
-    fused_structure = configuration.ring.FusedProfile_02x02
+    fused_structure = Profile()
+
+    fused_structure.add_structure(
+        structure_type=StructureType.CIRCULAR,
+        number_of_fibers=2,
+        fusion_degree=0.3,
+        fiber_radius=62.5e-6,
+        compute_fusing=True
+    )
+
+    fused_structure.refractive_index = 1.4444
 
     workflow = Workflow(
         fiber_list=fibers,
         clad_structure=fused_structure,
         wavelength=1550e-9,
         resolution=20,
-        x_bounds="left",
-        y_bounds="centering",
+        x_bounds=DomainAlignment.LEFT,
+        y_bounds=DomainAlignment.CENTERING,
         debug_mode=0,
         auto_label=True,
-        boundaries=[Boundaries(right='symmetric')],
+        boundaries=[Boundaries(right=BoundaryValue.SYMMETRIC)],
         n_sorted_mode=2,
         n_added_mode=2,
     )

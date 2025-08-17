@@ -6,7 +6,9 @@
 
 # %%
 # Importing the script dependencies
-from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries
+from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, BoundaryValue, DomainAlignment, Profile, StructureType
+
+from PyOptik import MaterialBank
 
 wavelength = 1550e-9
 
@@ -14,18 +16,31 @@ wavelength = 1550e-9
 # Generating the fiber structure
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Here we define the cladding and fiber structure to model the problem
-clad_structure = configuration.ring.FusedProfile_02x02
+clad_structure = Profile()
+
+clad_structure.add_structure(
+    structure_type=StructureType.CIRCULAR,
+    number_of_fibers=4,
+    fusion_degree=0.3,
+    fiber_radius=62.5e-6,
+    compute_fusing=True
+)
+
+clad_structure.refractive_index = MaterialBank.fused_silica.compute_refractive_index(wavelength)  # Refractive index of silica at the specified wavelength
+
 
 fiber_list = [
-    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
-    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
+    fiber_loader.load_fiber('DCF1300S_33', clad_refractive_index=clad_structure.refractive_index),
+    fiber_loader.load_fiber('DCF1300S_26', clad_refractive_index=clad_structure.refractive_index),
+    fiber_loader.load_fiber('DCF1300S_42', clad_refractive_index=clad_structure.refractive_index),
+    fiber_loader.load_fiber('DCF1300S_33', clad_refractive_index=clad_structure.refractive_index),
 ]
 
 # %%
 # Defining the boundaries of the system
 boundaries = [
-    Boundaries(right='symmetric', top='symmetric'),
-    Boundaries(right='symmetric', top='anti-symmetric')
+    Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.SYMMETRIC),
+    Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.ANTI_SYMMETRIC),
 ]
 
 # %%
@@ -35,19 +50,18 @@ boundaries = [
 workflow = Workflow(
     fiber_list=fiber_list,          # List of fiber to be added in the mesh, the order matters.
     clad_structure=clad_structure,  # Cladding structure, if None provided then no cladding is set.
-    fusion_degree=0.8,              # Degree of fusion of the structure if applicable.
     wavelength=wavelength,          # Wavelength used for the mode computation.
-    resolution=80,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
-    x_bounds="left",                # Mesh x-boundary structure.
-    y_bounds="bottom",              # Mesh y-boundary structure.
+    resolution=60,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
+    x_bounds=DomainAlignment.LEFT,  # Mesh x-boundary structure.
+    y_bounds=DomainAlignment.BOTTOM,# Mesh y-boundary structure.
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
-    n_sorted_mode=3,                # Total computed and sorted mode.
+    n_sorted_mode=2,                # Total computed and sorted mode.
     n_added_mode=2,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
     plot_geometry=True,             # Plot the geometry mesh before computation.
     debug_mode=0,                   # Print the iteration step for the solver plus some other important steps.
     auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.1,                  # Final value of inverse taper ratio to simulate
-    clad_rotation=0,                # Rotate the geoemtry in the given angle in degree
+    clad_rotation=45,               # Rotate the geoemtry in the given angle in degree
     index_scrambling=1e-4           # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
 )
 

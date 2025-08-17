@@ -17,20 +17,20 @@ mode_dict = []
 for azimuthal, radial in [(0, 1), (1, 1), (2, 1), (0, 2), (3, 1), (1, 2), (4, 1), (2, 2), (0, 3), (5, 1), (3, 2), (1, 3), (6, 1), ]:
 
     if azimuthal == 0:
-        parities = [[Parity.SYMMETRIC.value, Parity.SYMMETRIC.value]]
+        parities = [[Parity.SYMMETRIC, Parity.SYMMETRIC]]
         sublabels = ['']
 
     elif azimuthal % 2 == 1:
         parities = [
-            [Parity.ANTI_SYMMETRIC.value, Parity.SYMMETRIC.value],
-            [Parity.SYMMETRIC.value, Parity.ANTI_SYMMETRIC.value],
+            [Parity.ANTI_SYMMETRIC, Parity.SYMMETRIC],
+            [Parity.SYMMETRIC, Parity.ANTI_SYMMETRIC],
         ]
         sublabels = ['_a', '_b']
 
     elif azimuthal % 2 == 0:
         parities = [
-            [Parity.SYMMETRIC.value, Parity.SYMMETRIC.value],
-            [Parity.ANTI_SYMMETRIC.value, Parity.ANTI_SYMMETRIC.value],
+            [Parity.SYMMETRIC, Parity.SYMMETRIC],
+            [Parity.ANTI_SYMMETRIC, Parity.ANTI_SYMMETRIC],
         ]
         sublabels = ['_a', '_b']
 
@@ -122,7 +122,7 @@ class ModeLabel:
         list of tuple
             A list of filtered modes that match the specified x and y parity conditions.
         """
-        return [m['mode'] for m in mode_dict if self.x_parity in [m['x'], Parity.ZERO.value] and self.y_parity in [m['y'], Parity.ZERO.value]]
+        return [m['mode'] for m in mode_dict if self.x_parity in [m['x'], Parity.ZERO] and self.y_parity in [m['y'], Parity.ZERO]]
 
     def _get_parity(self, boundary_1: str, boundary_2: str) -> str:
         """
@@ -140,12 +140,12 @@ class ModeLabel:
         str
             The parity ('symmetric', 'anti-symmetric', or 'zero').
         """
-        if Parity.SYMMETRIC.value in (boundary_1, boundary_2):
-            return Parity.SYMMETRIC.value
-        elif Parity.ANTI_SYMMETRIC.value in (boundary_1, boundary_2):
-            return Parity.ANTI_SYMMETRIC.value
+        if boundary_1.value == Parity.SYMMETRIC.value or boundary_2 == Parity.SYMMETRIC.value:
+            return Parity.SYMMETRIC
+        elif boundary_1.value == Parity.ANTI_SYMMETRIC.value or boundary_2 == Parity.ANTI_SYMMETRIC.value:
+            return Parity.ANTI_SYMMETRIC
         else:
-            return Parity.ZERO.value
+            return Parity.ZERO
 
     def __repr__(self) -> str:
         """

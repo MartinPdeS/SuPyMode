@@ -190,6 +190,26 @@ PYBIND11_MODULE(interface_eigensolver, module)
             better accuracy at the cost of increased computational complexity.
         )pbdoc"
     )
+    .def("_cpp_reset_solver",
+        &EigenSolver::reset_solver,
+        R"pbdoc(
+            Reset the eigenvalue solver to its initial state.
+
+            This method clears all internal data structures and resets the
+            solver's state, allowing it to be reused for a new computation
+            without needing to reinitialize.
+
+            Returns
+            -------
+            None
+                The solver is reset and ready for a new computation.
+
+            Notes
+            -----
+            This method is useful when you want to run multiple computations
+            with different parameters without creating a new solver instance.
+        )pbdoc"
+    )
     .def(
         "_cpp_get_mode",
         &EigenSolver::get_sorted_mode,

@@ -4,7 +4,7 @@
 from unittest.mock import patch
 import pytest
 import matplotlib.pyplot as plt
-from SuPyMode.workflow import configuration, Workflow, fiber_catalogue, Boundaries
+from SuPyMode.workflow import Profile, Workflow, fiber_loader, Boundaries, StructureType, DomainAlignment, BoundaryValue
 
 
 SINGULAR_PLOTS = [
@@ -14,7 +14,6 @@ SINGULAR_PLOTS = [
 COUPLED_PLOTS = [
     'normalized_coupling', 'adiabatic', 'beating_length'
 ]
-
 
 
 @pytest.fixture(scope="module")
@@ -31,18 +30,27 @@ def setup_workflow():
     Workflow
         An instance of the Workflow class configured with predefined parameters for testing.
     """
-    fibers = [fiber_catalogue.load_fiber('SMF28', wavelength=1550e-9) for _ in range(2)]
-    fused_structure = configuration.ring.FusedProfile_02x02
+    fibers = [fiber_loader.load_fiber('SMF28', clad_refractive_index=1.4444) for _ in range(2)]
+    fused_structure = Profile()
+
+    fused_structure.add_structure(
+        structure_type=StructureType.CIRCULAR,
+        number_of_fibers=2,
+        fusion_degree=0.3,
+        fiber_radius=62.5e-6,
+        compute_fusing=True
+    )
+    fused_structure.refractive_index = 1.4444
 
     return Workflow(
         fiber_list=fibers,
         clad_structure=fused_structure,
         wavelength=1550e-9,
         resolution=30,
-        x_bounds="left",
-        y_bounds="centering",
+        x_bounds=DomainAlignment.LEFT,
+        y_bounds=DomainAlignment.CENTERING,
         debug_mode=0,
-        boundaries=[Boundaries(right='symmetric')],
+        boundaries=[Boundaries(right=BoundaryValue.SYMMETRIC)],
         n_sorted_mode=2,
         n_added_mode=2,
     )

@@ -50,6 +50,18 @@ class EigenSolver
         const size_t n_computed_mode,
         const size_t n_sorted_mode);
 
+    void reset_solver() {
+        if (this->model_parameters.debug_mode > 0)
+            std::cout << "Resetting the solver to empty state." << std::endl;
+
+        iteration = 0;
+        computed_supermodes.clear();
+        sorted_supermodes.clear();
+        previous_eigen_vectors.setZero();
+        previous_eigen_values.setZero();
+        alpha_vector.clear();
+    }
+
 
     /**
      * \brief Sets up the boundary conditions for the eigenvalue solver.
