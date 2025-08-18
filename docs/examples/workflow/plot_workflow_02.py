@@ -21,7 +21,7 @@ clad_structure = Profile()
 clad_structure.add_structure(
     structure_type=StructureType.CIRCULAR,
     number_of_fibers=4,
-    fusion_degree=0.3,
+    fusion_degree=0.5,
     fiber_radius=62.5e-6,
     compute_fusing=True
 )
@@ -66,6 +66,8 @@ workflow = Workflow(
 workflow.initialize_geometry(plot=True)  # Initialize the geometry and plot it
 
 workflow.run_solver()  # Run the solver to compute the modes
+
+workflow.geometry.plot()
 
 # %%
 # Field computation: :math:`E_{i,j}`
