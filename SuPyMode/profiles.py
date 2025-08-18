@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 
 import matplotlib.ticker as ticker
 from matplotlib.animation import FuncAnimation, PillowWriter
-from SuPyMode.helper import simple_plot_helper
 from MPSPlots.styles import mps
 
 config_dict = ConfigDict(
@@ -645,8 +644,6 @@ class AlphaProfile():
         ticks_x = ticker.FuncFormatter(lambda x, pos: '{0:g}'.format(x / scale_x))
         ax.xaxis.set_major_formatter(ticks_x)
 
-        ax.legend()
-
         return self.distance, self.itr_list
 
     @single_plot
@@ -672,8 +669,6 @@ class AlphaProfile():
         scale_x = 1e-3
         ticks_x = ticker.FuncFormatter(lambda x, pos: '{0:g}'.format(x / scale_x))
         ax.xaxis.set_major_formatter(ticks_x)
-
-        ax.legend()
 
         return self.distance, self.taper_angle
 
@@ -701,8 +696,6 @@ class AlphaProfile():
         scale_x = 1e-3
         ticks_x = ticker.FuncFormatter(lambda x, pos: '{0:g}'.format(x / scale_x))
         ax.xaxis.set_major_formatter(ticks_x)
-
-        ax.legend()
 
         return self.distance, self.adiabatic
 
@@ -748,7 +741,6 @@ class AlphaProfile():
         with plt.style.context(mps):
             figure, axes = plt.subplots(number_of_plots, 1, figsize=(10, 3 * number_of_plots), squeeze=False)
 
-            print(axes)
             axes = axes.flatten()
 
             for ax, show, method in zip(axes, shows, methods):
