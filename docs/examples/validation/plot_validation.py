@@ -51,7 +51,6 @@ workflow = Workflow(
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=7,                # Total computed and sorted mode.
     n_added_mode=6,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
-    plot_geometry=True,             # Plot the geometry mesh before computation.
     debug_mode=1,                   # Print the iteration step for the solver plus some other important steps.
     auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.4,                  # Final value of inverse taper ratio to simulate
@@ -59,16 +58,20 @@ workflow = Workflow(
     n_step=100
 )
 
-superset = workflow.get_superset()
 
-superset.label_supermodes('LP01', 'LP21', 'LP02', 'LP03', 'LP22', 'LP41')
+# %%
+# Plotting the geometry
+workflow.geometry.plot()
+
+
+workflow.superset.label_supermodes('LP01', 'LP21', 'LP02', 'LP03', 'LP22', 'LP41')
 
 
 # %%
 # Plotting the field distribution
-superset.plot(plot_type='field')
+workflow.superset.plot(plot_type='field')
 
-itr_list = superset.model_parameters.itr_list
+itr_list = workflow.superset.model_parameters.itr_list
 
 
 # %%
@@ -176,10 +179,10 @@ for idx, (mode_0, mode_1) in enumerate(itertools.combinations(['LP01', 'LP02', '
         color=color
     )
 
-    simulation = getattr(superset, mode_0).normalized_coupling.get_values(getattr(superset, mode_1)) / (3.1415 * 2)
+    simulation = getattr(workflow.superset, mode_0).normalized_coupling.get_values(getattr(workflow.superset, mode_1)) / (3.1415 * 2)
 
     ax.scatter(
-        superset.model_parameters.itr_list,
+        workflow.superset.model_parameters.itr_list,
         abs(simulation),
         color=color,
         s=80,

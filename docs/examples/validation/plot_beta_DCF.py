@@ -48,16 +48,21 @@ workflow = Workflow(
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=3,                # Total computed and sorted mode.
     n_added_mode=4,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
-    plot_geometry=True,             # Plot the geometry mesh before computation.
     debug_mode=0,                   # Print the iteration step for the solver plus some other important steps.
     auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.2,                  # Final value of inverse taper ratio to simulate
     n_step=70,
-    plot_field=True
 )
 
-superset = workflow.get_superset()
-itr_list = superset.model_parameters.itr_list
+# %%
+# Plotting the geometry
+workflow.geometry.plot()
+
+# %%
+# Plotting the field distribution
+workflow.plot('field')
+
+itr_list = workflow.model_parameters.itr_list
 
 # %%
 # Computing the analytical values using FiberModes solver.
@@ -76,7 +81,7 @@ ax.set(
 )
 
 pyfibermodes_mode = LP01
-supymode_mode = superset.LP01
+supymode_mode = workflow.superset.LP01
 
 analytical = numpy.empty(itr_list.shape)
 for idx, itr in enumerate(itr_list):

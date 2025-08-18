@@ -65,7 +65,6 @@ workflow = Workflow(
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=4,                # Total computed and sorted mode.
     n_added_mode=3,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
-    plot_geometry=True,             # Plot the geometry mesh before computation.
     debug_mode=0,                   # Print the iteration step for the solver plus some other important steps.
     auto_label=False,               # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.1,                  # Final value of inverse taper ratio to simulate
