@@ -74,6 +74,9 @@ def test_symmetry(boundaries, reference_clad, symmetric_clad, fiber_name: str = 
         boundaries=[Boundaries()],
     )
 
+    reference_workflow.initialize_geometry()
+    reference_workflow.run_solver()
+
     # Setup for symmetric boundary conditions
     left_workflow = Workflow(
         fiber_list=fiber_list,
@@ -81,6 +84,9 @@ def test_symmetry(boundaries, reference_clad, symmetric_clad, fiber_name: str = 
         **boundaries,
         **kwargs
     )
+
+    left_workflow.initialize_geometry()
+    left_workflow.run_solver()
 
     # Compare the effective index data between the two configurations
     discrepancy = numpy.isclose(

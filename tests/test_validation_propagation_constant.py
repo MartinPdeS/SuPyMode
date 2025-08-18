@@ -47,8 +47,10 @@ def test_propagation_constant(
         **kwargs
     )
 
-    superset = workflow.get_superset()
-    itr_list = superset.model_parameters.itr_list
+    workflow.initialize_geometry()
+    workflow.run_solver()
+
+    itr_list = workflow.superset.model_parameters.itr_list
 
     # Load and scale the analytical fiber model
     pfm_fiber = PyFiberModes.fiber.load_fiber(
@@ -61,7 +63,7 @@ def test_propagation_constant(
     analytical = numpy.array([pfm_fiber.scale(factor=itr).get_propagation_constant(mode=PyFiberModes.LP01) for itr in itr_list])
 
     # Retrieve simulation results
-    simulation = superset.LP01.beta.data
+    simulation = workflow.superset.LP01.beta.data
 
     # Check discrepancies
     discrepancies = numpy.isclose(analytical, simulation, rtol=1e-2)

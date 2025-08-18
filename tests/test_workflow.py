@@ -65,6 +65,10 @@ def test_workflow(fused_structure):
         debug_mode=0,
     )
 
+    workflow.initialize_geometry()
+
+    workflow.run_solver()
+
     workflow.generate_pdf_report(filename='test_0')
 
     plt.close()

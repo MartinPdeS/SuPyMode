@@ -42,7 +42,7 @@ def setup_workflow():
     )
     fused_structure.refractive_index = 1.4444
 
-    return Workflow(
+    workflow = Workflow(
         fiber_list=fibers,
         clad_structure=fused_structure,
         wavelength=1550e-9,
@@ -54,6 +54,11 @@ def setup_workflow():
         n_sorted_mode=2,
         n_added_mode=2,
     )
+
+    workflow.initialize_geometry()
+    workflow.run_solver()
+
+    return workflow
 
 
 @pytest.mark.parametrize("plot_type", SINGULAR_PLOTS)

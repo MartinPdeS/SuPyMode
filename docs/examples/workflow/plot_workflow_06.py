@@ -59,33 +59,35 @@ workflow = Workflow(
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=2,                # Total computed and sorted mode.
     n_added_mode=6,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
-    plot_geometry=True,             # Plot the geometry mesh before computation.
     debug_mode=0,                   # Print the iteration step for the solver plus some other important steps.
     auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.1,                  # Final value of inverse taper ratio to simulate
     index_scrambling=1e-4           # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
 )
 
-superset = workflow.get_superset()
+workflow.initialize_geometry(plot=True)  # Initialize the geometry and plot it
+
+workflow.run_solver()  # Run the solver to compute the modes
+
 
 # %%
 # Field computation: :math:`E_{i,j}`
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-_ = superset.plot(plot_type='field', itr_list=[1.0, 0.1])
+_ = workflow.plot(plot_type='field', itr_list=[1.0, 0.1])
 
 # %%
 # Effective index: :math:`n^{eff}_{i,j}`
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-_ = superset.plot(plot_type='index')
+_ = workflow.plot(plot_type='index')
 
 # %%
 # Modal normalized coupling: :math:`C_{i,j}`
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-_ = superset.plot(plot_type='normalized-coupling')
+_ = workflow.plot(plot_type='normalized-coupling')
 
 # %%
 # Adiabatic criterion: :math:`\tilde{C}_{i,j}`
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-_ = superset.plot(plot_type='adiabatic')
+_ = workflow.plot(plot_type='adiabatic')
 
 # -

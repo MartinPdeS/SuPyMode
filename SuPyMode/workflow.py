@@ -76,27 +76,6 @@ class Workflow():
     gaussian_filter_factor : Optional[float]
         Gaussian blurring factor applied to the structure for smoothing.
 
-    Plotting Flags
-    --------------
-    plot_geometry : bool
-        If True, plots the simulation geometry.
-    plot_cladding : bool
-        If True, plots the cladding structure.
-    plot_field : bool
-        If True, plots the field distribution.
-    plot_adiabatic : bool
-        If True, plots adiabatic transitions.
-    plot_coupling : bool
-        If True, plots coupling information.
-    plot_beating_length : bool
-        If True, plots the beating length.
-    plot_eigen_values : bool
-        If True, plots eigenvalues.
-    plot_index : bool
-        If True, plots the refractive index distribution.
-    plot_beta : bool
-        If True, plots propagation constants.
-
     """
 
     # Geometry attributes
@@ -121,48 +100,18 @@ class Workflow():
     itr_initial: Optional[float] = 1.0
     extrapolation_order: Optional[int] = 2
     core_position_scrambling: Optional[float] = 0
-    index_scrambling: Optional[float] = 0
+    index_scrambling: Optional[float] = 0.
     accuracy: Optional[int] = 2
-
-    # Plotting flags
-    plot_geometry: Optional[bool] = False
-    plot_cladding: Optional[bool] = False
-    plot_field: Optional[bool] = False
-    plot_adiabatic: Optional[bool] = False
-    plot_coupling: Optional[bool] = False
-    plot_beating_length: Optional[bool] = False
-    plot_eigen_values: Optional[bool] = False
-    plot_index: Optional[bool] = False
-    plot_beta: Optional[bool] = False
 
     # Extra attributes
     debug_mode: Optional[int] = 1
     auto_label: Optional[bool] = False
-    generate_report: Optional[bool] = False
-    save_superset: Optional[bool] = False
-
-    def __post_init__(self):
-        """
-        Initializes the simulation geometry and solver, and optionally plots the initial setup if enabled.
-        """
-        self.geometry = self.prepare_simulation_geometry()
-        self._plot_initial_setup()
-        self._initialize_solver()
-        self._plot_simulation_outputs()
-        self._finalize_workflow()
-
-    def _plot_initial_setup(self):
-        """Plots the initial simulation setup if the respective flags are enabled."""
-        if self.plot_cladding and self.clad_structure:
-            self.clad_structure.plot()
-        if self.plot_geometry:
-            self.geometry.plot()
 
     @property
     def superset(self):
         return self.solver.superset
 
-    def _initialize_solver(self):
+    def run_solver(self):
         """Initializes the solver with the set geometry and starts the mode computation process."""
         self.solver = SuPySolver(
             geometry=self.geometry,
@@ -187,33 +136,6 @@ class Workflow():
                 boundaries=boundary,
                 auto_label=self.auto_label
             )
-
-    def get_superset(self):
-        return self.solver.superset
-
-    def _plot_simulation_outputs(self):
-        """Plots the simulation outputs based on the respective flags."""
-        if self.plot_field:
-            self.plot('field')
-        if self.plot_adiabatic:
-            self.plot('adiabatic')
-        if self.plot_coupling:
-            self.plot('normalized-coupling')
-        if self.plot_beating_length:
-            self.plot('beating-length')
-        if self.plot_eigen_values:
-            self.plot('eigen-value')
-        if self.plot_index:
-            self.plot('index')
-        if self.plot_beta:
-            self.plot('beta')
-
-    def _finalize_workflow(self):
-        """Finalizes the workflow by generating reports and saving superset if enabled."""
-        if self.generate_report:
-            self.generate_pdf_report()
-        if self.save_superset:
-            self.save_superset_instance()
 
     def plot(self, *args, **kwargs):
         """Plots various types of data from the simulation based on the specified plot type."""
@@ -264,10 +186,15 @@ class Workflow():
 
         return filename
 
-    def prepare_simulation_geometry(self) -> Geometry:
+    def initialize_geometry(self, plot: bool = False) -> Geometry:
         """
         Prepares and returns the simulation geometry for optical fiber configurations,
         incorporating fused structures, optional capillary tubes, and specific boundary conditions.
+
+        Parameters
+        ----------
+        plot_geometry : bool
+            Flag indicating whether to plot the geometry after initialization.
 
         Returns
         -------
@@ -283,14 +210,13 @@ class Workflow():
         if self.clad_structure is not None:
             structures.append(self.clad_structure)
 
-        if self.index_scrambling != 0:
-
+        if self.index_scrambling != 0.:
             for fiber in self.fiber_list:
                 fiber.randomize_refractive_index(factor=self.index_scrambling)
 
         structures.extend(self.fiber_list)
 
-        geometry = Geometry(
+        self.geometry = Geometry(
             x_bounds=self.x_bounds,
             y_bounds=self.y_bounds,
             resolution=self.resolution,
@@ -299,11 +225,12 @@ class Workflow():
             gaussian_filter=self.gaussian_filter_factor
         )
 
-        geometry.add_structure(background, *structures)
+        self.geometry.add_structure(background, *structures)
 
-        geometry.initialize()
+        self.geometry.initialize()
 
-        return geometry
+        if plot:
+            self.geometry.plot()
 
     def prepare_fused_structure(self) -> None:
         """

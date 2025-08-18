@@ -49,9 +49,10 @@ def test_normalized_coupling(
         **kwargs
     )
 
-    superset = workflow.get_superset()
+    workflow.initialize_geometry()
+    workflow.run_solver()
 
-    itr_list = superset.model_parameters.itr_list
+    itr_list = workflow.superset.model_parameters.itr_list
 
     # Load and scale the analytical fiber
     smf28 = PyFiberModes.fiber.load_fiber(fiber_name, wavelength=wavelength, add_air_layer=False)
@@ -68,7 +69,7 @@ def test_normalized_coupling(
 
     analytical = numpy.abs(analytical)
     # Extract the simulation data
-    simulation = numpy.abs(superset.LP01.normalized_coupling.get_values(superset.LP02))
+    simulation = numpy.abs(workflow.superset.LP01.normalized_coupling.get_values(workflow.superset.LP02))
 
     # Calculate error metrics and validate against acceptable threshold
     error = numpy.abs(analytical - simulation)

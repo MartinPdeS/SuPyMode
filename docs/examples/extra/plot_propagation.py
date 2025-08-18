@@ -59,14 +59,14 @@ workflow = Workflow(
     boundaries=[Boundaries()],      # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=3,                # Total computed and sorted mode.
     n_added_mode=6,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
-    plot_geometry=True,             # Plot the geometry mesh before computation.
     debug_mode=0,                   # Print the iteration step for the solver plus some other important steps. [Does not work properly on jupyter notebooks]
     auto_label=False,               # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.1,                  # Final value of inverse taper ratio to simulate
 )
 
-superset = workflow.get_superset()
+workflow.initialize_geometry(plot=True)  # Initialize the geometry and plot it
 
+workflow.run_solver()  # Run the solver to compute the modes
 
 profile = AlphaProfile(symmetric=False, add_end_of_taper_section=True)
 

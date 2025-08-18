@@ -39,6 +39,10 @@ def precomputed_workflow():
         n_sorted_mode=2,
         n_added_mode=2,
     )
+
+    workflow.initialize_geometry()
+    workflow.run_solver()
+
     return workflow
 
 
