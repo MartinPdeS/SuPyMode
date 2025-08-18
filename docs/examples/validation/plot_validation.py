@@ -7,7 +7,9 @@ Propagation constant: DCFC
 # Imports
 # ~~~~~~~
 import numpy
-from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries
+from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, BoundaryValue, DomainAlignment
+from PyOptik import MaterialBank
+
 import PyFiberModes
 from PyFiberModes.fiber import load_fiber
 from PyFiberModes.__future__ import get_normalized_LP_coupling
@@ -18,18 +20,21 @@ wavelength = 1550e-9
 fiber_name = 'test_multimode_fiber'
 scale_factor = 4
 
+clad_refractive_index = MaterialBank.fused_silica.compute_refractive_index(wavelength)  # Refractive index of silica at the specified wavelength
+
+
 # %%
 # Generating the fiber structure
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Here we define the cladding and fiber structure to model the problem
-fiber = fiber_catalogue.load_fiber(fiber_name, wavelength=wavelength, remove_cladding=False)
+fiber = fiber_loader.load_fiber(fiber_name, clad_refractive_index=clad_refractive_index, remove_cladding=False)
 fiber_list = [fiber]
 
 
 # %%
 # Defining the boundaries of the system
 boundaries = [
-    Boundaries(right='symmetric', bottom='symmetric'),
+    Boundaries(right=BoundaryValue.SYMMETRIC, bottom=BoundaryValue.SYMMETRIC),
 ]
 
 # %%
@@ -38,12 +43,11 @@ boundaries = [
 # Workflow class to define all the computation parameters before initializing the solver
 workflow = Workflow(
     fiber_list=fiber_list,          # List of fiber to be added in the mesh, the order matters.
-    fusion_degree='auto',           # Degree of fusion of the structure if applicable.
     wavelength=wavelength,          # Wavelength used for the mode computation.
     resolution=180,                 # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
-    x_bounds="left",                # Mesh x-boundary structure.
-    y_bounds="top",                 # Mesh y-boundary structure.
-    air_padding_factor=4.0,
+    x_bounds=DomainAlignment.LEFT,  # Mesh x-boundary structure.
+    y_bounds=DomainAlignment.TOP,   # Mesh y-boundary structure.
+    air_padding_factor=2.0,
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=7,                # Total computed and sorted mode.
     n_added_mode=6,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
@@ -59,9 +63,13 @@ superset = workflow.get_superset()
 
 superset.label_supermodes('LP01', 'LP21', 'LP02', 'LP03', 'LP22', 'LP41')
 
+
+# %%
+# Plotting the field distribution
 superset.plot(plot_type='field')
 
 itr_list = superset.model_parameters.itr_list
+
 
 # %%
 # Computing the analytical values using FiberModes solver.
@@ -74,7 +82,7 @@ initial_fiber = load_fiber(
 
 # %%
 # Preparing the figure
-figure, ax = plt.subplots(1, 1)
+figure, ax = plt.subplots(1, 1, figsize=(12, 6))
 
 ax.set(
     xlabel='Inverse taper ratio',
@@ -99,7 +107,7 @@ for idx, mode in enumerate(['LP01', 'LP02', 'LP03']):
     ax.scatter(
         itr_list,
         supymode_mode.index.data,
-        label=str(supymode_mode),
+        label=str(supymode_mode) + " (SupyMode)",
         color=color,
         s=80,
         linestyle='-'
@@ -110,26 +118,27 @@ for idx, mode in enumerate(['LP01', 'LP02', 'LP03']):
     ax.plot(
         itr_list,
         analytical,
-        label=str(mode),
+        label=str(mode) + " (Analytical)",
         linestyle='-',
         linewidth=2,
         color=color
     )
 
+plt.legend()
+plt.grid()
 plt.show()
 
 
 # %%
+# Computing the analytical values using FiberModes solver.
 # Preparing the figure
-figure, ax = plt.subplots(1, 1)
+figure, ax = plt.subplots(1, 1, figsize=(12, 6))
 
 ax.set(
     xlabel='Inverse taper ratio',
     ylabel='Normalized coupling'
 )
 
-# %%
-# Computing the analytical values using FiberModes solver.
 initial_fiber = load_fiber(
     fiber_name=fiber_name,
     wavelength=wavelength,
@@ -167,7 +176,7 @@ for idx, (mode_0, mode_1) in enumerate(itertools.combinations(['LP01', 'LP02', '
         color=color
     )
 
-    simulation = getattr(superset, mode_0).normalized_coupling.get_values(getattr(superset, mode_1))
+    simulation = getattr(superset, mode_0).normalized_coupling.get_values(getattr(superset, mode_1)) / (3.1415 * 2)
 
     ax.scatter(
         superset.model_parameters.itr_list,
@@ -178,6 +187,8 @@ for idx, (mode_0, mode_1) in enumerate(itertools.combinations(['LP01', 'LP02', '
         label=mode_0 + '-' + mode_1
     )
 
+plt.legend()
+plt.grid()
 plt.show()
 
 # -

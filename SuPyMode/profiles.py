@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from matplotlib.animation import FuncAnimation, PillowWriter
 from SuPyMode.helper import simple_plot_helper
-
+from MPSPlots.styles import mps
 
 config_dict = ConfigDict(
     extra='forbid',
@@ -637,7 +637,7 @@ class AlphaProfile():
         ax.set(
             ylim=[0, None],
             xlabel='Z-propagation [mm]',
-            ylabel='Inverse taper ratio [ITR]',
+            ylabel='Taper radius [mm]',
             yscale="linear",
         )
 
@@ -714,12 +714,16 @@ class AlphaProfile():
         :param      ax:   The axis on which to add the plot
         :type       ax:   plt.Axes
         """
+        ax.set(
+            xlabel='ITR',
+            ylabel='Adiabatic criterion',
+            yscale="linear",
+        )
+
         return self.itr_list, self.adiabatic
 
-    @simple_plot_helper
     def plot(
             self,
-            ax: plt.Axes,
             show_radius: bool = True,
             show_adiabatic: bool = True,
             show_taper_angle: bool = True) -> None:
@@ -732,16 +736,28 @@ class AlphaProfile():
             show_adiabatic (bool): If True, includes a plot of adiabatic factor vs. ITR.
             show_taper_angle (bool): If True, includes a plot of taper angle vs. z-distance.
         """
-        ax.set_title(f'Minimum ITR: {self.smallest_itr:.4f}')
+        shows = [show_radius, show_adiabatic, show_taper_angle]
+        number_of_plots = sum(shows)
 
-        if show_radius:
-            self.render_itr_vs_z_on_ax(ax=ax)
+        methods = [
+            self.render_itr_vs_z_on_ax,
+            self.render_taper_angle_vs_z_on_ax,
+            self.render_adiabatic_factor_vs_itr_on_ax
+        ]
 
-        if show_taper_angle:
-            self.render_taper_angle_vs_z_on_ax(ax=ax)
+        with plt.style.context(mps):
+            figure, axes = plt.subplots(number_of_plots, 1, figsize=(10, 3 * number_of_plots), squeeze=False)
 
-        if show_adiabatic:
-            self.render_adiabatic_factor_vs_itr_on_ax(ax=ax)
+            print(axes)
+            axes = axes.flatten()
+
+            for ax, show, method in zip(axes, shows, methods):
+                if show:
+                    ax.set_title(f'Minimum ITR: {self.smallest_itr:.4f}')
+                    method(ax=ax)
+
+        plt.show()
+
 
     def generate_propagation_gif(
             self,

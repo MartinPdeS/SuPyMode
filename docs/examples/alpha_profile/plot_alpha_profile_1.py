@@ -1,6 +1,6 @@
 """
-Non-symmetric coupler z-profile
-===============================
+Symmetric coupler z-profile
+===========================
 """
 
 # %%
@@ -8,7 +8,7 @@ Non-symmetric coupler z-profile
 from SuPyMode.workflow import AlphaProfile
 
 
-profile = AlphaProfile(symmetric=False, add_end_of_taper_section=True)
+profile = AlphaProfile(symmetric=True, add_end_of_taper_section=True)
 
 # %%
 # Adding a first taper segment with large initial heating length (i.e. slow reduction)
@@ -27,6 +27,7 @@ profile.add_taper_segment(
 )
 
 profile.initialize()
+
 
 profile.plot()
 

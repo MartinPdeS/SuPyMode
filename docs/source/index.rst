@@ -9,5 +9,5 @@
 
     theory
     code
-    gallery/index
+    examples
     references
