@@ -98,7 +98,7 @@ Adding a first taper segment with small initial heating length (i.e. steep reduc
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.494 seconds)
+   **Total running time of the script:** (0 minutes 0.502 seconds)
 
 
 .. _sphx_glr_download_gallery_alpha_profile_plot_alpha_profile_0.py:
