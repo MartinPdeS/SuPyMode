@@ -1,4 +1,7 @@
-|logo|
+.. figure:: https://github.com/MartinPdeS/SuPyMode/blob/master/docs/images/mode_propagation.gif?raw=true
+   :alt: Propagation of mode in an adiabatic 2x1 modally-specific photonic lantern.
+   :width: 800px
+   class: with-shadow float-left
 
 .. list-table::
    :widths: 10 25 25 25
@@ -135,11 +138,6 @@ Contact
 -------
 For questions or contributions, contact `martin.poinsinet.de.sivry@gmail.com <mailto:martin.poinsinet.de.sivry@gmail.com>`_.
 
-
-.. |logo| figure:: https://github.com/MartinPdeS/SuPyMode/blob/master/docs/images/mode_propagation.gif?raw=true
-   :alt: Propagation of mode in an adiabatic 2x1 modally-specific photonic lantern.
-   :width: 800px
-   class: with-shadow float-left
 .. |python| image:: https://img.shields.io/badge/Made%20with-Python-1f425f.svg
     :alt: Python
     :target: https://www.python.org/
