@@ -67,7 +67,7 @@ def reset_mpl(gallery_conf, fname):
 
 
 examples_files = [
-    'basic', 'alpha_profile', 'validation'
+    'workflow', 'alpha_profile', 'validation', 'extra'
 ]
 
 sphinx_gallery_conf = {
