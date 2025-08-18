@@ -54,6 +54,10 @@ workflow = Workflow(
     n_step=70,
 )
 
+workflow.initialize_geometry()  # Initialize the geometry and plot it
+
+workflow.run_solver()  # Run the solver to compute the modes
+
 # %%
 # Plotting the geometry
 workflow.geometry.plot()
