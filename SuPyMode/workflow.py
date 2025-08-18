@@ -11,7 +11,6 @@ from pathlib import Path
 from FiberFusing import Geometry, BackGround
 from FiberFusing.fiber.generic_fiber import GenericFiber
 from SuPyMode.solver import SuPySolver
-from PyOptik import MaterialBank
 from PyFinitDiff.finite_difference_2D import Boundaries
 from pydantic.dataclasses import dataclass
 from pydantic import ConfigDict
@@ -25,112 +24,6 @@ config_dict = ConfigDict(
     kw_only=True,
 )
 
-
-def prepare_simulation_geometry(
-        wavelength: float,
-        clad_structure: object,
-        fiber_list: List[object],
-        capillary_tube: Optional[object] = None,
-        x_bounds: Union[str, Tuple[float, float]] = '',
-        y_bounds: Union[str, Tuple[float, float]] = '',
-        core_position_scrambling: float = 0,
-        index_scrambling: float = 0,
-        resolution: int = 150,
-        rotation: float = 0,
-        air_padding_factor: float = 1.2,
-        gaussian_filter: float = 0,
-        background_index: float = 1) -> Geometry:
-    """
-    Prepares and returns the simulation geometry for optical fiber configurations,
-    incorporating fused structures, optional capillary tubes, and specific boundary conditions.
-
-    Args:
-        wavelength (float): Wavelength for refractive index calculation.
-        clad_structure (object): Cladding or structural template for fibers.
-        fiber_list (List[object]): List of fibers to be included in the simulation.
-        capillary_tube (Optional[object]): Optional capillary structure to add.
-        x_bounds (Union[str, List[float]]): X-axis boundary conditions or limits.
-        y_bounds (Union[str, List[float]]): Y-axis boundary conditions or limits.
-        clad_index (Union[float, str]): Refractive index for the cladding material, can be a known string identifier.
-        core_position_scrambling (float): Random displacement added to fiber core positions to simulate imperfections.
-        index_scrambling (float): Noise level to simulate index inhomogeneity.
-        resolution (int): Resolution of the geometry mesh grid.
-        rotation (float): Rotation angle for the structure (degrees).
-        boundary_pad_factor (float): Padding factor for boundary adjustments.
-        gaussian_filter (float): Standard deviation for Gaussian blur to smooth sharp transitions.
-        background_index (float): Background refractive index for the simulation area.
-
-    Returns:
-        Geometry: Configured geometry object ready for simulation.
-
-    Raises:
-        ValueError: If clad_index is not 'silica' or a numeric value.
-    """
-    background = BackGround(refractive_index=background_index)
-
-    clad_instance = prepare_fused_structure(
-        clad_class=clad_structure,
-        core_position_scrambling=core_position_scrambling,
-        rotation=rotation
-    )
-
-    structures = []
-    if capillary_tube is not None:
-        structures.append(capillary_tube)
-    if clad_instance is not None:
-        structures.append(clad_instance)
-
-    if clad_instance is not None:
-        for fiber, core in zip(fiber_list, clad_instance.cores):
-            fiber.set_position((core.x, core.y))
-
-    structures.extend(fiber_list)
-
-    geometry = Geometry(
-        x_bounds=x_bounds,
-        y_bounds=y_bounds,
-        resolution=resolution,
-        index_scrambling=index_scrambling,
-        boundary_pad_factor=air_padding_factor,
-        gaussian_filter=gaussian_filter
-    )
-
-    geometry.add_structure(background, *structures)
-
-    geometry.initialize()
-
-    return geometry
-
-
-def prepare_fused_structure(
-        clad_class: type,
-        core_position_scrambling: float,
-        rotation: float) -> object:
-    """
-    Prepares and returns a clad instance according to the provided clad class and configuration parameters.
-
-    Args:
-        clad_class (type): The class representing the cladding structure.
-        core_position_scrambling (float): Random displacement added to fiber core positions to simulate imperfections.
-        rotation (float): Rotation angle for the structure (in degrees).
-
-    Returns:
-        Optional[object]: An instance of the clad structure configured with the provided parameters, or None if no clad class is provided.
-
-    Raises:
-        ValueError: If any of the required parameters are not provided or invalid.
-    """
-    if clad_class is None:
-        return None
-
-    clad_instance = clad_class
-
-    clad_instance.randomize_core_positions(random_factor=core_position_scrambling)
-
-    if rotation != 0:
-        clad_instance.rotate(rotation)
-
-    return clad_instance
 
 
 @dataclass(config=config_dict)
@@ -186,6 +79,7 @@ class Workflow():
     clad_rotation: Optional[float] = 0
     capillary_tube: Optional[object] = None
     clad_structure: Optional[object] = None
+    background_index: Optional[float] = 1.0
     fiber_list: Optional[List[GenericFiber]] = ()
     x_bounds: Union[DomainAlignment, Tuple[float, float]] = DomainAlignment.CENTERING
     y_bounds: Union[DomainAlignment, Tuple[float, float]] = DomainAlignment.CENTERING
@@ -229,21 +123,6 @@ class Workflow():
         self._initialize_solver()
         self._plot_simulation_outputs()
         self._finalize_workflow()
-
-    def prepare_simulation_geometry(self):
-        """Prepares the simulation geometry."""
-        return prepare_simulation_geometry(
-            wavelength=self.wavelength,
-            clad_structure=self.clad_structure,
-            fiber_list=self.fiber_list,
-            capillary_tube=self.capillary_tube,
-            resolution=self.resolution,
-            y_bounds=self.y_bounds,
-            x_bounds=self.x_bounds,
-            rotation=self.clad_rotation,
-            air_padding_factor=self.air_padding_factor,
-            gaussian_filter=self.gaussian_filter_factor
-        )
 
     def _plot_initial_setup(self):
         """Plots the initial simulation setup if the respective flags are enabled."""
@@ -349,5 +228,59 @@ class Workflow():
         )
 
         return filename
+
+    def prepare_simulation_geometry(self) -> Geometry:
+        """
+        Prepares and returns the simulation geometry for optical fiber configurations,
+        incorporating fused structures, optional capillary tubes, and specific boundary conditions.
+
+        Returns
+        -------
+        Geometry:
+            Configured geometry object ready for simulation.
+        """
+        background = BackGround(refractive_index=self.background_index)
+
+        self.prepare_fused_structure()
+
+        structures = []
+        if self.capillary_tube is not None:
+            structures.append(self.capillary_tube)
+        if self.clad_structure is not None:
+            structures.append(self.clad_structure)
+
+        if self.index_scrambling != 0:
+
+            for fiber in self.fiber_list:
+                fiber.randomize_refractive_index(factor=self.index_scrambling)
+
+        structures.extend(self.fiber_list)
+
+        geometry = Geometry(
+            x_bounds=self.x_bounds,
+            y_bounds=self.y_bounds,
+            resolution=self.resolution,
+            index_scrambling=self.index_scrambling,
+            boundary_pad_factor=self.air_padding_factor,
+            gaussian_filter=self.gaussian_filter_factor
+        )
+
+        geometry.add_structure(background, *structures)
+
+        geometry.initialize()
+
+        return geometry
+
+    def prepare_fused_structure(self) -> None:
+        """
+        Prepares and returns a clad instance according to the provided clad class and configuration parameters.
+        """
+        if self.clad_structure is None:
+            return
+
+        self.clad_structure.randomize_core_positions(random_factor=self.core_position_scrambling)
+
+        if self.clad_rotation != 0:
+            self.clad_structure.rotate(self.clad_rotation)
 
 # -

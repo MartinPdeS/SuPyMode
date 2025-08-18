@@ -5,7 +5,9 @@
 
 # %%
 # Importing the script dependencies
-from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries
+from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, DomainAlignment, GenericFiber, Profile, StructureType
+
+from PyOptik import MaterialBank
 
 # %%
 # Creating the fiber list for mesh
@@ -17,10 +19,26 @@ wavelength = 1550e-9
 # Generating the fiber structure
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Here we define the cladding and fiber structure to model the problem
-clad_structure = configuration.ring.FusedProfile_03x03
+clad_refractive_index = MaterialBank.fused_silica.compute_refractive_index(wavelength)  # Refractive index of silica at the specified wavelength
 
-custom_fiber = fiber_catalogue.CustomFiber(wavelength=1.55e-6)
-custom_fiber.add_silica_pure_cladding(radius=62.5e-6, name='outer-clad')
+clad_structure = Profile()
+
+clad_structure.add_structure(
+    structure_type=StructureType.CIRCULAR,
+    number_of_fibers=3,
+    fusion_degree=0.3,
+    fiber_radius=62.5e-6,
+    compute_fusing=True
+)
+
+clad_structure.refractive_index = clad_refractive_index
+
+custom_fiber = GenericFiber(position=clad_structure.cores[0])
+custom_fiber.create_and_add_new_structure(
+    radius=62.5e-6,
+    refractive_index=clad_refractive_index,
+    name='outer-clad'
+)
 
 custom_fiber.create_and_add_new_structure(
     radius=40e-6 / 2,
@@ -34,11 +52,10 @@ custom_fiber.create_and_add_new_structure(
 )
 
 fiber_list = [
-    fiber_catalogue.load_fiber('DCF1300S_42', wavelength=wavelength),
-    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
+    fiber_loader.load_fiber('DCF1300S_42', clad_refractive_index=clad_refractive_index, position=clad_structure.cores[1]),
+    fiber_loader.load_fiber('DCF1300S_33', clad_refractive_index=clad_refractive_index, position=clad_structure.cores[2]),
     custom_fiber
 ]
-
 
 # %%
 # Defining the boundaries of the system
@@ -53,20 +70,17 @@ boundaries = [
 workflow = Workflow(
     fiber_list=fiber_list,          # List of fiber to be added in the mesh, the order matters.
     clad_structure=clad_structure,  # Cladding structure, if None provided then no cladding is set.
-    fusion_degree=0.9,              # Degree of fusion of the structure if applicable.
     wavelength=wavelength,          # Wavelength used for the mode computation.
-    resolution=30,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
-    x_bounds="centering",           # Mesh x-boundary structure.
-    y_bounds="centering",           # Mesh y-boundary structure.
+    resolution=40,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
+    x_bounds=DomainAlignment.CENTERING, # Mesh x-boundary structure.
+    y_bounds=DomainAlignment.CENTERING, # Mesh y-boundary structure.
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=2,                # Total computed and sorted mode.
     n_added_mode=5,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
-    # plot_geometry=True,             # Plot the geometry mesh before computation.
+    plot_geometry=True,             # Plot the geometry mesh before computation.
     debug_mode=3,                   # Print the iteration step for the solver plus some other important steps.
     auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.05,                  # Final value of inverse taper ratio to simulate
-    clad_rotation=0,                # Rotate the geoemtry in the given angle in degree
-    index_scrambling=1e-7           # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
 )
 
 superset = workflow.get_superset()
