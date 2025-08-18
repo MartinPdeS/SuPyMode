@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import NoReturn
-
 import numpy
 import pyvista
 
@@ -13,9 +11,12 @@ import matplotlib.pyplot as plt
 class Propagation:
     def __init__(self, superset: object, distance: numpy.ndarray, profile: AlphaProfile, amplitudes: numpy.ndarray, z_to_itr: object):
         """
-        Args:
-            profile (AlphaProfile): The profile to propagate.
-            amplitude: The modes amplitudes.
+        Parameters
+        ----------
+        profile : AlphaProfile
+            The profile to propagate.
+        amplitude : numpy.ndarray
+            The modes amplitudes.
         """
         self.superset = superset
         self.supermodes = superset.supermodes
@@ -25,15 +26,20 @@ class Propagation:
         self.amplitudes = amplitudes
         self.z_to_itr = self.profile.get_itr_vs_distance_interpolation()
 
-    def plot(self, sub_sampling: int = 5, show_energy: bool = True, show_amplitudes: bool = True, **kwargs: dict) -> NoReturn:
+    def plot(self, sub_sampling: int = 5, show_energy: bool = True, show_amplitudes: bool = True, **kwargs: dict) -> None:
         """
         Plots the propagation of amplitudes over a given profile, optionally showing energy and amplitude plots.
 
-        Args:
-            sub_sampling (int): The factor for sub-sampling data for plotting. Defaults to 5.
-            show_energy (bool): Whether to plot the energy of the modes. Defaults to True.
-            show_amplitudes (bool): Whether to plot the real part of the amplitudes. Defaults to True.
-            **kwargs (dict): Additional keyword arguments for solver.
+        Parameters
+        ----------
+        sub_sampling : int
+            The factor for sub-sampling data for plotting. Defaults to 5.
+        show_energy : bool
+            Whether to plot the energy of the modes. Defaults to True.
+        show_amplitudes : bool
+            Whether to plot the real part of the amplitudes. Defaults to True.
+        **kwargs : dict
+            Additional keyword arguments for solver.
 
         """
         fig, ax = plt.subplots()
@@ -79,19 +85,26 @@ class Propagation:
             delta_azimuth: float = 0,
             save_directory: str = 'new_figure.gif',
             colormap: str = 'bwr',
-            **kwargs) -> NoReturn:
+            **kwargs) -> None:
         """
         Generates a gif video of the mode propagation.
 
-        Args:
-            sub_sampling (int): Propagation undersampling factor for the video production.
-            mutliplicative_factor (float): Multiplicative factor for scaling.
-            save_directory (str): Directory to save the generated GIF.
-            delta_azimuth (float): Azimuthal change per frame.
-            **kwargs (dict): Additional keyword arguments for solver.
+        Parameters
+        ----------
+        sub_sampling : int
+            Propagation undersampling factor for the video production.
+        mutliplicative_factor : float
+            Multiplicative factor for scaling.
+        save_directory : str
+            Directory to save the generated GIF.
+        delta_azimuth : float
+            Azimuthal change per frame.
+        **kwargs : dict
+            Additional keyword arguments for solver.
 
-        Returns:
-            Tuple: Propagation distances, amplitudes, and ITR list.
+        Returns
+        -------
+        Tuple: Propagation distances, amplitudes, and ITR list.
         """
         sub_amplitudes = self.amplitudes[:, ::sub_sampling]
         initial_amplitudes = self.amplitudes[:, 0]

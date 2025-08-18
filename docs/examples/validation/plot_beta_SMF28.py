@@ -7,7 +7,9 @@ Propagation constant: DCFC
 # Imports
 # ~~~~~~~
 import numpy
-from SuPyMode.workflow import Workflow, fiber_catalogue, Boundaries
+from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, BoundaryValue, DomainAlignment
+from PyOptik import MaterialBank
+
 from PyFiberModes import LP01
 from PyFiberModes.fiber import load_fiber
 import matplotlib.pyplot as plt
@@ -20,15 +22,15 @@ fiber_name = 'SMF28'
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Here we define the cladding and fiber structure to model the problem
 fiber_list = [
-    fiber_catalogue.load_fiber(fiber_name, wavelength=wavelength)
+    fiber_loader.load_fiber(fiber_name, clad_refractive_index=MaterialBank.fused_silica.compute_refractive_index(wavelength))  # Refractive index of silica at the specified wavelength
 ]
 
 
 # %%
 # Defining the boundaries of the system
 boundaries = [
-    Boundaries(right='symmetric', bottom='symmetric'),
-    Boundaries(right='symmetric', bottom='anti-symmetric')
+    Boundaries(right=BoundaryValue.SYMMETRIC, bottom=BoundaryValue.SYMMETRIC),
+    Boundaries(right=BoundaryValue.SYMMETRIC, bottom=BoundaryValue.ANTI_SYMMETRIC)
 ]
 
 # %%
@@ -37,11 +39,10 @@ boundaries = [
 # Workflow class to define all the computation parameters before initializing the solver
 workflow = Workflow(
     fiber_list=fiber_list,          # List of fiber to be added in the mesh, the order matters.
-    fusion_degree='auto',           # Degree of fusion of the structure if applicable.
     wavelength=wavelength,          # Wavelength used for the mode computation.
     resolution=50,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
-    x_bounds="left",                # Mesh x-boundary structure.
-    y_bounds="top",                 # Mesh y-boundary structure.
+    x_bounds=DomainAlignment.LEFT,  # Mesh x-boundary structure.
+    y_bounds=DomainAlignment.TOP,   # Mesh y-boundary structure.
     air_padding_factor=1.2,
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=6,                # Total computed and sorted mode.
@@ -85,7 +86,7 @@ for idx, itr in enumerate(itr_list):
 ax.plot(
     itr_list,
     analytical,
-    label=str(pyfibermodes_mode),
+    label=str(pyfibermodes_mode) + ": PyFiberModes",
     linestyle='-',
     linewidth=2,
     color='red'
@@ -94,7 +95,7 @@ ax.plot(
 ax.scatter(
     itr_list,
     supymode_mode.index.data,
-    label=str(supymode_mode),
+    label=str(supymode_mode) + ": SuPyMode",
     color='black',
     linewidth=2,
     s=80

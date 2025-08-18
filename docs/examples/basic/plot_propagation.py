@@ -78,7 +78,6 @@ profile.add_taper_segment(
     stretching_length=0.1e-3
 )
 
-
 profile.initialize()
 
 propagation = workflow.superset.propagate(add_coupling=False, profile=profile, initial_amplitude=[1, 0, 0])

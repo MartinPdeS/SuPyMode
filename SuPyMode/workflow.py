@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 from FiberFusing.fiber import FiberLoader  # noqa:
 from SuPyMode.profiles import AlphaProfile  # noqa: F401
 from FiberFusing.profile import Profile, StructureType # noqa: F401
@@ -25,51 +26,77 @@ config_dict = ConfigDict(
 )
 
 
-
 @dataclass(config=config_dict)
 class Workflow():
     """
     Configures and executes optical simulations using finite difference methods on specified fiber geometries.
 
-    Attributes:
-        wavelength (float): Wavelength at which the simulation is evaluated.
-        resolution (int): Resolution of the simulation mesh.
-        n_sorted_mode (int): Number of modes that are computed and sorted.
-        n_added_mode (int): Additional modes computed beyond the sorted modes for increased accuracy.
-        itr_final (float): Final Inverse Taper Ratio (ITR) for mode evaluation.
-        itr_initial (float): Initial ITR for mode evaluation.
-        n_step (int): Number of steps to iterate through the ITR section.
-        clad_rotation (float): Rotation of the clad structure in degrees.
-        accuracy (int): Accuracy level of the finite difference method.
-        debug_mode (int): Debug mode level for verbose output during computations.
-        auto_label (bool): If True, automatically labels supermodes.
-        generate_report (bool): If True, generates a PDF report of the simulation results.
-        save_superset (bool): If True, saves the computed superset instance for later use.
-        fiber_list (List[GenericFiber]): List of fibers included in the optical structure.
-        boundaries (List[Boundaries]): Boundary conditions applied to the simulation.
-        capillary_tube (Optional[object]): Additional capillary structure to include in the simulation.
-        clad_structure (Optional[object]): Initial optical structure used for the simulation.
-        x_bounds (Union[str, List[float]]): Boundary conditions along the x-axis.
-        y_bounds (Union[str, List[float]]): Boundary conditions along the y-axis.
-        air_padding_factor (float): Factor for padding the structure with air to prevent boundary effects.
-        gaussian_filter_factor (Optional[float]): Gaussian blurring factor applied to the structure for smoothing.
+    Parameters
+    ----------
+    wavelength : float
+        Wavelength at which the simulation is evaluated.
+    resolution : int
+        Resolution of the simulation mesh.
+    n_sorted_mode : int
+        Number of modes that are computed and sorted.
+    n_added_mode : int
+        Additional modes computed beyond the sorted modes for increased accuracy.
+    itr_final : float
+        Final Inverse Taper Ratio (ITR) for mode evaluation.
+    itr_initial : float
+        Initial ITR for mode evaluation.
+    n_step : int
+        Number of steps to iterate through the ITR section.
+    clad_rotation : float
+        Rotation of the clad structure in degrees.
+    accuracy : int
+        Accuracy level of the finite difference method.
+    debug_mode : int
+        Debug mode level for verbose output during computations.
+    auto_label : bool
+        If True, automatically labels supermodes.
+    generate_report : bool
+        If True, generates a PDF report of the simulation results.
+    save_superset : bool
+        If True, saves the computed superset instance for later use.
+    fiber_list : List[GenericFiber])
+        List of fibers included in the optical structure.
+    boundaries : List[Boundaries]
+        Boundary conditions applied to the simulation.
+    capillary_tube : Optional[object]
+        Additional capillary structure to include in the simulation.
+    clad_structure : Optional[object]
+        Initial optical structure used for the simulation.
+    x_bounds : Union[DomainAlignment, List[float]])
+        Boundary conditions along the x-axis.
+    y_bounds : Union[DomainAlignment, List[float]])
+        Boundary conditions along the y-axis.
+    air_padding_factor : float
+        Factor for padding the structure with air to prevent boundary effects.
+    gaussian_filter_factor : Optional[float]
+        Gaussian blurring factor applied to the structure for smoothing.
 
-    Plotting Flags:
-        plot_geometry (bool): If True, plots the simulation geometry.
-        plot_cladding (bool): If True, plots the cladding structure.
-        plot_field (bool): If True, plots the field distribution.
-        plot_adiabatic (bool): If True, plots adiabatic transitions.
-        plot_coupling (bool): If True, plots coupling information.
-        plot_beating_length (bool): If True, plots the beating length.
-        plot_eigen_values (bool): If True, plots eigenvalues.
-        plot_index (bool): If True, plots the refractive index distribution.
-        plot_beta (bool): If True, plots propagation constants.
+    Plotting Flags
+    --------------
+    plot_geometry : bool
+        If True, plots the simulation geometry.
+    plot_cladding : bool
+        If True, plots the cladding structure.
+    plot_field : bool
+        If True, plots the field distribution.
+    plot_adiabatic : bool
+        If True, plots adiabatic transitions.
+    plot_coupling : bool
+        If True, plots coupling information.
+    plot_beating_length : bool
+        If True, plots the beating length.
+    plot_eigen_values : bool
+        If True, plots eigenvalues.
+    plot_index : bool
+        If True, plots the refractive index distribution.
+    plot_beta : bool
+        If True, plots propagation constants.
 
-    Methods:
-        __post_init__: Initializes the simulation geometry and solver upon object creation.
-        plot: Plots various simulation outputs based on the provided plot type.
-        save_superset_instance: Saves the computed superset to a file for later use.
-        generate_pdf_report: Generates a comprehensive PDF report of all relevant simulation data and results.
     """
 
     # Geometry attributes
@@ -196,12 +223,16 @@ class Workflow():
         """
         Saves the superset instance to a file, defaulting to an auto-generated filename if not specified.
 
-        Args:
-            filename (str): Filename for the saved instance.
-            directory (str): Directory for saving the instance.
+        Parameters
+        ----------
+        filename : str
+            The name of the file to save the report as. Defaults to 'auto', which generates a timestamped filename.
+        directory : str
+            The directory where the report will be saved. Defaults to 'auto', which uses the current
 
-        Returns:
-            Path: Path to the saved file.
+        Returns
+        -------
+        Path: Path to the saved file.
         """
         self.solver.superset.save_instance(
             filename=filename,
@@ -214,12 +245,16 @@ class Workflow():
         """
         Generates a PDF report of all relevant simulation data and results.
 
-        Args:
-            filename (str): Filename for the report.
-            **kwargs: Additional arguments for the report generation.
+        Parameters
+        ----------
+        filename : str
+            The name of the file to save the report as. Defaults to 'auto', which generates a timestamped filename.
+        directory : str
+            The directory where the report will be saved. Defaults to 'auto', which uses the current
 
-        Returns:
-            Path: Path to the generated PDF report.
+        Returns
+        -------
+        Path: Path to the generated PDF report.
         """
         self.solver.superset.generate_pdf_report(
             filename=filename,
@@ -236,8 +271,7 @@ class Workflow():
 
         Returns
         -------
-        Geometry:
-            Configured geometry object ready for simulation.
+        Geometry: Configured geometry object ready for simulation.
         """
         background = BackGround(refractive_index=self.background_index)
 
