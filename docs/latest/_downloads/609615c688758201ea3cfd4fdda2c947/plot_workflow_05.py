@@ -6,7 +6,9 @@
 
 # %%
 # Importing the script dependencies
-from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries
+from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, DomainAlignment, Profile, StructureType, BoundaryValue
+
+from PyOptik import MaterialBank
 
 # %%
 # Creating the fiber list for mesh
@@ -19,23 +21,35 @@ wavelength = 1550e-9
 # Generating the fiber structure
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Here we define the cladding and fiber structure to model the problem
-clad_structure = configuration.ring.FusedProfile_07x07
+clad_refractive_index = MaterialBank.fused_silica.compute_refractive_index(wavelength)  # Refractive index of silica at the specified wavelength
+
+clad_structure = Profile()
+
+clad_structure.add_structure(
+    structure_type=StructureType.CIRCULAR,
+    number_of_fibers=7,
+    fusion_degree=0.3,
+    fiber_radius=62.5e-6,
+    compute_fusing=True
+)
+
+clad_structure.refractive_index = clad_refractive_index
 
 fiber_list = [
-    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
-    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
-    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
-    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
-    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
-    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
-    fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
+    fiber_loader.load_fiber('DCF1300S_33', clad_refractive_index=clad_refractive_index, position=clad_structure.cores[0]),
+    fiber_loader.load_fiber('SMF28', clad_refractive_index=clad_refractive_index, position=clad_structure.cores[1]),
+    fiber_loader.load_fiber('DCF1300S_33', clad_refractive_index=clad_refractive_index, position=clad_structure.cores[2]),
+    fiber_loader.load_fiber('SMF28', clad_refractive_index=clad_refractive_index, position=clad_structure.cores[3]),
+    fiber_loader.load_fiber('DCF1300S_33', clad_refractive_index=clad_refractive_index, position=clad_structure.cores[4]),
+    fiber_loader.load_fiber('DCF1300S_33', clad_refractive_index=clad_refractive_index, position=clad_structure.cores[5]),
+    fiber_loader.load_fiber('SMF28', clad_refractive_index=clad_refractive_index, position=clad_structure.cores[6]),
 ]
 
 
 # %%
 # Defining the boundaries of the system
 boundaries = [
-    Boundaries()
+    Boundaries(right=BoundaryValue.SYMMETRIC)
 ]
 
 # %%
@@ -45,19 +59,17 @@ boundaries = [
 workflow = Workflow(
     fiber_list=fiber_list,          # List of fiber to be added in the mesh, the order matters.
     clad_structure=clad_structure,  # Cladding structure, if None provided then no cladding is set.
-    fusion_degree=0.3,              # Degree of fusion of the structure if applicable.
     wavelength=wavelength,          # Wavelength used for the mode computation.
-    resolution=60,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
-    x_bounds="centering",           # Mesh x-boundary structure.
-    y_bounds="centering",           # Mesh y-boundary structure.
+    resolution=80,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
+    x_bounds=DomainAlignment.LEFT,  # Mesh x-boundary structure.
+    y_bounds=DomainAlignment.CENTERING, # Mesh y-boundary structure.
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
-    n_sorted_mode=6,                # Total computed and sorted mode.
+    n_sorted_mode=4,                # Total computed and sorted mode.
     n_added_mode=3,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
     plot_geometry=True,             # Plot the geometry mesh before computation.
     debug_mode=0,                   # Print the iteration step for the solver plus some other important steps.
     auto_label=False,               # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.1,                  # Final value of inverse taper ratio to simulate
-    clad_rotation=0,                # Rotate the geoemtry in the given angle in degree
     index_scrambling=1e-4           # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
 )
 

@@ -12,40 +12,6 @@ Standard workflow
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Non-symmetric coupler z-profile">
-
-.. only:: html
-
-  .. image:: /gallery/basic/images/thumb/sphx_glr_plot_alpha_profile_0_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_gallery_basic_plot_alpha_profile_0.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Non-symmetric coupler z-profile</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="Symmetric coupler z-profile">
-
-.. only:: html
-
-  .. image:: /gallery/basic/images/thumb/sphx_glr_plot_alpha_profile_1_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_gallery_basic_plot_alpha_profile_1.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Symmetric coupler z-profile</div>
-    </div>
-
-
-.. raw:: html
-
     <div class="sphx-glr-thumbcontainer" tooltip="4x4 Coupler [linear]">
 
 .. only:: html
@@ -148,7 +114,7 @@ Standard workflow
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="19x19 Coupler">
+    <div class="sphx-glr-thumbcontainer" tooltip="4x4 Coupler [linear]">
 
 .. only:: html
 
@@ -159,7 +125,7 @@ Standard workflow
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">19x19 Coupler</div>
+      <div class="sphx-glr-thumbnail-title">4x4 Coupler [linear]</div>
     </div>
 
 
@@ -180,23 +146,6 @@ Standard workflow
     </div>
 
 
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="4x4 Coupler [linear]">
-
-.. only:: html
-
-  .. image:: /gallery/basic/images/thumb/sphx_glr_plot_workflow_08_thumb.png
-    :alt:
-
-  :ref:`sphx_glr_gallery_basic_plot_workflow_08.py`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">4x4 Coupler [linear]</div>
-    </div>
-
-
 .. thumbnail-parent-div-close
 
 .. raw:: html
@@ -207,8 +156,6 @@ Standard workflow
 .. toctree::
    :hidden:
 
-   /gallery/basic/plot_alpha_profile_0
-   /gallery/basic/plot_alpha_profile_1
    /gallery/basic/plot_propagation
    /gallery/basic/plot_workflow_01
    /gallery/basic/plot_workflow_02
@@ -217,7 +164,6 @@ Standard workflow
    /gallery/basic/plot_workflow_05
    /gallery/basic/plot_workflow_06
    /gallery/basic/plot_workflow_07
-   /gallery/basic/plot_workflow_08
 
 
 

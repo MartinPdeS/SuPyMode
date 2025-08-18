@@ -25,11 +25,12 @@
 
 Importing the script dependencies
 
-.. GENERATED FROM PYTHON SOURCE LINES 9-14
+.. GENERATED FROM PYTHON SOURCE LINES 9-15
 
 .. code-block:: Python
 
-    from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries
+    from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, BoundaryValue, DomainAlignment
+    from PyOptik import MaterialBank
 
     wavelength = 1550e-9
 
@@ -41,21 +42,20 @@ Importing the script dependencies
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 15-18
+.. GENERATED FROM PYTHON SOURCE LINES 16-19
 
 Generating the fiber structure
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Here we define the cladding and fiber structure to model the problem
 
-.. GENERATED FROM PYTHON SOURCE LINES 18-24
+.. GENERATED FROM PYTHON SOURCE LINES 19-24
 
 .. code-block:: Python
 
-    clad_structure = configuration.ring.FusedProfile_01x01
 
-    fiber_list = [
-        fiber_catalogue.load_fiber('SMF28', wavelength=wavelength)
-    ]
+    clad_refractive_index = MaterialBank.fused_silica.compute_refractive_index(wavelength)  # Refractive index of silica at the specified wavelength
+
+    fiber = fiber_loader.load_fiber('SMF28', clad_refractive_index=clad_refractive_index, remove_cladding=False)
 
 
 
@@ -73,8 +73,8 @@ Defining the boundaries of the system
 .. code-block:: Python
 
     boundaries = [
-        Boundaries(right='symmetric', top='symmetric'),
-        Boundaries(right='symmetric', top='anti-symmetric')
+        Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.SYMMETRIC),
+        Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.ANTI_SYMMETRIC)
     ]
 
 
@@ -90,18 +90,16 @@ Generating the computing workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Workflow class to define all the computation parameters before initializing the solver
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-56
+.. GENERATED FROM PYTHON SOURCE LINES 35-54
 
 .. code-block:: Python
 
     workflow = Workflow(
-        fiber_list=fiber_list,          # List of fiber to be added in the mesh, the order matters.
-        clad_structure=clad_structure,  # Cladding structure, if None provided then no cladding is set.
-        fusion_degree='auto',           # Degree of fusion of the structure if applicable.
+        fiber_list=[fiber],          # List of fiber to be added in the mesh, the order matters.
         wavelength=wavelength,          # Wavelength used for the mode computation.
         resolution=80,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
-        x_bounds="left",                # Mesh x-boundary structure.
-        y_bounds="bottom",              # Mesh y-boundary structure.
+        x_bounds=DomainAlignment.LEFT,  # Mesh x-boundary structure.
+        y_bounds=DomainAlignment.BOTTOM,# Mesh y-boundary structure.
         boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
         n_sorted_mode=4,                # Total computed and sorted mode.
         n_added_mode=2,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
@@ -127,12 +125,12 @@ Workflow class to define all the computation parameters before initializing the 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 57-59
+.. GENERATED FROM PYTHON SOURCE LINES 55-57
 
 Field computation: :math:`E_{i,j}`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 59-61
+.. GENERATED FROM PYTHON SOURCE LINES 57-59
 
 .. code-block:: Python
 
@@ -150,12 +148,12 @@ Field computation: :math:`E_{i,j}`
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 62-64
+.. GENERATED FROM PYTHON SOURCE LINES 60-62
 
 Effective index: :math:`n^{eff}_{i,j}`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 64-66
+.. GENERATED FROM PYTHON SOURCE LINES 62-64
 
 .. code-block:: Python
 
@@ -173,12 +171,12 @@ Effective index: :math:`n^{eff}_{i,j}`
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 67-69
+.. GENERATED FROM PYTHON SOURCE LINES 65-67
 
 Modal normalized coupling: :math:`C_{i,j}`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-71
+.. GENERATED FROM PYTHON SOURCE LINES 67-69
 
 .. code-block:: Python
 
@@ -196,12 +194,12 @@ Modal normalized coupling: :math:`C_{i,j}`
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 72-74
+.. GENERATED FROM PYTHON SOURCE LINES 70-72
 
 Adiabatic criterion: :math:`\tilde{C}_{i,j}`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-77
+.. GENERATED FROM PYTHON SOURCE LINES 72-75
 
 .. code-block:: Python
 
@@ -223,7 +221,7 @@ Adiabatic criterion: :math:`\tilde{C}_{i,j}`
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 19.230 seconds)
+   **Total running time of the script:** (0 minutes 13.071 seconds)
 
 
 .. _sphx_glr_download_gallery_basic_plot_workflow_01.py:

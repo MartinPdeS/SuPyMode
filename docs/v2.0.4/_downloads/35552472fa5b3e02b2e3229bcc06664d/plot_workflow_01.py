@@ -6,7 +6,8 @@
 
 # %%
 # Importing the script dependencies
-from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries
+from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, BoundaryValue, DomainAlignment
+from PyOptik import MaterialBank
 
 wavelength = 1550e-9
 
@@ -15,17 +16,16 @@ wavelength = 1550e-9
 # Generating the fiber structure
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Here we define the cladding and fiber structure to model the problem
-clad_structure = configuration.ring.FusedProfile_01x01
 
-fiber_list = [
-    fiber_catalogue.load_fiber('SMF28', wavelength=wavelength)
-]
+clad_refractive_index = MaterialBank.fused_silica.compute_refractive_index(wavelength)  # Refractive index of silica at the specified wavelength
+
+fiber = fiber_loader.load_fiber('SMF28', clad_refractive_index=clad_refractive_index, remove_cladding=False)
 
 # %%
 # Defining the boundaries of the system
 boundaries = [
-    Boundaries(right='symmetric', top='symmetric'),
-    Boundaries(right='symmetric', top='anti-symmetric')
+    Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.SYMMETRIC),
+    Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.ANTI_SYMMETRIC)
 ]
 
 # %%
@@ -33,13 +33,11 @@ boundaries = [
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Workflow class to define all the computation parameters before initializing the solver
 workflow = Workflow(
-    fiber_list=fiber_list,          # List of fiber to be added in the mesh, the order matters.
-    clad_structure=clad_structure,  # Cladding structure, if None provided then no cladding is set.
-    fusion_degree='auto',           # Degree of fusion of the structure if applicable.
+    fiber_list=[fiber],          # List of fiber to be added in the mesh, the order matters.
     wavelength=wavelength,          # Wavelength used for the mode computation.
     resolution=80,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
-    x_bounds="left",                # Mesh x-boundary structure.
-    y_bounds="bottom",              # Mesh y-boundary structure.
+    x_bounds=DomainAlignment.LEFT,  # Mesh x-boundary structure.
+    y_bounds=DomainAlignment.BOTTOM,# Mesh y-boundary structure.
     boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
     n_sorted_mode=4,                # Total computed and sorted mode.
     n_added_mode=2,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].

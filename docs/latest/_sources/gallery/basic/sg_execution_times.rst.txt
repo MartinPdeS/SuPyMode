@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**04:17.081** total execution time for 11 files **from gallery/basic**:
+**02:37.505** total execution time for 8 files **from gallery/basic**:
 
 .. container::
 
@@ -33,35 +33,26 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_gallery_basic_plot_workflow_07.py` (``plot_workflow_07.py``)
-     - 00:57.080
-     - 0.0
-   * - :ref:`sphx_glr_gallery_basic_plot_workflow_08.py` (``plot_workflow_08.py``)
-     - 00:53.089
-     - 0.0
-   * - :ref:`sphx_glr_gallery_basic_plot_workflow_05.py` (``plot_workflow_05.py``)
-     - 00:34.337
-     - 0.0
-   * - :ref:`sphx_glr_gallery_basic_plot_workflow_04.py` (``plot_workflow_04.py``)
-     - 00:27.931
-     - 0.0
-   * - :ref:`sphx_glr_gallery_basic_plot_workflow_02.py` (``plot_workflow_02.py``)
-     - 00:23.116
-     - 0.0
-   * - :ref:`sphx_glr_gallery_basic_plot_workflow_01.py` (``plot_workflow_01.py``)
-     - 00:19.230
+     - 00:46.363
      - 0.0
    * - :ref:`sphx_glr_gallery_basic_plot_workflow_06.py` (``plot_workflow_06.py``)
-     - 00:18.817
+     - 00:32.020
+     - 0.0
+   * - :ref:`sphx_glr_gallery_basic_plot_workflow_05.py` (``plot_workflow_05.py``)
+     - 00:21.442
+     - 0.0
+   * - :ref:`sphx_glr_gallery_basic_plot_workflow_01.py` (``plot_workflow_01.py``)
+     - 00:13.071
+     - 0.0
+   * - :ref:`sphx_glr_gallery_basic_plot_workflow_02.py` (``plot_workflow_02.py``)
+     - 00:11.737
      - 0.0
    * - :ref:`sphx_glr_gallery_basic_plot_propagation.py` (``plot_propagation.py``)
-     - 00:13.293
+     - 00:11.518
+     - 0.0
+   * - :ref:`sphx_glr_gallery_basic_plot_workflow_04.py` (``plot_workflow_04.py``)
+     - 00:11.386
      - 0.0
    * - :ref:`sphx_glr_gallery_basic_plot_workflow_03.py` (``plot_workflow_03.py``)
-     - 00:08.818
-     - 0.0
-   * - :ref:`sphx_glr_gallery_basic_plot_alpha_profile_0.py` (``plot_alpha_profile_0.py``)
-     - 00:01.187
-     - 0.0
-   * - :ref:`sphx_glr_gallery_basic_plot_alpha_profile_1.py` (``plot_alpha_profile_1.py``)
-     - 00:00.182
+     - 00:09.968
      - 0.0

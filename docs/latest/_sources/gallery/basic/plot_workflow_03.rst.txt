@@ -25,11 +25,13 @@
 
 Importing the script dependencies
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-10
+.. GENERATED FROM PYTHON SOURCE LINES 8-12
 
 .. code-block:: Python
 
-    from SuPyMode.workflow import Workflow, configuration, fiber_catalogue, Boundaries
+    from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, DomainAlignment, GenericFiber, Profile, StructureType
+
+    from PyOptik import MaterialBank
 
 
 
@@ -38,13 +40,13 @@ Importing the script dependencies
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 11-14
+.. GENERATED FROM PYTHON SOURCE LINES 13-16
 
 Creating the fiber list for mesh
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In this example we want to simulate a single fiber at wavelength 1550 nm.
 
-.. GENERATED FROM PYTHON SOURCE LINES 14-16
+.. GENERATED FROM PYTHON SOURCE LINES 16-18
 
 .. code-block:: Python
 
@@ -57,20 +59,36 @@ In this example we want to simulate a single fiber at wavelength 1550 nm.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 17-20
+.. GENERATED FROM PYTHON SOURCE LINES 19-22
 
 Generating the fiber structure
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Here we define the cladding and fiber structure to model the problem
 
-.. GENERATED FROM PYTHON SOURCE LINES 20-43
+.. GENERATED FROM PYTHON SOURCE LINES 22-60
 
 .. code-block:: Python
 
-    clad_structure = configuration.ring.FusedProfile_03x03
+    clad_refractive_index = MaterialBank.fused_silica.compute_refractive_index(wavelength)  # Refractive index of silica at the specified wavelength
 
-    custom_fiber = fiber_catalogue.CustomFiber(wavelength=1.55e-6)
-    custom_fiber.add_silica_pure_cladding(radius=62.5e-6, name='outer-clad')
+    clad_structure = Profile()
+
+    clad_structure.add_structure(
+        structure_type=StructureType.CIRCULAR,
+        number_of_fibers=3,
+        fusion_degree=0.3,
+        fiber_radius=62.5e-6,
+        compute_fusing=True
+    )
+
+    clad_structure.refractive_index = clad_refractive_index
+
+    custom_fiber = GenericFiber(position=clad_structure.cores[0])
+    custom_fiber.create_and_add_new_structure(
+        radius=62.5e-6,
+        refractive_index=clad_refractive_index,
+        name='outer-clad'
+    )
 
     custom_fiber.create_and_add_new_structure(
         radius=40e-6 / 2,
@@ -84,8 +102,8 @@ Here we define the cladding and fiber structure to model the problem
     )
 
     fiber_list = [
-        fiber_catalogue.load_fiber('DCF1300S_42', wavelength=wavelength),
-        fiber_catalogue.load_fiber('DCF1300S_33', wavelength=wavelength),
+        fiber_loader.load_fiber('DCF1300S_42', clad_refractive_index=clad_refractive_index, position=clad_structure.cores[1]),
+        fiber_loader.load_fiber('DCF1300S_33', clad_refractive_index=clad_refractive_index, position=clad_structure.cores[2]),
         custom_fiber
     ]
 
@@ -96,12 +114,11 @@ Here we define the cladding and fiber structure to model the problem
 
 
 
-
-.. GENERATED FROM PYTHON SOURCE LINES 44-45
+.. GENERATED FROM PYTHON SOURCE LINES 61-62
 
 Defining the boundaries of the system
 
-.. GENERATED FROM PYTHON SOURCE LINES 45-49
+.. GENERATED FROM PYTHON SOURCE LINES 62-66
 
 .. code-block:: Python
 
@@ -116,33 +133,30 @@ Defining the boundaries of the system
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 50-53
+.. GENERATED FROM PYTHON SOURCE LINES 67-70
 
 Generating the computing workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Workflow class to define all the computation parameters before initializing the solver
 
-.. GENERATED FROM PYTHON SOURCE LINES 53-74
+.. GENERATED FROM PYTHON SOURCE LINES 70-88
 
 .. code-block:: Python
 
     workflow = Workflow(
         fiber_list=fiber_list,          # List of fiber to be added in the mesh, the order matters.
         clad_structure=clad_structure,  # Cladding structure, if None provided then no cladding is set.
-        fusion_degree=0.9,              # Degree of fusion of the structure if applicable.
         wavelength=wavelength,          # Wavelength used for the mode computation.
-        resolution=30,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
-        x_bounds="centering",           # Mesh x-boundary structure.
-        y_bounds="centering",           # Mesh y-boundary structure.
+        resolution=40,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
+        x_bounds=DomainAlignment.CENTERING, # Mesh x-boundary structure.
+        y_bounds=DomainAlignment.CENTERING, # Mesh y-boundary structure.
         boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
         n_sorted_mode=2,                # Total computed and sorted mode.
         n_added_mode=5,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
-        # plot_geometry=True,             # Plot the geometry mesh before computation.
+        plot_geometry=True,             # Plot the geometry mesh before computation.
         debug_mode=3,                   # Print the iteration step for the solver plus some other important steps.
         auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
         itr_final=0.05,                  # Final value of inverse taper ratio to simulate
-        clad_rotation=0,                # Rotate the geoemtry in the given angle in degree
-        index_scrambling=1e-7           # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
     )
 
     superset = workflow.get_superset()
@@ -150,16 +164,21 @@ Workflow class to define all the computation parameters before initializing the 
 
 
 
+.. image-sg:: /gallery/basic/images/sphx_glr_plot_workflow_03_001.png
+   :alt: Fiber structure, Fiber structure
+   :srcset: /gallery/basic/images/sphx_glr_plot_workflow_03_001.png
+   :class: sphx-glr-single-img
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 75-77
+
+.. GENERATED FROM PYTHON SOURCE LINES 89-91
 
 Field computation: :math:`E_{i,j}`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-79
+.. GENERATED FROM PYTHON SOURCE LINES 91-93
 
 .. code-block:: Python
 
@@ -168,31 +187,8 @@ Field computation: :math:`E_{i,j}`
 
 
 
-.. image-sg:: /gallery/basic/images/sphx_glr_plot_workflow_03_001.png
-   :alt: $LP01$ slice: 0  itr: 1.000, $LP11_a$ slice: 0  itr: 1.000, $LP01$ slice: 368  itr: 0.299, $LP11_a$ slice: 368  itr: 0.299, $LP01$ slice: 473  itr: 0.099, $LP11_a$ slice: 473  itr: 0.099
-   :srcset: /gallery/basic/images/sphx_glr_plot_workflow_03_001.png
-   :class: sphx-glr-single-img
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 80-82
-
-Effective index: :math:`n^{eff}_{i,j}`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. GENERATED FROM PYTHON SOURCE LINES 82-84
-
-.. code-block:: Python
-
-    _ = superset.plot(plot_type='index')
-
-
-
-
 .. image-sg:: /gallery/basic/images/sphx_glr_plot_workflow_03_002.png
-   :alt: plot workflow 03
+   :alt: $LP01$ slice: 0  itr: 1.000, $LP11_a$ slice: 0  itr: 1.000, $LP01$ slice: 368  itr: 0.299, $LP11_a$ slice: 368  itr: 0.299, $LP01$ slice: 473  itr: 0.099, $LP11_a$ slice: 473  itr: 0.099
    :srcset: /gallery/basic/images/sphx_glr_plot_workflow_03_002.png
    :class: sphx-glr-single-img
 
@@ -200,16 +196,16 @@ Effective index: :math:`n^{eff}_{i,j}`
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 85-87
+.. GENERATED FROM PYTHON SOURCE LINES 94-96
 
-Modal normalized coupling: :math:`C_{i,j}`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Effective index: :math:`n^{eff}_{i,j}`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-89
+.. GENERATED FROM PYTHON SOURCE LINES 96-98
 
 .. code-block:: Python
 
-    _ = superset.plot(plot_type='normalized-coupling')
+    _ = superset.plot(plot_type='index')
 
 
 
@@ -223,18 +219,17 @@ Modal normalized coupling: :math:`C_{i,j}`
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 90-92
+.. GENERATED FROM PYTHON SOURCE LINES 99-101
 
-Adiabatic criterion: :math:`\tilde{C}_{i,j}`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Modal normalized coupling: :math:`C_{i,j}`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 92-95
+.. GENERATED FROM PYTHON SOURCE LINES 101-103
 
 .. code-block:: Python
 
-    _ = superset.plot(plot_type='adiabatic')
+    _ = superset.plot(plot_type='normalized-coupling')
 
-    # -
 
 
 
@@ -247,10 +242,34 @@ Adiabatic criterion: :math:`\tilde{C}_{i,j}`
 
 
 
+.. GENERATED FROM PYTHON SOURCE LINES 104-106
+
+Adiabatic criterion: :math:`\tilde{C}_{i,j}`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. GENERATED FROM PYTHON SOURCE LINES 106-109
+
+.. code-block:: Python
+
+    _ = superset.plot(plot_type='adiabatic')
+
+    # -
+
+
+
+.. image-sg:: /gallery/basic/images/sphx_glr_plot_workflow_03_005.png
+   :alt: plot workflow 03
+   :srcset: /gallery/basic/images/sphx_glr_plot_workflow_03_005.png
+   :class: sphx-glr-single-img
+
+
+
+
+
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 8.818 seconds)
+   **Total running time of the script:** (0 minutes 9.968 seconds)
 
 
 .. _sphx_glr_download_gallery_basic_plot_workflow_03.py:

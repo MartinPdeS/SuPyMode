@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="../../" >
+<html lang="en" data-content_root="../../" data-theme="dark">
 
   <head>
     <meta charset="utf-8" />
@@ -13,8 +13,8 @@
   
   
   <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "dark";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
   </script>
   <!-- 
     this give us a css class that will be invisible only if js is disabled 
@@ -57,13 +57,15 @@
     <link rel="icon" href="../../_static/thumbnail.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Propagation constant: DCFC" href="plot_beta_SMF28.html" />
+    <link rel="prev" title="Validation workflow" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="2.0.4" />
   </head>
   
   
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="dark">
 
   
   
@@ -122,11 +124,9 @@
   
     
     
-      
     
-    
-    <img src="../../_static/thumbnail.png" class="logo__image only-light" alt=""/>
-    <img src="../../_static/thumbnail.png" class="logo__image only-dark pst-js-only" alt=""/>
+    <img src="../../_static/thumbnail.png" class="logo__image only-dark" alt=""/>
+    <img src="../../_static/thumbnail.png" class="logo__image only-light pst-js-only" alt=""/>
   
   
     <p class="title logo__title">SuPyMode</p>
@@ -153,6 +153,13 @@
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../code.html">
     Source code
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Coding examples
   </a>
 </li>
 
@@ -202,20 +209,16 @@
   </div>
 </div></div>
       
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://github.com/MartinPdeS/SuPyMode" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
-        </li>
         <li class="nav-item">
           
           
@@ -302,6 +305,13 @@
 </li>
 
 
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Coding examples
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../references.html">
     References
@@ -338,20 +348,16 @@
   </div>
 </div></div>
         
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://github.com/MartinPdeS/SuPyMode" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
-        </li>
         <li class="nav-item">
           
           
@@ -387,7 +393,26 @@
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"></div>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../basic/index.html">Standard workflow</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../basic/plot_propagation.html">4x4 Coupler [linear]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic/plot_workflow_01.html">1x1 Coupler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic/plot_workflow_02.html">2x2 Coupler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic/plot_workflow_03.html">3x3 Coupler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic/plot_workflow_04.html">4x4 Coupler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic/plot_workflow_05.html">5x5 Coupler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic/plot_workflow_06.html">4x4 Coupler [linear]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../basic/plot_workflow_07.html">4x4 Coupler [linear]</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Validation workflow</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Propagation constant: DCFC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_beta_SMF28.html">Propagation constant: DCFC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_validation.html">Propagation constant: DCFC</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
 </nav></div>
     </div>
   
@@ -421,6 +446,12 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
+    
+    <li class="breadcrumb-item"><a href="../../examples.html" class="nav-link">Coding examples</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Validation workflow</a></li>
+    
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Propagation constant: DCFC</span></li>
   </ul>
 </nav>
@@ -448,7 +479,9 @@ to download the full example code.</p>
 <section id="imports">
 <h2>Imports<a class="headerlink" href="#imports" title="Link to this heading">#</a></h2>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">Workflow</span><span class="p">,</span> <span class="n">fiber_catalogue</span><span class="p">,</span> <span class="n">Boundaries</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">Workflow</span><span class="p">,</span> <span class="n">fiber_loader</span><span class="p">,</span> <span class="n">Boundaries</span><span class="p">,</span> <span class="n">BoundaryValue</span><span class="p">,</span> <span class="n">DomainAlignment</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PyOptik</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaterialBank</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">PyFiberModes</span><span class="w"> </span><span class="kn">import</span> <span class="n">LP01</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">PyFiberModes.fiber</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_fiber</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -462,14 +495,14 @@ to download the full example code.</p>
 <h2>Generating the fiber structure<a class="headerlink" href="#generating-the-fiber-structure" title="Link to this heading">#</a></h2>
 <p>Here we define the cladding and fiber structure to model the problem</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fiber_list</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">fiber_catalogue</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span><span class="n">fiber_name</span><span class="p">,</span> <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">)</span>
+    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span><span class="n">fiber_name</span><span class="p">,</span> <span class="n">clad_refractive_index</span><span class="o">=</span><span class="n">MaterialBank</span><span class="o">.</span><span class="n">fused_silica</span><span class="o">.</span><span class="n">compute_refractive_index</span><span class="p">(</span><span class="n">wavelength</span><span class="p">))</span>  <span class="c1"># Refractive index of silica at the specified wavelength</span>
 <span class="p">]</span>
 </pre></div>
 </div>
 <p>Defining the boundaries of the system</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">boundaries</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="s1">&#39;symmetric&#39;</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="s1">&#39;symmetric&#39;</span><span class="p">),</span>
-    <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="s1">&#39;symmetric&#39;</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="s1">&#39;anti-symmetric&#39;</span><span class="p">)</span>
+    <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">),</span>
+    <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">ANTI_SYMMETRIC</span><span class="p">)</span>
 <span class="p">]</span>
 </pre></div>
 </div>
@@ -479,28 +512,31 @@ to download the full example code.</p>
 <p>Workflow class to define all the computation parameters before initializing the solver</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">workflow</span> <span class="o">=</span> <span class="n">Workflow</span><span class="p">(</span>
     <span class="n">fiber_list</span><span class="o">=</span><span class="n">fiber_list</span><span class="p">,</span>          <span class="c1"># List of fiber to be added in the mesh, the order matters.</span>
-    <span class="n">fusion_degree</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>           <span class="c1"># Degree of fusion of the structure if applicable.</span>
     <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>          <span class="c1"># Wavelength used for the mode computation.</span>
     <span class="n">resolution</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>                  <span class="c1"># Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].</span>
-    <span class="n">x_bounds</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>                <span class="c1"># Mesh x-boundary structure.</span>
-    <span class="n">y_bounds</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span>                 <span class="c1"># Mesh y-boundary structure.</span>
-    <span class="n">air_padding_factor</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
+    <span class="n">x_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span>  <span class="c1"># Mesh x-boundary structure.</span>
+    <span class="n">y_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">TOP</span><span class="p">,</span>   <span class="c1"># Mesh y-boundary structure.</span>
+    <span class="n">air_padding_factor</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span>
     <span class="n">boundaries</span><span class="o">=</span><span class="n">boundaries</span><span class="p">,</span>          <span class="c1"># Set of symmetries to be evaluated, each symmetry add a round of simulation</span>
-    <span class="n">n_sorted_mode</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>                <span class="c1"># Total computed and sorted mode.</span>
+    <span class="n">n_sorted_mode</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>                <span class="c1"># Total computed and sorted mode.</span>
     <span class="n">n_added_mode</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>                 <span class="c1"># Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].</span>
     <span class="n">plot_geometry</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>             <span class="c1"># Plot the geometry mesh before computation.</span>
     <span class="n">debug_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>                   <span class="c1"># Print the iteration step for the solver plus some other important steps.</span>
     <span class="n">auto_label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                <span class="c1"># Auto labeling the mode. Label are not always correct and should be verified afterwards.</span>
     <span class="n">itr_final</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>                  <span class="c1"># Final value of inverse taper ratio to simulate</span>
-    <span class="n">index_scrambling</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>             <span class="c1"># Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]</span>
-    <span class="n">n_step</span><span class="o">=</span><span class="mi">50</span>
+    <span class="n">n_step</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span>
+    <span class="n">plot_field</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 
 <span class="n">superset</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">get_superset</span><span class="p">()</span>
-<span class="n">itr_list</span> <span class="o">=</span> <span class="n">superset</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">itr_list</span>
+<a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">itr_list</span></a> <span class="o">=</span> <span class="n">superset</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">itr_list</span></a>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_beta_DCF_001.png" srcset="../../_images/sphx_glr_plot_beta_DCF_001.png" alt="Fiber structure, Fiber structure" class = "sphx-glr-single-img"/><p>Computing the analytical values using FiberModes solver.</p>
+<ul class="sphx-glr-horizontal">
+<li><img src="../../_images/sphx_glr_plot_beta_DCF_001.png" srcset="../../_images/sphx_glr_plot_beta_DCF_001.png" alt="Fiber structure, Fiber structure" class = "sphx-glr-multi-img"/></li>
+<li><img src="../../_images/sphx_glr_plot_beta_DCF_002.png" srcset="../../_images/sphx_glr_plot_beta_DCF_002.png" alt="$LP01$ slice: 0  itr: 1.000, $LP21_a$ slice: 0  itr: 1.000, $LP02$ slice: 0  itr: 1.000, $LP11_b$ slice: 0  itr: 1.000, $LP31_b$ slice: 0  itr: 1.000, $LP12_b$ slice: 0  itr: 1.000, $LP01$ slice: -1  itr: 0.200, $LP21_a$ slice: -1  itr: 0.200, $LP02$ slice: -1  itr: 0.200, $LP11_b$ slice: -1  itr: 0.200, $LP31_b$ slice: -1  itr: 0.200, $LP12_b$ slice: -1  itr: 0.200" class = "sphx-glr-multi-img"/></li>
+</ul>
+<p>Computing the analytical values using FiberModes solver.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">dcf_fiber</span> <span class="o">=</span> <span class="n">load_fiber</span><span class="p">(</span>
     <span class="n">fiber_name</span><span class="o">=</span><span class="n">fiber_name</span><span class="p">,</span>
     <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
@@ -518,24 +554,24 @@ to download the full example code.</p>
 <span class="n">pyfibermodes_mode</span> <span class="o">=</span> <span class="n">LP01</span>
 <span class="n">supymode_mode</span> <span class="o">=</span> <span class="n">superset</span><span class="o">.</span><span class="n">LP01</span>
 
-<span class="n">analytical</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">itr_list</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">itr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">itr_list</span><span class="p">):</span>
-    <span class="n">_fiber</span> <span class="o">=</span> <span class="n">dcf_fiber</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="o">=</span><span class="n">itr</span><span class="p">)</span>
-    <span class="n">analytical</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">_fiber</span><span class="o">.</span><span class="n">get_effective_index</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">pyfibermodes_mode</span><span class="p">)</span>
+<a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">analytical</span></a> <span class="o">=</span> <a href="https://numpy.org/devdocs/reference/generated/numpy.empty.html#numpy.empty" title="numpy.empty" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">numpy</span><span class="o">.</span><span class="n">empty</span></a><span class="p">(</span><a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">itr_list</span></a><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">itr</span></a> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">itr_list</span></a><span class="p">):</span>
+    <span class="n">_fiber</span> <span class="o">=</span> <span class="n">dcf_fiber</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="o">=</span><a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">itr</span></a><span class="p">)</span>
+    <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">analytical</span></a><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">_fiber</span><span class="o">.</span><span class="n">get_effective_index</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">pyfibermodes_mode</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">itr_list</span><span class="p">,</span>
-    <span class="n">analytical</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pyfibermodes_mode</span><span class="p">),</span>
+    <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">itr_list</span></a><span class="p">,</span>
+    <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">analytical</span></a><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pyfibermodes_mode</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: PyFiberModes&quot;</span><span class="p">,</span>
     <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span>
     <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
     <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
-    <span class="n">itr_list</span><span class="p">,</span>
+    <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">itr_list</span></a><span class="p">,</span>
     <span class="n">supymode_mode</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">supymode_mode</span><span class="p">),</span>
+    <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">supymode_mode</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: SuPyMode&quot;</span><span class="p">,</span>
     <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>
     <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
     <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span>
@@ -549,7 +585,7 @@ to download the full example code.</p>
 <span class="c1"># -</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_beta_DCF_002.png" srcset="../../_images/sphx_glr_plot_beta_DCF_002.png" alt="plot beta DCF" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 23.733 seconds)</p>
+<img src="../../_images/sphx_glr_plot_beta_DCF_003.png" srcset="../../_images/sphx_glr_plot_beta_DCF_003.png" alt="plot beta DCF" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 34.682 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-validation-plot-beta-dcf-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/278ed90851090b90cbe20155b6b9c0f3/plot_beta_DCF.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_beta_DCF.ipynb</span></code></a></p>
@@ -628,7 +664,7 @@ to download the full example code.</p>
 
   <p class="copyright">
     
-      © Copyright 2024, Martin Poinsinet de Sivry-Houle.
+      © Copyright 2025, Martin Poinsinet de Sivry-Houle.
       <br/>
     
   </p>
