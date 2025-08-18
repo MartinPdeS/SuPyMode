@@ -22,8 +22,7 @@ clad_structure.add_structure(
     structure_type=StructureType.CIRCULAR,
     number_of_fibers=4,
     fusion_degree=0.5,
-    fiber_radius=62.5e-6,
-    compute_fusing=True
+    fiber_radius=62.5e-6
 )
 
 clad_structure.refractive_index = MaterialBank.fused_silica.compute_refractive_index(wavelength)  # Refractive index of silica at the specified wavelength

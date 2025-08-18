@@ -29,8 +29,7 @@ clad_structure.add_structure(
     structure_type=StructureType.CIRCULAR,
     number_of_fibers=7,
     fusion_degree=0.3,
-    fiber_radius=62.5e-6,
-    compute_fusing=True
+    fiber_radius=62.5e-6
 )
 
 clad_structure.refractive_index = clad_refractive_index
