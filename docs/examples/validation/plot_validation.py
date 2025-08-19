@@ -54,7 +54,6 @@ workflow = Workflow(
     debug_mode=1,                   # Print the iteration step for the solver plus some other important steps.
     auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.4,                  # Final value of inverse taper ratio to simulate
-    index_scrambling=0,             # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
     n_step=100
 )
 

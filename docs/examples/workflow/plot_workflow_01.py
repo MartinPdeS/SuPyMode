@@ -45,7 +45,6 @@ workflow = Workflow(
     auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.05,                 # Final value of inverse taper ratio to simulate
     clad_rotation=0,                # Rotate the geoemtry in the given angle in degree
-    index_scrambling=0              # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
 )
 
 workflow.initialize_geometry(plot=True)  # Initialize the geometry and plot it

@@ -4,6 +4,7 @@
 from FiberFusing.fiber import FiberLoader  # noqa:
 from SuPyMode.profiles import AlphaProfile  # noqa: F401
 from FiberFusing.profile import Profile, StructureType # noqa: F401
+from FiberFusing.graded_index import GradedIndex  # noqa: F401
 from PyFinitDiff import BoundaryValue  # noqa: F401
 
 from FiberFusing import DomainAlignment

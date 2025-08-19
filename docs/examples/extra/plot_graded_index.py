@@ -6,7 +6,7 @@
 
 # %%
 # Importing the script dependencies
-from SuPyMode.workflow import Workflow, Boundaries, BoundaryValue, GenericFiber
+from SuPyMode.workflow import Workflow, Boundaries, BoundaryValue, GenericFiber, GradedIndex
 from PyOptik import MaterialBank
 
 wavelength = 1550e-9
@@ -27,11 +27,11 @@ fiber.create_and_add_new_structure(
     radius=62.5 * 1e-6
 )
 
-fiber.create_and_add_new_graded_index_structure(
+graded_index = GradedIndex(inside=1.4480, outside=1.4450)
+
+fiber.create_and_add_new_structure(
     name='core',
-    is_graded=True,
-    refractive_index_out=1.4450,
-    refractive_index_in=1.4480,
+    refractive_index=graded_index,
     radius=8.0 * 1e-6
 )
 
@@ -58,8 +58,6 @@ workflow = Workflow(
     debug_mode=1,                    # Print the iteration step for the solver plus some other important steps.
     auto_label=True,                 # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.05,                  # Final value of inverse taper ratio to simulate
-    clad_rotation=0,                 # Rotate the geoemtry in the given angle in degree
-    index_scrambling=0               # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
 )
 
 workflow.initialize_geometry(plot=True)  # Initialize the geometry and plot it

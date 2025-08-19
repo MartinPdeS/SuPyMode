@@ -60,7 +60,6 @@ workflow = Workflow(
     debug_mode=0,                   # Print the iteration step for the solver plus some other important steps. [Does not work properly on jupyter notebooks]
     auto_label=True,               # Auto labeling the mode. Label are not always correct and should be verified afterwards.
     itr_final=0.1,                  # Final value of inverse taper ratio to simulate
-    index_scrambling=0e-4           # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
 )
 
 workflow.initialize_geometry(plot=True)  # Initialize the geometry and plot it
