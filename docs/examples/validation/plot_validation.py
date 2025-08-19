@@ -110,7 +110,7 @@ def get_index_pyfibermodes(mode, itr_list, fiber):
 for idx, mode in enumerate(['LP01', 'LP02', 'LP03']):
     color = f"C{idx}"
 
-    supymode_mode = getattr(superset, mode)
+    supymode_mode = getattr(workflow.superset, mode)
     ax.scatter(
         itr_list,
         supymode_mode.index.data,
