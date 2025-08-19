@@ -66,7 +66,7 @@ workflow.geometry.plot()
 # Plotting the field distribution
 workflow.plot('field')
 
-itr_list = workflow.model_parameters.itr_list
+itr_list = workflow.superset.model_parameters.itr_list
 
 # %%
 # Computing the analytical values using FiberModes solver.
