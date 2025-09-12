@@ -2,27 +2,29 @@
 # -*- coding: utf-8 -*-
 
 # Built-in imports
-import pickle
-import numpy
 import logging
+import pickle
 from dataclasses import dataclass
-from pathlib import Path
 from itertools import combinations, product
-from typing import Optional, List
-from FiberFusing.geometry import Geometry
+from pathlib import Path
+from typing import List, Optional
+
+import numpy
 
 # Third-party imports
-from scipy.interpolate import interp1d
+from FiberFusing.geometry import Geometry
 from scipy.integrate import solve_ivp
+from scipy.interpolate import interp1d
 
 # Local imports
-from SuPyMode.binary.interface_model_parameters import MODELPARAMETERS as ModelParameters
-from SuPyMode.supermode import SuperMode
+from SuPyMode.binary.interface_model_parameters import (
+    MODELPARAMETERS as ModelParameters,
+)
 from SuPyMode.profiles import AlphaProfile
 from SuPyMode.propagation import Propagation
+from SuPyMode.supermode import SuperMode
 from SuPyMode.superset_plots import SuperSetPlots
-from SuPyMode.utils import test_valid_input, parse_filename
-from SuPyMode.helper import parse_mode_of_interest, parse_combination
+from SuPyMode.utils import interpret_mode_of_interest, parse_filename, test_valid_input
 
 
 @dataclass
@@ -42,6 +44,7 @@ class SuperSet(SuperSetPlots):
     geometry : Geometry
         The geometry of the optical structure.
     """
+
     model_parameters: ModelParameters
     wavelength: float
     geometry: Geometry
@@ -49,7 +52,9 @@ class SuperSet(SuperSetPlots):
     def __post_init__(self):
         self._transmission_matrix = None
         self.supermodes = []
-        self._itr_to_slice = interp1d(self.model_parameters.itr_list, numpy.arange(self.model_parameters.n_slice))
+        self._itr_to_slice = interp1d(
+            self.model_parameters.itr_list, numpy.arange(self.model_parameters.n_slice)
+        )
 
     def __getitem__(self, idx: int) -> SuperMode:
         return self.supermodes[idx]
@@ -171,7 +176,9 @@ class SuperSet(SuperSetPlots):
 
         return fundamental_supermodes
 
-    def get_non_fundamental_supermodes(self, *, tolerance: float = 0.1) -> list[SuperMode]:
+    def get_non_fundamental_supermodes(
+        self, *, tolerance: float = 0.1
+    ) -> list[SuperMode]:
         """
         Returns a list of non-fundamental supermodes that do not overlap with the fundamental modes.
 
@@ -205,9 +212,7 @@ class SuperSet(SuperSetPlots):
 
         number_of_solvers = len(set(solver_numbers))
 
-        mode_solver_array = [
-            [] for i in range(number_of_solvers)
-        ]
+        mode_solver_array = [[] for i in range(number_of_solvers)]
 
         for mode in self:
             mode_solver_array[mode.solver_number].append(mode)
@@ -233,7 +238,7 @@ class SuperSet(SuperSetPlots):
         Reset labels for all supermodes to default values.
         """
         for n, super_mode in enumerate(self.supermodes):
-            super_mode.label = f'mode_{n}'
+            super_mode.label = f"mode_{n}"
 
     def compute_transmission_matrix(self) -> None:
         """
@@ -242,15 +247,19 @@ class SuperSet(SuperSetPlots):
         shape = [
             len(self.supermodes),
             len(self.supermodes),
-            len(self.model_parameters.itr_list)
+            len(self.model_parameters.itr_list),
         ]
 
         self._transmission_matrix = numpy.zeros(shape)
 
         for mode in self.supermodes:
-            self._transmission_matrix[mode.mode_number, mode.mode_number, :] = mode.beta.data * 2.0 * numpy.pi
+            self._transmission_matrix[mode.mode_number, mode.mode_number, :] = (
+                mode.beta.data * 2.0 * numpy.pi
+            )
 
-    def add_coupling_to_t_matrix(self, *, t_matrix: numpy.ndarray, adiabatic_factor: numpy.ndarray) -> numpy.ndarray:
+    def add_coupling_to_t_matrix(
+        self, *, t_matrix: numpy.ndarray, adiabatic_factor: numpy.ndarray
+    ) -> numpy.ndarray:
         """
         Add coupling coefficients to the transmission matrix.
 
@@ -271,18 +280,19 @@ class SuperSet(SuperSetPlots):
         t_matrix = t_matrix.astype(complex)
 
         for mode_0, mode_1 in combinations(self.supermodes, 2):
-
             coupling = mode_0.normalized_coupling.get_values(mode_1)[:size]
 
             coupling *= adiabatic_factor
 
-            t_matrix[mode_0.mode_number, mode_1.mode_number, :] = - coupling
-            t_matrix[mode_1.mode_number, mode_0.mode_number, :] = + coupling
+            t_matrix[mode_0.mode_number, mode_1.mode_number, :] = -coupling
+            t_matrix[mode_1.mode_number, mode_0.mode_number, :] = +coupling
 
         if numpy.isnan(t_matrix).any():
-            raise ValueError('Nan values detected in transmission matrix.')
+            raise ValueError("Nan values detected in transmission matrix.")
         if numpy.isinf(t_matrix).any():
-            raise ValueError('Inf values detected in transmission matrix, verify that there is no hybrid mode in the computation.')
+            raise ValueError(
+                "Inf values detected in transmission matrix, verify that there is no hybrid mode in the computation."
+            )
 
         return t_matrix
 
@@ -306,7 +316,9 @@ class SuperSet(SuperSetPlots):
 
         return ditr / dx
 
-    def get_transmision_matrix_from_profile(self, *, profile: AlphaProfile, add_coupling: bool = True) -> tuple:
+    def get_transmision_matrix_from_profile(
+        self, *, profile: AlphaProfile, add_coupling: bool = True
+    ) -> tuple:
         """
         Get the transmission matrix from the given profile.
 
@@ -328,12 +340,12 @@ class SuperSet(SuperSetPlots):
 
         sub_t_matrix = self.transmission_matrix[..., :final_slice]
 
-        sub_itr_vector = self.model_parameters.itr_list[: final_slice]
+        sub_itr_vector = self.model_parameters.itr_list[:final_slice]
 
         if add_coupling:
             sub_t_matrix = self.add_coupling_to_t_matrix(
                 t_matrix=sub_t_matrix,
-                adiabatic_factor=profile.evaluate_adiabatic_factor(itr=sub_itr_vector)
+                adiabatic_factor=profile.evaluate_adiabatic_factor(itr=sub_itr_vector),
             )
 
         sub_distance = profile.evaluate_distance_vs_itr(sub_itr_vector)
@@ -341,14 +353,16 @@ class SuperSet(SuperSetPlots):
         return sub_distance, sub_itr_vector, sub_t_matrix
 
     def propagate(
-            self, *,
-            profile: AlphaProfile,
-            initial_amplitude: list,
-            max_step: Optional[float] = None,
-            n_step: Optional[int] = None,
-            add_coupling: bool = True,
-            method: str = 'RK45',
-            **kwargs: dict) -> Propagation:
+        self,
+        *,
+        profile: AlphaProfile,
+        initial_amplitude: list,
+        max_step: Optional[float] = None,
+        n_step: Optional[int] = None,
+        add_coupling: bool = True,
+        method: str = "RK45",
+        **kwargs: dict,
+    ) -> Propagation:
         """
         Propagate the amplitudes of the supermodes in a coupler based on the given profile.
 
@@ -379,13 +393,21 @@ class SuperSet(SuperSetPlots):
         if max_step is None:
             max_step = self.model_parameters.wavelength / 200
 
-        sub_distance, sub_itr_vector, sub_t_matrix = self.get_transmision_matrix_from_profile(
-            profile=profile,
-            add_coupling=add_coupling
+        sub_distance, sub_itr_vector, sub_t_matrix = (
+            self.get_transmision_matrix_from_profile(
+                profile=profile, add_coupling=add_coupling
+            )
         )
 
-        z_to_itr = interp1d(profile.distance, profile.itr_list, bounds_error=False, fill_value='extrapolate')
-        itr_to_t_matrix = interp1d(sub_itr_vector, sub_t_matrix, bounds_error=False, fill_value='extrapolate')
+        z_to_itr = interp1d(
+            profile.distance,
+            profile.itr_list,
+            bounds_error=False,
+            fill_value="extrapolate",
+        )
+        itr_to_t_matrix = interp1d(
+            sub_itr_vector, sub_t_matrix, bounds_error=False, fill_value="extrapolate"
+        )
 
         def model(z, y):
             itr = z_to_itr(z)
@@ -398,23 +420,27 @@ class SuperSet(SuperSetPlots):
             method=method,
             vectorized=True,
             max_step=max_step,
-            **kwargs
+            **kwargs,
         )
 
         # Check power conservation across the propagation
-        norm = numpy.sum(numpy.abs(sol.y)**2, axis=0)
+        norm = numpy.sum(numpy.abs(sol.y) ** 2, axis=0)
         if not numpy.allclose(norm, 1.0, atol=1e-1):
-            logging.warning(f'Power conservation not achieved [{max_step = }, atol = 1e-1].')
+            logging.warning(
+                f"Power conservation not achieved [{max_step = }, atol = 1e-1]."
+            )
 
         return Propagation(
             superset=self,
             amplitudes=sol.y,
             distance=sol.t,
             profile=profile,
-            z_to_itr=z_to_itr
+            z_to_itr=z_to_itr,
         )
 
-    def interpret_initial_input(self, initial_amplitude: list | SuperMode) -> numpy.ndarray:
+    def interpret_initial_input(
+        self, initial_amplitude: list | SuperMode
+    ) -> numpy.ndarray:
         """
         Interpret the initial amplitude input to ensure compatibility with the expected number of supermodes.
 
@@ -442,7 +468,9 @@ class SuperSet(SuperSetPlots):
         number_of_supermodes = len(self.supermodes)
 
         if amplitude_size != number_of_supermodes:
-            raise ValueError(f'Amplitudes size: {amplitude_size} does not match with the number of supermodes: {number_of_supermodes}')
+            raise ValueError(
+                f"Amplitudes size: {amplitude_size} does not match with the number of supermodes: {number_of_supermodes}"
+            )
 
         return numpy.asarray(amplitudes, dtype=complex)
 
@@ -470,11 +498,13 @@ class SuperSet(SuperSetPlots):
         """
         Sort supermodes in descending order of their propagation constants (beta).
         """
-        lexort_index = ([-mode.beta.data[-1] for mode in self.supermodes], )
+        lexort_index = ([-mode.beta.data[-1] for mode in self.supermodes],)
 
         self.all_supermodes = self._sort_modes(lexort_index)
 
-    def sort_modes(self, sorting_method: str = "beta", keep_only: Optional[int] = None) -> None:
+    def sort_modes(
+        self, sorting_method: str = "beta", keep_only: Optional[int] = None
+    ) -> None:
         """
         Sort supermodes according to the specified method, optionally limiting the number of modes retained.
 
@@ -491,14 +521,20 @@ class SuperSet(SuperSetPlots):
             If an unrecognized sorting method is provided.
         """
         match sorting_method.lower():
-            case 'beta':
+            case "beta":
                 self.sort_modes_by_beta()
-            case 'symmetry+beta':
+            case "symmetry+beta":
                 self.sort_modes_by_solver_and_beta()
             case _:
-                raise ValueError(f"Unrecognized sorting method: {sorting_method}, accepted values are ['beta', 'symmetry+beta']")
+                raise ValueError(
+                    f"Unrecognized sorting method: {sorting_method}, accepted values are ['beta', 'symmetry+beta']"
+                )
 
-        self.supermodes = self.all_supermodes[:keep_only] if keep_only is not None else self.all_supermodes
+        self.supermodes = (
+            self.all_supermodes[:keep_only]
+            if keep_only is not None
+            else self.all_supermodes
+        )
 
     def sort_modes_by_solver_and_beta(self) -> None:
         """
@@ -506,7 +542,7 @@ class SuperSet(SuperSetPlots):
         """
         lexort_index = (
             [mode.solver_number for mode in self.supermodes],
-            [-mode.beta.data[-1] for mode in self.supermodes]
+            [-mode.beta.data[-1] for mode in self.supermodes],
         )
 
         self.all_supermodes = self._sort_modes(lexort_index)
@@ -567,15 +603,15 @@ class SuperSet(SuperSetPlots):
             Set of mode combinations.
         """
         test_valid_input(
-            variable_name='combination',
+            variable_name="combination",
             user_input=combination,
-            valid_inputs=['pairs', 'specific']
+            valid_inputs=["pairs", "specific"],
         )
 
         match combination:
-            case 'pairs':
+            case "pairs":
                 mode_combinations = product(mode_of_interest, mode_of_interest)
-            case 'specific':
+            case "specific":
                 mode_combinations = product(mode_of_interest, self.supermodes)
 
         mode_combinations = filter(self.is_compute_compatible, mode_combinations)
@@ -599,24 +635,18 @@ class SuperSet(SuperSetPlots):
         Path
             The path to the saved instance file.
         """
-        with open(filename.with_suffix('.pickle'), 'wb') as output_file:
+        with open(filename.with_suffix(".pickle"), "wb") as output_file:
             pickle.dump(self, output_file, pickle.HIGHEST_PROTOCOL)
 
         return filename
 
-    @parse_mode_of_interest
-    @parse_combination
     @parse_filename
-    def export_data(self,
+    def export_data(
+        self,
         filename: str,
-        mode_of_interest: list = 'all',
-        combination: list = None,
-        export_index: bool = True,
-        export_beta: bool = True,
-        export_eigen_value: bool = False,
-        export_adiabatic: bool = True,
-        export_beating_length: bool = True,
-        export_normalized_coupling: bool = True) -> Path:
+        mode_of_interest: list[SuperMode] | str = "all",
+        combination: list | str = "pairs",
+    ) -> Path:
         """
         Export the SuperSet data as CSV files, saving specific attributes of the modes or combinations of modes.
 
@@ -628,26 +658,19 @@ class SuperSet(SuperSetPlots):
             List of modes to be exported (default is 'all').
         combination : list, optional
             List of mode combinations to be exported (default is None).
-        export_index : bool, optional
-            Whether to export the 'index' attribute (default is True).
-        export_beta : bool, optional
-            Whether to export the 'beta' attribute (default is True).
-        export_eigen_value : bool, optional
-            Whether to export the 'eigen_value' attribute (default is False).
-        export_adiabatic : bool, optional
-            Whether to export the 'adiabatic' attribute for combinations (default is True).
-        export_beating_length : bool, optional
-            Whether to export the 'beating_length' attribute for combinations (default is True).
-        export_normalized_coupling : bool, optional
-            Whether to export the 'normalized_coupling' attribute for combinations (default is True).
 
         Returns
         -------
         Path
             The path to the directory where the files were saved.
         """
-        from pathlib import Path
-        import numpy as np
+        mode_of_interest = interpret_mode_of_interest(
+            superset=self, mode_of_interest=mode_of_interest
+        )
+
+        combination = self.interpret_combination(
+            mode_of_interest=mode_of_interest, combination=combination
+        )
 
         # Create the directory if it doesn't exist
         output_dir = Path(filename)
@@ -657,30 +680,43 @@ class SuperSet(SuperSetPlots):
             """Helper function to export data for a single attribute for all modes of interest."""
             for mode in mode_of_interest:
                 data = getattr(mode, attribute_name).data
-                sub_filename = output_dir / f"{attribute_name}_{mode.label}".replace("}", "").replace("{", "")
-                data = np.vstack([self.model_parameters.itr_list, data])
-                np.savetxt(fname=sub_filename.with_suffix('.csv'), X=data, delimiter=',', header=f'ITR, {attribute_name}')
+                sub_filename = output_dir / f"{attribute_name}_{mode.label}".replace(
+                    "}", ""
+                ).replace("{", "")
+                data = numpy.vstack([self.model_parameters.itr_list, data])
+                numpy.savetxt(
+                    fname=sub_filename.with_suffix(".csv"),
+                    X=data,
+                    delimiter=",",
+                    header=f"ITR, {attribute_name}",
+                )
 
         def _export_combination_data(attribute_name: str):
             """Helper function to export data for a single attribute for all combinations of modes."""
             for mode_0, mode_1 in combination:
-                data = getattr(mode_0, attribute_name).get_values(other_supermode=mode_1)
-                sub_filename = output_dir / f"{attribute_name}_{mode_0.label}_{mode_1.label}".replace("}", "").replace("{", "")
-                data = np.vstack([self.model_parameters.itr_list, data])
-                np.savetxt(fname=sub_filename.with_suffix('.csv'), X=data, delimiter=',', header=f'ITR, {attribute_name}')
+                data = getattr(mode_0, attribute_name).get_values(
+                    other_supermode=mode_1
+                )
+                sub_filename = (
+                    output_dir
+                    / f"{attribute_name}_{mode_0.label}_{mode_1.label}".replace(
+                        "}", ""
+                    ).replace("{", "")
+                )
+                data = numpy.vstack([self.model_parameters.itr_list, data])
+                numpy.savetxt(
+                    fname=sub_filename.with_suffix(".csv"),
+                    X=data,
+                    delimiter=",",
+                    header=f"ITR, {attribute_name}",
+                )
 
         # Export single-mode attributes
-        if export_index:
-            _export_single_data('index')
-        if export_beta:
-            _export_single_data('beta')
-        if export_eigen_value:
-            _export_single_data('eigen_value')
+        _export_single_data("index")
+        _export_single_data("beta")
+        _export_single_data("eigen_value")
 
         # Export combination-mode attributes
-        if export_adiabatic:
-            _export_combination_data('adiabatic')
-        if export_beating_length:
-            _export_combination_data('beating_length')
-        if export_normalized_coupling:
-            _export_combination_data('normalized_coupling')
+        _export_combination_data("adiabatic")
+        _export_combination_data("beating_length")
+        _export_combination_data("normalized_coupling")
