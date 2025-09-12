@@ -451,7 +451,15 @@ to download the full example code.</p>
 <section class="sphx-glr-example-title" id="x2-coupler">
 <span id="sphx-glr-gallery-workflow-plot-workflow-02-py"></span><h1>2x2 Coupler<a class="headerlink" href="#x2-coupler" title="Link to this heading">#</a></h1>
 <p>Importing the script dependencies</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">Workflow</span><span class="p">,</span> <span class="n">fiber_loader</span><span class="p">,</span> <span class="n">Boundaries</span><span class="p">,</span> <span class="n">BoundaryValue</span><span class="p">,</span> <span class="n">DomainAlignment</span><span class="p">,</span> <span class="n">Profile</span><span class="p">,</span> <span class="n">StructureType</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Workflow</span><span class="p">,</span>
+    <span class="n">fiber_loader</span><span class="p">,</span>
+    <span class="n">Boundaries</span><span class="p">,</span>
+    <span class="n">BoundaryValue</span><span class="p">,</span>
+    <span class="n">DomainAlignment</span><span class="p">,</span>
+    <span class="n">Profile</span><span class="p">,</span>
+    <span class="n">StructureType</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">PyOptik</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaterialBank</span>
 
@@ -467,17 +475,35 @@ to download the full example code.</p>
     <span class="n">structure_type</span><span class="o">=</span><span class="n">StructureType</span><span class="o">.</span><span class="n">CIRCULAR</span><span class="p">,</span>
     <span class="n">number_of_fibers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
     <span class="n">fusion_degree</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">fiber_radius</span><span class="o">=</span><span class="mf">62.5e-6</span>
+    <span class="n">fiber_radius</span><span class="o">=</span><span class="mf">62.5e-6</span><span class="p">,</span>
 <span class="p">)</span>
 
-<a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">clad_structure</span><span class="o">.</span><span class="n">refractive_index</span></a> <span class="o">=</span> <span class="n">MaterialBank</span><span class="o">.</span><span class="n">fused_silica</span><span class="o">.</span><span class="n">compute_refractive_index</span><span class="p">(</span><span class="n">wavelength</span><span class="p">)</span>  <span class="c1"># Refractive index of silica at the specified wavelength</span>
+<a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">clad_structure</span><span class="o">.</span><span class="n">refractive_index</span></a> <span class="o">=</span> <span class="n">MaterialBank</span><span class="o">.</span><span class="n">fused_silica</span><span class="o">.</span><span class="n">compute_refractive_index</span><span class="p">(</span>
+    <span class="n">wavelength</span>
+<span class="p">)</span>  <span class="c1"># Refractive index of silica at the specified wavelength</span>
 
 
 <span class="n">fiber_list</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span><span class="s1">&#39;DCF1300S_33&#39;</span><span class="p">,</span> <span class="n">clad_refractive_index</span><span class="o">=</span><a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">clad_structure</span><span class="o">.</span><span class="n">refractive_index</span></a><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span><span class="s1">&#39;DCF1300S_26&#39;</span><span class="p">,</span> <span class="n">clad_refractive_index</span><span class="o">=</span><a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">clad_structure</span><span class="o">.</span><span class="n">refractive_index</span></a><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span><span class="s1">&#39;DCF1300S_42&#39;</span><span class="p">,</span> <span class="n">clad_refractive_index</span><span class="o">=</span><a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">clad_structure</span><span class="o">.</span><span class="n">refractive_index</span></a><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
-    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span><span class="s1">&#39;DCF1300S_33&#39;</span><span class="p">,</span> <span class="n">clad_refractive_index</span><span class="o">=</span><a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">clad_structure</span><span class="o">.</span><span class="n">refractive_index</span></a><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span>
+        <span class="s2">&quot;DCF1300S_33&quot;</span><span class="p">,</span>
+        <span class="n">clad_refractive_index</span><span class="o">=</span><a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">clad_structure</span><span class="o">.</span><span class="n">refractive_index</span></a><span class="p">,</span>
+        <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">),</span>
+    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span>
+        <span class="s2">&quot;DCF1300S_26&quot;</span><span class="p">,</span>
+        <span class="n">clad_refractive_index</span><span class="o">=</span><a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">clad_structure</span><span class="o">.</span><span class="n">refractive_index</span></a><span class="p">,</span>
+        <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="p">),</span>
+    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span>
+        <span class="s2">&quot;DCF1300S_42&quot;</span><span class="p">,</span>
+        <span class="n">clad_refractive_index</span><span class="o">=</span><a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">clad_structure</span><span class="o">.</span><span class="n">refractive_index</span></a><span class="p">,</span>
+        <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="p">),</span>
+    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span>
+        <span class="s2">&quot;DCF1300S_33&quot;</span><span class="p">,</span>
+        <span class="n">clad_refractive_index</span><span class="o">=</span><a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">clad_structure</span><span class="o">.</span><span class="n">refractive_index</span></a><span class="p">,</span>
+        <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+    <span class="p">),</span>
 <span class="p">]</span>
 </pre></div>
 </div>
@@ -493,18 +519,18 @@ to download the full example code.</p>
 <h2>Generating the computing workflow<a class="headerlink" href="#generating-the-computing-workflow" title="Link to this heading">#</a></h2>
 <p>Workflow class to define all the computation parameters before initializing the solver</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">workflow</span> <span class="o">=</span> <span class="n">Workflow</span><span class="p">(</span>
-    <span class="n">fiber_list</span><span class="o">=</span><span class="n">fiber_list</span><span class="p">,</span>          <span class="c1"># List of fiber to be added in the mesh, the order matters.</span>
+    <span class="n">fiber_list</span><span class="o">=</span><span class="n">fiber_list</span><span class="p">,</span>  <span class="c1"># List of fiber to be added in the mesh, the order matters.</span>
     <span class="n">clad_structure</span><span class="o">=</span><span class="n">clad_structure</span><span class="p">,</span>  <span class="c1"># Cladding structure, if None provided then no cladding is set.</span>
-    <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>          <span class="c1"># Wavelength used for the mode computation.</span>
-    <span class="n">resolution</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>                  <span class="c1"># Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].</span>
+    <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>  <span class="c1"># Wavelength used for the mode computation.</span>
+    <span class="n">resolution</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>  <span class="c1"># Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].</span>
     <span class="n">x_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span>  <span class="c1"># Mesh x-boundary structure.</span>
-    <span class="n">y_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">BOTTOM</span><span class="p">,</span><span class="c1"># Mesh y-boundary structure.</span>
-    <span class="n">boundaries</span><span class="o">=</span><span class="n">boundaries</span><span class="p">,</span>          <span class="c1"># Set of symmetries to be evaluated, each symmetry add a round of simulation</span>
-    <span class="n">n_sorted_mode</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>                <span class="c1"># Total computed and sorted mode.</span>
-    <span class="n">n_added_mode</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>                 <span class="c1"># Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].</span>
-    <span class="n">debug_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>                   <span class="c1"># Print the iteration step for the solver plus some other important steps.</span>
-    <span class="n">auto_label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                <span class="c1"># Auto labeling the mode. Label are not always correct and should be verified afterwards.</span>
-    <span class="n">itr_final</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>                  <span class="c1"># Final value of inverse taper ratio to simulate</span>
+    <span class="n">y_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">BOTTOM</span><span class="p">,</span>  <span class="c1"># Mesh y-boundary structure.</span>
+    <span class="n">boundaries</span><span class="o">=</span><span class="n">boundaries</span><span class="p">,</span>  <span class="c1"># Set of symmetries to be evaluated, each symmetry add a round of simulation</span>
+    <span class="n">n_sorted_mode</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># Total computed and sorted mode.</span>
+    <span class="n">n_added_mode</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].</span>
+    <span class="n">debug_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># Print the iteration step for the solver plus some other important steps.</span>
+    <span class="n">auto_label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Auto labeling the mode. Label are not always correct and should be verified afterwards.</span>
+    <span class="n">itr_final</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>  <span class="c1"># Final value of inverse taper ratio to simulate</span>
 <span class="p">)</span>
 
 <span class="n">workflow</span><span class="o">.</span><span class="n">initialize_geometry</span><span class="p">(</span><span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Initialize the geometry and plot it</span>
@@ -524,31 +550,31 @@ to download the full example code.</p>
 </section>
 <section id="field-computation-e-i-j">
 <h2>Field computation: <span class="math notranslate nohighlight">\(E_{i,j}\)</span><a class="headerlink" href="#field-computation-e-i-j" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;field&#39;</span><span class="p">,</span> <span class="n">itr_list</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;field&quot;</span><span class="p">,</span> <span class="n">itr_list</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
 </pre></div>
 </div>
 <img src="../../_images/sphx_glr_plot_workflow_02_003.png" srcset="../../_images/sphx_glr_plot_workflow_02_003.png" alt="$LP01$ slice: 0  itr: 1.000, $LP21_a$ slice: 0  itr: 1.000, $LP11_b$ slice: 0  itr: 1.000, $LP31_b$ slice: 0  itr: 1.000, $LP01$ slice: 499  itr: 0.100, $LP21_a$ slice: 499  itr: 0.100, $LP11_b$ slice: 499  itr: 0.100, $LP31_b$ slice: 499  itr: 0.100" class = "sphx-glr-single-img"/></section>
 <section id="effective-index-n-eff-i-j">
 <h2>Effective index: <span class="math notranslate nohighlight">\(n^{eff}_{i,j}\)</span><a class="headerlink" href="#effective-index-n-eff-i-j" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;beta&#39;</span><span class="p">)</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;beta&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <img src="../../_images/sphx_glr_plot_workflow_02_004.png" srcset="../../_images/sphx_glr_plot_workflow_02_004.png" alt="plot workflow 02" class = "sphx-glr-single-img"/></section>
 <section id="modal-normalized-coupling-c-i-j">
 <h2>Modal normalized coupling: <span class="math notranslate nohighlight">\(C_{i,j}\)</span><a class="headerlink" href="#modal-normalized-coupling-c-i-j" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;normalized-coupling&#39;</span><span class="p">)</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;normalized-coupling&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <img src="../../_images/sphx_glr_plot_workflow_02_005.png" srcset="../../_images/sphx_glr_plot_workflow_02_005.png" alt="plot workflow 02" class = "sphx-glr-single-img"/></section>
 <section id="adiabatic-criterion-tilde-c-i-j">
 <h2>Adiabatic criterion: <span class="math notranslate nohighlight">\(\tilde{C}_{i,j}\)</span><a class="headerlink" href="#adiabatic-criterion-tilde-c-i-j" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;adiabatic&#39;</span><span class="p">,</span> <span class="n">save_filename</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;adiabatic&quot;</span><span class="p">,</span> <span class="n">save_as</span><span class="o">=</span><span class="s2">&quot;test.png&quot;</span><span class="p">)</span>
 
 
 <span class="c1"># -</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_workflow_02_006.png" srcset="../../_images/sphx_glr_plot_workflow_02_006.png" alt="plot workflow 02" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 12.165 seconds)</p>
+<img src="../../_images/sphx_glr_plot_workflow_02_006.png" srcset="../../_images/sphx_glr_plot_workflow_02_006.png" alt="plot workflow 02" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 11.935 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-workflow-plot-workflow-02-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/6026197b478d46eadb1154e4277d3188/plot_workflow_02.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_workflow_02.ipynb</span></code></a></p>
