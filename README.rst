@@ -140,7 +140,7 @@ For questions or contributions, contact `martin.poinsinet.de.sivry@gmail.com <ma
     :alt: Python
     :target: https://www.python.org/
 .. |zenodo| image:: https://zenodo.org/badge/366930899.svg
-   :target: https://zenodo.org/badge/latestdoi/366930899
+   :target: https://opg.optica.org/optcon/viewmedia.cfm?uri=optcon-3-2-242&html=true
    :alt: Scientific article
 .. |colab| image:: https://colab.research.google.com/assets/colab-badge.svg
    :alt: Google Colab
