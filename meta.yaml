@@ -6,35 +6,35 @@ source:
   git_url: https://github.com/MartinPdeS/SuPyMode.git
 
 build:
-  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
   number: 0
+  script:
+    - export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"  # [osx]
+    - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
-  host:
-    - {{ compiler('c') }}
+  build:
     - {{ compiler('cxx') }}
+    - llvm-openmp  # [osx]
+  host:
     - python {{ PY_VER }}*
+    - python_abi 3.13.* *_cp313   # [py==313]
     - scikit-build-core ~=0.3
     - pybind11 ~=2.13
     - python-build ~=1.2
     - setuptools_scm[toml] ~=8.0
-    - llvm-openmp
+    - numpy >=2.0,<3
   run:
-    - python {{PY_VER}}*
     - martinpdes::pyoptik
     - martinpdes::mpsplots
     - martinpdes::fiberfusing
     - martinpdes::pyfibermodes
     - martinpdes::pyfinitdiff
-    - numpy >=2.2
+    - numpy >=2.0,<3
     - pyvista
     - scipy
     - pydantic
     - tabulate
     - pathvalidate
-    - llvm-openmp
-
-
 
 about:
   home: https://github.com/MartinPdeS/SuPyMode
@@ -61,11 +61,12 @@ test:
   imports:
     - SuPyMode
   requires:
-    - python {{PY_VER}}*
+    - python {{ PY_VER }}*
+    - python_abi 3.13.* *_cp313   # [py==313]
     - pytest >=0.6
     - pytest-cov >=2.0
-    - pytest-json-report ~=1.5.0
-    - coverage ~=7.6.1
+    - pytest-json-report ==1.5
+    - coverage ==7.6
   commands:
     - python -m pytest
   source_files:
