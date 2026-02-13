@@ -37,14 +37,23 @@ if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif()
 
 if (WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    add_compile_options(/W4 /permissive- /Zc:preprocessor)
+    add_compile_options(
+        $<$<COMPILE_LANGUAGE:CXX>:/W4>
+        $<$<COMPILE_LANGUAGE:CXX>:/permissive->
+    )
+    add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/Zc:preprocessor>)
 else()
-    add_compile_options(-Wall -Wextra -pedantic-errors -Wno-unused-parameter)
+    add_compile_options(
+        $<$<COMPILE_LANGUAGE:CXX>:-Wall>
+        $<$<COMPILE_LANGUAGE:CXX>:-Wextra>
+        $<$<COMPILE_LANGUAGE:CXX>:-pedantic-errors>
+        $<$<COMPILE_LANGUAGE:CXX>:-Wno-unused-parameter>
+    )
 endif()
 # --------------------- Platform-specific compiler and linker options --------------------
 
 # --------------------- Find dependencies and compile options --------------------
-find_package(OpenMP REQUIRED)
+find_package(OpenMP REQUIRED COMPONENTS CXX)
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 # --------------------- Find dependencies and compile options --------------------
