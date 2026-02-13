@@ -19,7 +19,7 @@ Coupler Alpha Profile
   .. image:: /gallery/alpha_profile/images/thumb/sphx_glr_plot_alpha_profile_0_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_alpha_profile_plot_alpha_profile_0.py`
+  :doc:`/gallery/alpha_profile/plot_alpha_profile_0`
 
 .. raw:: html
 
@@ -36,7 +36,7 @@ Coupler Alpha Profile
   .. image:: /gallery/alpha_profile/images/thumb/sphx_glr_plot_alpha_profile_1_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_alpha_profile_plot_alpha_profile_1.py`
+  :doc:`/gallery/alpha_profile/plot_alpha_profile_1`
 
 .. raw:: html
 

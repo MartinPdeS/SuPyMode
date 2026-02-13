@@ -19,7 +19,7 @@ Standard workflow
   .. image:: /gallery/workflow/images/thumb/sphx_glr_plot_workflow_01_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_workflow_plot_workflow_01.py`
+  :doc:`/gallery/workflow/plot_workflow_01`
 
 .. raw:: html
 
@@ -36,7 +36,7 @@ Standard workflow
   .. image:: /gallery/workflow/images/thumb/sphx_glr_plot_workflow_02_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_workflow_plot_workflow_02.py`
+  :doc:`/gallery/workflow/plot_workflow_02`
 
 .. raw:: html
 
@@ -53,7 +53,7 @@ Standard workflow
   .. image:: /gallery/workflow/images/thumb/sphx_glr_plot_workflow_03_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_workflow_plot_workflow_03.py`
+  :doc:`/gallery/workflow/plot_workflow_03`
 
 .. raw:: html
 
@@ -70,7 +70,7 @@ Standard workflow
   .. image:: /gallery/workflow/images/thumb/sphx_glr_plot_workflow_04_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_workflow_plot_workflow_04.py`
+  :doc:`/gallery/workflow/plot_workflow_04`
 
 .. raw:: html
 
@@ -87,7 +87,7 @@ Standard workflow
   .. image:: /gallery/workflow/images/thumb/sphx_glr_plot_workflow_05_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_workflow_plot_workflow_05.py`
+  :doc:`/gallery/workflow/plot_workflow_05`
 
 .. raw:: html
 
@@ -104,7 +104,7 @@ Standard workflow
   .. image:: /gallery/workflow/images/thumb/sphx_glr_plot_workflow_06_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_workflow_plot_workflow_06.py`
+  :doc:`/gallery/workflow/plot_workflow_06`
 
 .. raw:: html
 
@@ -121,7 +121,7 @@ Standard workflow
   .. image:: /gallery/workflow/images/thumb/sphx_glr_plot_workflow_07_thumb.png
     :alt:
 
-  :ref:`sphx_glr_gallery_workflow_plot_workflow_07.py`
+  :doc:`/gallery/workflow/plot_workflow_07`
 
 .. raw:: html
 
