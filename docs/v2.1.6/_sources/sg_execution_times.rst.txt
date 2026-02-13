@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**05:16.244** total execution time for 14 files **from all galleries**:
+**05:03.506** total execution time for 14 files **from all galleries**:
 
 .. container::
 
@@ -33,44 +33,44 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_gallery_extra_plot_graded_index.py` (``../examples/extra/plot_graded_index.py``)
-     - 01:03.476
+     - 00:59.226
      - 0.0
    * - :ref:`sphx_glr_gallery_workflow_plot_workflow_07.py` (``../examples/workflow/plot_workflow_07.py``)
-     - 00:47.317
-     - 0.0
-   * - :ref:`sphx_glr_gallery_validation_plot_validation.py` (``../examples/validation/plot_validation.py``)
-     - 00:36.146
+     - 00:46.117
      - 0.0
    * - :ref:`sphx_glr_gallery_validation_plot_beta_DCF.py` (``../examples/validation/plot_beta_DCF.py``)
-     - 00:35.715
+     - 00:33.892
+     - 0.0
+   * - :ref:`sphx_glr_gallery_validation_plot_validation.py` (``../examples/validation/plot_validation.py``)
+     - 00:33.631
      - 0.0
    * - :ref:`sphx_glr_gallery_workflow_plot_workflow_06.py` (``../examples/workflow/plot_workflow_06.py``)
-     - 00:32.115
+     - 00:31.529
      - 0.0
    * - :ref:`sphx_glr_gallery_workflow_plot_workflow_05.py` (``../examples/workflow/plot_workflow_05.py``)
-     - 00:21.808
+     - 00:21.332
      - 0.0
    * - :ref:`sphx_glr_gallery_validation_plot_beta_SMF28.py` (``../examples/validation/plot_beta_SMF28.py``)
-     - 00:19.074
+     - 00:18.258
      - 0.0
    * - :ref:`sphx_glr_gallery_workflow_plot_workflow_01.py` (``../examples/workflow/plot_workflow_01.py``)
-     - 00:14.535
+     - 00:14.487
      - 0.0
    * - :ref:`sphx_glr_gallery_workflow_plot_workflow_02.py` (``../examples/workflow/plot_workflow_02.py``)
-     - 00:12.080
+     - 00:11.873
      - 0.0
    * - :ref:`sphx_glr_gallery_workflow_plot_workflow_04.py` (``../examples/workflow/plot_workflow_04.py``)
-     - 00:11.804
+     - 00:11.407
      - 0.0
    * - :ref:`sphx_glr_gallery_extra_plot_propagation.py` (``../examples/extra/plot_propagation.py``)
-     - 00:10.874
+     - 00:10.634
      - 0.0
    * - :ref:`sphx_glr_gallery_workflow_plot_workflow_03.py` (``../examples/workflow/plot_workflow_03.py``)
-     - 00:10.294
+     - 00:10.143
      - 0.0
    * - :ref:`sphx_glr_gallery_alpha_profile_plot_alpha_profile_0.py` (``../examples/alpha_profile/plot_alpha_profile_0.py``)
-     - 00:00.513
+     - 00:00.494
      - 0.0
    * - :ref:`sphx_glr_gallery_alpha_profile_plot_alpha_profile_1.py` (``../examples/alpha_profile/plot_alpha_profile_1.py``)
-     - 00:00.494
+     - 00:00.483
      - 0.0
