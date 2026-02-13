@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:00.981** total execution time for 2 files **from gallery/alpha_profile**:
+**00:00.837** total execution time for 2 files **from gallery/alpha_profile**:
 
 .. container::
 
@@ -33,8 +33,8 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_gallery_alpha_profile_plot_alpha_profile_0.py` (``plot_alpha_profile_0.py``)
-     - 00:00.499
+     - 00:00.425
      - 0.0
    * - :ref:`sphx_glr_gallery_alpha_profile_plot_alpha_profile_1.py` (``plot_alpha_profile_1.py``)
-     - 00:00.482
+     - 00:00.412
      - 0.0
