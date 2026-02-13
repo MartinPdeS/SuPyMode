@@ -45,9 +45,7 @@ def test_build_single_segment_profile(mock_show, alpha_profile):
         The profile fixture to use in the test.
     """
     alpha_profile.add_taper_segment(
-        alpha=0,
-        initial_heating_length=10e-3,
-        stretching_length=0.2e-3 * 200
+        alpha=0, initial_heating_length=10e-3, stretching_length=0.2e-3 * 200
     )
     alpha_profile.initialize()
     alpha_profile.plot()
@@ -68,14 +66,10 @@ def test_build_two_segment_profile(mock_show, alpha_profile):
         The profile fixture to use in the test.
     """
     alpha_profile.add_taper_segment(
-        alpha=0,
-        initial_heating_length=10e-3,
-        stretching_length=0.2e-3 * 200
+        alpha=0, initial_heating_length=10e-3, stretching_length=0.2e-3 * 200
     )
     alpha_profile.add_taper_segment(
-        alpha=0,
-        initial_heating_length=3e-3,
-        stretching_length=0.2e-3 * 200
+        alpha=0, initial_heating_length=3e-3, stretching_length=0.2e-3 * 200
     )
     alpha_profile.initialize()
     alpha_profile.plot()
@@ -96,9 +90,7 @@ def test_build_asymmetric_profile(mock_show, asymmetric_alpha_profile):
         The asymmetric profile fixture to use in the test.
     """
     asymmetric_alpha_profile.add_taper_segment(
-        alpha=0,
-        initial_heating_length=10e-3,
-        stretching_length=0.2e-3 * 200
+        alpha=0, initial_heating_length=10e-3, stretching_length=0.2e-3 * 200
     )
     asymmetric_alpha_profile.initialize()
     asymmetric_alpha_profile.plot()
@@ -116,9 +108,7 @@ def test_generate_propagation_gif(alpha_profile):
         The profile fixture to use in the test.
     """
     alpha_profile.add_taper_segment(
-        alpha=0,
-        initial_heating_length=3e-3,
-        stretching_length=0.2e-3 * 200
+        alpha=0, initial_heating_length=3e-3, stretching_length=0.2e-3 * 200
     )
     alpha_profile.initialize()
     alpha_profile.generate_propagation_gif(number_of_frames=10)

@@ -28,26 +28,26 @@ def rho_mesh(x_vector, y_vector):
 
 def test_constant_gradient(x_vector, y_vector, rho_mesh):
     rho_gradient = get_rho_gradient_5p(
-        mesh=rho_mesh,
-        x_vector=x_vector,
-        y_vector=y_vector
+        mesh=rho_mesh, x_vector=x_vector, y_vector=y_vector
     )
 
     condition = numpy.isclose(rho_gradient, 1, atol=0.5)
-    assert numpy.all(condition), f"Error in constant (expected value: 1.0) gradient computation. Mean gradient value: {condition.mean()}"
+    assert numpy.all(
+        condition
+    ), f"Error in constant (expected value: 1.0) gradient computation. Mean gradient value: {condition.mean()}"
 
 
 def test_null_gradient(x_vector, y_vector, rho_mesh):
     rho_mesh *= 0.0
 
     rho_gradient = get_rho_gradient_5p(
-        mesh=rho_mesh,
-        x_vector=x_vector,
-        y_vector=y_vector
+        mesh=rho_mesh, x_vector=x_vector, y_vector=y_vector
     )
 
     condition = numpy.isclose(rho_gradient, 0, atol=0.5)
-    assert numpy.all(condition), f"Error in constant (expected value: 0.0) gradient computation. Mean gradient value: {condition.mean()}"
+    assert numpy.all(
+        condition
+    ), f"Error in constant (expected value: 0.0) gradient computation. Mean gradient value: {condition.mean()}"
 
 
 if __name__ == "__main__":

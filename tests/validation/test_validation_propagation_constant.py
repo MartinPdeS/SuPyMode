@@ -2,17 +2,24 @@
 # -*- coding: utf-8 -*-
 import pytest
 import numpy
-from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, DomainAlignment, BoundaryValue
+from SuPyMode.workflow import (
+    Workflow,
+    fiber_loader,
+    Boundaries,
+    DomainAlignment,
+    BoundaryValue,
+)
 import PyFiberModes
 
 
 def test_propagation_constant(
-        wavelength: float = 1550e-9,
-        fiber_name: str = 'test_multimode_fiber',
-        resolution: int = 140,
-        n_step: int = 80,
-        itr_final: float = 0.5,
-        **kwargs):
+    wavelength: float = 1550e-9,
+    fiber_name: str = "test_multimode_fiber",
+    resolution: int = 140,
+    n_step: int = 80,
+    itr_final: float = 0.5,
+    **kwargs,
+):
     """
     Tests the consistency between analytical and simulated propagation constants over a range of fiber scaling iterations.
 
@@ -37,14 +44,16 @@ def test_propagation_constant(
         resolution=resolution,
         x_bounds=DomainAlignment.LEFT,
         y_bounds=DomainAlignment.BOTTOM,
-        boundaries=[Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.SYMMETRIC)],
+        boundaries=[
+            Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.SYMMETRIC)
+        ],
         n_sorted_mode=4,
         n_added_mode=8,
         debug_mode=0,
         auto_label=True,
         itr_final=itr_final,
         n_step=n_step,
-        **kwargs
+        **kwargs,
     )
 
     workflow.initialize_geometry()
@@ -54,13 +63,16 @@ def test_propagation_constant(
 
     # Load and scale the analytical fiber model
     pfm_fiber = PyFiberModes.fiber.load_fiber(
-        fiber_name=fiber_name,
-        wavelength=wavelength,
-        add_air_layer=False
+        fiber_name=fiber_name, wavelength=wavelength, add_air_layer=False
     )
 
     # Compute the analytical propagation constant for each scaling iteration
-    analytical = numpy.array([pfm_fiber.scale(factor=itr).get_propagation_constant(mode=PyFiberModes.LP01) for itr in itr_list])
+    analytical = numpy.array(
+        [
+            pfm_fiber.scale(factor=itr).get_propagation_constant(mode=PyFiberModes.LP01)
+            for itr in itr_list
+        ]
+    )
 
     # Retrieve simulation results
     simulation = workflow.superset.LP01.beta.data
@@ -70,7 +82,9 @@ def test_propagation_constant(
     if numpy.mean(discrepancies) < 0.9:
         error = numpy.abs(analytical - simulation)
         relative_error = error / numpy.abs(analytical)
-        raise AssertionError(f"Discrepancy between computed and analytical propagation constants. Mean Error: {error.mean()}, Mean Relative Error: {relative_error.mean()}")
+        raise AssertionError(
+            f"Discrepancy between computed and analytical propagation constants. Mean Error: {error.mean()}, Mean Relative Error: {relative_error.mean()}"
+        )
 
 
 if __name__ == "__main__":

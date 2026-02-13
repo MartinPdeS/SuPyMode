@@ -2,7 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, BoundaryValue, Profile, StructureType, DomainAlignment
+from SuPyMode.workflow import (
+    Workflow,
+    fiber_loader,
+    Boundaries,
+    BoundaryValue,
+    Profile,
+    StructureType,
+    DomainAlignment,
+)
 
 
 @pytest.fixture(scope="module")
@@ -11,8 +19,8 @@ def precomputed_workflow():
     Fixture to initialize the SuPyMode workflow for reuse across multiple tests.
     """
     fibers = [
-        fiber_loader.load_fiber('SMF28', clad_refractive_index=1.4444),
-        fiber_loader.load_fiber('SMF28', clad_refractive_index=1.4444),
+        fiber_loader.load_fiber("SMF28", clad_refractive_index=1.4444),
+        fiber_loader.load_fiber("SMF28", clad_refractive_index=1.4444),
     ]
     fused_structure = Profile()
 
@@ -20,7 +28,7 @@ def precomputed_workflow():
         structure_type=StructureType.CIRCULAR,
         number_of_fibers=2,
         fusion_degree=0.3,
-        fiber_radius=62.5e-6
+        fiber_radius=62.5e-6,
     )
 
     fused_structure.refractive_index = 1.4444
@@ -67,7 +75,9 @@ def test_solver_properties(precomputed_workflow):
     """
     solver = precomputed_workflow.solver
     assert solver.eigen_value_to_index(3e6) is not None, "Eigenvalue conversion failed."
-    assert solver.coordinate_system is not None, "Solver coordinate system not accessible."
+    assert (
+        solver.coordinate_system is not None
+    ), "Solver coordinate system not accessible."
 
 
 def test_mode_properties(precomputed_workflow):
@@ -87,19 +97,23 @@ def test_field_interpolation(precomputed_workflow):
     Test field interpolation for a mode using ITR and slice number.
     """
     mode = precomputed_workflow.superset[0]
-    assert mode.get_field_interpolation(itr=1.0) is not None, "Field interpolation by ITR failed."
-    assert mode.get_field_interpolation(slice_number=3) is not None, "Field interpolation by slice number failed."
+    assert (
+        mode.get_field_interpolation(itr=1.0) is not None
+    ), "Field interpolation by ITR failed."
+    assert (
+        mode.get_field_interpolation(slice_number=3) is not None
+    ), "Field interpolation by slice number failed."
 
 
 def test_superset_operations(precomputed_workflow):
     """
     Test labeling, resetting labels, sorting, and exporting supermodes.
     """
-    precomputed_workflow.superset.label_supermodes('a', 'b')
+    precomputed_workflow.superset.label_supermodes("a", "b")
     precomputed_workflow.superset.reset_labels()
-    precomputed_workflow.superset.sort_modes('beta')
-    precomputed_workflow.superset.sort_modes('symmetry+beta')
-    precomputed_workflow.superset.export_data(filename='test_data')
+    precomputed_workflow.superset.sort_modes("beta")
+    precomputed_workflow.superset.sort_modes("symmetry+beta")
+    precomputed_workflow.superset.export_data(filename="test_data")
 
 
 if __name__ == "__main__":

@@ -4,16 +4,25 @@
 from unittest.mock import patch
 import pytest
 import matplotlib.pyplot as plt
-from SuPyMode.workflow import Profile, Workflow, fiber_loader, Boundaries, StructureType, DomainAlignment, BoundaryValue
+from SuPyMode.workflow import (
+    Profile,
+    Workflow,
+    fiber_loader,
+    Boundaries,
+    StructureType,
+    DomainAlignment,
+    BoundaryValue,
+)
 
 
 SINGULAR_PLOTS = [
-    'index', 'beta', 'field', 'eigen_value',
+    "index",
+    "beta",
+    "field",
+    "eigen_value",
 ]
 
-COUPLED_PLOTS = [
-    'normalized_coupling', 'adiabatic', 'beating_length'
-]
+COUPLED_PLOTS = ["normalized_coupling", "adiabatic", "beating_length"]
 
 
 @pytest.fixture(scope="module")
@@ -30,14 +39,16 @@ def setup_workflow():
     Workflow
         An instance of the Workflow class configured with predefined parameters for testing.
     """
-    fibers = [fiber_loader.load_fiber('SMF28', clad_refractive_index=1.4444) for _ in range(2)]
+    fibers = [
+        fiber_loader.load_fiber("SMF28", clad_refractive_index=1.4444) for _ in range(2)
+    ]
     fused_structure = Profile()
 
     fused_structure.add_structure(
         structure_type=StructureType.CIRCULAR,
         number_of_fibers=2,
         fusion_degree=0.3,
-        fiber_radius=62.5e-6
+        fiber_radius=62.5e-6,
     )
     fused_structure.refractive_index = 1.4444
 
@@ -80,7 +91,7 @@ def test_superset_plot(mock_show, setup_workflow, plot_type):
     """
     superset = setup_workflow.superset
 
-    superset.plot(plot_type=plot_type, mode_of_interest='fundamental')
+    superset.plot(plot_type=plot_type, mode_of_interest="fundamental")
     mock_show.assert_called_once()
     mock_show.reset_mock()
     plt.close()
@@ -115,6 +126,7 @@ def test_representation_plot(mock_show, setup_workflow, plot_type):
     mock_show.reset_mock()
     plt.close()
 
+
 @pytest.mark.parametrize("plot_type", COUPLED_PLOTS)
 @patch("matplotlib.pyplot.show")
 def test_representation_plot(mock_show, setup_workflow, plot_type):
@@ -140,7 +152,6 @@ def test_representation_plot(mock_show, setup_workflow, plot_type):
 
     other_mode = setup_workflow.superset[1]
     representation.plot(other_supermode=other_mode)
-
 
     mock_show.assert_called_once()
     mock_show.reset_mock()
