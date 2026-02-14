@@ -18,9 +18,7 @@ jobs:
       build-Linux: true
       build-macOS: true
       build-Windows: true
-      apt-package: |
-        libopenblas-dev
-        pkg-config
+      apt-package: libopenblas-dev pkg-config
       mingw-package: |
         mingw-w64-x86_64-toolchain
         mingw-w64-x86_64-openmp
