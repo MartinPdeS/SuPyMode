@@ -1,11 +1,12 @@
 #pragma once
 
+#include <pybind11/pybind11.h>
 #include <complex>
 #include "../utils/utils.h"
 #include "../utils/numpy_interface.h"
 #include "../model_parameters/model_parameters.h"
 #include <Eigen/Core>
-#include <pybind11/pybind11.h>
+#include "boundaries/boundaries.h"
 
 typedef std::complex<double> complex128;
 
@@ -33,10 +34,7 @@ public:
     Eigen::VectorXd eigen_value; ///< Eigenvalues from the mode solver
     ModelParameters model_parameters; ///< Physical and numerical parameters for the model
 
-    std::string left_boundary;   ///< Boundary condition specification for left edge
-    std::string right_boundary;  ///< Boundary condition specification for right edge
-    std::string top_boundary;    ///< Boundary condition specification for top edge
-    std::string bottom_boundary; ///< Boundary condition specification for bottom edge
+    Boundaries boundaries;
 
     /**
      * @brief Default constructor for SuperMode.
@@ -51,10 +49,7 @@ public:
      * @param betas_py Python array containing propagation constants
      * @param eigen_value_py Python array containing eigenvalues
      * @param model_parameters Physical and numerical model parameters
-     * @param left_boundary Boundary condition for left edge
-     * @param right_boundary Boundary condition for right edge
-     * @param top_boundary Boundary condition for top edge
-     * @param bottom_boundary Boundary condition for bottom edge
+     * @param boundaries Boundary conditions for the mode solver
      */
     SuperMode(
         const size_t mode_number,
@@ -63,10 +58,7 @@ public:
         const pybind11::array_t<double> &betas_py,
         const pybind11::array_t<double> &eigen_value_py,
         const ModelParameters &model_parameters,
-        const std::string &left_boundary,
-        const std::string &right_boundary,
-        const std::string &top_boundary,
-        const std::string &bottom_boundary
+        const Boundaries& boundaries
     );
 
     /**
@@ -74,18 +66,12 @@ public:
      *
      * @param mode_number Index/identifier for this mode
      * @param model_parameters Physical and numerical model parameters
-     * @param left_boundary Boundary condition for left edge
-     * @param right_boundary Boundary condition for right edge
-     * @param top_boundary Boundary condition for top edge
-     * @param bottom_boundary Boundary condition for bottom edge
+     * @param boundaries Boundary conditions for the mode solver
      */
     SuperMode(
         const size_t mode_number,
         const ModelParameters &model_parameters,
-        const std::string& left_boundary,
-        const std::string& right_boundary,
-        const std::string& top_boundary,
-        const std::string& bottom_boundary
+        const Boundaries& boundaries
     );
 
     /**
@@ -406,5 +392,3 @@ public:
     static SuperMode build_from_tuple(pybind11::tuple tuple);
 
 };
-
-

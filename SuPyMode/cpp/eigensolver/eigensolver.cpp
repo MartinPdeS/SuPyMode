@@ -24,7 +24,13 @@ void EigenSolver::initialize(
 }
 
 
-void EigenSolver::setup_boundaries(const std::string &left, const std::string &right, const std::string &top, const std::string &bottom) {
+void EigenSolver::setup_boundaries(
+    const std::string &left,
+    const std::string &right,
+    const std::string &top,
+    const std::string &bottom
+) {
+    this->boundaries = Boundaries(left, right, top, bottom);
     if (this->model_parameters.debug_mode > 0)
         std::cout
             << "Setting up boundaries."
@@ -33,10 +39,6 @@ void EigenSolver::setup_boundaries(const std::string &left, const std::string &r
             << "Top: " << top << ", "
             << "Bottom: " << bottom << std::endl;
 
-    this->left_boundary = left;
-    this->right_boundary = right;
-    this->top_boundary = top;
-    this->bottom_boundary = bottom;
 }
 
 void EigenSolver::compute_laplacian() {
@@ -69,13 +71,21 @@ void EigenSolver::generate_mode_set()
 {
     for (size_t mode_number=0; mode_number < n_computed_mode; ++mode_number)
     {
-        SuperMode supermode = SuperMode(mode_number, this->model_parameters, this->left_boundary, this->right_boundary, this->top_boundary, this->bottom_boundary);
+        SuperMode supermode = SuperMode(
+            mode_number,
+            this->model_parameters,
+            this->boundaries
+        );
         computed_supermodes.push_back(supermode);
     }
 
     for (size_t mode_number=0; mode_number<n_sorted_mode; ++mode_number)
     {
-        SuperMode supermode = SuperMode(mode_number, this->model_parameters, this->left_boundary, this->right_boundary, this->top_boundary, this->bottom_boundary);
+        SuperMode supermode = SuperMode(
+            mode_number,
+            this->model_parameters,
+            this->boundaries
+        );
         sorted_supermodes.push_back(supermode);
     }
 

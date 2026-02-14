@@ -41,13 +41,15 @@ class SuPySolver(EIGENSOLVER):
         Debug output level from the C++ binding, where 0 is no output and higher values provide more detail (default is 1).
     """
 
-    def __init__(self,
+    def __init__(
+        self,
         geometry: Geometry | numpy.ndarray,
         tolerance: float = 1e-8,
         max_iteration: int = 10_000,
         accuracy: int = 2,
         extrapolation_order: int = 2,
-        debug_mode: int = 1) -> None:
+        debug_mode: int = 1,
+    ) -> None:
         """
         Initialize the solver with the given parameters.
         """
@@ -66,19 +68,11 @@ class SuPySolver(EIGENSOLVER):
         self.mode_number = 0
         self.solver_number = 0
 
-        # self._geometry = GEOMETRY(
-        #     mesh=self.mesh,
-        #     x=self.coordinate_system.x_vector,
-        #     y=self.coordinate_system.y_vector
-        # )
+        super().__init__(max_iteration=max_iteration, tolerance=tolerance)
 
-
-        super().__init__(
-            max_iteration=max_iteration,
-            tolerance=tolerance
-        )
-
-    def initialize_binding(self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int) -> None:
+    def initialize_binding(
+        self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int
+    ) -> None:
         """
         Initialize and configure the C++ solver binding for eigenvalue computations.
 
@@ -103,7 +97,7 @@ class SuPySolver(EIGENSOLVER):
             dy=self.coordinate_system.dy,
             derivative=2,
             accuracy=self.accuracy,
-            boundaries=boundaries
+            boundaries=boundaries,
         )
 
         finit_diff_matrix.construct_triplet()
@@ -111,14 +105,14 @@ class SuPySolver(EIGENSOLVER):
         new_array = numpy.c_[
             finit_diff_matrix._triplet.array[:, 1],
             finit_diff_matrix._triplet.array[:, 0],
-            finit_diff_matrix._triplet.array[:, 2]
+            finit_diff_matrix._triplet.array[:, 2],
         ]
 
         self._cpp_set_boundaries(
             left=boundaries.left.value.lower(),
             right=boundaries.right.value.lower(),
             top=boundaries.top.value.lower(),
-            bottom=boundaries.bottom.value.lower()
+            bottom=boundaries.bottom.value.lower(),
         )
 
         self._cpp_initialize(
@@ -130,7 +124,13 @@ class SuPySolver(EIGENSOLVER):
 
         self._cpp_compute_laplacian()
 
-    def init_superset(self, wavelength: float, n_step: int = 300, itr_initial: float = 1.0, itr_final: float = 0.1) -> None:
+    def init_superset(
+        self,
+        wavelength: float,
+        n_step: int = 300,
+        itr_initial: float = 1.0,
+        itr_final: float = 0.1,
+    ) -> None:
         """
         Initialize a SuperSet instance containing computed supermodes over a range of inverse taper ratios (ITR).
 
@@ -157,10 +157,14 @@ class SuPySolver(EIGENSOLVER):
             mesh=self.mesh,
             x_vector=self.coordinate_system.x_vector,
             y_vector=self.coordinate_system.y_vector,
-            debug_mode=self.debug_mode
+            debug_mode=self.debug_mode,
         )
 
-        self.superset = SuperSet(geometry=self.geometry, wavelength=wavelength, model_parameters=self.model_parameters)
+        self.superset = SuperSet(
+            geometry=self.geometry,
+            wavelength=wavelength,
+            model_parameters=self.model_parameters,
+        )
 
     def index_to_eigen_value(self, index: float) -> float:
         """
@@ -176,7 +180,7 @@ class SuPySolver(EIGENSOLVER):
         float
             Calculated eigenvalue based on the given index and the wavenumber.
         """
-        return -(index * self.wavenumber)**2
+        return -((index * self.wavenumber) ** 2)
 
     def eigen_value_to_index(self, eigen_value: float) -> float:
         """
@@ -194,7 +198,9 @@ class SuPySolver(EIGENSOLVER):
         """
         return numpy.sqrt(eigen_value) / self.wavenumber
 
-    def get_supermode_labels(self, n_modes: int, boundaries: Boundaries, auto_label: bool) -> list:
+    def get_supermode_labels(
+        self, n_modes: int, boundaries: Boundaries, auto_label: bool
+    ) -> list:
         """
         Generate labels for supermodes based on boundary conditions and whether auto-labeling is enabled.
 
@@ -214,12 +220,20 @@ class SuPySolver(EIGENSOLVER):
         """
         if auto_label:
             return [
-                ModeLabel(boundaries=boundaries, mode_number=n).label for n in range(n_modes)
+                ModeLabel(boundaries=boundaries, mode_number=n).label
+                for n in range(n_modes)
             ]
         else:
             return [f"mode_{{{n}}}" for n in range(n_modes)]
 
-    def add_modes(self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int = 4, index_guess: float = 0., auto_label: bool = True) -> None:
+    def add_modes(
+        self,
+        n_sorted_mode: int,
+        boundaries: Boundaries,
+        n_added_mode: int = 4,
+        index_guess: float = 0.0,
+        auto_label: bool = True,
+    ) -> None:
         """
         Compute and add a specified number of supermodes to the solver's collection.
 
@@ -242,27 +256,23 @@ class SuPySolver(EIGENSOLVER):
             This method updates the solver's internal state but does not return any value.
         """
 
-
         beta_guess = self.index_to_eigen_value(index_guess)
         self._cpp_reset_solver()
 
         self.initialize_binding(
             boundaries=boundaries,
             n_added_mode=n_added_mode,
-            n_sorted_mode=n_sorted_mode
+            n_sorted_mode=n_sorted_mode,
         )
 
         self.superset.model_parameters = self.model_parameters
 
         self._cpp_loop_over_itr(
-            extrapolation_order=self.extrapolation_order,
-            alpha=beta_guess
+            extrapolation_order=self.extrapolation_order, alpha=beta_guess
         )
 
         mode_labels = self.get_supermode_labels(
-            n_modes=n_sorted_mode,
-            boundaries=boundaries,
-            auto_label=auto_label
+            n_modes=n_sorted_mode, boundaries=boundaries, auto_label=auto_label
         )
 
         for binding_number, label in enumerate(mode_labels):
@@ -272,7 +282,7 @@ class SuPySolver(EIGENSOLVER):
                 mode_number=self.mode_number,
                 solver_number=self.solver_number,
                 boundaries=boundaries,
-                label=label
+                label=label,
             )
 
             self.superset.supermodes.append(supermode)

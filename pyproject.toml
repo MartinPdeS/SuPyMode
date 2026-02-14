@@ -45,7 +45,7 @@ classifiers = [
 dependencies = [
     "setuptools_scm[toml]>=8.0",
     "numpy>=2.0.0",
-    "scipy",
+    # "scipy",
     "MPSPlots",
     "pydantic",
     "PyFinitDiff",

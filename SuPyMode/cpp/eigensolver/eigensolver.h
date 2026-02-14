@@ -10,6 +10,7 @@
 #include "../utils/extrapolator.h"
 #include "../utils/progress_bar.h"
 #include "../utils/numpy_interface.h"
+#include "boundaries/boundaries.h"
 #include <iostream>
 
 class EigenSolver
@@ -20,10 +21,11 @@ class EigenSolver
         size_t n_sorted_mode;
         size_t max_iteration;
         double tolerance;
-        std::string left_boundary;
-        std::string right_boundary;
-        std::string top_boundary;
-        std::string bottom_boundary;
+        Boundaries boundaries;
+        // std::string left_boundary;
+        // std::string right_boundary;
+        // std::string top_boundary;
+        // std::string bottom_boundary;
         size_t iteration;
 
         std::vector<SuperMode> computed_supermodes;

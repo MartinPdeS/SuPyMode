@@ -332,8 +332,8 @@ PYBIND11_MODULE(interface_eigensolver, module)
     )
 
     .def_readonly(
-        "left_boundary",
-        &EigenSolver::left_boundary,
+        "boundaries",
+        &EigenSolver::boundaries,
         R"pbdoc(
             Boundary condition applied to the left edge of the computational domain.
 
@@ -357,68 +357,5 @@ PYBIND11_MODULE(interface_eigensolver, module)
               component is zero at the boundary
         )pbdoc"
     )
-    .def_readonly(
-        "right_boundary",
-        &EigenSolver::right_boundary,
-        R"pbdoc(
-            Boundary condition applied to the right edge of the computational domain.
-
-            This read-only attribute specifies the type of boundary condition
-            used at the right boundary of the finite difference grid.
-
-            Type
-            ----
-            str
-                One of "PML", "PEC", or "PMC"
-
-            See Also
-            --------
-            left_boundary : Description of boundary condition options
-        )pbdoc"
-    )
-    .def_readonly(
-        "top_boundary",
-        &EigenSolver::top_boundary,
-        R"pbdoc(
-            Boundary condition applied to the top edge of the computational domain.
-
-            This read-only attribute specifies the type of boundary condition
-            used at the top boundary of the finite difference grid.
-
-            Type
-            ----
-            str
-                One of "PML", "PEC", or "PMC"
-
-            See Also
-            --------
-            left_boundary : Description of boundary condition options
-        )pbdoc"
-    )
-    .def_readonly(
-        "bottom_boundary",
-        &EigenSolver::bottom_boundary,
-        R"pbdoc(
-            Boundary condition applied to the bottom edge of the computational domain.
-
-            This read-only attribute specifies the type of boundary condition
-            used at the bottom boundary of the finite difference grid.
-
-            Type
-            ----
-            str
-                One of "PML", "PEC", or "PMC"
-
-            Notes
-            -----
-            In cylindrical coordinates, the bottom boundary often corresponds
-            to the axis of symmetry (r=0), where special care must be taken
-            to handle the coordinate singularity properly.
-
-            See Also
-            --------
-            left_boundary : Description of boundary condition options
-        )pbdoc"
-    );
+    ;
 }
-
