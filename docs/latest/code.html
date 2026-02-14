@@ -594,6 +594,21 @@ boundary conditions.</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.accuracy">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">accuracy</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.accuracy" title="Link to this definition">#</a></dt>
+<dd><p>Accuracy order of the finite difference scheme.</p>
+<p>This parameter controls the order of accuracy for the finite difference
+approximation used in the eigenvalue solver. Higher values provide better
+accuracy at the cost of increased computational complexity.</p>
+<p>Common values:
+- 1: First-order accuracy (simplest, least accurate)
+- 2: Second-order accuracy (standard choice for many problems)
+- 4: Fourth-order accuracy (more accurate, especially for smooth solutions)</p>
+<p>The optimal choice depends on the specific problem and desired balance
+between accuracy and computational resources.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.alpha_vector">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">alpha_vector</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.alpha_vector" title="Link to this definition">#</a></dt>
 <dd><p>Vector of alpha parameters used in iterative extrapolation.</p>
@@ -693,6 +708,18 @@ calls to get_mode() but does not trigger recomputation of
 eigenvalues. The sorting and selection is performed on the
 already computed modes.</p>
 </section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.wavelength">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wavelength</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.wavelength" title="Link to this definition">#</a></dt>
+<dd><p>Operating wavelength for the eigenmode solver.</p>
+<p>This parameter specifies the wavelength of light for which the modes are
+being computed. It is used in the calculation of the propagation constants
+and mode field distributions.</p>
+<p>Units: meters (m)</p>
+<p>The wavelength should be chosen based on the application and the physical
+properties of the waveguide being modeled.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2058,10 +2085,12 @@ Requires exactly one of the parameters to be specified.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.eigen_value_to_index"><code class="docutils literal notranslate"><span class="pre">SuPySolver.eigen_value_to_index()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.get_supermode_labels"><code class="docutils literal notranslate"><span class="pre">SuPySolver.get_supermode_labels()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.add_modes"><code class="docutils literal notranslate"><span class="pre">SuPySolver.add_modes()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.accuracy"><code class="docutils literal notranslate"><span class="pre">SuPySolver.accuracy</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.alpha_vector"><code class="docutils literal notranslate"><span class="pre">SuPySolver.alpha_vector</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.boundaries"><code class="docutils literal notranslate"><span class="pre">SuPySolver.boundaries</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.n_computed_mode"><code class="docutils literal notranslate"><span class="pre">SuPySolver.n_computed_mode</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.n_sorted_mode"><code class="docutils literal notranslate"><span class="pre">SuPySolver.n_sorted_mode</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.wavelength"><code class="docutils literal notranslate"><span class="pre">SuPySolver.wavelength</span></code></a></li>
 </ul>
 </li>
 </ul>
