@@ -620,41 +620,15 @@ and the condition number of the eigenvalue problem.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.bottom_boundary">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bottom_boundary</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.bottom_boundary" title="Link to this definition">#</a></dt>
-<dd><p>Boundary condition applied to the bottom edge of the computational domain.</p>
-<p>This read-only attribute specifies the type of boundary condition
-used at the bottom boundary of the finite difference grid.</p>
-<section id="id1">
-<h3>Type<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>str</dt><dd><p>One of “PML”, “PEC”, or “PMC”</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>In cylindrical coordinates, the bottom boundary often corresponds
-to the axis of symmetry (r=0), where special care must be taken
-to handle the coordinate singularity properly.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="#SuPyMode.solver.SuPySolver.left_boundary" title="SuPyMode.solver.SuPySolver.left_boundary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">left_boundary</span></code></a></dt><dd><p>Description of boundary condition options</p>
-</dd>
-</dl>
-</div>
-</section>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.left_boundary">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">left_boundary</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.left_boundary" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.boundaries">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">boundaries</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.boundaries" title="Link to this definition">#</a></dt>
 <dd><p>Boundary condition applied to the left edge of the computational domain.</p>
 <p>This read-only attribute specifies the type of boundary condition
 used at the left boundary of the finite difference grid. The
 boundary condition affects how the wave equation is discretized
 near the domain edges.</p>
-<section id="id2">
-<h3>Type<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<section id="id1">
+<h3>Type<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 <dl class="simple">
 <dt>str</dt><dd><p>One of “PML”, “PEC”, or “PMC”</p>
 </dd>
@@ -680,8 +654,8 @@ component is zero at the boundary</p></li>
 <p>This attribute determines how many eigenvalues and eigenvectors
 the solver will compute. A larger number provides more modes
 but increases computational cost and memory usage.</p>
-<section id="id3">
-<h3>Type<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<section id="id2">
+<h3>Type<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <dl class="simple">
 <dt>int</dt><dd><p>Typical range: 10-100 depending on the application.
 For single-mode analysis, 5-10 is often sufficient.
@@ -706,8 +680,8 @@ are captured, especially in the presence of numerical noise.</p>
 retained and returned by get_mode(). The modes are sorted by
 their effective refractive index (real part of eigenvalue) in
 descending order.</p>
-<section id="id4">
-<h3>Type<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<section id="id3">
+<h3>Type<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <dl class="simple">
 <dt>int</dt><dd><p>Must be &lt;= n_computed_mode. Typical values range from 1
 (fundamental mode only) to 10-20 for multimode analysis.</p>
@@ -718,50 +692,6 @@ descending order.</p>
 calls to get_mode() but does not trigger recomputation of
 eigenvalues. The sorting and selection is performed on the
 already computed modes.</p>
-</section>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.right_boundary">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">right_boundary</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.right_boundary" title="Link to this definition">#</a></dt>
-<dd><p>Boundary condition applied to the right edge of the computational domain.</p>
-<p>This read-only attribute specifies the type of boundary condition
-used at the right boundary of the finite difference grid.</p>
-<section id="id5">
-<h3>Type<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>str</dt><dd><p>One of “PML”, “PEC”, or “PMC”</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="#SuPyMode.solver.SuPySolver.left_boundary" title="SuPyMode.solver.SuPySolver.left_boundary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">left_boundary</span></code></a></dt><dd><p>Description of boundary condition options</p>
-</dd>
-</dl>
-</div>
-</section>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.top_boundary">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">top_boundary</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.top_boundary" title="Link to this definition">#</a></dt>
-<dd><p>Boundary condition applied to the top edge of the computational domain.</p>
-<p>This read-only attribute specifies the type of boundary condition
-used at the top boundary of the finite difference grid.</p>
-<section id="id6">
-<h3>Type<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>str</dt><dd><p>One of “PML”, “PEC”, or “PMC”</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<dl class="simple">
-<dt><a class="reference internal" href="#SuPyMode.solver.SuPySolver.left_boundary" title="SuPyMode.solver.SuPySolver.left_boundary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">left_boundary</span></code></a></dt><dd><p>Description of boundary condition options</p>
-</dd>
-</dl>
-</div>
 </section>
 </dd></dl>
 
@@ -1313,7 +1243,7 @@ related to fiber optics simulations.</p>
 </dd>
 <dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
 </dd>
-<dt><a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
+<dt><a href="#id4"><span class="problematic" id="id5">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -1344,6 +1274,80 @@ related to fiber optics simulations.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>plt.Figure</p>
+</dd>
+</dl>
+<section id="id6">
+<h3>Extra Parameters<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>show<span class="classifier">bool</span></dt><dd><p>Whether to display the plot after creation.</p>
+</dd>
+<dt>save_as<span class="classifier">str, optional</span></dt><dd><p>If provided, save the figure to this path.</p>
+</dd>
+<dt>figure_size<span class="classifier">tuple, optional</span></dt><dd><p>Size of the figure in inches.</p>
+</dd>
+<dt>tight_layout<span class="classifier">bool, default=True</span></dt><dd><p>Whether to use tight layout for the figure.</p>
+</dd>
+<dt>axes<span class="classifier">matplotlib.axes.Axes, optional</span></dt><dd><p>Axes to draw on. If None, a new figure+axes are created.</p>
+</dd>
+<dt>xscale<span class="classifier">str, optional</span></dt><dd><p>X-axis scale type (e.g., ‘linear’, ‘log’).</p>
+</dd>
+<dt>yscale<span class="classifier">str, optional</span></dt><dd><p>Y-axis scale type (e.g., ‘linear’, ‘log’).</p>
+</dd>
+<dt>xlim<span class="classifier">tuple, optional</span></dt><dd><p>X-axis limits as (min, max).</p>
+</dd>
+<dt>ylim<span class="classifier">tuple, optional</span></dt><dd><p>Y-axis limits as (min, max).</p>
+</dd>
+<dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
+</dd>
+<dt><a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>matplotlib.axes.Axes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_beta">
+<span class="sig-name descname"><span class="pre">plot_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_crossings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_beta" title="Link to this definition">#</a></dt>
+<dd><p>Plot the effective propagation constant for each mode as a function of inverse taper ratio (ITR).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
+<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SuperMode" title="SuPyMode.supermode.SuperMode"><em>SuperMode</em></a>) – List of modes to be plotted.</p></li>
+<li><p><strong>show_crossings</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to show crossings in the plot (default is False).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Figure</em></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">superset_plots</span><span class="o">.</span><span class="n">plot_index</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">mode_of_interest</span><span class="o">=</span><span class="p">[</span><span class="n">mode1</span><span class="p">,</span> <span class="n">mode2</span><span class="p">],</span> <span class="n">show_crossings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>plt.Figure</p>
+</dd>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
+<li><p><strong>mode_of_interest</strong> (<em>list</em><em>[</em><a class="reference internal" href="#SuPyMode.supermode.SuperMode" title="SuPyMode.supermode.SuperMode"><em>SuperMode</em></a><em>] </em><em>| </em><em>str</em>)</p></li>
+<li><p><strong>show_crossings</strong> (<em>bool</em>)</p></li>
+</ul>
 </dd>
 </dl>
 <section id="id9">
@@ -1384,9 +1388,9 @@ related to fiber optics simulations.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_beta">
-<span class="sig-name descname"><span class="pre">plot_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_crossings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_beta" title="Link to this definition">#</a></dt>
-<dd><p>Plot the effective propagation constant for each mode as a function of inverse taper ratio (ITR).</p>
+<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_eigen_value">
+<span class="sig-name descname"><span class="pre">plot_eigen_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_crossings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_eigen_value" title="Link to this definition">#</a></dt>
+<dd><p>Plot the computed eigen-values for each mode as a function of inverse taper ratio (ITR).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1458,42 +1462,29 @@ related to fiber optics simulations.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_eigen_value">
-<span class="sig-name descname"><span class="pre">plot_eigen_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_crossings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_eigen_value" title="Link to this definition">#</a></dt>
-<dd><p>Plot the computed eigen-values for each mode as a function of inverse taper ratio (ITR).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SuperMode" title="SuPyMode.supermode.SuperMode"><em>SuperMode</em></a>) – List of modes to be plotted.</p></li>
-<li><p><strong>show_crossings</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to show crossings in the plot (default is False).</p></li>
-</ul>
+<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_field">
+<span class="sig-name descname"><span class="pre">plot_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_mode_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_itr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_slice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_field" title="Link to this definition">#</a></dt>
+<dd><blockquote>
+<div><p>Render the mode field for different ITR values or slice numbers.</p>
+<dl class="simple">
+<dt>mode_of_interest<span class="classifier">list, optional</span></dt><dd><p>List of modes to be plotted (default is ‘all’).</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>Figure</em></p>
+<dt>itr_list<span class="classifier">list of float, optional</span></dt><dd><p>List of ITR values for plotting (default is None).</p>
 </dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">superset_plots</span><span class="o">.</span><span class="n">plot_index</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">mode_of_interest</span><span class="o">=</span><span class="p">[</span><span class="n">mode1</span><span class="p">,</span> <span class="n">mode2</span><span class="p">],</span> <span class="n">show_crossings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
+<dt>slice_list<span class="classifier">list of int, optional</span></dt><dd><p>List of slice numbers for plotting (default is None).</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>plt.Figure</p>
+<dt>show_mode_label<span class="classifier">bool, optional</span></dt><dd><p>Flag to display mode labels (default is True).</p>
 </dd>
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em>[</em><a class="reference internal" href="#SuPyMode.supermode.SuperMode" title="SuPyMode.supermode.SuperMode"><em>SuperMode</em></a><em>] </em><em>| </em><em>str</em>)</p></li>
-<li><p><strong>show_crossings</strong> (<em>bool</em>)</p></li>
-</ul>
+<dt>show_itr<span class="classifier">bool, optional</span></dt><dd><p>Flag to display ITR values (default is True).</p>
+</dd>
+<dt>show_slice<span class="classifier">bool, optional</span></dt><dd><p>Flag to display slice numbers (default is True).</p>
 </dd>
 </dl>
+<dl class="simple">
+<dt>plt.Figure</dt><dd><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
+</dd>
+</dl>
+</div></blockquote>
 <section id="id15">
 <h3>Extra Parameters<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
 <dl class="simple">
@@ -1518,67 +1509,6 @@ related to fiber optics simulations.</p>
 <dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
 </dd>
 <dt><a href="#id16"><span class="problematic" id="id17">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
-</dd>
-<dt class="field-even">rtype<span class="colon">:</span></dt>
-<dd class="field-even"><p>matplotlib.axes.Axes</p>
-</dd>
-</dl>
-</section>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_field">
-<span class="sig-name descname"><span class="pre">plot_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_mode_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_itr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_slice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_field" title="Link to this definition">#</a></dt>
-<dd><blockquote>
-<div><p>Render the mode field for different ITR values or slice numbers.</p>
-<dl class="simple">
-<dt>mode_of_interest<span class="classifier">list, optional</span></dt><dd><p>List of modes to be plotted (default is ‘all’).</p>
-</dd>
-<dt>itr_list<span class="classifier">list of float, optional</span></dt><dd><p>List of ITR values for plotting (default is None).</p>
-</dd>
-<dt>slice_list<span class="classifier">list of int, optional</span></dt><dd><p>List of slice numbers for plotting (default is None).</p>
-</dd>
-<dt>show_mode_label<span class="classifier">bool, optional</span></dt><dd><p>Flag to display mode labels (default is True).</p>
-</dd>
-<dt>show_itr<span class="classifier">bool, optional</span></dt><dd><p>Flag to display ITR values (default is True).</p>
-</dd>
-<dt>show_slice<span class="classifier">bool, optional</span></dt><dd><p>Flag to display slice numbers (default is True).</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>plt.Figure</dt><dd><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
-</dd>
-</dl>
-</div></blockquote>
-<section id="id18">
-<h3>Extra Parameters<a class="headerlink" href="#id18" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>show<span class="classifier">bool</span></dt><dd><p>Whether to display the plot after creation.</p>
-</dd>
-<dt>save_as<span class="classifier">str, optional</span></dt><dd><p>If provided, save the figure to this path.</p>
-</dd>
-<dt>figure_size<span class="classifier">tuple, optional</span></dt><dd><p>Size of the figure in inches.</p>
-</dd>
-<dt>tight_layout<span class="classifier">bool, default=True</span></dt><dd><p>Whether to use tight layout for the figure.</p>
-</dd>
-<dt>axes<span class="classifier">matplotlib.axes.Axes, optional</span></dt><dd><p>Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-<dt>xscale<span class="classifier">str, optional</span></dt><dd><p>X-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>yscale<span class="classifier">str, optional</span></dt><dd><p>Y-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>xlim<span class="classifier">tuple, optional</span></dt><dd><p>X-axis limits as (min, max).</p>
-</dd>
-<dt>ylim<span class="classifier">tuple, optional</span></dt><dd><p>Y-axis limits as (min, max).</p>
-</dd>
-<dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
-</dd>
-<dt><a href="#id19"><span class="problematic" id="id20">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -1644,8 +1574,8 @@ related to fiber optics simulations.</p>
 </ul>
 </dd>
 </dl>
-<section id="id21">
-<h3>Extra Parameters<a class="headerlink" href="#id21" title="Link to this heading">#</a></h3>
+<section id="id18">
+<h3>Extra Parameters<a class="headerlink" href="#id18" title="Link to this heading">#</a></h3>
 <dl class="simple">
 <dt>show<span class="classifier">bool</span></dt><dd><p>Whether to display the plot after creation.</p>
 </dd>
@@ -1667,7 +1597,7 @@ related to fiber optics simulations.</p>
 </dd>
 <dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
 </dd>
-<dt><a href="#id22"><span class="problematic" id="id23">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
+<dt><a href="#id19"><span class="problematic" id="id20">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -1701,8 +1631,8 @@ related to fiber optics simulations.</p>
 <dd class="field-odd"><p>plt.Figure</p>
 </dd>
 </dl>
-<section id="id24">
-<h3>Extra Parameters<a class="headerlink" href="#id24" title="Link to this heading">#</a></h3>
+<section id="id21">
+<h3>Extra Parameters<a class="headerlink" href="#id21" title="Link to this heading">#</a></h3>
 <dl class="simple">
 <dt>show<span class="classifier">bool</span></dt><dd><p>Whether to display the plot after creation.</p>
 </dd>
@@ -1724,7 +1654,7 @@ related to fiber optics simulations.</p>
 </dd>
 <dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
 </dd>
-<dt><a href="#id25"><span class="problematic" id="id26">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
+<dt><a href="#id22"><span class="problematic" id="id23">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -2129,12 +2059,9 @@ Requires exactly one of the parameters to be specified.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.get_supermode_labels"><code class="docutils literal notranslate"><span class="pre">SuPySolver.get_supermode_labels()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.add_modes"><code class="docutils literal notranslate"><span class="pre">SuPySolver.add_modes()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.alpha_vector"><code class="docutils literal notranslate"><span class="pre">SuPySolver.alpha_vector</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.bottom_boundary"><code class="docutils literal notranslate"><span class="pre">SuPySolver.bottom_boundary</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.left_boundary"><code class="docutils literal notranslate"><span class="pre">SuPySolver.left_boundary</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.boundaries"><code class="docutils literal notranslate"><span class="pre">SuPySolver.boundaries</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.n_computed_mode"><code class="docutils literal notranslate"><span class="pre">SuPySolver.n_computed_mode</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.n_sorted_mode"><code class="docutils literal notranslate"><span class="pre">SuPySolver.n_sorted_mode</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.right_boundary"><code class="docutils literal notranslate"><span class="pre">SuPySolver.right_boundary</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.top_boundary"><code class="docutils literal notranslate"><span class="pre">SuPySolver.top_boundary</span></code></a></li>
 </ul>
 </li>
 </ul>
