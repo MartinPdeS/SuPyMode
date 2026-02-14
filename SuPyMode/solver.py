@@ -43,7 +43,7 @@ class SuPySolver(EIGENSOLVER):
 
     def __init__(
         self,
-        geometry: Geometry | numpy.ndarray,
+        geometry: Geometry,
         tolerance: float = 1e-8,
         max_iteration: int = 10_000,
         accuracy: int = 2,
@@ -58,10 +58,7 @@ class SuPySolver(EIGENSOLVER):
         self.extrapolation_order = extrapolation_order
         self.debug_mode = debug_mode
 
-        if isinstance(geometry, Geometry):
-            self.mesh = self.geometry.mesh
-        else:
-            self.mesh = geometry
+        self.mesh = self.geometry.mesh
 
         self.coordinate_system = self.geometry.coordinate_system
 
