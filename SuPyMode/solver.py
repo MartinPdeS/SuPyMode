@@ -144,7 +144,6 @@ class SuPySolver(EIGENSOLVER):
             Final ITR value (default is 0.1).
         """
         self.wavelength = wavelength
-        self.wavenumber = 2 * numpy.pi / wavelength
         self.itr_list = numpy.linspace(itr_initial, itr_final, n_step)
 
         self.model_parameters = MODELPARAMETERS(
@@ -223,6 +222,7 @@ class SuPySolver(EIGENSOLVER):
         """
 
         beta_guess = self.index_to_eigenvalue(index_guess)
+
         self._cpp_reset_solver()
 
         self.initialize_binding(

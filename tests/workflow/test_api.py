@@ -74,7 +74,7 @@ def test_solver_properties(precomputed_workflow):
     Test accessing solver properties and performing eigenvalue conversion.
     """
     solver = precomputed_workflow.solver
-    assert solver.eigen_value_to_index(3e6) is not None, "Eigenvalue conversion failed."
+    assert solver.eigenvalue_to_index(3e6) is not None, "Eigenvalue conversion failed."
     assert (
         solver.coordinate_system is not None
     ), "Solver coordinate system not accessible."
