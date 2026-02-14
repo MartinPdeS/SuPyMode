@@ -282,7 +282,7 @@ Adiabatic criterion: :math:`\tilde{C}_{i,j}`
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 12.051 seconds)
+   **Total running time of the script:** (0 minutes 11.885 seconds)
 
 
 .. _sphx_glr_download_gallery_workflow_plot_workflow_02.py:

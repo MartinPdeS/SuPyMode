@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**01:10.737** total execution time for 2 files **from gallery/extra**:
+**01:09.323** total execution time for 2 files **from gallery/extra**:
 
 .. container::
 
@@ -33,8 +33,8 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_gallery_extra_plot_graded_index.py` (``plot_graded_index.py``)
-     - 01:00.199
+     - 00:58.679
      - 0.0
    * - :ref:`sphx_glr_gallery_extra_plot_propagation.py` (``plot_propagation.py``)
-     - 00:10.538
+     - 00:10.644
      - 0.0
