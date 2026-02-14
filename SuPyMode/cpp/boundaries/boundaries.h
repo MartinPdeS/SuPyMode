@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <stdexcept>
 
 
 enum class BoundaryCondition {
@@ -8,6 +9,15 @@ enum class BoundaryCondition {
     Symmetric,
     AntiSymmetric
 };
+
+
+static constexpr std::string_view to_string(const BoundaryCondition bc) {
+    switch (bc) {
+        case BoundaryCondition::Zero:          return "Zero";
+        case BoundaryCondition::Symmetric:     return "Symmetric";
+        case BoundaryCondition::AntiSymmetric: return "AntiSymmetric";
+    }
+}
 
 class Boundaries {
 public:
@@ -64,6 +74,20 @@ public:
             right == other.right &&
             top == other.top &&
             bottom == other.bottom
+        );
+    }
+
+    void print() const {
+        printf(
+            "Boundaries:\n"
+            "\tLeft: %.*s\n"
+            "\tRight: %.*s\n"
+            "\tTop: %.*s\n"
+            "\tBottom: %.*s\n",
+            static_cast<int>(to_string(left).size()),   to_string(left).data(),
+            static_cast<int>(to_string(right).size()),  to_string(right).data(),
+            static_cast<int>(to_string(top).size()),    to_string(top).data(),
+            static_cast<int>(to_string(bottom).size()), to_string(bottom).data()
         );
     }
 
