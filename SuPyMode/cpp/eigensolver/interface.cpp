@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <memory>
 #include "eigensolver.h"
 
 /**
@@ -22,7 +23,7 @@ PYBIND11_MODULE(interface_eigensolver, module)
         step-index and graded-index fiber profiles.
     )pbdoc";
 
-    pybind11::class_<EigenSolver>(module, "EIGENSOLVER",
+    pybind11::class_<EigenSolver, std::shared_ptr<EigenSolver>>(module, "EIGENSOLVER",
         R"pbdoc(
             Eigenmode solver for optical waveguides.
 
@@ -92,6 +93,48 @@ PYBIND11_MODULE(interface_eigensolver, module)
 
             The wavelength should be chosen based on the application and the physical
             properties of the waveguide being modeled.
+        )pbdoc"
+    )
+    .def(
+        "index_to_eigenvalue",
+        &EigenSolver::index_to_eigenvalue,
+        pybind11::arg("mode_index"),
+        R"pbdoc(
+            Convert mode index to eigenvalue (propagation constant).
+            This method takes a mode index (e.g., 0 for the fundamental mode, 1 for
+            the first higher-order mode, etc.) and returns the corresponding eigenvalue
+            (propagation constant) for that mode.
+
+            Parameters
+            ----------
+            mode_index : double
+                The refractive index of the mode for which to compute the eigenvalue.
+
+            Returns
+            -------
+            complex
+                The eigenvalue (propagation constant) corresponding to the given mode index.
+        )pbdoc"
+    )
+    .def("eigenvalue_to_index",
+        &EigenSolver::eigenvalue_to_index,
+        pybind11::arg("eigenvalue"),
+        R"pbdoc(
+            Convert eigenvalue (propagation constant) to mode index.
+
+            This method takes an eigenvalue (propagation constant) and returns the
+            corresponding mode index, which can be used to identify the mode order
+            (e.g., 0 for fundamental mode, 1 for first higher-order mode, etc.).
+
+            Parameters
+            ----------
+            eigenvalue : complex
+                The eigenvalue (propagation constant) for which to compute the mode index.
+
+            Returns
+            -------
+            double
+                The mode index corresponding to the given eigenvalue.
         )pbdoc"
     )
     .def("_cpp_set_boundaries",

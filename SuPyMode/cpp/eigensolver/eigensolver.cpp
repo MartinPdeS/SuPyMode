@@ -264,3 +264,14 @@ double EigenSolver::compute_max_index()
 
     return max_index;
 }
+
+
+double EigenSolver::index_to_eigenvalue(const double index) const {
+    double wavenumber = 2 * 3.14159265358979 / model_parameters.wavelength;
+    return -std::pow(wavenumber * index, 2);
+}
+
+double EigenSolver::eigenvalue_to_index(const double eigenvalue) const {
+    double wavenumber = 2 * 3.14159265358979 / model_parameters.wavelength;
+    return std::sqrt(eigenvalue) / wavenumber;
+}

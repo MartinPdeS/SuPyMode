@@ -164,4 +164,20 @@ class EigenSolver
      * \return The maximum index.
      */
     double compute_max_index();
+
+    /**
+     * \brief Converts an index value to an eigenvalue for the eigenvalue problem.
+     *
+     * \param index The index value to convert.
+     * \return The corresponding eigenvalue.
+     */
+    double index_to_eigenvalue(const double index) const;
+
+    /**
+     * \brief Converts an eigenvalue to an index value for the eigenvalue problem.
+     *
+     * \param eigenvalue The eigenvalue to convert.
+     * \return The corresponding index value.
+     */
+    double eigenvalue_to_index(const double eigenvalue) const;
 };

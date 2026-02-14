@@ -96,6 +96,7 @@ relative_files = true
 [tool.cibuildwheel]
 build-frontend = "build"
 test-extras = ["testing"]
+environment = { PIP_ONLY_BINARY=":all:", PIP_PREFER_BINARY="1" }
 
 [tool.cibuildwheel.linux]
 archs = ["x86_64"]

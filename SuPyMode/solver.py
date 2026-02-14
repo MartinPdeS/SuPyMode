@@ -164,38 +164,6 @@ class SuPySolver(EIGENSOLVER):
             model_parameters=self.model_parameters,
         )
 
-    def index_to_eigen_value(self, index: float) -> float:
-        """
-        Convert a refractive index to the corresponding eigenvalue for the solver.
-
-        Parameters
-        ----------
-        index : float
-            Refractive index to convert.
-
-        Returns
-        -------
-        float
-            Calculated eigenvalue based on the given index and the wavenumber.
-        """
-        return -((index * self.wavenumber) ** 2)
-
-    def eigen_value_to_index(self, eigen_value: float) -> float:
-        """
-        Convert an eigenvalue from the solver to the corresponding refractive index.
-
-        Parameters
-        ----------
-        eigen_value : float
-            Eigenvalue to convert.
-
-        Returns
-        -------
-        float
-            Equivalent refractive index calculated from the eigenvalue and the wavenumber.
-        """
-        return numpy.sqrt(eigen_value) / self.wavenumber
-
     def get_supermode_labels(
         self, n_modes: int, boundaries: Boundaries, auto_label: bool
     ) -> list:
@@ -254,7 +222,7 @@ class SuPySolver(EIGENSOLVER):
             This method updates the solver's internal state but does not return any value.
         """
 
-        beta_guess = self.index_to_eigen_value(index_guess)
+        beta_guess = self.index_to_eigenvalue(index_guess)
         self._cpp_reset_solver()
 
         self.initialize_binding(
