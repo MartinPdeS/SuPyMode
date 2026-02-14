@@ -14,8 +14,6 @@ from SuPyMode.workflow import (
 )
 from PyOptik import MaterialBank
 
-# from SuPyMode.binary.interface_boundaries import Boundaries, BoundaryValue
-
 wavelength = 1550e-9
 
 

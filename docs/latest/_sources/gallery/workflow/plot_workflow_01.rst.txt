@@ -25,7 +25,7 @@
 
 Importing the script dependencies
 
-.. GENERATED FROM PYTHON SOURCE LINES 8-22
+.. GENERATED FROM PYTHON SOURCE LINES 8-20
 
 .. code-block:: Python
 
@@ -38,8 +38,6 @@ Importing the script dependencies
     )
     from PyOptik import MaterialBank
 
-    # from SuPyMode.binary.interface_boundaries import Boundaries, BoundaryValue
-
     wavelength = 1550e-9
 
 
@@ -50,13 +48,13 @@ Importing the script dependencies
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 23-26
+.. GENERATED FROM PYTHON SOURCE LINES 21-24
 
 Generating the fiber structure
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Here we define the cladding and fiber structure to model the problem
 
-.. GENERATED FROM PYTHON SOURCE LINES 26-35
+.. GENERATED FROM PYTHON SOURCE LINES 24-33
 
 .. code-block:: Python
 
@@ -76,11 +74,11 @@ Here we define the cladding and fiber structure to model the problem
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 36-37
+.. GENERATED FROM PYTHON SOURCE LINES 34-35
 
 Defining the boundaries of the system
 
-.. GENERATED FROM PYTHON SOURCE LINES 37-42
+.. GENERATED FROM PYTHON SOURCE LINES 35-40
 
 .. code-block:: Python
 
@@ -96,13 +94,13 @@ Defining the boundaries of the system
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 43-46
+.. GENERATED FROM PYTHON SOURCE LINES 41-44
 
 Generating the computing workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Workflow class to define all the computation parameters before initializing the solver
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-66
+.. GENERATED FROM PYTHON SOURCE LINES 44-64
 
 .. code-block:: Python
 
@@ -138,12 +136,12 @@ Workflow class to define all the computation parameters before initializing the 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 67-69
+.. GENERATED FROM PYTHON SOURCE LINES 65-67
 
 Field computation: :math:`E_{i,j}`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 69-71
+.. GENERATED FROM PYTHON SOURCE LINES 67-69
 
 .. code-block:: Python
 
@@ -161,12 +159,12 @@ Field computation: :math:`E_{i,j}`
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 72-74
+.. GENERATED FROM PYTHON SOURCE LINES 70-72
 
 Effective index: :math:`n^{eff}_{i,j}`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-76
+.. GENERATED FROM PYTHON SOURCE LINES 72-74
 
 .. code-block:: Python
 
@@ -184,12 +182,12 @@ Effective index: :math:`n^{eff}_{i,j}`
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-79
+.. GENERATED FROM PYTHON SOURCE LINES 75-77
 
 Modal normalized coupling: :math:`C_{i,j}`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 79-81
+.. GENERATED FROM PYTHON SOURCE LINES 77-79
 
 .. code-block:: Python
 
@@ -207,12 +205,12 @@ Modal normalized coupling: :math:`C_{i,j}`
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 82-84
+.. GENERATED FROM PYTHON SOURCE LINES 80-82
 
 Adiabatic criterion: :math:`\tilde{C}_{i,j}`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-87
+.. GENERATED FROM PYTHON SOURCE LINES 82-85
 
 .. code-block:: Python
 
@@ -240,7 +238,7 @@ Adiabatic criterion: :math:`\tilde{C}_{i,j}`
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 14.603 seconds)
+   **Total running time of the script:** (0 minutes 14.407 seconds)
 
 
 .. _sphx_glr_download_gallery_workflow_plot_workflow_01.py:
