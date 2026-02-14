@@ -648,6 +648,19 @@ corresponding mode index, which can be used to identify the mode order
 </dl>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.extrapolation_order">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extrapolation_order</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.extrapolation_order" title="Link to this definition">#</a></dt>
+<dd><p>Extrapolation order for iterative eigenvalue computation.
+This parameter specifies the order of Richardson extrapolation used in
+the iterative eigenvalue solver. Extrapolation can accelerate convergence
+and improve accuracy, especially for challenging problems.</p>
+<p>Recommended values:
+- 1: No extrapolation (standard iterative solver)
+- 2: Second-order extrapolation (common choice for improved convergence)
+- 3 or higher: Higher-order extrapolation (can provide better accuracy but may introduce instability)</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.index_to_eigenvalue">
 <span class="sig-name descname"><span class="pre">index_to_eigenvalue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SuPyMode.binary.interface_eigensolver.EIGENSOLVER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsFloat</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.index_to_eigenvalue" title="Link to this definition">#</a></dt>
@@ -666,6 +679,50 @@ the first higher-order mode, etc.) and returns the corresponding eigenvalue
 <dd class="field-odd"><p>complex</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.loop_over_itr">
+<span class="sig-name descname"><span class="pre">loop_over_itr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SuPyMode.binary.interface_eigensolver.EIGENSOLVER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsFloat</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.loop_over_itr" title="Link to this definition">#</a></dt>
+<dd><p>Perform iterative eigenvalue computation with extrapolation.</p>
+<p>This method implements an iterative algorithm to solve the eigenvalue
+problem with Richardson extrapolation for improved convergence and
+accuracy. It’s particularly useful for challenging problems where
+direct methods might struggle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>alpha</strong> (<em>float</em>) – Extrapolation parameter controlling the step size in the
+iterative process. Optimal values depend on the problem
+characteristics. Typical range: 0.1-2.0.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if convergence was achieved within max_iter iterations,
+False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This method modifies the internal state of the solver and should
+be called after initialization but before retrieving modes.
+The extrapolation helps accelerate convergence especially for
+problems with slowly converging eigenvalues.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">converged</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">loop_over_itr</span><span class="p">(</span><span class="n">extrapolation_order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="ow">not</span> <span class="n">converged</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Solver did not converge&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.mode_number">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mode_number</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.mode_number" title="Link to this definition">#</a></dt>
+<dd><p>Current mode number being processed.
+This parameter keeps track of the mode index currently being computed or
+sorted. It is used internally to manage the mode computation process and
+can be accessed for informational purposes.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -717,6 +774,15 @@ already computed modes.</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.solver_number">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">solver_number</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.solver_number" title="Link to this definition">#</a></dt>
+<dd><p>Current solver iteration number.
+This parameter tracks the current iteration of the eigenvalue solver, which
+can be useful for monitoring convergence and debugging. It is updated
+during the iterative eigenvalue computation process.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.wavelength">
 <em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wavelength</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.wavelength" title="Link to this definition">#</a></dt>
 <dd><p>Operating wavelength for the eigenmode solver.</p>
@@ -753,7 +819,7 @@ related to fiber optics simulations.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.model_parameters">
-<span class="sig-name descname"><span class="pre">model_parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">MODELPARAMETERS</span></em><a class="headerlink" href="#SuPyMode.superset.SuperSet.model_parameters" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">model_parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModelParameters</span></em><a class="headerlink" href="#SuPyMode.superset.SuperSet.model_parameters" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1919,7 +1985,7 @@ is uniquely identified within its symmetry set by a mode number.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="SuPyMode.supermode.SuperMode.model_parameters">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">MODELPARAMETERS</span></em><a class="headerlink" href="#SuPyMode.supermode.SuperMode.model_parameters" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model_parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModelParameters</span></em><a class="headerlink" href="#SuPyMode.supermode.SuperMode.model_parameters" title="Link to this definition">#</a></dt>
 <dd><p>Retrieves parameters defining the model’s computational aspects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -2093,9 +2159,13 @@ Requires exactly one of the parameters to be specified.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.alpha_vector"><code class="docutils literal notranslate"><span class="pre">SuPySolver.alpha_vector</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.boundaries"><code class="docutils literal notranslate"><span class="pre">SuPySolver.boundaries</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.eigenvalue_to_index"><code class="docutils literal notranslate"><span class="pre">SuPySolver.eigenvalue_to_index()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.extrapolation_order"><code class="docutils literal notranslate"><span class="pre">SuPySolver.extrapolation_order</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.index_to_eigenvalue"><code class="docutils literal notranslate"><span class="pre">SuPySolver.index_to_eigenvalue()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.loop_over_itr"><code class="docutils literal notranslate"><span class="pre">SuPySolver.loop_over_itr()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.mode_number"><code class="docutils literal notranslate"><span class="pre">SuPySolver.mode_number</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.n_computed_mode"><code class="docutils literal notranslate"><span class="pre">SuPySolver.n_computed_mode</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.n_sorted_mode"><code class="docutils literal notranslate"><span class="pre">SuPySolver.n_sorted_mode</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.solver_number"><code class="docutils literal notranslate"><span class="pre">SuPySolver.solver_number</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.wavelength"><code class="docutils literal notranslate"><span class="pre">SuPySolver.wavelength</span></code></a></li>
 </ul>
 </li>
