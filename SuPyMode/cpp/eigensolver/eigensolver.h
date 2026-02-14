@@ -21,12 +21,11 @@ class EigenSolver
         size_t n_sorted_mode;
         size_t max_iteration;
         double tolerance;
+        size_t accuracy;
         Boundaries boundaries;
-        // std::string left_boundary;
-        // std::string right_boundary;
-        // std::string top_boundary;
-        // std::string bottom_boundary;
         size_t iteration;
+        double wavelength;
+
 
         std::vector<SuperMode> computed_supermodes;
         std::vector<SuperMode> sorted_supermodes;
@@ -44,7 +43,11 @@ class EigenSolver
 
         double k_taper;
 
-    EigenSolver(const size_t max_iteration, const double tolerance);
+    EigenSolver(
+        const size_t max_iteration,
+        const double tolerance,
+        const size_t accuracy
+    );
 
     void initialize(
         const ModelParameters &model_parameters,

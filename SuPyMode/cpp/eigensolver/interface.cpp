@@ -36,10 +36,12 @@ PYBIND11_MODULE(interface_eigensolver, module)
             - Various boundary conditions (PML, PEC, PMC)
             - Efficient sparse matrix operations
             - Mode sorting and selection
-        )pbdoc")
-    .def(pybind11::init<const size_t, const double>(),
+        )pbdoc"
+    )
+    .def(pybind11::init<const size_t, const double, const size_t>(),
         pybind11::arg("max_iteration") = 10'000,
         pybind11::arg("tolerance") = 1e-8,
+        pybind11::arg("accuracy") = 2,
         R"pbdoc(
             Default constructor for EigenSolver.
 
@@ -52,7 +54,44 @@ PYBIND11_MODULE(interface_eigensolver, module)
                 Maximum number of iterations for the eigenvalue solver.
             tolerance : float
                 Convergence tolerance for the eigenvalue solver.
+            accuracy : int
+                Accuracy order of the finite difference scheme (e.g., 1, 2,
 
+        )pbdoc"
+    )
+    .def_readonly(
+        "accuracy",
+        &EigenSolver::accuracy,
+        R"pbdoc(
+            Accuracy order of the finite difference scheme.
+
+            This parameter controls the order of accuracy for the finite difference
+            approximation used in the eigenvalue solver. Higher values provide better
+            accuracy at the cost of increased computational complexity.
+
+            Common values:
+            - 1: First-order accuracy (simplest, least accurate)
+            - 2: Second-order accuracy (standard choice for many problems)
+            - 4: Fourth-order accuracy (more accurate, especially for smooth solutions)
+
+            The optimal choice depends on the specific problem and desired balance
+            between accuracy and computational resources.
+        )pbdoc"
+    )
+    .def_readwrite(
+        "wavelength",
+        &EigenSolver::wavelength,
+        R"pbdoc(
+            Operating wavelength for the eigenmode solver.
+
+            This parameter specifies the wavelength of light for which the modes are
+            being computed. It is used in the calculation of the propagation constants
+            and mode field distributions.
+
+            Units: meters (m)
+
+            The wavelength should be chosen based on the application and the physical
+            properties of the waveguide being modeled.
         )pbdoc"
     )
     .def("_cpp_set_boundaries",

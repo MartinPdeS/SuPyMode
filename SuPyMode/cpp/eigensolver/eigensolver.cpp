@@ -1,7 +1,11 @@
 #include "eigensolver.h"
 
-EigenSolver::EigenSolver(const size_t max_iteration, const double tolerance)
-: max_iteration(max_iteration), tolerance(tolerance) {}
+EigenSolver::EigenSolver(
+    const size_t max_iteration,
+    const double tolerance,
+    const size_t accuracy
+)
+: max_iteration(max_iteration), tolerance(tolerance), accuracy(accuracy) {}
 
 void EigenSolver::initialize(
     const ModelParameters &model_parameters,
@@ -32,13 +36,7 @@ void EigenSolver::setup_boundaries(
 ) {
     this->boundaries = Boundaries(left, right, top, bottom);
     if (this->model_parameters.debug_mode > 0)
-        std::cout
-            << "Setting up boundaries."
-            << "Left: " << left << ", "
-            << "Right: " << right << ", "
-            << "Top: " << top << ", "
-            << "Bottom: " << bottom << std::endl;
-
+        this->boundaries.print();
 }
 
 void EigenSolver::compute_laplacian() {

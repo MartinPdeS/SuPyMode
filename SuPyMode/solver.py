@@ -54,7 +54,6 @@ class SuPySolver(EIGENSOLVER):
         Initialize the solver with the given parameters.
         """
         self.geometry = geometry
-        self.accuracy = accuracy
         self.extrapolation_order = extrapolation_order
         self.debug_mode = debug_mode
 
@@ -65,7 +64,9 @@ class SuPySolver(EIGENSOLVER):
         self.mode_number = 0
         self.solver_number = 0
 
-        super().__init__(max_iteration=max_iteration, tolerance=tolerance)
+        super().__init__(
+            max_iteration=max_iteration, tolerance=tolerance, accuracy=accuracy
+        )
 
     def initialize_binding(
         self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int
