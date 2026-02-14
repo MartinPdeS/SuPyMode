@@ -39,10 +39,11 @@ PYBIND11_MODULE(interface_eigensolver, module)
             - Mode sorting and selection
         )pbdoc"
     )
-    .def(pybind11::init<const size_t, const double, const size_t>(),
+    .def(pybind11::init<const size_t, const double, const size_t, const size_t>(),
         pybind11::arg("max_iteration") = 10'000,
         pybind11::arg("tolerance") = 1e-8,
         pybind11::arg("accuracy") = 2,
+        pybind11::arg("extrapolation_order") = 2,
         R"pbdoc(
             Default constructor for EigenSolver.
 
@@ -56,8 +57,9 @@ PYBIND11_MODULE(interface_eigensolver, module)
             tolerance : float
                 Convergence tolerance for the eigenvalue solver.
             accuracy : int
-                Accuracy order of the finite difference scheme (e.g., 1, 2,
-
+                Accuracy order of the finite difference scheme (e.g., 1, 2, 4)
+            extrapolation_order : int
+                Order of Richardson extrapolation for iterative eigenvalue computation (e.g., 1, 2, 3)
         )pbdoc"
     )
     .def_readonly(
@@ -80,6 +82,22 @@ PYBIND11_MODULE(interface_eigensolver, module)
         )pbdoc"
     )
     .def_readwrite(
+        "extrapolation_order",
+        &EigenSolver::extrapolation_order,
+        R"pbdoc(
+            Extrapolation order for iterative eigenvalue computation.
+            This parameter specifies the order of Richardson extrapolation used in
+            the iterative eigenvalue solver. Extrapolation can accelerate convergence
+            and improve accuracy, especially for challenging problems.
+
+            Recommended values:
+            - 1: No extrapolation (standard iterative solver)
+            - 2: Second-order extrapolation (common choice for improved convergence)
+            - 3 or higher: Higher-order extrapolation (can provide better accuracy but may introduce instability)
+
+        )pbdoc"
+    )
+    .def_readwrite(
         "wavelength",
         &EigenSolver::wavelength,
         R"pbdoc(
@@ -93,6 +111,26 @@ PYBIND11_MODULE(interface_eigensolver, module)
 
             The wavelength should be chosen based on the application and the physical
             properties of the waveguide being modeled.
+        )pbdoc"
+    )
+    .def_readwrite(
+        "mode_number",
+        &EigenSolver::mode_number,
+        R"pbdoc(
+            Current mode number being processed.
+            This parameter keeps track of the mode index currently being computed or
+            sorted. It is used internally to manage the mode computation process and
+            can be accessed for informational purposes.
+        )pbdoc"
+    )
+    .def_readwrite(
+        "solver_number",
+        &EigenSolver::solver_number,
+        R"pbdoc(
+            Current solver iteration number.
+            This parameter tracks the current iteration of the eigenvalue solver, which
+            can be useful for monitoring convergence and debugging. It is updated
+            during the iterative eigenvalue computation process.
         )pbdoc"
     )
     .def(
@@ -197,9 +235,8 @@ PYBIND11_MODULE(interface_eigensolver, module)
         )pbdoc"
     )
     .def(
-        "_cpp_loop_over_itr",
+        "loop_over_itr",
         &EigenSolver::loop_over_itr,
-        pybind11::arg("extrapolation_order"),
         pybind11::arg("alpha"),
         R"pbdoc(
             Perform iterative eigenvalue computation with extrapolation.
@@ -211,10 +248,6 @@ PYBIND11_MODULE(interface_eigensolver, module)
 
             Parameters
             ----------
-            extrapolation_order : int
-                Order of Richardson extrapolation. Higher orders can improve
-                accuracy but may introduce numerical instability.
-                Recommended range: 1-4.
             alpha : float
                 Extrapolation parameter controlling the step size in the
                 iterative process. Optimal values depend on the problem

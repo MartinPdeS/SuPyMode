@@ -17,15 +17,20 @@ class EigenSolver
 {
     public:
         ModelParameters model_parameters;
-        size_t n_computed_mode;
-        size_t n_sorted_mode;
+
         size_t max_iteration;
         double tolerance;
         size_t accuracy;
-        Boundaries boundaries;
-        size_t iteration;
+        size_t extrapolation_order;
         double wavelength;
 
+        size_t n_computed_mode;
+        size_t n_sorted_mode;
+        Boundaries boundaries;
+
+        size_t iteration;
+        size_t mode_number = 0;
+        size_t solver_number = 0;
 
         std::vector<SuperMode> computed_supermodes;
         std::vector<SuperMode> sorted_supermodes;
@@ -46,8 +51,13 @@ class EigenSolver
     EigenSolver(
         const size_t max_iteration,
         const double tolerance,
-        const size_t accuracy
-    );
+        const size_t accuracy,
+        const size_t extrapolation_order)
+    :   max_iteration(max_iteration),
+        tolerance(tolerance),
+        accuracy(accuracy),
+        extrapolation_order(extrapolation_order)
+    {}
 
     void initialize(
         const ModelParameters &model_parameters,
@@ -141,7 +151,7 @@ class EigenSolver
      * \param extrapolation_order The order of extrapolation for the eigenvalue problem.
      * \param alpha The alpha parameter for the eigenvalue problem.
      */
-    void loop_over_itr(size_t extrapolation_order = 1, double alpha = 0);
+    void loop_over_itr(double alpha = 0);
 
     /**
      * \brief Sorts the modes based on the last propagation constant.

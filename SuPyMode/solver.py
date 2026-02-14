@@ -12,7 +12,7 @@ from SuPyMode.superset import SuperSet
 from SuPyMode.supermode import SuperMode
 from SuPyMode.binary.interface_supermode import SUPERMODE  # type: ignore
 from SuPyMode.binary.interface_eigensolver import EIGENSOLVER  # type: ignore
-from SuPyMode.binary.interface_model_parameters import MODELPARAMETERS  # type: ignore
+from SuPyMode.binary.interface_model_parameters import ModelParameters  # type: ignore
 from SuPyMode.binary.interface_mesh import GEOMETRY
 from SuPyMode.mode_label import ModeLabel
 
@@ -54,18 +54,26 @@ class SuPySolver(EIGENSOLVER):
         Initialize the solver with the given parameters.
         """
         self.geometry = geometry
-        self.extrapolation_order = extrapolation_order
         self.debug_mode = debug_mode
 
         self.mesh = self.geometry.mesh
 
         self.coordinate_system = self.geometry.coordinate_system
 
-        self.mode_number = 0
-        self.solver_number = 0
-
         super().__init__(
-            max_iteration=max_iteration, tolerance=tolerance, accuracy=accuracy
+            max_iteration=max_iteration,
+            tolerance=tolerance,
+            accuracy=accuracy,
+            extrapolation_order=extrapolation_order,
+        )
+
+        self.model_parameters = ModelParameters(
+            dx=self.coordinate_system.dx,
+            dy=self.coordinate_system.dy,
+            mesh=self.mesh,
+            x_vector=self.coordinate_system.x_vector,
+            y_vector=self.coordinate_system.y_vector,
+            debug_mode=self.debug_mode,
         )
 
     def initialize_binding(
@@ -143,18 +151,11 @@ class SuPySolver(EIGENSOLVER):
         itr_final : float, optional
             Final ITR value (default is 0.1).
         """
-        self.wavelength = wavelength
-        self.itr_list = numpy.linspace(itr_initial, itr_final, n_step)
-
-        self.model_parameters = MODELPARAMETERS(
-            dx=self.coordinate_system.dx,
-            dy=self.coordinate_system.dy,
+        self.model_parameters.initialize(
             wavelength=wavelength,
-            itr_list=self.itr_list,
-            mesh=self.mesh,
-            x_vector=self.coordinate_system.x_vector,
-            y_vector=self.coordinate_system.y_vector,
-            debug_mode=self.debug_mode,
+            itr_initial=itr_initial,
+            itr_final=itr_final,
+            n_step=n_step,
         )
 
         self.superset = SuperSet(
@@ -233,9 +234,7 @@ class SuPySolver(EIGENSOLVER):
 
         self.superset.model_parameters = self.model_parameters
 
-        self._cpp_loop_over_itr(
-            extrapolation_order=self.extrapolation_order, alpha=beta_guess
-        )
+        self.loop_over_itr(alpha=beta_guess)
 
         mode_labels = self.get_supermode_labels(
             n_modes=n_sorted_mode, boundaries=boundaries, auto_label=auto_label

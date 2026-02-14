@@ -5,12 +5,13 @@ from scipy.interpolate import RectBivariateSpline
 
 # Local imports
 from SuPyMode import representation
-from SuPyMode.binary.interface_model_parameters import MODELPARAMETERS as ModelParameters  # type: ignore
+from SuPyMode.binary.interface_model_parameters import ModelParameters  # type: ignore
 from SuPyMode.utils import interpret_slice_number_and_itr, get_symmetrized_vector
 from PyFinitDiff import BoundaryValue
 
+
 @dataclass(kw_only=True)
-class SuperMode():
+class SuperMode:
     """
     Represents supermodes within fiber optic structures. This class serves as a Python
     counterpart to a C++ SuperMode class, facilitating integration and computation via
@@ -33,6 +34,7 @@ class SuperMode():
         An arbitrary descriptive label for the supermode.
 
     """
+
     parent_set: object
     binding: object
     solver_number: int
@@ -246,7 +248,7 @@ class SuperMode():
         else:
             return f"${self.label}$"
 
-    def is_computation_compatible(self, other: 'SuperMode') -> bool:
+    def is_computation_compatible(self, other: "SuperMode") -> bool:
         """
         Determines if another supermode is compatible for computation, based on unique
         identifiers and boundary conditions.
@@ -263,7 +265,7 @@ class SuperMode():
         """
         return self.binding.is_computation_compatible(other.binding)
 
-    def is_symmetry_compatible(self, other: 'SuperMode') -> bool:
+    def is_symmetry_compatible(self, other: "SuperMode") -> bool:
         """
         Determines whether the specified other supermode has the same symmetry.
 
@@ -279,7 +281,9 @@ class SuperMode():
         """
         return self.boundaries == other.boundaries
 
-    def get_field_interpolation(self, itr: float = None, slice_number: int = None) -> RectBivariateSpline:
+    def get_field_interpolation(
+        self, itr: float = None, slice_number: int = None
+    ) -> RectBivariateSpline:
         """
         Computes the field interpolation for a given iteration or slice number.
         Requires exactly one of the parameters to be specified.
@@ -309,8 +313,7 @@ class SuperMode():
 
         if itr is None:
             slice_number, itr = interpret_slice_number_and_itr(
-                itr_baseline=self.itr_list,
-                slice_list=slice_number
+                itr_baseline=self.itr_list, slice_list=slice_number
             )
 
         field = self.field.get_field(slice_number=slice_number, add_symmetries=True).T
@@ -345,20 +348,32 @@ class SuperMode():
         if not add_symmetries:
             return full_x_axis, full_y_axis
 
-        if self.boundaries.right in [BoundaryValue.SYMMETRIC, BoundaryValue.ANTI_SYMMETRIC]:
-            full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type='last')
+        if self.boundaries.right in [
+            BoundaryValue.SYMMETRIC,
+            BoundaryValue.ANTI_SYMMETRIC,
+        ]:
+            full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type="last")
             full_x_axis.sort()
 
-        if self.boundaries.left in [BoundaryValue.SYMMETRIC, BoundaryValue.ANTI_SYMMETRIC]:
-            full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type='first')
+        if self.boundaries.left in [
+            BoundaryValue.SYMMETRIC,
+            BoundaryValue.ANTI_SYMMETRIC,
+        ]:
+            full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type="first")
             full_x_axis.sort()
 
-        if self.boundaries.top in [BoundaryValue.SYMMETRIC, BoundaryValue.ANTI_SYMMETRIC]:
-            full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type='last')
+        if self.boundaries.top in [
+            BoundaryValue.SYMMETRIC,
+            BoundaryValue.ANTI_SYMMETRIC,
+        ]:
+            full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type="last")
             full_y_axis.sort()
 
-        if self.boundaries.bottom in [BoundaryValue.SYMMETRIC, BoundaryValue.ANTI_SYMMETRIC]:
-            full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type='first')
+        if self.boundaries.bottom in [
+            BoundaryValue.SYMMETRIC,
+            BoundaryValue.ANTI_SYMMETRIC,
+        ]:
+            full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type="first")
             full_y_axis.sort()
 
         return full_x_axis, full_y_axis
@@ -393,5 +408,6 @@ class SuperMode():
             The label of the supermode.
         """
         return self.label
+
 
 # -

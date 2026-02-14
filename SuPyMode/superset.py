@@ -17,9 +17,8 @@ from scipy.integrate import solve_ivp
 from scipy.interpolate import interp1d
 
 # Local imports
-from SuPyMode.binary.interface_model_parameters import (
-    MODELPARAMETERS as ModelParameters,
-)
+from SuPyMode.binary.interface_model_parameters import ModelParameters
+
 from SuPyMode.profiles import AlphaProfile
 from SuPyMode.propagation import Propagation
 from SuPyMode.supermode import SuperMode
@@ -52,8 +51,10 @@ class SuperSet(SuperSetPlots):
     def __post_init__(self):
         self._transmission_matrix = None
         self.supermodes = []
+        itr_list = self.model_parameters.itr_list
         self._itr_to_slice = interp1d(
-            self.model_parameters.itr_list, numpy.arange(self.model_parameters.n_slice)
+            itr_list,
+            numpy.arange(itr_list.size),
         )
 
     def __getitem__(self, idx: int) -> SuperMode:

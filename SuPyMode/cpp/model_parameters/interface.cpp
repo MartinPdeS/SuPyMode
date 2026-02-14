@@ -30,7 +30,7 @@ PYBIND11_MODULE(interface_model_parameters, module) {
         quantities like wave numbers and normalized parameters.
     )pbdoc";
 
-    pybind11::class_<ModelParameters>(module, "MODELPARAMETERS",
+    pybind11::class_<ModelParameters>(module, "ModelParameters",
         R"pbdoc(
             Central parameter management class for waveguide mode analysis.
 
@@ -57,42 +57,19 @@ PYBIND11_MODULE(interface_model_parameters, module) {
             - Wavelength and frequency parameter conversion
             - Cross-module parameter consistency
 
-            Examples
-            --------
-            >>> import numpy as np
-            >>> # Create refractive index mesh
-            >>> mesh = create_fiber_mesh(core_radius=4.1e-6, ...)
-            >>> x = np.linspace(-10e-6, 10e-6, 201)
-            >>> y = np.linspace(-10e-6, 10e-6, 201)
-            >>> itr_list = np.array([1.0, 1.5, 2.0])
-            >>>
-            >>> # Initialize ModelParameters
-            >>> params = ModelParameters(
-            ...     mesh=mesh,
-            ...     x_vector=x,
-            ...     y_vector=y,
-            ...     itr_list=itr_list,
-            ...     wavelength=1550e-9,
-            ...     dx=x[1]-x[0],
-            ...     dy=y[1]-y[0],
-            ...     debug_mode=0
-            ... )
         )pbdoc")
         .def(
             pybind11::init<
                 const pybind11::array_t<double>&,
                 const pybind11::array_t<double>&,
                 const pybind11::array_t<double>&,
-                const pybind11::array_t<double>&,
                 const double,
                 const double,
-                const double,
-                const int>(),
+                const int
+            >(),
             pybind11::arg("mesh"),
             pybind11::arg("x_vector"),
             pybind11::arg("y_vector"),
-            pybind11::arg("itr_list"),
-            pybind11::arg("wavelength"),
             pybind11::arg("dx"),
             pybind11::arg("dy"),
             pybind11::arg("debug_mode") = 0,
@@ -161,22 +138,38 @@ PYBIND11_MODULE(interface_model_parameters, module) {
                 - Refractive indices should be real for lossless analysis
                 - The coordinate system assumes z as the propagation direction
 
-                Examples
-                --------
-                >>> # Typical single-mode fiber at 1550 nm
-                >>> params = ModelParameters(
-                ...     mesh=fiber_mesh,
-                ...     x_vector=x_coords,
-                ...     y_vector=y_coords,
-                ...     itr_list=np.array([1.0, 1.2, 1.5]),
-                ...     wavelength=1550e-9,  # 1550 nm
-                ...     dx=50e-9,            # 50 nm grid spacing
-                ...     dy=50e-9,
-                ...     debug_mode=1
-                ... )
             )pbdoc"
         )
-        .def_readonly("n_slice", &ModelParameters::n_slice,
+        .def(
+            "initialize",
+            &ModelParameters::initialize,
+            pybind11::arg("wavelength"),
+            pybind11::arg("itr_initial"),
+            pybind11::arg("itr_final"),
+            pybind11::arg("n_step"),
+            R"pbdoc(
+                Initialize derived parameters based on physical settings.
+
+                This method computes all derived parameters from the initial
+                physical settings, including the wave number, iteration list,
+                and scaled parameters for numerical stability.
+
+                Parameters
+                ----------
+                wavelength : float
+                    Operating wavelength in meters (e.g., 1550e-9 for 1550 nm).
+                itr_initial : float
+                    Initial iteration parameter for adaptive computations.
+                itr_final : float
+                    Final iteration parameter for adaptive computations.
+                n_step : int
+                    Number of steps in the iteration list (>= 2).
+
+            )pbdoc"
+        )
+        .def_readonly(
+            "n_slice",
+            &ModelParameters::n_slice,
             R"pbdoc(
                 Number of slices in the computational domain.
 
@@ -195,7 +188,8 @@ PYBIND11_MODULE(interface_model_parameters, module) {
                 The slice count affects memory usage and computational complexity.
                 For single-layer waveguides, n_slice = 1 is typical. For
                 multi-layer structures or 3D analysis, larger values are used.
-            )pbdoc")
+            )pbdoc"
+        )
         .def_readonly("nx", &ModelParameters::nx,
             R"pbdoc(
                 Number of grid points in the x-direction.
@@ -276,7 +270,7 @@ PYBIND11_MODULE(interface_model_parameters, module) {
                 approximately equal. The spacing must satisfy stability and
                 accuracy requirements for the numerical scheme used.
             )pbdoc")
-        .def_readonly("wavelength", &ModelParameters::wavelength,
+        .def_readwrite("wavelength", &ModelParameters::wavelength,
             R"pbdoc(
                 Operating wavelength in vacuum.
 
@@ -319,7 +313,11 @@ PYBIND11_MODULE(interface_model_parameters, module) {
 
                 It's automatically computed from the wavelength parameter.
             )pbdoc")
-        .def_readonly("itr_list", &ModelParameters::itr_list_py,
+        .def_property_readonly(
+            "itr_list",
+            [](const ModelParameters &self) {
+                return NumpyInterface::eigen_to_ndarray<double>(self.itr_list, {static_cast<unsigned long>(self.itr_list.size())});
+            },
             R"pbdoc(
                 Iteration parameter list for adaptive computations.
 
@@ -342,7 +340,8 @@ PYBIND11_MODULE(interface_model_parameters, module) {
                 - Multi-grid methods
 
                 Typical values are monotonically increasing: [1.0, 1.5, 2.0]
-            )pbdoc")
+            )pbdoc"
+        )
         .def_readonly("mesh", &ModelParameters::mesh_py,
             R"pbdoc(
                 Refractive index distribution mesh.

@@ -1,12 +1,5 @@
 #include "eigensolver.h"
 
-EigenSolver::EigenSolver(
-    const size_t max_iteration,
-    const double tolerance,
-    const size_t accuracy
-)
-: max_iteration(max_iteration), tolerance(tolerance), accuracy(accuracy) {}
-
 void EigenSolver::initialize(
     const ModelParameters &model_parameters,
     const pybind11::array_t<double> &finit_difference_triplets_py,
@@ -166,17 +159,20 @@ void EigenSolver::populate_sorted_supermodes(size_t slice, Eigen::MatrixXd &eige
     }
 }
 
-void EigenSolver::loop_over_itr(size_t extrapolation_order, double alpha)
+void EigenSolver::loop_over_itr(double alpha)
 {
     if (this->model_parameters.debug_mode > 0)
-        std::cout << "Starting iterative eigenvalue computation with extrapolation order: " << extrapolation_order << ", alpha: " << alpha << std::endl;
+        std::cout << "Starting iterative eigenvalue computation with extrapolation order: " << this->extrapolation_order << ", alpha: " << alpha << std::endl;
 
     this->iteration = 0;
 
     Eigen::MatrixXd eigen_vectors;
     Eigen::VectorXd eigen_values;
 
-    Extrapolator extrapolator = Extrapolator(this->model_parameters.ditr, extrapolation_order);
+    Extrapolator extrapolator = Extrapolator(
+        this->model_parameters.ditr,
+        this->extrapolation_order
+    );
 
     ProgressBar progress_bar = ProgressBar(this->model_parameters.n_slice, 70, true, true);
 
@@ -267,11 +263,9 @@ double EigenSolver::compute_max_index()
 
 
 double EigenSolver::index_to_eigenvalue(const double index) const {
-    double wavenumber = 2 * 3.14159265358979 / this->wavelength;
-    return -std::pow(wavenumber * index, 2);
+    return -std::pow(this->model_parameters.wavenumber * index, 2);
 }
 
 double EigenSolver::eigenvalue_to_index(const double eigenvalue) const {
-    double wavenumber = 2 * 3.14159265358979 / this->wavelength;
-    return std::sqrt(eigenvalue) / wavenumber;
+    return std::sqrt(eigenvalue) / this->model_parameters.wavenumber;
 }
