@@ -1,14 +1,10 @@
 # #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
 
-from __future__ import annotations
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from SuPyMode.supermode import SuperMode
-
 import numpy
-from SuPyMode.representation.base import InheritFromSuperMode, BaseMultiModePlot
 import matplotlib.pyplot as plt
+from SuPyMode.representation.base import InheritFromSuperMode, BaseMultiModePlot
+from SuPyMode.binary.interface_supermode import SUPERMODE
 
 
 class BeatingLength(InheritFromSuperMode, BaseMultiModePlot):
@@ -20,27 +16,28 @@ class BeatingLength(InheritFromSuperMode, BaseMultiModePlot):
 
     Attributes
     ----------
-    parent_supermode : SuperMode
+    supermode : SUPERMODE
         The parent supermode object that provides the base mode data.
     """
-    def __init__(self, parent_supermode: SuperMode):
+
+    def __init__(self, supermode: SUPERMODE):
         """
         Initialize a BeatingLength object with a reference to a parent supermode.
 
         Parameters
         ----------
-        parent_supermode : SuperMode
+        supermode : SUPERMODE
             The parent supermode object that provides the base mode data.
         """
-        self.parent_supermode = parent_supermode
+        self.supermode = supermode
 
-    def get_values(self, other_supermode: SuperMode) -> numpy.ndarray:
+    def get_values(self, other_supermode: SUPERMODE) -> numpy.ndarray:
         """
         Calculate the beating length between the parent supermode and another specified supermode.
 
         Parameters
         ----------
-        other_supermode : SuperMode
+        other_supermode : SUPERMODE
             The supermode with which to compare the parent supermode.
 
         Returns
@@ -48,7 +45,7 @@ class BeatingLength(InheritFromSuperMode, BaseMultiModePlot):
         numpy.ndarray
             An array of beating lengths calculated between the two supermodes.
         """
-        return self.parent_supermode.binding.get_beating_length_with_mode(other_supermode.binding)
+        return self.supermode.get_beating_length_with_mode(other_supermode)
 
     def _dress_ax(self, ax: plt.Axes) -> None:
         """
@@ -59,7 +56,8 @@ class BeatingLength(InheritFromSuperMode, BaseMultiModePlot):
         ax : matplotlib.axes.Axes
             The axis object on which to set the labels.
         """
-        ax.set_xlabel('Inverse taper ratio')
-        ax.set_ylabel('Beating length [m]')
+        ax.set_xlabel("Inverse taper ratio")
+        ax.set_ylabel("Beating length [m]")
+
 
 # -

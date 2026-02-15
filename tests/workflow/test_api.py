@@ -75,9 +75,6 @@ def test_solver_properties(precomputed_workflow):
     """
     solver = precomputed_workflow.solver
     assert solver.eigenvalue_to_index(3e6) is not None, "Eigenvalue conversion failed."
-    assert (
-        solver.coordinate_system is not None
-    ), "Solver coordinate system not accessible."
 
 
 def test_mode_properties(precomputed_workflow):
@@ -85,7 +82,6 @@ def test_mode_properties(precomputed_workflow):
     Test accessing and validating properties of the first mode in the superset.
     """
     mode = precomputed_workflow.superset[0]
-    assert mode.geometry is not None, "Mode geometry not accessible."
     assert mode.coordinate_system is not None, "Mode coordinate system not accessible."
     assert mode.itr_list is not None, "Mode ITR list not accessible."
     assert mode.model_parameters is not None, "Mode model parameters not accessible."

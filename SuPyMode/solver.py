@@ -9,7 +9,6 @@ from FiberFusing.geometry import Geometry
 
 # Local imports
 from SuPyMode.superset import SuperSet
-from SuPyMode.supermode import SuperMode
 from SuPyMode.binary.interface_supermode import SUPERMODE  # type: ignore
 from SuPyMode.binary.interface_eigensolver import EIGENSOLVER  # type: ignore
 from SuPyMode.binary.interface_model_parameters import ModelParameters  # type: ignore
@@ -192,12 +191,7 @@ class SuPySolver(EIGENSOLVER):
         self.loop_over_itr(guess_index=index_guess, auto_label=auto_label)
 
         for binding_number in range(n_sorted_mode):
-            binded_mode = self.get_sorted_mode(binding_number)
-
-            supermode = SuperMode(
-                parent_set=self.superset,
-                binding=binded_mode,
-            )
+            supermode = self.get_sorted_mode(binding_number)
 
             self.superset.supermodes.append(supermode)
 

@@ -1,13 +1,9 @@
 # #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
-
-from __future__ import annotations
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from SuPyMode.supermode import SuperMode
-
-from SuPyMode.representation.base import InheritFromSuperMode, BaseSingleModePlot
 import matplotlib.pyplot as plt
+
+from SuPyMode.binary.interface_supermode import SUPERMODE
+from SuPyMode.representation.base import InheritFromSuperMode, BaseSingleModePlot
 
 
 class EigenValue(InheritFromSuperMode, BaseSingleModePlot):
@@ -19,22 +15,23 @@ class EigenValue(InheritFromSuperMode, BaseSingleModePlot):
 
     Attributes
     ----------
-    parent_supermode : SuperMode
+    supermode : SUPERMODE
         The parent supermode object from which eigenvalue data is derived.
     data : numpy.ndarray
         The eigenvalue data retrieved from the parent supermode binding.
     """
-    def __init__(self, parent_supermode: SuperMode):
+
+    def __init__(self, supermode: SUPERMODE):
         """
         Initialize an EigenValue object with a parent supermode reference.
 
         Parameters
         ----------
-        parent_supermode : SuperMode
+        supermode : SUPERMODE
             A reference to the parent supermode object that provides the base eigenvalue data.
         """
-        self.parent_supermode = parent_supermode
-        self.data = self.parent_supermode.binding.get_eigen_value()
+        self.supermode = supermode
+        self.data = self.supermode.get_eigen_value()
 
     def _dress_ax(self, ax: plt.Axes) -> None:
         """
@@ -45,7 +42,8 @@ class EigenValue(InheritFromSuperMode, BaseSingleModePlot):
         ax : matplotlib.axes.Axes
             The axis object on which to set the labels.
         """
-        ax.set_xlabel('Inverse taper ratio')
-        ax.set_ylabel('Mode eigenvalues')
+        ax.set_xlabel("Inverse taper ratio")
+        ax.set_ylabel("Mode eigenvalues")
+
 
 # -

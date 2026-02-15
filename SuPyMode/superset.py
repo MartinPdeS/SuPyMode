@@ -12,16 +12,15 @@ from typing import List, Optional
 import numpy
 
 # Third-party imports
-from FiberFusing.geometry import Geometry
 from scipy.integrate import solve_ivp
 from scipy.interpolate import interp1d
 
 # Local imports
 from SuPyMode.binary.interface_model_parameters import ModelParameters
+from SuPyMode.binary.interface_supermode import SUPERMODE
 
 from SuPyMode.profiles import AlphaProfile
 from SuPyMode.propagation import Propagation
-from SuPyMode.supermode import SuperMode
 from SuPyMode.superset_plots import SuperSetPlots
 from SuPyMode.utils import interpret_mode_of_interest, parse_filename, test_valid_input
 
@@ -54,32 +53,32 @@ class SuperSet(SuperSetPlots):
             numpy.arange(itr_list.size),
         )
 
-    def __getitem__(self, idx: int) -> SuperMode:
+    def __getitem__(self, idx: int) -> SUPERMODE:
         return self.supermodes[idx]
 
-    def __setitem__(self, idx: int, value: SuperMode) -> None:
+    def __setitem__(self, idx: int, value: SUPERMODE) -> None:
         self.supermodes[idx] = value
 
     @property
-    def fundamental_supermodes(self) -> list[SuperMode]:
+    def fundamental_supermodes(self) -> list[SUPERMODE]:
         """
         Returns the fundamental supermodes based on the highest beta values and minimal spatial overlap.
 
         Returns
         -------
-        list of SuperMode
+        list of SUPERMODE
             A list of fundamental supermodes.
         """
         return self.get_fundamental_supermodes(tolerance=1e-2)
 
     @property
-    def non_fundamental_supermodes(self) -> list[SuperMode]:
+    def non_fundamental_supermodes(self) -> list[SUPERMODE]:
         """
         Returns the non-fundamental supermodes based on the specified spatial overlap tolerance.
 
         Returns
         -------
-        list of SuperMode
+        list of SUPERMODE
             A list of non-fundamental supermodes.
         """
         return self.get_non_fundamental_supermodes(tolerance=1e-2)
@@ -117,7 +116,7 @@ class SuperSet(SuperSetPlots):
 
         return numpy.floor(self._itr_to_slice(itr_list)).astype(int)
 
-    def get_fundamental_supermodes(self, *, tolerance: float = 0.1) -> list[SuperMode]:
+    def get_fundamental_supermodes(self, *, tolerance: float = 0.1) -> list[SUPERMODE]:
         """
         Returns a list of fundamental supermodes with the highest propagation constant values and minimal spatial overlap.
 
@@ -128,14 +127,14 @@ class SuperSet(SuperSetPlots):
 
         Returns
         -------
-        list of SuperMode
+        list of SUPERMODE
             List of fundamental supermodes.
         """
         self.sort_modes_by_beta()
 
         fundamental_supermodes = [self.supermodes[0]]
 
-        def absolute_overlap(mode_0: SuperMode, mode_1: SuperMode) -> float:
+        def absolute_overlap(mode_0: SUPERMODE, mode_1: SUPERMODE) -> float:
             field_0 = numpy.abs(mode_0.field.data[0])
             norm_0 = field_0.sum()
             field_0 /= numpy.sqrt(norm_0)
@@ -164,7 +163,7 @@ class SuperSet(SuperSetPlots):
 
     def get_non_fundamental_supermodes(
         self, *, tolerance: float = 0.1
-    ) -> list[SuperMode]:
+    ) -> list[SUPERMODE]:
         """
         Returns a list of non-fundamental supermodes that do not overlap with the fundamental modes.
 
@@ -175,7 +174,7 @@ class SuperSet(SuperSetPlots):
 
         Returns
         -------
-        list of SuperMode
+        list of SUPERMODE
             List of non-fundamental supermodes.
         """
         non_fundamental_supermodes = self.supermodes
@@ -185,13 +184,13 @@ class SuperSet(SuperSetPlots):
 
         return non_fundamental_supermodes
 
-    def get_mode_solver_classification(self) -> list[list[SuperMode]]:
+    def get_mode_solver_classification(self) -> list[list[SUPERMODE]]:
         """
         Returns a list of modes classified by solver number.
 
         Returns
         -------
-        list of list of SuperMode
+        list of list of SUPERMODE
             List of lists containing modes classified by solver number.
         """
         solver_numbers = [mode.solver_number for mode in self]
@@ -425,15 +424,15 @@ class SuperSet(SuperSetPlots):
         )
 
     def interpret_initial_input(
-        self, initial_amplitude: list | SuperMode
+        self, initial_amplitude: list | SUPERMODE
     ) -> numpy.ndarray:
         """
         Interpret the initial amplitude input to ensure compatibility with the expected number of supermodes.
 
         Parameters
         ----------
-        initial_amplitude : list or SuperMode
-            The initial amplitude as either a list of complex numbers or a SuperMode object.
+        initial_amplitude : list or SUPERMODE
+            The initial amplitude as either a list of complex numbers or a SUPERMODE object.
 
         Returns
         -------
@@ -445,7 +444,7 @@ class SuperSet(SuperSetPlots):
         ValueError
             If the length of the initial amplitude list does not match the number of supermodes.
         """
-        if isinstance(initial_amplitude, SuperMode):
+        if isinstance(initial_amplitude, SUPERMODE):
             amplitudes = initial_amplitude.amplitudes
         else:
             amplitudes = initial_amplitude
@@ -460,7 +459,7 @@ class SuperSet(SuperSetPlots):
 
         return numpy.asarray(amplitudes, dtype=complex)
 
-    def _sort_modes(self, ordering_keys) -> List[SuperMode]:
+    def _sort_modes(self, ordering_keys) -> List[SUPERMODE]:
         """
         Sort supermodes using specified keys provided as tuples in `ordering_keys`.
 
@@ -471,7 +470,7 @@ class SuperSet(SuperSetPlots):
 
         Returns
         -------
-        list of SuperMode
+        list of SUPERMODE
             Sorted list of supermodes.
         """
         order = numpy.lexsort(ordering_keys)
@@ -550,7 +549,7 @@ class SuperSet(SuperSetPlots):
         mode_0, mode_1 = pair_of_mode
         return mode_0.is_computation_compatible(mode_1)
 
-    def remove_duplicate_combination(self, supermodes_list: list) -> list[SuperMode]:
+    def remove_duplicate_combination(self, supermodes_list: list) -> list[SUPERMODE]:
         """
         Remove duplicate combinations from the mode combination list irrespective of the order.
 
@@ -630,7 +629,7 @@ class SuperSet(SuperSetPlots):
     def export_data(
         self,
         filename: str,
-        mode_of_interest: list[SuperMode] | str = "all",
+        mode_of_interest: list[SUPERMODE] | str = "all",
         combination: list | str = "pairs",
     ) -> Path:
         """
@@ -700,7 +699,7 @@ class SuperSet(SuperSetPlots):
         # Export single-mode attributes
         _export_single_data("index")
         _export_single_data("beta")
-        _export_single_data("eigen_value")
+        _export_single_data("eigenvalue")
 
         # Export combination-mode attributes
         _export_combination_data("adiabatic")

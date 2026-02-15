@@ -1,13 +1,9 @@
 # #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
-
-from __future__ import annotations
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from SuPyMode.supermode import SuperMode
-
-from SuPyMode.representation.base import InheritFromSuperMode, BaseSingleModePlot
 import matplotlib.pyplot as plt
+
+from SuPyMode.binary.interface_supermode import SUPERMODE
+from SuPyMode.representation.base import InheritFromSuperMode, BaseSingleModePlot
 
 
 class Index(InheritFromSuperMode, BaseSingleModePlot):
@@ -19,22 +15,23 @@ class Index(InheritFromSuperMode, BaseSingleModePlot):
 
     Attributes
     ----------
-    parent_supermode : SuperMode
+    supermode : SUPERMODE
         The supermode instance to which this Index object is linked.
     data : numpy.ndarray
         The effective refractive index data for the mode derived from the parent supermode.
     """
-    def __init__(self, parent_supermode: SuperMode):
+
+    def __init__(self, supermode: SUPERMODE):
         """
         Initialize an Index object with a reference to a parent supermode.
 
         Parameters
         ----------
-        parent_supermode : SuperMode
+        supermode : SUPERMODE
             The parent supermode object that provides the base mode data.
         """
-        self.parent_supermode = parent_supermode
-        self.data = self.parent_supermode.binding.get_index()
+        self.supermode = supermode
+        self.data = self.supermode.get_index()
 
     def _dress_ax(self, ax: plt.Axes) -> None:
         """
@@ -46,9 +43,10 @@ class Index(InheritFromSuperMode, BaseSingleModePlot):
             The axis object on which to set the labels and limits.
         """
         ax.set(
-            xlabel='Inverse taper ratio',
-            ylabel='Effective refractive index',
-            ylim=[1.44, 1.455]
+            xlabel="Inverse taper ratio",
+            ylabel="Effective refractive index",
+            ylim=[1.44, 1.455],
         )
+
 
 # -

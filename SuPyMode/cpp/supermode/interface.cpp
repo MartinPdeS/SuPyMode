@@ -32,7 +32,7 @@ PYBIND11_MODULE(interface_supermode, module)
         and coupled resonators.
     )pbdoc";
 
-    pybind11::class_<SuperMode>(module, "SUPERMODE",
+    pybind11::class_<SuperMode, std::shared_ptr<SuperMode>>(module, "SUPERMODE",
         R"pbdoc(
             Supermode analysis class for coupled waveguide systems.
 
@@ -125,6 +125,15 @@ PYBIND11_MODULE(interface_supermode, module)
             Label or identifier for the supermode.
         )pbdoc"
     )
+    .def_property_readonly(
+        "stylized_label",
+        [](const SuperMode &self) {
+            return self.label.empty() ? "Mode: " + std::to_string(self.mode_number) : "$" + self.label + "$";
+        },
+        R"pbdoc(
+            Stylized label for the supermode, combining the mode number and label.
+        )pbdoc"
+    )
     .def_readwrite(
         "mode_number",
         &SuperMode::mode_number,
@@ -133,16 +142,16 @@ PYBIND11_MODULE(interface_supermode, module)
         )pbdoc"
     )
     .def_readwrite(
-        "mode_number",
-        &SuperMode::mode_number,
+        "solver_number",
+        &SuperMode::solver_number,
         R"pbdoc(
-            Mode number or identifier for the supermode.
+            Solver number or identifier for the supermode.
         )pbdoc"
     )
     .def_property_readonly(
         "ID",
         [](const SuperMode &self) {
-            return py::tuple(py::int_(self.mode_number), py::int_(self.solver_number));
+            return py::make_tuple(py::int_(self.mode_number), py::int_(self.solver_number));
         },
         R"pbdoc(
             Unique identifier for the supermode instance.
@@ -153,6 +162,22 @@ PYBIND11_MODULE(interface_supermode, module)
         &SuperMode::boundaries,
         R"pbdoc(
             Boundary conditions for the supermode.
+        )pbdoc"
+    )
+    .def(
+        "__repr__",
+        [](const SuperMode &self) {
+            return "<SuperMode mode_number=" + std::to_string(self.mode_number) +
+                   ", solver_number=" + std::to_string(self.solver_number) +
+                   ", label='" + self.label + "'>";
+        },
+        R"pbdoc(
+            String representation of the SuperMode instance for debugging and display.
+
+            Returns
+            -------
+            str
+                A string representation of the SuperMode instance.
         )pbdoc"
     )
     .def_readwrite(
@@ -231,13 +256,12 @@ PYBIND11_MODULE(interface_supermode, module)
             information, which is essential for understanding interference
             and beating effects in coupled systems.
 
-            Examples
-            --------
-            >>> fields = supermode.get_fields()
-            >>> fundamental_supermode = fields[:, 0]  # First supermode
-            >>> field_intensity = numpy.abs(fields)**2
-        )pbdoc")
-    .def("get_field", &SuperMode::get_field_py, pybind11::arg("index"),
+        )pbdoc"
+    )
+    .def(
+        "get_field",
+        &SuperMode::get_field_py,
+        pybind11::arg("index"),
         R"pbdoc(
             Retrieve the field distribution of a specific supermode.
 
@@ -266,8 +290,11 @@ PYBIND11_MODULE(interface_supermode, module)
             --------
             >>> fundamental = supermode.get_field(0)  # Fundamental supermode
             >>> first_higher = supermode.get_field(1)  # First higher-order supermode
-        )pbdoc")
-    .def("get_norm", &SuperMode::get_norm,
+        )pbdoc"
+    )
+    .def(
+        "get_norm",
+        &SuperMode::get_norm,
         R"pbdoc(
             Calculate the normalization factors for all supermodes.
 
@@ -285,8 +312,11 @@ PYBIND11_MODULE(interface_supermode, module)
             The normalization typically ensures unit power flow for each
             supermode, which is essential for accurate coupling coefficient
             calculations and power transfer analysis.
-        )pbdoc")
-    .def("get_index", &SuperMode::get_index_py,
+        )pbdoc"
+    )
+    .def(
+        "get_index",
+        &SuperMode::get_index_py,
         R"pbdoc(
             Get the effective refractive indices of all supermodes.
 
@@ -309,8 +339,11 @@ PYBIND11_MODULE(interface_supermode, module)
 
             For weakly coupled systems, the supermode effective indices
             are close to those of the individual uncoupled waveguides.
-        )pbdoc")
-    .def("get_betas", &SuperMode::get_betas_py,
+        )pbdoc"
+    )
+    .def(
+        "get_betas",
+        &SuperMode::get_betas_py,
         R"pbdoc(
             Get the propagation constants (beta values) of all supermodes.
 
@@ -334,7 +367,9 @@ PYBIND11_MODULE(interface_supermode, module)
             The difference in propagation constants between supermodes
             determines the beating length: L_beat = 2π / |β₁ - β₂|.
         )pbdoc")
-    .def("get_eigen_value", &SuperMode::get_eigen_value_py,
+    .def(
+        "get_eigen_value",
+        &SuperMode::get_eigen_value_py,
         R"pbdoc(
             Get the eigenvalues from the supermode eigenvalue problem.
 
@@ -355,9 +390,11 @@ PYBIND11_MODULE(interface_supermode, module)
             solver and may require transformation to obtain physically
             meaningful propagation constants. The transformation depends
             on the specific wave equation formulation and discretization.
-        )pbdoc")
-
-    .def("get_normalized_coupling_with_mode", &SuperMode::get_normalized_coupling_with_mode_py,
+        )pbdoc"
+    )
+    .def(
+        "get_normalized_coupling_with_mode",
+        &SuperMode::get_normalized_coupling_with_mode_py,
         R"pbdoc(
             Calculate normalized coupling coefficients with another supermode set.
 
@@ -395,8 +432,11 @@ PYBIND11_MODULE(interface_supermode, module)
             --------
             >>> coupling_matrix = supermode1.get_normalized_coupling_with_mode(supermode2)
             >>> max_coupling = numpy.max(numpy.abs(coupling_matrix))
-        )pbdoc")
-    .def("get_adiabatic_with_mode", &SuperMode::get_adiabatic_with_mode_py,
+        )pbdoc"
+    )
+    .def(
+        "get_adiabatic_with_mode",
+        &SuperMode::get_adiabatic_with_mode_py,
         R"pbdoc(
             Analyze adiabatic coupling conditions with another supermode set.
 
@@ -429,8 +469,11 @@ PYBIND11_MODULE(interface_supermode, module)
             The adiabatic criterion is typically expressed as:
             |dγ/dz| << |Δβ|², where γ are coupling coefficients and
             Δβ are propagation constant differences.
-        )pbdoc")
-    .def("get_overlap_integrals_with_mode", &SuperMode::get_overlap_integrals_with_mode_py,
+        )pbdoc"
+    )
+    .def(
+        "get_overlap_integrals_with_mode",
+        &SuperMode::get_overlap_integrals_with_mode_py,
         R"pbdoc(
             Compute overlap integrals between supermodes and another mode set.
 
@@ -467,8 +510,11 @@ PYBIND11_MODULE(interface_supermode, module)
             --------
             >>> overlaps = supermode1.get_overlap_integrals_with_mode(supermode2)
             >>> diagonal_overlaps = numpy.diag(overlaps)  # Same mode overlaps
-        )pbdoc")
-    .def("get_beating_length_with_mode", &SuperMode::get_beating_length_with_mode_py,
+        )pbdoc"
+    )
+    .def(
+        "get_beating_length_with_mode",
+        &SuperMode::get_beating_length_with_mode_py,
         R"pbdoc(
             Calculate beating lengths between supermodes and another mode set.
 
@@ -506,8 +552,11 @@ PYBIND11_MODULE(interface_supermode, module)
             --------
             >>> beating_lengths = supermode1.get_beating_length_with_mode(supermode2)
             >>> min_beating = numpy.min(beating_lengths[beating_lengths > 0])
-        )pbdoc")
-    .def("is_computation_compatible", &SuperMode::is_computation_compatible,
+        )pbdoc"
+    )
+    .def(
+        "is_computation_compatible",
+        &SuperMode::is_computation_compatible,
         R"pbdoc(
             Check computational compatibility with another SuperMode object.
 
@@ -547,8 +596,10 @@ PYBIND11_MODULE(interface_supermode, module)
             ...     coupling = supermode1.get_normalized_coupling_with_mode(supermode2)
             ... else:
             ...     print("Supermodes are not compatible for coupling analysis")
-        )pbdoc")
-    .def(pybind11::pickle(&SuperMode::get_pickle, &SuperMode::build_from_tuple),
+        )pbdoc"
+    )
+    .def(
+        pybind11::pickle(&SuperMode::get_pickle, &SuperMode::build_from_tuple),
         R"pbdoc(
             Enable Python pickle serialization support.
 
@@ -567,16 +618,204 @@ PYBIND11_MODULE(interface_supermode, module)
             The pickle protocol preserves all computed fields, parameters,
             and internal state, allowing full reconstruction of the object.
 
-            Examples
-            --------
-            >>> import pickle
-            >>> # Save SuperMode object
-            >>> with open('supermode.pkl', 'wb') as f:
-            ...     pickle.dump(supermode, f)
-            >>>
-            >>> # Load SuperMode object
-            >>> with open('supermode.pkl', 'rb') as f:
-            ...     loaded_supermode = pickle.load(f)
-        )pbdoc")
+        )pbdoc"
+    )
+    .def_property_readonly(
+        "beta",
+        [](const SuperMode &self) {
+            py::object Beta = py::module_::import("SuPyMode.representation").attr("Beta");
+            return Beta(self);
+        },
+        R"pbdoc(
+            Property to access the Beta representation (propagation constants) of the supermode.
+
+            This property allows users to access the Beta representation, which
+            provides a convenient interface for analyzing the propagation constants
+            and related properties of the supermodes.
+
+            Returns
+            -------
+            Beta
+                An instance of the Beta class representing the propagation constants
+                and related properties of the supermodes.
+
+            Notes
+            -----
+            The Beta representation is useful for:
+            - Analyzing effective indices and phase velocities
+            - Calculating beating lengths and coupling characteristics
+            - Visualizing mode dispersion and propagation behavior
+        )pbdoc"
+    )
+    .def_property_readonly(
+        "field",
+        [](const SuperMode &self) {
+            py::object Field = py::module_::import("SuPyMode.representation").attr("Field");
+            return Field(self);
+        },
+        R"pbdoc(
+            Property to access the Field representation of the supermode.
+
+            This property allows users to access the Field representation, which
+            provides a convenient interface for analyzing the electric field
+            distributions and related properties of the supermodes.
+
+            Returns
+            -------
+            Field
+                An instance of the Field class representing the electric field
+                distributions and related properties of the supermodes.
+
+            Notes
+            -----
+            The Field representation is useful for:
+            - Visualizing mode profiles and spatial distributions
+            - Analyzing mode overlap and coupling characteristics
+            - Calculating power flow and intensity distributions
+        )pbdoc"
+    )
+    .def_property_readonly(
+        "adiabatic",
+        [](const SuperMode &self) {
+            py::object Adiabatic = py::module_::import("SuPyMode.representation").attr("Adiabatic");
+            return Adiabatic(self);
+        },
+        R"pbdoc(
+            Property to access the Adiabatic representation of the supermode.
+
+            This property allows users to access the Adiabatic representation, which
+            provides a convenient interface for analyzing adiabatic coupling and mode evolution characteristics of the supermodes.
+
+            Returns
+            -------
+            Adiabatic
+                An instance of the Adiabatic class representing the adiabatic coupling and mode evolution properties of the supermodes.
+
+            Notes
+            -----
+            The Adiabatic representation is useful for:
+            - Analyzing adiabatic coupling conditions and mode evolution
+            - Evaluating transition probabilities in varying structures
+            - Designing adiabatic tapers and mode converters
+        )pbdoc"
+    )
+    .def_property_readonly(
+        "normalized_coupling",
+        [](const SuperMode &self) {
+            py::object NormalizedCoupling = py::module_::import("SuPyMode.representation").attr("NormalizedCoupling");
+            return NormalizedCoupling(self);
+        },
+        R"pbdoc(
+            Property to access the Normalized Coupling representation of the supermode.
+
+            This property allows users to access the Normalized Coupling representation, which
+            provides a convenient interface for analyzing the normalized coupling characteristics
+            of the supermodes.
+
+            Returns
+            -------
+            NormalizedCoupling
+                An instance of the NormalizedCoupling class representing the normalized coupling
+                characteristics of the supermodes.
+
+            Notes
+            -----
+            The Normalized Coupling representation is useful for:
+            - Analyzing mode overlap and coupling efficiency
+            - Evaluating power transfer between modes
+            - Designing mode converters and couplers
+        )pbdoc"
+    )
+    .def_property_readonly(
+        "index",
+        [](const SuperMode &self) {
+            py::object Index = py::module_::import("SuPyMode.representation").attr("Index");
+            return Index(self);
+        },
+        R"pbdoc(
+            Property to access the Index representation of the supermode.
+
+            This property allows users to access the Index representation, which
+            provides a convenient interface for analyzing the effective refractive indices
+            and related properties of the supermodes.
+
+            Returns
+            -------
+            Index
+                An instance of the Index class representing the effective refractive indices
+                and related properties of the supermodes.
+
+            Notes
+            -----
+            The Index representation is useful for:
+            - Analyzing effective indices and phase velocities
+            - Calculating beating lengths and coupling characteristics
+            - Visualizing mode dispersion and propagation behavior
+        )pbdoc"
+    )
+    .def_property_readonly(
+        "eigenvalue",
+        [](const SuperMode &self) {
+            py::object EigenValue = py::module_::import("SuPyMode.representation").attr("EigenValue");
+            return EigenValue(self);
+        },
+        R"pbdoc(
+            Property to access the EigenValue representation of the supermode.
+
+            This property allows users to access the EigenValue representation, which
+            provides a convenient interface for analyzing the raw eigenvalues obtained
+            from the supermode eigenvalue problem.
+
+            Returns
+            -------
+            EigenValue
+                An instance of the EigenValue class representing the raw eigenvalues
+                from the supermode eigenvalue problem.
+
+            Notes
+            -----
+            The EigenValue representation is useful for:
+            - Analyzing the raw output of the numerical eigenvalue solver
+            - Understanding the relationship between eigenvalues and physical propagation constants
+            - Diagnosing convergence and computational issues in the eigenvalue problem
+        )pbdoc"
+    )
+    .def_property_readonly(
+        "beating_length",
+        [](const SuperMode &self) {
+            py::object BeatingLength = py::module_::import("SuPyMode.representation").attr("BeatingLength");
+            return BeatingLength(self);
+        },
+        R"pbdoc(
+            Property to access the Beating Length representation of the supermode.
+            This property allows users to access the Beating Length representation, which
+            provides a convenient interface for analyzing the beating lengths that characterize the periodic power exchange between supermodes.
+
+            Returns
+            -------
+            BeatingLength
+                An instance of the BeatingLength class representing the beating lengths between supermodes.
+
+            Notes
+            -----
+            The Beating Length representation is useful for:
+            - Analyzing mode coupling and power transfer characteristics
+            - Designing directional couplers and multi-core fibers
+            - Understanding interference effects in coupled systems
+        )pbdoc"
+    )
+    .def(
+        "__hash__",
+        [](const SuperMode &self) {
+            // Create a hash based on the unique identifier of the supermode
+            std::size_t h1 = std::hash<int>()(self.mode_number);
+            std::size_t h2 = std::hash<int>()(self.solver_number);
+            return h1 ^ (h2 << 1); // Combine hashes
+        },
+        R"pbdoc(
+            Compute a hash value for the SuperMode instance.
+            This allows SuperMode objects to be used in hash-based collections like sets and dictionaries.
+        )pbdoc"
+    )
     ;
 }

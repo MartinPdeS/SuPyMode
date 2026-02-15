@@ -8,7 +8,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 from MPSPlots import helper
 
 from SuPyMode.profiles import AlphaProfile
-from SuPyMode.supermode import SuperMode
+from SuPyMode.binary.interface_supermode import SUPERMODE
 from SuPyMode.utils import (
     get_intersection,
     interpret_mode_of_interest,
@@ -22,7 +22,7 @@ class SuperSetPlots(object):
     def plot_index(
         self,
         axes: plt.Axes,
-        mode_of_interest: list[SuperMode] = "all",
+        mode_of_interest: list[SUPERMODE] = "all",
         show_crossings: bool = False,
     ) -> plt.Figure:
         """
@@ -32,7 +32,7 @@ class SuperSetPlots(object):
         ----------
         axes : matplotlib.axes.Axes
             The axes object on which to plot.
-        mode_of_interest : list of SuperMode
+        mode_of_interest : list of SUPERMODE
             List of modes to be plotted.
         show_crossings : bool, optional
             Whether to show crossings in the plot (default is False).
@@ -66,7 +66,7 @@ class SuperSetPlots(object):
     def plot_beta(
         self,
         axes: plt.Axes,
-        mode_of_interest: list[SuperMode] | str = "all",
+        mode_of_interest: list[SUPERMODE] | str = "all",
         show_crossings: bool = False,
     ) -> plt.Figure:
         """
@@ -76,7 +76,7 @@ class SuperSetPlots(object):
         ----------
         axes : matplotlib.axes.Axes
             The axes object on which to plot.
-        mode_of_interest : list of SuperMode
+        mode_of_interest : list of SUPERMODE
             List of modes to be plotted.
         show_crossings : bool, optional
             Whether to show crossings in the plot (default is False).
@@ -110,7 +110,7 @@ class SuperSetPlots(object):
     def plot_eigen_value(
         self,
         axes: plt.Axes,
-        mode_of_interest: list[SuperMode] | str = "all",
+        mode_of_interest: list[SUPERMODE] | str = "all",
         show_crossings: bool = False,
     ) -> plt.Figure:
         """
@@ -120,7 +120,7 @@ class SuperSetPlots(object):
         ----------
         axes : matplotlib.axes.Axes
             The axes object on which to plot.
-        mode_of_interest : list of SuperMode
+        mode_of_interest : list of SUPERMODE
             List of modes to be plotted.
         show_crossings : bool, optional
             Whether to show crossings in the plot (default is False).
@@ -141,7 +141,7 @@ class SuperSetPlots(object):
         )
 
         for mode in mode_of_interest:
-            mode.eigen_value.plot(ax=axes, show=False)
+            mode.eigenvalue.plot(ax=axes, show=False)
 
         if show_crossings:
             self.add_crossings_to_ax(
@@ -154,7 +154,7 @@ class SuperSetPlots(object):
     def plot_beating_length(
         self,
         axes: plt.Axes,
-        mode_of_interest: list[SuperMode] = "all",
+        mode_of_interest: list[SUPERMODE] = "all",
         combination: list = "pairs",
     ) -> plt.Figure:
         """
@@ -164,7 +164,7 @@ class SuperSetPlots(object):
         ----------
         axes : matplotlib.axes.Axes
             The axes object on which to plot.
-        mode_of_interest : list of SuperMode
+        mode_of_interest : list of SUPERMODE
             List of modes to be plotted.
         combination : list
             List of mode combinations.
@@ -191,7 +191,7 @@ class SuperSetPlots(object):
     def plot_normalized_coupling(
         self,
         axes: plt.Axes,
-        mode_of_interest: list[SuperMode] | str = "all",
+        mode_of_interest: list[SUPERMODE] | str = "all",
         combination: list | str = "pairs",
     ) -> plt.Figure:
         """
@@ -201,7 +201,7 @@ class SuperSetPlots(object):
         ----------
         ax : matplotlib.axes.Axes
             The axes object on which to plot.
-        mode_of_interest : list of SuperMode
+        mode_of_interest : list of SUPERMODE
             List of modes to be plotted.
         combination : list
             List of mode combinations.
@@ -226,7 +226,7 @@ class SuperSetPlots(object):
     def plot_adiabatic(
         self,
         axes: plt.Axes,
-        mode_of_interest: list[SuperMode] | str = "all",
+        mode_of_interest: list[SUPERMODE] | str = "all",
         combination: list | str = "pairs",
         add_profile: list[AlphaProfile] = None,
     ) -> plt.Figure:
@@ -237,7 +237,7 @@ class SuperSetPlots(object):
         ----------
         ax : matplotlib.axes.Axes
             The axes object on which to plot.
-        mode_of_interest : list of SuperMode
+        mode_of_interest : list of SUPERMODE
             List of modes to be plotted.
         combination : list
             List of mode combinations.
@@ -391,7 +391,7 @@ class SuperSetPlots(object):
         filename: str = "auto",
         itr_list: list[float] | None = None,
         slice_list: list[int] | None = None,
-        mode_of_interest: list[SuperMode] | str = "all",
+        mode_of_interest: list[SUPERMODE] | str = "all",
         combination: str = "pairs",
     ) -> None:
         """
@@ -420,7 +420,7 @@ class SuperSetPlots(object):
         kwargs = dict(show=False, mode_of_interest=mode_of_interest)
 
         figure_list = [
-            self.geometry.plot(show=False),
+            # self.geometry.plot(show=False),
             self.plot_field(itr_list=itr_list, slice_list=slice_list, **kwargs),
             self.plot_index(**kwargs),
             self.plot_beta(**kwargs),
@@ -447,7 +447,7 @@ class SuperSetPlots(object):
         ----------
         ax : matplotlib.axes.Axes
             The axes object on which to plot.
-        mode_of_interest : list of SuperMode
+        mode_of_interest : list of SUPERMODE
             List of modes of interest.
         data_type : str
             The type of data for which to find crossings (e.g., 'index', 'beta', etc.).

@@ -1,14 +1,15 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from SuPyMode.supermode import SuperMode
-
 import matplotlib.pyplot as plt
 from MPSPlots.styles import mps
 
+from SuPyMode.binary.interface_boundaries import BoundaryValue
+from SuPyMode.binary.interface_supermode import SUPERMODE
+from SuPyMode.utils import get_symmetrized_vector
 
-class BaseMultiModePlot():
-    def plot(self, other_supermode: SuperMode, ax: plt.Axes = None, show: bool = True) -> plt.Figure:
+
+class BaseMultiModePlot:
+    def plot(
+        self, other_supermode: SUPERMODE, ax: plt.Axes = None, show: bool = True
+    ) -> plt.Figure:
         """
         Plot the coupling between the parent supermode and another supermode.
 
@@ -18,7 +19,7 @@ class BaseMultiModePlot():
 
         Parameters
         ----------
-        other_supermode : SuperMode
+        other_supermode : SUPERMODE
             The supermode to compare against.
         ax : matplotlib.axes.Axes, optional
             The axis on which to plot. If `None`, a new axis is created (default is `None`).
@@ -44,14 +45,16 @@ class BaseMultiModePlot():
 
         self._dress_ax(ax)
 
-        if not self.parent_supermode.is_computation_compatible(other_supermode):
+        if not self.supermode.is_computation_compatible(other_supermode):
             return
 
         y = self.get_values(other_supermode=other_supermode)
 
-        label = f'{self.parent_supermode.stylized_label} - {other_supermode.stylized_label}'
+        label = f"{self.supermode.stylized_label} - {other_supermode.stylized_label}"
 
-        ax.plot(self.itr_list, abs(y), label=label, linewidth=2)
+        ax.plot(
+            self.supermode.model_parameters.itr_list, abs(y), label=label, linewidth=2
+        )
 
         ax.legend()
 
@@ -61,7 +64,7 @@ class BaseMultiModePlot():
         return figure
 
 
-class BaseSingleModePlot():
+class BaseSingleModePlot:
     def __getitem__(self, idx: int):
         return self._data[idx]
 
@@ -84,11 +87,6 @@ class BaseSingleModePlot():
         matplotlib.figure.Figure
             The figure object containing the generated plot.
 
-        Examples
-        --------
-        >>> fig, ax = plt.subplots()
-        >>> base_single_mode_plot.plot(ax=ax, show=True)
-        >>> plt.show()
         """
         if ax is None:
             with plt.style.context(mps):
@@ -96,7 +94,12 @@ class BaseSingleModePlot():
         else:
             figure = ax.figure
 
-        ax.plot(self.itr_list, self.data, label=f'{self.stylized_label}', linewidth=2)
+        ax.plot(
+            self.supermode.model_parameters.itr_list,
+            self.data,
+            label=f"{self.supermode.stylized_label}",
+            linewidth=2,
+        )
 
         ax.legend()
 
@@ -108,7 +111,7 @@ class BaseSingleModePlot():
         return figure
 
 
-class InheritFromSuperMode():
+class InheritFromSuperMode:
     def _set_axis_(self, ax: plt.Axes):
         """
         Set the axis properties according to the predefined plot style.
@@ -139,102 +142,6 @@ class InheritFromSuperMode():
         """
         return self.data[idx]
 
-    @property
-    def mode_number(self) -> int:
-        """
-        Get the mode number of the parent supermode.
-
-        Returns
-        -------
-        int
-            The mode number of the parent supermode.
-        """
-        return self.parent_supermode.mode_number
-
-    @property
-    def solver_number(self) -> int:
-        """
-        Get the solver number of the parent supermode.
-
-        Returns
-        -------
-        int
-            The solver number of the parent supermode.
-        """
-        return self.parent_supermode.solver_number
-
-    @property
-    def axes(self):
-        """
-        Get the axes of the parent supermode.
-
-        Returns
-        -------
-        Any
-            The axes associated with the parent supermode.
-        """
-        return self.parent_supermode.axes
-
-    @property
-    def boundaries(self):
-        """
-        Get the boundary conditions of the parent supermode.
-
-        Returns
-        -------
-        Any
-            The boundaries of the parent supermode.
-        """
-        return self.parent_supermode.boundaries
-
-    @property
-    def itr_list(self):
-        """
-        Get the list of inverse taper ratio (ITR) values.
-
-        Returns
-        -------
-        list
-            The list of ITR values associated with the parent supermode.
-        """
-        return self.parent_supermode.itr_list
-
-    @property
-    def ID(self):
-        """
-        Get the identifier (ID) of the parent supermode.
-
-        Returns
-        -------
-        Any
-            The identifier of the parent supermode.
-        """
-        return self.parent_supermode.ID
-
-    @property
-    def label(self):
-        """
-        Get the label of the parent supermode.
-
-        Returns
-        -------
-        str
-            The label of the parent supermode.
-        """
-        return self.parent_supermode.label
-
-    @property
-    def stylized_label(self):
-        """
-        Get the stylized label of the parent supermode.
-
-        Returns
-        -------
-        str
-            The stylized label of the parent supermode.
-        """
-        return self.parent_supermode.stylized_label
-
     def slice_to_itr(self, slice: list = []):
         """
         Convert slice indices to inverse taper ratio (ITR) values.
@@ -249,7 +156,7 @@ class InheritFromSuperMode():
         list
             A list of ITR values corresponding to the provided slice indices.
         """
-        return self.parent_supermode.parent_set.slice_to_itr(slice)
+        return self.supermode.parent_set.slice_to_itr(slice)
 
     def itr_to_slice(self, itr: list = []):
         """
@@ -265,7 +172,7 @@ class InheritFromSuperMode():
         list
             A list of slice indices corresponding to the provided ITR values.
         """
-        return self.parent_supermode.parent_set.itr_to_slice(itr)
+        return self.supermode.parent_set.itr_to_slice(itr)
 
     def _get_symmetrize_vector(self, *args, **kwargs):
         """
@@ -276,28 +183,81 @@ class InheritFromSuperMode():
         Any
             The symmetrization vector computed by the parent supermode.
         """
-        return self.parent_supermode._get_symmetrize_vector(*args, **kwargs)
+        return self.supermode._get_symmetrize_vector(*args, **kwargs)
 
-    def _get_axis_vector(self, *args, **kwargs):
+    def _get_axis_vector(self, supermode: object, add_symmetries: bool = True) -> tuple:
         """
-        Get the axis vector from the parent supermode.
+        Computes the full axis vectors, optionally including symmetries.
 
-        Returns
-        -------
-        Any
-            The axis vector computed by the parent supermode.
-        """
-        return self.parent_supermode._get_axis_vector(*args, **kwargs)
-
-    def get_axis(self, *args, **kwargs):
-        """
-        Get the axis information from the parent supermode.
+        Parameters
+        ----------
+        add_symmetries : bool, optional, default=True
+            Whether to include symmetries when computing the axis vectors.
 
         Returns
         -------
-        Any
-            The axis information retrieved from the parent supermode.
+        tuple
+            A tuple containing the full x-axis and y-axis vectors.
         """
-        return self.parent_supermode.get_axis(*args, **kwargs)
+        full_x_axis = self.supermode.model_parameters.x_vector
+        full_y_axis = self.supermode.model_parameters.y_vector
+
+        if not add_symmetries:
+            return full_x_axis, full_y_axis
+
+        if supermode.boundaries.right in [
+            BoundaryValue.Symmetric,
+            BoundaryValue.AntiSymmetric,
+        ]:
+            full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type="last")
+            full_x_axis.sort()
+
+        if supermode.boundaries.left in [
+            BoundaryValue.Symmetric,
+            BoundaryValue.AntiSymmetric,
+        ]:
+            full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type="first")
+            full_x_axis.sort()
+
+        if supermode.boundaries.top in [
+            BoundaryValue.Symmetric,
+            BoundaryValue.AntiSymmetric,
+        ]:
+            full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type="last")
+            full_y_axis.sort()
+
+        if supermode.boundaries.bottom in [
+            BoundaryValue.Symmetric,
+            BoundaryValue.AntiSymmetric,
+        ]:
+            full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type="first")
+            full_y_axis.sort()
+
+        return full_x_axis, full_y_axis
+
+    def get_axis(
+        self, supermode: object, slice_number: int, add_symmetries: bool = True
+    ) -> tuple:
+        """
+        Computes the scaled axis vectors for a specific slice, optionally including symmetries.
+
+        Parameters
+        ----------
+        slice_number : int
+            The slice index for which to compute the axis vectors.
+        add_symmetries : bool, optional, default=True
+            Whether to include symmetries in the computed axis vectors.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the scaled x-axis and y-axis vectors for the given slice.
+        """
+        itr = supermode.model_parameters.itr_list[slice_number]
+        x_axis, y_axis = self._get_axis_vector(
+            supermode=supermode, add_symmetries=add_symmetries
+        )
+        return (x_axis * itr, y_axis * itr)
+
 
 # -

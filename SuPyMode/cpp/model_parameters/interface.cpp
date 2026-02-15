@@ -190,7 +190,9 @@ PYBIND11_MODULE(interface_model_parameters, module) {
                 multi-layer structures or 3D analysis, larger values are used.
             )pbdoc"
         )
-        .def_readonly("nx", &ModelParameters::nx,
+        .def_readonly(
+            "nx",
+            &ModelParameters::nx,
             R"pbdoc(
                 Number of grid points in the x-direction.
 
@@ -369,7 +371,58 @@ PYBIND11_MODULE(interface_model_parameters, module) {
 
                 The mesh should be smooth to avoid numerical artifacts, with
                 gradual transitions at material interfaces when possible.
-            )pbdoc")
+            )pbdoc"
+        )
+        .def_readonly(
+            "x_vector",
+            &ModelParameters::x_vector_py,
+            R"pbdoc(
+                X-coordinate vector for the computational grid.
+
+                This read-only attribute provides the 1D array of x-coordinates
+                corresponding to the horizontal grid points in the computational
+                domain.
+
+                Type
+                ----
+                numpy.ndarray
+                    1D array of x-coordinates in meters, length nx
+
+                Notes
+                -----
+                The x_vector defines the spatial grid in the horizontal direction.
+                It should be uniformly spaced and centered around the waveguide
+                structure for optimal accuracy.
+
+                The spacing between points should match the dx parameter:
+                dx = x_vector[1] - x_vector[0]
+            )pbdoc"
+        )
+        .def_readonly(
+            "y_vector",
+            &ModelParameters::y_vector_py,
+            R"pbdoc(
+                Y-coordinate vector for the computational grid.
+
+                This read-only attribute provides the 1D array of y-coordinates
+                corresponding to the vertical grid points in the computational
+                domain.
+
+                Type
+                ----
+                numpy.ndarray
+                    1D array of y-coordinates in meters, length ny
+
+                Notes
+                -----
+                The y_vector defines the spatial grid in the vertical direction.
+                It should be uniformly spaced and centered around the waveguide
+                structure for optimal accuracy.
+
+                The spacing between points should match the dy parameter:
+                dy = y_vector[1] - y_vector[0]
+            )pbdoc"
+        )
         .def_readonly("mesh_gradient", &ModelParameters::mesh_gradient_py,
             R"pbdoc(
                 Gradient of the refractive index mesh.

@@ -1,20 +1,16 @@
 # #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
 
-from __future__ import annotations
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from SuPyMode.supermode import SuperMode
-
 import numpy
 from MPSPlots import colormaps
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib import colors
+
 from SuPyMode.utils import interpret_slice_number_and_itr, slice_to_itr
 from SuPyMode.binary.interface_boundaries import BoundaryValue
 from SuPyMode.representation.base import InheritFromSuperMode
+from SuPyMode.binary.interface_supermode import SUPERMODE
 
 
 class Field(InheritFromSuperMode):
@@ -26,23 +22,23 @@ class Field(InheritFromSuperMode):
 
     Attributes
     ----------
-    parent_supermode : SuperMode
+    supermode : SUPERMODE
         Reference to the parent supermode object that provides source data.
     data : numpy.ndarray
         The field data retrieved from the parent supermode binding.
     """
 
-    def __init__(self, parent_supermode: SuperMode):
+    def __init__(self, supermode: SUPERMODE):
         """
         Initialize the Field object with a reference to a parent supermode.
 
         Parameters
         ----------
-        parent_supermode : SuperMode
+        supermode : SUPERMODE
             The parent supermode from which this field is derived.
         """
-        self.parent_supermode = parent_supermode
-        self.data = self.parent_supermode.binding.get_fields()
+        self.supermode = supermode
+        self.data = self.supermode.get_fields()
 
     def get_norm(self, slice_number: int) -> float:
         """
@@ -58,7 +54,7 @@ class Field(InheritFromSuperMode):
         float
             The norm of the field for the specified slice.
         """
-        return self.parent_supermode.binding.get_norm(slice_number)
+        return self.supermode.get_norm(slice_number)
 
     @property
     def itr_list(self) -> numpy.ndarray:
@@ -70,7 +66,7 @@ class Field(InheritFromSuperMode):
         numpy.ndarray
             An array of iteration indices.
         """
-        return self.parent_supermode.binding.model_parameters.itr_list
+        return self.supermode.model_parameters.itr_list
 
     @property
     def parent_superset(self) -> object:
@@ -82,7 +78,7 @@ class Field(InheritFromSuperMode):
         object
             The parent set object.
         """
-        return self.parent_supermode.parent_set
+        return self.supermode.parent_set
 
     def get_field(
         self, slice_number: int = None, itr: float = None, add_symmetries: bool = True
@@ -113,7 +109,7 @@ class Field(InheritFromSuperMode):
             itr_baseline=self.itr_list, itr_list=itr, slice_list=slice_number
         )
 
-        fields = self.parent_supermode.binding.get_fields()
+        fields = self.supermode.get_fields()
 
         fields = numpy.take(fields, slice_list, axis=0)
         if add_symmetries:
@@ -146,16 +142,16 @@ class Field(InheritFromSuperMode):
                 norm = abs(field).max()
             case "center":
                 idx_x_center = numpy.argmin(
-                    abs(self.parent_supermode.parent_set.coordinate_system.x_vector)
+                    abs(self.supermode.parent_set.coordinate_system.x_vector)
                 )
                 idx_y_center = numpy.argmin(
-                    abs(self.parent_supermode.parent_set.coordinate_system.y_vector)
+                    abs(self.supermode.parent_set.coordinate_system.y_vector)
                 )
                 center_value = field[idx_x_center, idx_y_center]
                 norm = center_value
             case "l2":
-                dx_scaled = self.parent_supermode.parent_set.coordinate_system.dx * itr
-                dy_scaled = self.parent_supermode.parent_set.coordinate_system.dy * itr
+                dx_scaled = self.supermode.parent_set.coordinate_system.dx * itr
+                dy_scaled = self.supermode.parent_set.coordinate_system.dy * itr
                 norm = numpy.sqrt(
                     numpy.trapz(
                         numpy.trapz(numpy.square(field), dx=dy_scaled, axis=0),
@@ -164,8 +160,8 @@ class Field(InheritFromSuperMode):
                     )
                 )
             case "cmt":
-                dx_scaled = self.parent_supermode.parent_set.coordinate_system.dx * itr
-                dy_scaled = self.parent_supermode.parent_set.coordinate_system.dy * itr
+                dx_scaled = self.supermode.parent_set.coordinate_system.dx * itr
+                dy_scaled = self.supermode.parent_set.coordinate_system.dy * itr
                 norm = numpy.sqrt(
                     numpy.trapz(
                         numpy.trapz(numpy.square(field), dx=dx_scaled, axis=0),
@@ -228,14 +224,14 @@ class Field(InheritFromSuperMode):
         ), f"Expected a 2-dimensional array, but got {field.ndim}-dimensional."
 
         symmetric_field = field[:, -2::-1]
-        match self.boundaries.left:
+        match self.supermode.boundaries.left:
             case BoundaryValue.Symmetric:
                 field = numpy.c_[symmetric_field, field]
 
             case BoundaryValue.AntiSymmetric:
                 field = numpy.c_[-symmetric_field, field]
 
-        match self.boundaries.right:
+        match self.supermode.boundaries.right:
             case BoundaryValue.Symmetric:
                 field = numpy.c_[field, symmetric_field]
 
@@ -243,14 +239,14 @@ class Field(InheritFromSuperMode):
                 field = numpy.c_[field, -symmetric_field]
 
         symmetric_field = field[-2::-1, :]
-        match self.boundaries.top:
+        match self.supermode.boundaries.top:
             case BoundaryValue.Symmetric:
                 field = numpy.r_[field, symmetric_field]
 
             case BoundaryValue.AntiSymmetric:
                 field = numpy.r_[field, -symmetric_field]
 
-        match self.boundaries.bottom:
+        match self.supermode.boundaries.bottom:
             case BoundaryValue.Symmetric:
                 field = numpy.r_[symmetric_field, field]
 
@@ -341,7 +337,11 @@ class Field(InheritFromSuperMode):
 
         field = self.get_field(slice_number=slice_number, add_symmetries=add_symmetries)
 
-        x, y = self.get_axis(slice_number=slice_number, add_symmetries=add_symmetries)
+        x, y = self.get_axis(
+            supermode=self.supermode,
+            slice_number=slice_number,
+            add_symmetries=add_symmetries,
+        )
 
         mappable = ax.pcolormesh(
             x * 1e6,
@@ -377,10 +377,13 @@ class Field(InheritFromSuperMode):
         title = ""
 
         if show_mode_label:
-            title += f"{self.stylized_label}"
+            title += f"{self.supermode.stylized_label}"
 
         if show_itr or show_slice:
-            itr = slice_to_itr(itr_list=self.itr_list, slice_number=slice_number)
+            itr = slice_to_itr(
+                itr_list=self.supermode.model_parameters.itr_list,
+                slice_number=slice_number,
+            )
             title += "\n"
 
         if show_slice:
