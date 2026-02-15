@@ -7,7 +7,7 @@ add_library("${NAME}" STATIC "${NAME}.cpp")
 
 target_include_directories("${NAME}" PUBLIC "${CMAKE_SOURCE_DIR}/extern/eigen")
 
-target_link_libraries("${NAME}" PRIVATE pybind11::module model_parameters)
+target_link_libraries("${NAME}" PRIVATE pybind11::module model_parameters boundaries)
 
 # Create a Python module, if needed.
 pybind11_add_module("interface_${NAME}" MODULE interface.cpp)

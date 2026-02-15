@@ -38,15 +38,12 @@ class SuperSet(SuperSetPlots):
     ----------
     model_parameters : ModelParameters
         Parameters defining the model for simulation.
-    wavelength : float
-        The wavelength used in the solver, in meters.
-    geometry : Geometry
-        The geometry of the optical structure.
+    coordinate_system : Geometry
+        The coordinate system of the optical structure.
     """
 
     model_parameters: ModelParameters
-    wavelength: float
-    geometry: Geometry
+    coordinate_system: object
 
     def __post_init__(self):
         self._transmission_matrix = None
@@ -62,18 +59,6 @@ class SuperSet(SuperSetPlots):
 
     def __setitem__(self, idx: int, value: SuperMode) -> None:
         self.supermodes[idx] = value
-
-    @property
-    def coordinate_system(self):
-        """
-        Returns the coordinate system associated with the geometry.
-
-        Returns
-        -------
-        CoordinateSystem
-            The coordinate system of the geometry.
-        """
-        return self.geometry.coordinate_system
 
     @property
     def fundamental_supermodes(self) -> list[SuperMode]:

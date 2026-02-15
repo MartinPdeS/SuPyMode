@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from SuPyMode.supermode import SuperMode
 
@@ -12,7 +13,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib import colors
 from SuPyMode.utils import interpret_slice_number_and_itr, slice_to_itr
-from PyFinitDiff import BoundaryValue
+from SuPyMode.binary.interface_boundaries import BoundaryValue
 from SuPyMode.representation.base import InheritFromSuperMode
 
 
@@ -30,6 +31,7 @@ class Field(InheritFromSuperMode):
     data : numpy.ndarray
         The field data retrieved from the parent supermode binding.
     """
+
     def __init__(self, parent_supermode: SuperMode):
         """
         Initialize the Field object with a reference to a parent supermode.
@@ -82,7 +84,9 @@ class Field(InheritFromSuperMode):
         """
         return self.parent_supermode.parent_set
 
-    def get_field(self, slice_number: int = None, itr: float = None, add_symmetries: bool = True) -> numpy.ndarray:
+    def get_field(
+        self, slice_number: int = None, itr: float = None, add_symmetries: bool = True
+    ) -> numpy.ndarray:
         """
         Retrieve a specific field adjusted for boundary conditions and optionally add symmetries.
 
@@ -106,9 +110,7 @@ class Field(InheritFromSuperMode):
             If neither or both of `slice_number` and `itr` are defined.
         """
         slice_list, itr_list = interpret_slice_number_and_itr(
-            itr_baseline=self.itr_list,
-            itr_list=itr,
-            slice_list=slice_number
+            itr_baseline=self.itr_list, itr_list=itr, slice_list=slice_number
         )
 
         fields = self.parent_supermode.binding.get_fields()
@@ -119,7 +121,9 @@ class Field(InheritFromSuperMode):
 
         return fields
 
-    def normalize_field(self, field: numpy.ndarray, itr: float, norm_type: str = 'L2') -> numpy.ndarray:
+    def normalize_field(
+        self, field: numpy.ndarray, itr: float, norm_type: str = "L2"
+    ) -> numpy.ndarray:
         """
         Normalize a field array based on a specified normalization method.
 
@@ -138,21 +142,37 @@ class Field(InheritFromSuperMode):
             The normalized field.
         """
         match norm_type.lower():
-            case 'max':
+            case "max":
                 norm = abs(field).max()
-            case 'center':
-                idx_x_center = numpy.argmin(abs(self.parent_supermode.parent_set.coordinate_system.x_vector))
-                idx_y_center = numpy.argmin(abs(self.parent_supermode.parent_set.coordinate_system.y_vector))
+            case "center":
+                idx_x_center = numpy.argmin(
+                    abs(self.parent_supermode.parent_set.coordinate_system.x_vector)
+                )
+                idx_y_center = numpy.argmin(
+                    abs(self.parent_supermode.parent_set.coordinate_system.y_vector)
+                )
                 center_value = field[idx_x_center, idx_y_center]
                 norm = center_value
-            case 'l2':
+            case "l2":
                 dx_scaled = self.parent_supermode.parent_set.coordinate_system.dx * itr
                 dy_scaled = self.parent_supermode.parent_set.coordinate_system.dy * itr
-                norm = numpy.sqrt(numpy.trapz(numpy.trapz(numpy.square(field), dx=dy_scaled, axis=0), dx=dx_scaled, axis=0))
-            case 'cmt':
+                norm = numpy.sqrt(
+                    numpy.trapz(
+                        numpy.trapz(numpy.square(field), dx=dy_scaled, axis=0),
+                        dx=dx_scaled,
+                        axis=0,
+                    )
+                )
+            case "cmt":
                 dx_scaled = self.parent_supermode.parent_set.coordinate_system.dx * itr
                 dy_scaled = self.parent_supermode.parent_set.coordinate_system.dy * itr
-                norm = numpy.sqrt(numpy.trapz(numpy.trapz(numpy.square(field), dx=dx_scaled, axis=0), dx=dy_scaled, axis=0))
+                norm = numpy.sqrt(
+                    numpy.trapz(
+                        numpy.trapz(numpy.square(field), dx=dx_scaled, axis=0),
+                        dx=dy_scaled,
+                        axis=0,
+                    )
+                )
 
         return field / norm
 
@@ -203,50 +223,50 @@ class Field(InheritFromSuperMode):
             If the input field is not a 2D array.
         """
         field = field.squeeze()
-        assert field.ndim == 2, f"Expected a 2-dimensional array, but got {field.ndim}-dimensional."
+        assert (
+            field.ndim == 2
+        ), f"Expected a 2-dimensional array, but got {field.ndim}-dimensional."
 
         symmetric_field = field[:, -2::-1]
         match self.boundaries.left:
-            case BoundaryValue.SYMMETRIC:
+            case BoundaryValue.Symmetric:
                 field = numpy.c_[symmetric_field, field]
 
-            case BoundaryValue.ANTI_SYMMETRIC:
+            case BoundaryValue.AntiSymmetric:
                 field = numpy.c_[-symmetric_field, field]
 
         match self.boundaries.right:
-            case BoundaryValue.SYMMETRIC:
+            case BoundaryValue.Symmetric:
                 field = numpy.c_[field, symmetric_field]
 
-            case BoundaryValue.ANTI_SYMMETRIC:
+            case BoundaryValue.AntiSymmetric:
                 field = numpy.c_[field, -symmetric_field]
 
         symmetric_field = field[-2::-1, :]
         match self.boundaries.top:
-            case BoundaryValue.SYMMETRIC:
+            case BoundaryValue.Symmetric:
                 field = numpy.r_[field, symmetric_field]
 
-            case BoundaryValue.ANTI_SYMMETRIC:
+            case BoundaryValue.AntiSymmetric:
                 field = numpy.r_[field, -symmetric_field]
 
         match self.boundaries.bottom:
-            case BoundaryValue.SYMMETRIC:
+            case BoundaryValue.Symmetric:
                 field = numpy.r_[symmetric_field, field]
 
-            case BoundaryValue.ANTI_SYMMETRIC:
+            case BoundaryValue.AntiSymmetric:
                 field = numpy.r_[-symmetric_field, field]
 
         return field
 
     def plot(
-            self,
-            itr_list: list[float] = [],
-            slice_list: list[int] = [0, -1],
-            add_symmetries: bool = True,
-            show_mode_label: bool = True,
-            show_itr: bool = True,
-            show_colorbar: bool = False,
-            show_slice: bool = True,
-            show: bool = True) -> None:
+        self,
+        itr_list: list[float] = [],
+        slice_list: list[int] = [0, -1],
+        add_symmetries: bool = True,
+        show_colorbar: bool = False,
+        show: bool = True,
+    ) -> None:
         """
         Plot the field for specified iterations or slice numbers.
 
@@ -268,9 +288,7 @@ class Field(InheritFromSuperMode):
             Whether to show the slice number.
         """
         slice_list, itr_list = interpret_slice_number_and_itr(
-            itr_baseline=self.itr_list,
-            itr_list=itr_list,
-            slice_list=slice_list
+            itr_baseline=self.itr_list, itr_list=itr_list, slice_list=slice_list
         )
 
         unit_size = numpy.array([len(slice_list), 1])
@@ -281,7 +299,7 @@ class Field(InheritFromSuperMode):
                 ax=axes[n],
                 slice_number=slice_number,
                 add_symmetries=add_symmetries,
-                show_colorbar=show_colorbar
+                show_colorbar=show_colorbar,
             )
 
         plt.tight_layout()
@@ -290,14 +308,15 @@ class Field(InheritFromSuperMode):
             plt.show()
 
     def render_on_ax(
-            self,
-            ax: plt.Axes,
-            slice_number: int,
-            show_mode_label: bool = True,
-            show_itr: bool = True,
-            show_slice: bool = True,
-            show_colorbar: bool = False,
-            add_symmetries: bool = True) -> None:
+        self,
+        ax: plt.Axes,
+        slice_number: int,
+        show_mode_label: bool = True,
+        show_itr: bool = True,
+        show_slice: bool = True,
+        show_colorbar: bool = False,
+        add_symmetries: bool = True,
+    ) -> None:
         """
         Render the mode field at the given slice number into the input axis.
 
@@ -314,33 +333,35 @@ class Field(InheritFromSuperMode):
             slice_number=slice_number,
             show_mode_label=show_mode_label,
             show_itr=show_itr,
-            show_slice=show_slice
+            show_slice=show_slice,
         )
 
         ax.set_title(title)
-        ax.set_aspect('equal')
+        ax.set_aspect("equal")
 
-        field = self.get_field(
-            slice_number=slice_number,
-            add_symmetries=add_symmetries
+        field = self.get_field(slice_number=slice_number, add_symmetries=add_symmetries)
+
+        x, y = self.get_axis(slice_number=slice_number, add_symmetries=add_symmetries)
+
+        mappable = ax.pcolormesh(
+            x * 1e6,
+            y * 1e6,
+            field,
+            cmap=colormaps.blue_black_red,
+            norm=colors.CenteredNorm(),
         )
-
-        x, y = self.get_axis(
-            slice_number=slice_number,
-            add_symmetries=add_symmetries
-        )
-
-        mappable = ax.pcolormesh(x * 1e6, y * 1e6, field, cmap=colormaps.blue_black_red, norm=colors.CenteredNorm())
         plt.setp(ax.get_xticklabels(), visible=False)
 
         if show_colorbar:
             divider = make_axes_locatable(ax)
-            cax = divider.append_axes('right', size='5%', pad=0.05)
+            cax = divider.append_axes("right", size="5%", pad=0.05)
 
             figure = ax.get_figure()
-            figure.colorbar(mappable, cax=cax, orientation='vertical')
+            figure.colorbar(mappable, cax=cax, orientation="vertical")
 
-    def get_plot_mode_field_title(self, slice_number: int, show_mode_label: bool, show_itr: bool, show_slice: bool) -> str:
+    def get_plot_mode_field_title(
+        self, slice_number: int, show_mode_label: bool, show_itr: bool, show_slice: bool
+    ) -> str:
         """
         Constructs a title for the field plot based on the mode, iteration, and slice number.
 
@@ -353,20 +374,20 @@ class Field(InheritFromSuperMode):
         Returns:
             str: The constructed title for the plot.
         """
-        title = ''
+        title = ""
 
         if show_mode_label:
-            title += f'{self.stylized_label}'
+            title += f"{self.stylized_label}"
 
         if show_itr or show_slice:
             itr = slice_to_itr(itr_list=self.itr_list, slice_number=slice_number)
-            title += '\n'
+            title += "\n"
 
         if show_slice:
-            title += f'slice: {slice_number}'
+            title += f"slice: {slice_number}"
 
         if show_itr:
-            title += f'  itr: {itr:.3f}'
+            title += f"  itr: {itr:.3f}"
 
         return title
 

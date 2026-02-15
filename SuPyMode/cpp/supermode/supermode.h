@@ -2,10 +2,12 @@
 
 #include <pybind11/pybind11.h>
 #include <complex>
-#include "../utils/utils.h"
-#include "../utils/numpy_interface.h"
-#include "../model_parameters/model_parameters.h"
+#include <string>
 #include <Eigen/Core>
+
+#include "utils/utils.h"
+#include "utils/numpy_interface.h"
+#include "model_parameters/model_parameters.h"
 #include "boundaries/boundaries.h"
 
 typedef std::complex<double> complex128;
@@ -28,12 +30,14 @@ typedef std::complex<double> complex128;
 class SuperMode {
 public:
     size_t mode_number;          ///< Index/number identifier for this mode
+    size_t solver_number;
     Eigen::MatrixXd fields;      ///< Electromagnetic field distribution matrix
     Eigen::VectorXd index;       ///< Refractive index profile along propagation direction
     Eigen::VectorXd betas;       ///< Propagation constants (beta values) along the mode
     Eigen::VectorXd eigen_value; ///< Eigenvalues from the mode solver
     ModelParameters model_parameters; ///< Physical and numerical parameters for the model
 
+    std::string label;
     Boundaries boundaries;
 
     /**

@@ -39,7 +39,8 @@ PYBIND11_MODULE(interface_eigensolver, module)
             - Mode sorting and selection
         )pbdoc"
     )
-    .def(pybind11::init<const size_t, const double, const size_t, const size_t>(),
+    .def(pybind11::init<ModelParameters&, const size_t, const double, const size_t, const size_t>(),
+        pybind11::arg("model_parameters"),
         pybind11::arg("max_iteration") = 10'000,
         pybind11::arg("tolerance") = 1e-8,
         pybind11::arg("accuracy") = 2,
@@ -60,6 +61,17 @@ PYBIND11_MODULE(interface_eigensolver, module)
                 Accuracy order of the finite difference scheme (e.g., 1, 2, 4)
             extrapolation_order : int
                 Order of Richardson extrapolation for iterative eigenvalue computation (e.g., 1, 2, 3)
+        )pbdoc"
+    )
+    .def_readonly(
+        "model_parameters",
+        &EigenSolver::model_parameters,
+        R"pbdoc(
+            Model parameters for the eigenvalue solver.
+
+            This parameter provides access to the model parameters used in the
+            eigenvalue solver, including grid spacing, mesh size, and other
+            relevant physical and numerical parameters.
         )pbdoc"
     )
     .def_readonly(
@@ -175,7 +187,7 @@ PYBIND11_MODULE(interface_eigensolver, module)
                 The mode index corresponding to the given eigenvalue.
         )pbdoc"
     )
-    .def("_cpp_set_boundaries",
+    .def("set_boundaries",
         &EigenSolver::setup_boundaries,
         pybind11::arg("left"),
         pybind11::arg("right"),
@@ -205,7 +217,7 @@ PYBIND11_MODULE(interface_eigensolver, module)
                 If boundary conditions are not recognized.
         )pbdoc"
     )
-    .def("_cpp_initialize",
+    .def("initialize",
         &EigenSolver::initialize,
         pybind11::arg("model_parameters"),
         pybind11::arg("finit_matrix"),
@@ -237,7 +249,8 @@ PYBIND11_MODULE(interface_eigensolver, module)
     .def(
         "loop_over_itr",
         &EigenSolver::loop_over_itr,
-        pybind11::arg("alpha"),
+        pybind11::arg("guess_index"),
+        pybind11::arg("auto_label") = true,
         R"pbdoc(
             Perform iterative eigenvalue computation with extrapolation.
 
@@ -274,38 +287,7 @@ PYBIND11_MODULE(interface_eigensolver, module)
         )pbdoc"
     )
     .def(
-        "_cpp_compute_laplacian",
-        &EigenSolver::compute_laplacian,
-        R"pbdoc(
-            Compute the Laplacian operator matrix for the finite difference grid.
-
-            This method constructs the discrete Laplacian operator used in the
-            wave equation eigenvalue problem. The Laplacian is computed using
-            finite difference approximations on the computational grid.
-
-            The method handles:
-            - Grid spacing variations
-            - Boundary condition implementation
-            - Coordinate system transformations (cylindrical)
-
-            Returns
-            -------
-            None
-                The computed Laplacian is stored internally and used by the
-                eigenvalue solver.
-
-            Notes
-            -----
-            This method should be called before solving for eigenvalues.
-            The Laplacian matrix is typically sparse and stored efficiently
-            using appropriate data structures.
-
-            The finite difference stencil used depends on the accuracy order
-            specified in the model parameters, with higher orders providing
-            better accuracy at the cost of increased computational complexity.
-        )pbdoc"
-    )
-    .def("_cpp_reset_solver",
+        "reset_solver",
         &EigenSolver::reset_solver,
         R"pbdoc(
             Reset the eigenvalue solver to its initial state.
@@ -326,7 +308,7 @@ PYBIND11_MODULE(interface_eigensolver, module)
         )pbdoc"
     )
     .def(
-        "_cpp_get_mode",
+        "get_sorted_mode",
         &EigenSolver::get_sorted_mode,
         R"pbdoc(
             Retrieve computed and sorted eigenmodes.

@@ -14,7 +14,6 @@ from SuPyMode.binary.interface_supermode import SUPERMODE  # type: ignore
 from SuPyMode.binary.interface_eigensolver import EIGENSOLVER  # type: ignore
 from SuPyMode.binary.interface_model_parameters import ModelParameters  # type: ignore
 from SuPyMode.binary.interface_mesh import GEOMETRY
-from SuPyMode.mode_label import ModeLabel
 
 
 class SuPySolver(EIGENSOLVER):
@@ -54,31 +53,25 @@ class SuPySolver(EIGENSOLVER):
         Initialize the solver with the given parameters.
         """
         self.geometry = geometry
-        self.debug_mode = debug_mode
 
-        self.mesh = self.geometry.mesh
-
-        self.coordinate_system = self.geometry.coordinate_system
+        model_parameters = ModelParameters(
+            dx=geometry.coordinate_system.dx,
+            dy=geometry.coordinate_system.dy,
+            mesh=geometry.mesh,
+            x_vector=geometry.coordinate_system.x_vector,
+            y_vector=geometry.coordinate_system.y_vector,
+            debug_mode=debug_mode,
+        )
 
         super().__init__(
+            model_parameters=model_parameters,
             max_iteration=max_iteration,
             tolerance=tolerance,
             accuracy=accuracy,
             extrapolation_order=extrapolation_order,
         )
 
-        self.model_parameters = ModelParameters(
-            dx=self.coordinate_system.dx,
-            dy=self.coordinate_system.dy,
-            mesh=self.mesh,
-            x_vector=self.coordinate_system.x_vector,
-            y_vector=self.coordinate_system.y_vector,
-            debug_mode=self.debug_mode,
-        )
-
-    def initialize_binding(
-        self, n_sorted_mode: int, boundaries: Boundaries, n_added_mode: int
-    ) -> None:
+    def get_finit_difference_array(self, boundaries: Boundaries) -> None:
         """
         Initialize and configure the C++ solver binding for eigenvalue computations.
 
@@ -97,10 +90,10 @@ class SuPySolver(EIGENSOLVER):
             Configured C++ solver instance.
         """
         finit_diff_matrix = FiniteDifference(
-            n_x=self.coordinate_system.nx,
-            n_y=self.coordinate_system.ny,
-            dx=self.coordinate_system.dx,
-            dy=self.coordinate_system.dy,
+            n_x=self.model_parameters.nx,
+            n_y=self.model_parameters.ny,
+            dx=self.model_parameters.dx,
+            dy=self.model_parameters.dy,
             derivative=2,
             accuracy=self.accuracy,
             boundaries=boundaries,
@@ -108,27 +101,11 @@ class SuPySolver(EIGENSOLVER):
 
         finit_diff_matrix.construct_triplet()
 
-        new_array = numpy.c_[
+        return numpy.c_[
             finit_diff_matrix._triplet.array[:, 1],
             finit_diff_matrix._triplet.array[:, 0],
             finit_diff_matrix._triplet.array[:, 2],
         ]
-
-        self._cpp_set_boundaries(
-            left=boundaries.left.value.lower(),
-            right=boundaries.right.value.lower(),
-            top=boundaries.top.value.lower(),
-            bottom=boundaries.bottom.value.lower(),
-        )
-
-        self._cpp_initialize(
-            model_parameters=self.model_parameters,
-            finit_matrix=new_array.T,
-            n_computed_mode=n_sorted_mode + n_added_mode,
-            n_sorted_mode=n_sorted_mode,
-        )
-
-        self._cpp_compute_laplacian()
 
     def init_superset(
         self,
@@ -159,38 +136,9 @@ class SuPySolver(EIGENSOLVER):
         )
 
         self.superset = SuperSet(
-            geometry=self.geometry,
-            wavelength=wavelength,
+            coordinate_system=self.geometry.coordinate_system,
             model_parameters=self.model_parameters,
         )
-
-    def get_supermode_labels(
-        self, n_modes: int, boundaries: Boundaries, auto_label: bool
-    ) -> list:
-        """
-        Generate labels for supermodes based on boundary conditions and whether auto-labeling is enabled.
-
-        Parameters
-        ----------
-        n_modes : int
-            Number of modes for which labels are needed.
-        boundaries : Boundaries
-            Boundary conditions that affect mode symmetries.
-        auto_label : bool
-            If True, automatically generates labels based on mode symmetries; otherwise, generates generic labels.
-
-        Returns
-        -------
-        list
-            List of labels for the supermodes.
-        """
-        if auto_label:
-            return [
-                ModeLabel(boundaries=boundaries, mode_number=n).label
-                for n in range(n_modes)
-            ]
-        else:
-            return [f"mode_{{{n}}}" for n in range(n_modes)]
 
     def add_modes(
         self,
@@ -221,39 +169,36 @@ class SuPySolver(EIGENSOLVER):
         None
             This method updates the solver's internal state but does not return any value.
         """
-
-        beta_guess = self.index_to_eigenvalue(index_guess)
-
-        self._cpp_reset_solver()
-
-        self.initialize_binding(
+        finit_difference_array = self.get_finit_difference_array(
             boundaries=boundaries,
-            n_added_mode=n_added_mode,
+        )
+
+        self.reset_solver()
+
+        self.set_boundaries(
+            left=boundaries.left.value.lower(),
+            right=boundaries.right.value.lower(),
+            top=boundaries.top.value.lower(),
+            bottom=boundaries.bottom.value.lower(),
+        )
+
+        self.initialize(
+            model_parameters=self.model_parameters,
+            finit_matrix=finit_difference_array.T,
+            n_computed_mode=n_sorted_mode + n_added_mode,
             n_sorted_mode=n_sorted_mode,
         )
 
-        self.superset.model_parameters = self.model_parameters
+        self.loop_over_itr(guess_index=index_guess, auto_label=auto_label)
 
-        self.loop_over_itr(alpha=beta_guess)
+        for binding_number in range(n_sorted_mode):
+            binded_mode = self.get_sorted_mode(binding_number)
 
-        mode_labels = self.get_supermode_labels(
-            n_modes=n_sorted_mode, boundaries=boundaries, auto_label=auto_label
-        )
-
-        for binding_number, label in enumerate(mode_labels):
             supermode = SuperMode(
                 parent_set=self.superset,
-                binding=self._cpp_get_mode(binding_number),
-                mode_number=self.mode_number,
-                solver_number=self.solver_number,
-                boundaries=boundaries,
-                label=label,
+                binding=binded_mode,
             )
 
             self.superset.supermodes.append(supermode)
 
-            setattr(self.superset, label, supermode)
-
-            self.mode_number += 1
-
-        self.solver_number += 1
+            setattr(self.superset, supermode.label, supermode)

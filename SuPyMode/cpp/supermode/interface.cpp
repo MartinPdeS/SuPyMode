@@ -1,6 +1,8 @@
 #include <pybind11/pybind11.h>
 #include "supermode.h"
 
+namespace py = pybind11;
+
 /**
  * @brief Python bindings for the SuperMode C++ module
  *
@@ -60,8 +62,11 @@ PYBIND11_MODULE(interface_supermode, module)
             >>> # Analyze coupling between modes
             >>> coupling = supermode.get_normalized_coupling_with_mode(other_mode)
             >>> beating_length = supermode.get_beating_length_with_mode(other_mode)
-        )pbdoc")
-    .def_readonly("fields", &SuperMode::fields,
+        )pbdoc"
+    )
+    .def_readonly(
+        "fields",
+        &SuperMode::fields,
         R"pbdoc(
             Electric field distributions of all supermodes.
 
@@ -86,8 +91,11 @@ PYBIND11_MODULE(interface_supermode, module)
             Each column represents one supermode, and the spatial distribution
             shows how that particular supermode extends across all waveguides
             in the coupled system.
-        )pbdoc")
-    .def_readwrite("binding_number", &SuperMode::mode_number,
+        )pbdoc"
+    )
+    .def_readwrite(
+        "binding_number",
+        &SuperMode::mode_number,
         R"pbdoc(
             Binding number or mode identifier for the supermode set.
 
@@ -108,8 +116,48 @@ PYBIND11_MODULE(interface_supermode, module)
             The binding number is particularly important when dealing with
             multiple supermode calculations or when tracking specific modes
             through parameter variations (e.g., in bend or taper analysis).
-        )pbdoc")
-    .def_readwrite("model_parameters", &SuperMode::model_parameters,
+        )pbdoc"
+    )
+    .def_readwrite(
+        "label",
+        &SuperMode::label,
+        R"pbdoc(
+            Label or identifier for the supermode.
+        )pbdoc"
+    )
+    .def_readwrite(
+        "mode_number",
+        &SuperMode::mode_number,
+        R"pbdoc(
+            Mode number or identifier for the supermode.
+        )pbdoc"
+    )
+    .def_readwrite(
+        "mode_number",
+        &SuperMode::mode_number,
+        R"pbdoc(
+            Mode number or identifier for the supermode.
+        )pbdoc"
+    )
+    .def_property_readonly(
+        "ID",
+        [](const SuperMode &self) {
+            return py::tuple(py::int_(self.mode_number), py::int_(self.solver_number));
+        },
+        R"pbdoc(
+            Unique identifier for the supermode instance.
+        )pbdoc"
+    )
+    .def_readwrite(
+        "boundaries",
+        &SuperMode::boundaries,
+        R"pbdoc(
+            Boundary conditions for the supermode.
+        )pbdoc"
+    )
+    .def_readwrite(
+        "model_parameters",
+        &SuperMode::model_parameters,
         R"pbdoc(
             Physical and computational parameters for the supermode model.
 
@@ -159,8 +207,8 @@ PYBIND11_MODULE(interface_supermode, module)
             and understanding the computational cost of the supermode
             calculation. It can help optimize solver parameters for
             better performance or accuracy.
-        )pbdoc")
-
+        )pbdoc"
+    )
     .def("get_fields", &SuperMode::get_fields_py,
         R"pbdoc(
             Retrieve all supermode field distributions.
@@ -532,4 +580,3 @@ PYBIND11_MODULE(interface_supermode, module)
         )pbdoc")
     ;
 }
-

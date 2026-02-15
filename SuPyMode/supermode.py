@@ -7,7 +7,7 @@ from scipy.interpolate import RectBivariateSpline
 from SuPyMode import representation
 from SuPyMode.binary.interface_model_parameters import ModelParameters  # type: ignore
 from SuPyMode.utils import interpret_slice_number_and_itr, get_symmetrized_vector
-from PyFinitDiff import BoundaryValue
+from SuPyMode.binary.interface_boundaries import Boundaries, BoundaryValue
 
 
 @dataclass(kw_only=True)
@@ -30,21 +30,16 @@ class SuperMode:
         Unique identifier for this mode within a symmetry set.
     boundaries : dict
         Specifications of the boundary conditions for the supermode.
-    label : str, optional
-        An arbitrary descriptive label for the supermode.
 
     """
 
     parent_set: object
     binding: object
-    solver_number: int
-    mode_number: int
-    boundaries: dict
-    label: str = None
-    ID: list = field_arg(init=False)
 
     def __post_init__(self):
-        self.ID = [self.solver_number, self.binding_number]
+        self.ID = self.binding.ID
+        self.label = self.binding.label
+        self.boundaries = self.binding.boundaries
 
     @property
     def field(self) -> representation.Field:
@@ -143,18 +138,6 @@ class SuperMode:
             The hash value of the bound supermode object.
         """
         return hash(self.binding)
-
-    @property
-    def binding_number(self) -> int:
-        """
-        Retrieves the binding number specific to the linked C++ solver.
-
-        Returns
-        -------
-        int
-            The binding number from the associated C++ solver.
-        """
-        return self.binding.binding_number
 
     @property
     def geometry(self) -> object:
@@ -349,29 +332,29 @@ class SuperMode:
             return full_x_axis, full_y_axis
 
         if self.boundaries.right in [
-            BoundaryValue.SYMMETRIC,
-            BoundaryValue.ANTI_SYMMETRIC,
+            BoundaryValue.Symmetric,
+            BoundaryValue.AntiSymmetric,
         ]:
             full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type="last")
             full_x_axis.sort()
 
         if self.boundaries.left in [
-            BoundaryValue.SYMMETRIC,
-            BoundaryValue.ANTI_SYMMETRIC,
+            BoundaryValue.Symmetric,
+            BoundaryValue.AntiSymmetric,
         ]:
             full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type="first")
             full_x_axis.sort()
 
         if self.boundaries.top in [
-            BoundaryValue.SYMMETRIC,
-            BoundaryValue.ANTI_SYMMETRIC,
+            BoundaryValue.Symmetric,
+            BoundaryValue.AntiSymmetric,
         ]:
             full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type="last")
             full_y_axis.sort()
 
         if self.boundaries.bottom in [
-            BoundaryValue.SYMMETRIC,
-            BoundaryValue.ANTI_SYMMETRIC,
+            BoundaryValue.Symmetric,
+            BoundaryValue.AntiSymmetric,
         ]:
             full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type="first")
             full_y_axis.sort()

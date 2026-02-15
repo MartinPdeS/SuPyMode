@@ -11,6 +11,9 @@
 #include "../utils/progress_bar.h"
 #include "../utils/numpy_interface.h"
 #include "boundaries/boundaries.h"
+#include "model_parameters/model_parameters.h"
+#include "mode_labeler.h"
+
 #include <iostream>
 
 class EigenSolver
@@ -39,6 +42,7 @@ class EigenSolver
         Eigen::VectorXd previous_eigen_values;
 
         std::vector<double> alpha_vector;
+        ModeLabeler mode_labeler;
 
     public:
         Eigen::SparseMatrix<double, Eigen::ColMajor> laplacian_matrix;
@@ -49,11 +53,13 @@ class EigenSolver
         double k_taper;
 
     EigenSolver(
+        ModelParameters &model_parameters,
         const size_t max_iteration,
         const double tolerance,
         const size_t accuracy,
         const size_t extrapolation_order)
-    :   max_iteration(max_iteration),
+    :   model_parameters(model_parameters),
+        max_iteration(max_iteration),
         tolerance(tolerance),
         accuracy(accuracy),
         extrapolation_order(extrapolation_order)
@@ -105,7 +111,7 @@ class EigenSolver
      * \param alpha The alpha parameter for the eigenvalue problem.
      * \return A tuple containing the eigenvalues and eigenvectors.
      */
-    SuperMode &get_sorted_mode(size_t mode_number){ return sorted_supermodes[mode_number]; }
+    SuperMode &get_sorted_mode(const size_t mode_number) { return sorted_supermodes[mode_number]; }
 
     /**
      * \brief Generates the mode set based on the model parameters.
@@ -151,7 +157,7 @@ class EigenSolver
      * \param extrapolation_order The order of extrapolation for the eigenvalue problem.
      * \param alpha The alpha parameter for the eigenvalue problem.
      */
-    void loop_over_itr(double alpha = 0);
+    void loop_over_itr(double guess_index, bool auto_label);
 
     /**
      * \brief Sorts the modes based on the last propagation constant.

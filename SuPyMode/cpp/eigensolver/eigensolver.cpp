@@ -1,5 +1,6 @@
 #include "eigensolver.h"
 
+
 void EigenSolver::initialize(
     const ModelParameters &model_parameters,
     const pybind11::array_t<double> &finit_difference_triplets_py,
@@ -17,6 +18,8 @@ void EigenSolver::initialize(
     );
 
     this->generate_mode_set();
+
+    this->compute_laplacian();
 
 }
 
@@ -159,8 +162,10 @@ void EigenSolver::populate_sorted_supermodes(size_t slice, Eigen::MatrixXd &eige
     }
 }
 
-void EigenSolver::loop_over_itr(double alpha)
+void EigenSolver::loop_over_itr(const double guess_index, bool auto_label)
 {
+    double alpha = this->index_to_eigenvalue(guess_index);
+
     if (this->model_parameters.debug_mode > 0)
         std::cout << "Starting iterative eigenvalue computation with extrapolation order: " << this->extrapolation_order << ", alpha: " << alpha << std::endl;
 
@@ -212,6 +217,24 @@ void EigenSolver::loop_over_itr(double alpha)
     this->normalize_mode_field();
 
     this->arrange_mode_field();
+
+    for (SuperMode& supermode: sorted_supermodes) {
+        supermode.mode_number = this->mode_number++;
+        supermode.solver_number = this->solver_number;
+    }
+
+    size_t index = 0;
+    if (auto_label)
+        for (SuperMode& supermode: sorted_supermodes) {
+            supermode.label = mode_labeler.get(supermode.boundaries, index);
+            ++index;
+        }
+    else
+        for (SuperMode& supermode: sorted_supermodes) {
+            supermode.label = "mode_" + std::to_string(supermode.mode_number);
+        }
+
+    this->solver_number++;
 }
 
 void EigenSolver::sort_mode_per_last_propagation_constant()
