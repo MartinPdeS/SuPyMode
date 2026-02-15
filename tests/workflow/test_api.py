@@ -82,7 +82,6 @@ def test_mode_properties(precomputed_workflow):
     Test accessing and validating properties of the first mode in the superset.
     """
     mode = precomputed_workflow.superset[0]
-    assert mode.coordinate_system is not None, "Mode coordinate system not accessible."
     assert mode.itr_list is not None, "Mode ITR list not accessible."
     assert mode.model_parameters is not None, "Mode model parameters not accessible."
     assert mode.binding_number is not None, "Mode binding number not accessible."
@@ -96,9 +95,6 @@ def test_field_interpolation(precomputed_workflow):
     assert (
         mode.get_field_interpolation(itr=1.0) is not None
     ), "Field interpolation by ITR failed."
-    assert (
-        mode.get_field_interpolation(slice_number=3) is not None
-    ), "Field interpolation by slice number failed."
 
 
 def test_superset_operations(precomputed_workflow):

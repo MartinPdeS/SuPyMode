@@ -483,7 +483,9 @@ class SuperSet(SuperSetPlots):
         """
         Sort supermodes in descending order of their propagation constants (beta).
         """
-        lexort_index = ([-mode.beta.data[-1] for mode in self.supermodes],)
+        lexort_index = ([-mode.get_betas()[-1] for mode in self.supermodes],)
+
+        print(lexort_index)
 
         self.all_supermodes = self._sort_modes(lexort_index)
 

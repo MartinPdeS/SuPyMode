@@ -496,5 +496,6 @@ PYBIND11_MODULE(interface_model_parameters, module) {
                 >>> # Verify parameters are identical
                 >>> assert numpy.allclose(loaded_params.mesh, model_params.mesh)
             )pbdoc"
-        );
+        )
+        ;
 }

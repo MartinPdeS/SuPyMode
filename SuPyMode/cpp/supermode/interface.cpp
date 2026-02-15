@@ -53,15 +53,70 @@ PYBIND11_MODULE(interface_supermode, module)
             - Overlap integral computation for mode matching
             - Adiabatic coupling analysis for varying structures
 
-            Examples
-            --------
-            >>> # Access supermode properties
-            >>> fields = supermode.get_fields()
-            >>> betas = supermode.get_betas()
-            >>>
-            >>> # Analyze coupling between modes
-            >>> coupling = supermode.get_normalized_coupling_with_mode(other_mode)
-            >>> beating_length = supermode.get_beating_length_with_mode(other_mode)
+        )pbdoc"
+    )
+    .def(
+        // pybind11::init<
+        //     const size_t,
+        //     const pybind11::array_t<double> &,
+        //     const pybind11::array_t<double> &,
+        //     const pybind11::array_t<double> &,
+        //     const pybind11::array_t<double> &,
+        //     const ModelParameters &,
+        //     const Boundaries&
+        // >(),
+        pybind11::init(
+            [](
+                const size_t mode_number,
+                const pybind11::array_t<double> &fields,
+                const pybind11::array_t<double> &index,
+                const pybind11::array_t<double> &betas,
+                const pybind11::array_t<double> &eigen_value,
+                const ModelParameters &model_parameters,
+                const Boundaries& boundaries
+            ) {
+                Eigen::VectorXd fields_eigen = NumpyInterface::convert_py_to_eigen(fields, model_parameters.nx * model_parameters.ny, model_parameters.n_slice);
+                Eigen::VectorXd index_eigen = NumpyInterface::convert_py_to_eigen(index, model_parameters.n_slice);
+                Eigen::VectorXd betas_eigen = NumpyInterface::convert_py_to_eigen(betas, model_parameters.n_slice);
+                Eigen::VectorXd eigen_value_eigen = NumpyInterface::convert_py_to_eigen(eigen_value, model_parameters.n_slice);
+
+                return std::make_shared<SuperMode>(
+                    mode_number,
+                    fields_eigen,
+                    index_eigen,
+                    betas_eigen,
+                    eigen_value_eigen,
+                    model_parameters,
+                    boundaries
+                );
+            }
+        ),
+        pybind11::arg("mode_number"),
+        pybind11::arg("fields"),
+        pybind11::arg("index"),
+        pybind11::arg("betas"),
+        pybind11::arg("eigen_value"),
+        pybind11::arg("model_parameters"),
+        pybind11::arg("boundaries"),
+        R"pbdoc(
+            Constructor for SuperMode with full field data and parameters.
+
+            Parameters
+            ----------
+            mode_number : int
+                Identifier for the supermode (e.g., 0 for fundamental, 1 for first higher-order mode).
+            fields : numpy.ndarray
+                Complex field distribution of the supermode, typically flattened from a 2D grid.
+            index : numpy.ndarray
+                Effective index distribution associated with the supermode.
+            betas : numpy.ndarray
+                Propagation constants for the supermode.
+            eigen_value : numpy.ndarray
+                Eigenvalues from the mode solver corresponding to the supermode.
+            model_parameters : ModelParameters
+                Physical and computational parameters defining the coupled system.
+            boundaries : Boundaries
+                Boundary conditions applied in the mode solver.
         )pbdoc"
     )
     .def_readonly(
@@ -210,9 +265,41 @@ PYBIND11_MODULE(interface_supermode, module)
             - Core separation distance (affects coupling strength)
             - Individual core parameters (size, index contrast)
             - Operating wavelength (affects normalized frequency)
-        )pbdoc")
+        )pbdoc"
+    )
+    .def(
+        "get_fields",
+        [](const SuperMode &self) {
+            return NumpyInterface::eigen_to_ndarray<double>(self.fields, {self.model_parameters.n_slice, self.model_parameters.ny, self.model_parameters.nx});
+        },
+        R"pbdoc(
+            Retrieve all supermode field distributions.
 
-    .def("itr_list", &SuperMode::get_itr_list,
+            Returns the complete set of electric field distributions for all
+            computed supermodes in the coupled waveguide system. Each supermode
+            represents a normal mode of the entire coupled structure.
+
+            Returns
+            -------
+            numpy.ndarray
+                Array containing electric field distributions with
+                shape (n_slice, ny, nx). Each element represents
+                the spatial field distribution of one supermode.
+
+            Notes
+            -----
+            The returned fields are typically normalized to unit power or
+            energy. The values include both amplitude and phase
+            information, which is essential for understanding interference
+            and beating effects in coupled systems.
+
+        )pbdoc"
+    )
+    .def(
+        "itr_list",
+        [](const SuperMode &self) {
+            return NumpyInterface::eigen_to_ndarray<double>(self.model_parameters.itr_list, {static_cast<unsigned long>(self.model_parameters.itr_list.size())});
+        },
         R"pbdoc(
             Get the list of iteration parameters used in supermode computation.
 
@@ -226,70 +313,25 @@ PYBIND11_MODULE(interface_supermode, module)
                 List of iteration parameters, convergence criteria, and
                 computational metrics from the eigenvalue solver.
 
-            Notes
-            -----
-            This information is useful for diagnosing convergence issues
-            and understanding the computational cost of the supermode
-            calculation. It can help optimize solver parameters for
-            better performance or accuracy.
-        )pbdoc"
-    )
-    .def("get_fields", &SuperMode::get_fields_py,
-        R"pbdoc(
-            Retrieve all supermode field distributions.
-
-            Returns the complete set of electric field distributions for all
-            computed supermodes in the coupled waveguide system. Each supermode
-            represents a normal mode of the entire coupled structure.
-
-            Returns
-            -------
-            numpy.ndarray
-                Complex array containing electric field distributions with
-                shape (n_grid_points, n_supermodes). Each column represents
-                the spatial field distribution of one supermode.
-
-            Notes
-            -----
-            The returned fields are typically normalized to unit power or
-            energy. The complex values include both amplitude and phase
-            information, which is essential for understanding interference
-            and beating effects in coupled systems.
-
         )pbdoc"
     )
     .def(
-        "get_field",
-        &SuperMode::get_field_py,
-        pybind11::arg("index"),
+        "get_mesh_gradient",
+        [](const SuperMode &self) {
+            return NumpyInterface::eigen_to_ndarray<double>(self.model_parameters.mesh_gradient, {self.model_parameters.nx * self.model_parameters.ny, 2});
+        },
         R"pbdoc(
-            Retrieve the field distribution of a specific supermode.
-
-            Returns the electric field distribution for a single supermode
-            identified by its index. This is more efficient than retrieving
-            all fields when only one is needed.
-
-            Parameters
-            ----------
-            index : int
-                Index of the desired supermode (0-based). Must be less than
-                the total number of computed supermodes.
+            Get the mesh gradients used in the supermode computation.
+            This method returns the spatial gradients of the computational mesh,
+            which are essential for accurate finite-difference calculations of the supermodes.
 
             Returns
             -------
             numpy.ndarray
-                Complex array containing the electric field distribution
-                of the specified supermode with shape (n_grid_points,).
+                Array of shape (n_grid_points, 2) containing the x and y gradients
+                of the computational mesh. The first column corresponds to the x-gradient,
+                and the second column corresponds to the y-gradient.
 
-            Raises
-            ------
-            IndexError
-                If the index is out of range for the computed supermodes.
-
-            Examples
-            --------
-            >>> fundamental = supermode.get_field(0)  # Fundamental supermode
-            >>> first_higher = supermode.get_field(1)  # First higher-order supermode
         )pbdoc"
     )
     .def(
@@ -316,7 +358,9 @@ PYBIND11_MODULE(interface_supermode, module)
     )
     .def(
         "get_index",
-        &SuperMode::get_index_py,
+        [](const SuperMode &self) {
+            return NumpyInterface::eigen_to_ndarray<double>(self.index, {self.model_parameters.n_slice});
+        },
         R"pbdoc(
             Get the effective refractive indices of all supermodes.
 
@@ -343,7 +387,9 @@ PYBIND11_MODULE(interface_supermode, module)
     )
     .def(
         "get_betas",
-        &SuperMode::get_betas_py,
+        [](const SuperMode &self) {
+            return NumpyInterface::eigen_to_ndarray<double>(self.betas, {self.model_parameters.n_slice});
+        },
         R"pbdoc(
             Get the propagation constants (beta values) of all supermodes.
 
@@ -366,10 +412,13 @@ PYBIND11_MODULE(interface_supermode, module)
 
             The difference in propagation constants between supermodes
             determines the beating length: L_beat = 2π / |β₁ - β₂|.
-        )pbdoc")
+        )pbdoc"
+    )
     .def(
         "get_eigen_value",
-        &SuperMode::get_eigen_value_py,
+        [](const SuperMode &self) {
+            return NumpyInterface::eigen_to_ndarray<double>(self.eigen_value, {self.model_parameters.n_slice,});
+        },
         R"pbdoc(
             Get the eigenvalues from the supermode eigenvalue problem.
 
@@ -394,7 +443,10 @@ PYBIND11_MODULE(interface_supermode, module)
     )
     .def(
         "get_normalized_coupling_with_mode",
-        &SuperMode::get_normalized_coupling_with_mode_py,
+        [](const SuperMode &self, const SuperMode &other) {
+            Eigen::Matrix<complex128, Eigen::Dynamic, Eigen::Dynamic> coupling = self.get_normalized_coupling_with_mode(other);
+            return NumpyInterface::eigen_to_ndarray<complex128>(coupling, {self.model_parameters.n_slice});
+        },
         R"pbdoc(
             Calculate normalized coupling coefficients with another supermode set.
 
@@ -428,52 +480,15 @@ PYBIND11_MODULE(interface_supermode, module)
             where the coupling coefficients should remain close to unity
             for adiabatic mode evolution.
 
-            Examples
-            --------
-            >>> coupling_matrix = supermode1.get_normalized_coupling_with_mode(supermode2)
-            >>> max_coupling = numpy.max(numpy.abs(coupling_matrix))
-        )pbdoc"
-    )
-    .def(
-        "get_adiabatic_with_mode",
-        &SuperMode::get_adiabatic_with_mode_py,
-        R"pbdoc(
-            Analyze adiabatic coupling conditions with another supermode set.
-
-            Evaluates whether the transition between this supermode configuration
-            and another can be considered adiabatic. Adiabatic transitions
-            preserve mode identity and minimize unwanted mode coupling.
-
-            Parameters
-            ----------
-            other_mode : SuperMode
-                Another SuperMode object representing a nearby configuration
-                in parameter space (e.g., different position in a taper).
-
-            Returns
-            -------
-            dict or numpy.ndarray
-                Adiabatic coupling metrics, which may include:
-                - Adiabaticity parameter values
-                - Mode correlation coefficients
-                - Transition probabilities
-                - Local coupling strengths
-
-            Notes
-            -----
-            Adiabatic evolution occurs when the rate of change of system
-            parameters is much slower than the characteristic time scales
-            of the system. This analysis helps determine if a taper or
-            varying structure will maintain mode purity.
-
-            The adiabatic criterion is typically expressed as:
-            |dγ/dz| << |Δβ|², where γ are coupling coefficients and
-            Δβ are propagation constant differences.
         )pbdoc"
     )
     .def(
         "get_overlap_integrals_with_mode",
-        &SuperMode::get_overlap_integrals_with_mode_py,
+        [](const SuperMode &self, const SuperMode &other) {
+            Eigen::MatrixXd overlaps = self.get_overlap_integrals_with_mode(other);
+            return NumpyInterface::eigen_to_ndarray<double>(overlaps, {self.model_parameters.n_slice});
+        },
+        pybind11::arg("other_mode"),
         R"pbdoc(
             Compute overlap integrals between supermodes and another mode set.
 
@@ -513,8 +528,64 @@ PYBIND11_MODULE(interface_supermode, module)
         )pbdoc"
     )
     .def(
+        "get_overlap_integrals_with_mode",
+        [](const SuperMode &self, const SuperMode &other) {
+            Eigen::MatrixXd overlaps = self.get_overlap_integrals_with_mode(other);
+            return NumpyInterface::eigen_to_ndarray<double>(overlaps, {self.model_parameters.n_slice});
+        },
+        pybind11::arg("other_mode"),
+        R"pbdoc(
+            Compute normalized overlap integrals between supermodes and another mode set.
+
+            Calculates the normalized spatial overlap integrals between the field
+            distributions of supermodes in this object and those in another SuperMode object. Normalized overlap integrals provide a dimensionless measure of mode similarity.
+
+
+            Parameters
+            ----------
+            other_mode : SuperMode
+                Another SuperMode object with which to compute normalized overlaps.
+
+
+            Returns
+            -------
+            numpy.ndarray
+                Matrix of complex normalized overlap integrals with shape (n_modes_self, n_modes_other).
+        )pbdoc"
+    )
+    .def(
+        "get_adiabatic_with_mode",
+        [](const SuperMode &self, const SuperMode &other) {
+            Eigen::MatrixXd adiabaticity = self.get_adiabatic_with_mode(other);
+            return NumpyInterface::eigen_to_ndarray<double>(adiabaticity, {self.model_parameters.n_slice});
+        },
+        pybind11::arg("other_mode"),
+        R"pbdoc(
+            Calculate the adiabaticity parameter between supermodes and another mode set.
+            Evaluates the adiabaticity parameter, which quantifies how closely the transition between two supermode configurations follows adiabatic evolution. A low adiabaticity parameter indicates that the system is evolving slowly enough to maintain mode purity, while a high value suggests significant non-adiabatic coupling and potential mode mixing.
+
+            Parameters
+            ----------
+            other_mode : SuperMode
+                Another SuperMode object representing a different configuration or position along a varying structure.
+
+            Returns
+            -------
+            numpy.ndarray
+                Matrix of adiabaticity parameters with shape (n_modes_self, n_modes_other).
+            Notes
+            -----
+            The adiabaticity parameter is typically defined as:
+            A_ij = |dγ_ij/dz| / |Δβ_ij|²
+            where γ_ij are the coupling coefficients between modes i and j, and Δβ_ij are the differences in propagation constants. A value of A_ij << 1 indicates adiabatic evolution, while A_ij ~ 1 or greater indicates non-adiabatic behavior.
+        )pbdoc"
+    )
+    .def(
         "get_beating_length_with_mode",
-        &SuperMode::get_beating_length_with_mode_py,
+        [](const SuperMode &self, const SuperMode &other) {
+            Eigen::MatrixXd beating_lengths = self.get_beating_length_with_mode(other);
+            return NumpyInterface::eigen_to_ndarray<double>(beating_lengths, {self.model_parameters.n_slice});
+        },
         R"pbdoc(
             Calculate beating lengths between supermodes and another mode set.
 
@@ -590,16 +661,33 @@ PYBIND11_MODULE(interface_supermode, module)
             - Different wavelengths or frequencies
             - Inconsistent boundary conditions
 
-            Examples
-            --------
-            >>> if supermode1.is_computation_compatible(supermode2):
-            ...     coupling = supermode1.get_normalized_coupling_with_mode(supermode2)
-            ... else:
-            ...     print("Supermodes are not compatible for coupling analysis")
         )pbdoc"
     )
     .def(
-        pybind11::pickle(&SuperMode::get_pickle, &SuperMode::build_from_tuple),
+        pybind11::pickle(
+            [](const SuperMode &supermode) {
+                return pybind11::make_tuple(
+                    supermode.mode_number,
+                    NumpyInterface::eigen_to_ndarray<double>(supermode.fields, {supermode.model_parameters.nx * supermode.model_parameters.ny, supermode.model_parameters.n_slice}),
+                    NumpyInterface::eigen_to_ndarray<double>(supermode.index, {supermode.model_parameters.n_slice}),
+                    NumpyInterface::eigen_to_ndarray<double>(supermode.betas, {supermode.model_parameters.n_slice}),
+                    NumpyInterface::eigen_to_ndarray<double>(supermode.eigen_value, {supermode.model_parameters.n_slice}),
+                    supermode.model_parameters,
+                    supermode.boundaries
+                );
+            },
+            [](const pybind11::tuple &tuple) {
+                return SuperMode{
+                    tuple[0].cast<size_t>(),                             // mode_number
+                    tuple[1].cast<Eigen::VectorXd>(),                    // fields
+                    tuple[2].cast<Eigen::VectorXd>(),                    // index
+                    tuple[3].cast<Eigen::VectorXd>(),                    // betas
+                    tuple[4].cast<Eigen::VectorXd>(),                    // eigen_values
+                    tuple[5].cast<ModelParameters>(),                    // Model parameters
+                    tuple[6].cast<Boundaries>()                          // boundaries
+                }; // load
+            }
+        ),
         R"pbdoc(
             Enable Python pickle serialization support.
 
@@ -815,6 +903,37 @@ PYBIND11_MODULE(interface_supermode, module)
         R"pbdoc(
             Compute a hash value for the SuperMode instance.
             This allows SuperMode objects to be used in hash-based collections like sets and dictionaries.
+        )pbdoc"
+    )
+    .def(
+        "get_field_interpolation",
+        [](const SuperMode &self, double itr) {
+            Eigen::VectorXd interpolated_field = self.get_field_interpolation(itr);
+
+            return NumpyInterface::eigen_to_ndarray<double>(interpolated_field, {self.model_parameters.ny, self.model_parameters.nx});
+        },
+        pybind11::arg("itr"),
+        R"pbdoc(
+            Get interpolated field data for a specific iteration.
+
+            This method provides access to the interpolated field data for a given iteration parameter, allowing users to retrieve the mode field distribution at specific points in the iteration process.
+            Parameters
+            ----------
+            itr : float
+                The iteration value for which to retrieve the interpolated field data.
+
+            Returns
+            -------
+            numpy.ndarray
+                A 2D array of shape (ny, nx) containing the interpolated field data
+
+            Notes
+            -----
+            This method is useful for:
+            - Visualizing mode field evolution during iterative solvers
+            - Analyzing convergence behavior of mode calculations
+            - Extracting intermediate field distributions for diagnostics
+
         )pbdoc"
     )
     ;

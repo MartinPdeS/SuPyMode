@@ -1,40 +1,5 @@
 #include "supermode.h"
 
-SuperMode::SuperMode(
-    const size_t mode_number,
-    const pybind11::array_t<double> &fields_py,
-    const pybind11::array_t<double> &index_py,
-    const pybind11::array_t<double> &betas_py,
-    const pybind11::array_t<double> &eigen_value_py,
-    const ModelParameters &model_parameters,
-    const Boundaries& boundaries
-)
-    :
-        mode_number(mode_number),
-        model_parameters(model_parameters),
-        boundaries(boundaries)
-{
-    fields = NumpyInterface::convert_py_to_eigen(fields_py, this->model_parameters.nx * this->model_parameters.ny, this->model_parameters.n_slice);
-    index = NumpyInterface::convert_py_to_eigen(index_py, this->model_parameters.n_slice, 1);
-    betas = NumpyInterface::convert_py_to_eigen(betas_py, this->model_parameters.n_slice, 1);
-    eigen_value = NumpyInterface::convert_py_to_eigen(eigen_value_py, this->model_parameters.n_slice, 1);
-}
-
-SuperMode::SuperMode(
-    const size_t mode_number,
-    const ModelParameters &model_parameters,
-    const Boundaries& boundaries)
-    :
-        mode_number(mode_number),
-        boundaries(boundaries)
-{
-    this->model_parameters = model_parameters;
-    this->fields = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>(this->model_parameters.nx * this->model_parameters.ny, model_parameters.n_slice);
-    this->eigen_value = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
-    this->betas = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
-    this->index = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
-}
-
 double SuperMode::get_norm(const size_t &slice, const std::string &normalization_type) const {
     if (normalization_type == "max")
         return this->get_norm_max(slice);
@@ -212,27 +177,44 @@ bool SuperMode::is_same_symmetry(const SuperMode &other_supermode) const {
     return (this->boundaries == other_supermode.boundaries);
 }
 
-pybind11::tuple SuperMode::get_pickle(SuperMode &supermode) {
-    return pybind11::make_tuple(
-        supermode.mode_number,
-        supermode.get_fields_py(),
-        supermode.get_index_py(),
-        supermode.get_betas_py(),
-        supermode.get_eigen_value_py(),
-        supermode.model_parameters,
-        supermode.boundaries
+Eigen::VectorXd SuperMode::get_field_interpolation(const double itr) const {
+    // Create an output array to hold the interpolated field data
+    Eigen::VectorXd interpolated_field(model_parameters.nx * model_parameters.ny);
+
+    // Map the output array to an Eigen matrix for easier manipulation
+    Eigen::Map<Eigen::MatrixXd> interpolated_field_map(
+        interpolated_field.data(),
+        model_parameters.nx,
+        model_parameters.ny
+
     );
-}
 
-SuperMode SuperMode::build_from_tuple(pybind11::tuple tuple) {
-    return SuperMode{
-        tuple[0].cast<size_t>(),                             // mode_number
-        tuple[1].cast<pybind11::array_t<double>>(),          // fields
-        tuple[2].cast<pybind11::array_t<double>>(),          // index
-        tuple[3].cast<pybind11::array_t<double>>(),          // betas
-        tuple[4].cast<pybind11::array_t<double>>(),          // eigen_values
-        tuple[5].cast<ModelParameters>(),                    // Model parameters
-        tuple[6].cast<Boundaries>()                         // boundaries
-    }; // load
+    // Perform linear interpolation for each point in the field
+    for (size_t i = 0; i < model_parameters.nx; ++i) {
+        for (size_t j = 0; j < model_parameters.ny; ++j) {
+            // Find the two slices that bracket the desired iteration value
+            size_t slice_0 = 0;
+            while (slice_0 < model_parameters.n_slice - 1 && model_parameters.itr_list[slice_0 + 1] < itr) {
+                ++slice_0;
+            }
+            size_t slice_1 = slice_0 + 1;
 
+            // Get the field values at the two slices
+            double field_0 = this->fields(i + j * model_parameters.nx, slice_0);
+            double field_1 = this->fields(i + j * model_parameters.nx, slice_1);
+
+            // Get the iteration values at the two slices
+            double itr_0 = model_parameters.itr_list[slice_0];
+            double itr_1 = model_parameters.itr_list[slice_1];
+
+            // Perform linear interpolation
+            if (itr_1 != itr_0) {
+                interpolated_field_map(i, j) = field_0 + (field_1 - field_0) * (itr - itr_0) / (itr_1 - itr_0);
+            } else {
+                interpolated_field_map(i, j) = field_0; // or field_1, they are the same in this case
+            }
+        }
+    }
+
+    return interpolated_field;
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <pybind11/pybind11.h>
 #include <complex>
 #include <string>
 #include <Eigen/Core>
@@ -25,45 +24,56 @@ typedef std::complex<double> complex128;
  * - Overlap integral calculations between modes
  * - Coupling coefficient computations
  * - Beating length and adiabatic parameter calculations
- * - Python interface through pybind11
  */
 class SuperMode {
 public:
     size_t mode_number;          ///< Index/number identifier for this mode
     size_t solver_number;
+    Boundaries boundaries;
+    ModelParameters model_parameters; ///< Physical and numerical parameters for the model
     Eigen::MatrixXd fields;      ///< Electromagnetic field distribution matrix
     Eigen::VectorXd index;       ///< Refractive index profile along propagation direction
     Eigen::VectorXd betas;       ///< Propagation constants (beta values) along the mode
     Eigen::VectorXd eigen_value; ///< Eigenvalues from the mode solver
-    ModelParameters model_parameters; ///< Physical and numerical parameters for the model
+
 
     std::string label;
-    Boundaries boundaries;
+
 
     /**
      * @brief Default constructor for SuperMode.
      */
     SuperMode() = default;
+
     /**
      * @brief Constructor with full field data and parameters.
      *
      * @param mode_number Index/identifier for this mode
-     * @param fields_py Python array containing electromagnetic field data
-     * @param index_py Python array containing refractive index profile
-     * @param betas_py Python array containing propagation constants
-     * @param eigen_value_py Python array containing eigenvalues
+     * @param fields Electromagnetic field distribution matrix
+     * @param index Refractive index profile along propagation direction
+     * @param betas Propagation constants (beta values) along the mode
+     * @param eigen_value Eigenvalues from the mode solver
      * @param model_parameters Physical and numerical model parameters
      * @param boundaries Boundary conditions for the mode solver
      */
     SuperMode(
         const size_t mode_number,
-        const pybind11::array_t<double> &fields_py,
-        const pybind11::array_t<double> &index_py,
-        const pybind11::array_t<double> &betas_py,
-        const pybind11::array_t<double> &eigen_value_py,
+        const Eigen::VectorXd &fields,
+        const Eigen::VectorXd &index,
+        const Eigen::VectorXd &betas,
+        const Eigen::VectorXd &eigen_value,
         const ModelParameters &model_parameters,
         const Boundaries& boundaries
-    );
+    )
+        :
+            mode_number(mode_number),
+            boundaries(boundaries),
+            model_parameters(model_parameters),
+            fields(fields),
+            index(index),
+            betas(betas),
+            eigen_value(eigen_value)
+    {}
 
     /**
      * @brief Constructor with minimal parameters (fields computed separately).
@@ -75,8 +85,21 @@ public:
     SuperMode(
         const size_t mode_number,
         const ModelParameters &model_parameters,
-        const Boundaries& boundaries
-    );
+        const Boundaries& boundaries)
+        :
+            mode_number(mode_number),
+            boundaries(boundaries)
+    {
+        this->model_parameters = model_parameters;
+        this->fields = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>(
+            this->model_parameters.nx * this->model_parameters.ny,
+            model_parameters.n_slice
+        );
+
+        this->eigen_value = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
+        this->betas = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
+        this->index = Eigen::Matrix<double, Eigen::Dynamic, 1>(model_parameters.n_slice);
+    }
 
     /**
      * @brief Calculate field normalization for a specific slice.
@@ -270,129 +293,11 @@ public:
         return (this->mode_number != other_supermode.mode_number) && (this->is_same_symmetry(other_supermode));
     }
 
-    // Python interface methods using pybind11
-
     /**
-     * @brief Get overlap integrals with another mode (Python interface).
+     * @brief Get interpolated field data for a specific iteration (Python interface).
      *
-     * @param supermode The other SuperMode
-     * @return Python numpy array of overlap integrals
+     * @param itr The iteration value for interpolation
+     * @return Python numpy array of interpolated field data with shape [nx, ny]
      */
-    pybind11::array_t<double> get_overlap_integrals_with_mode_py(const SuperMode& supermode) const {
-        return NumpyInterface::eigen_to_ndarray<double>(this->get_overlap_integrals_with_mode(supermode), {model_parameters.n_slice});
-    }
-
-    /**
-     * @brief Get normalized coupling coefficients (Python interface).
-     *
-     * @param supermode The other SuperMode
-     * @return Python numpy array of complex coupling coefficients
-     */
-    pybind11::array_t<std::complex<double>> get_normalized_coupling_with_mode_py(const SuperMode& supermode) const {
-        return NumpyInterface::eigen_to_ndarray<complex128>(this->get_normalized_coupling_with_mode(supermode), {model_parameters.n_slice});
-    }
-
-    /**
-     * @brief Get adiabatic parameters with another mode (Python interface).
-     *
-     * @param supermode The other SuperMode
-     * @return Python numpy array of adiabatic parameters
-     */
-    pybind11::array_t<double> get_adiabatic_with_mode_py(const SuperMode& supermode) const {
-        return NumpyInterface::eigen_to_ndarray<double>(this->get_adiabatic_with_mode(supermode), {model_parameters.n_slice});
-    }
-
-    /**
-     * @brief Get beating lengths with another mode (Python interface).
-     *
-     * @param supermode The other SuperMode
-     * @return Python numpy array of beating lengths
-     */
-    pybind11::array_t<double> get_beating_length_with_mode_py(const SuperMode& supermode) const {
-        return NumpyInterface::eigen_to_ndarray<double>(this->get_beating_length_with_mode(supermode), {model_parameters.n_slice});
-    }
-
-    /**
-     * @brief Get electromagnetic fields (Python interface).
-     *
-     * @return Python numpy array of field data with shape [n_slice, ny, nx]
-     */
-    pybind11::array_t<double> get_fields_py() const {
-        return NumpyInterface::eigen_to_ndarray<double>(this->fields, {model_parameters.n_slice, model_parameters.ny, model_parameters.nx});
-    }
-
-    /**
-     * @brief Get refractive index profile (Python interface).
-     *
-     * @return Python numpy array of refractive indices with shape [n_slice]
-     */
-    pybind11::array_t<double> get_index_py() const {
-        return NumpyInterface::eigen_to_ndarray<double>(this->index, {model_parameters.n_slice});
-    }
-
-    /**
-     * @brief Get eigenvalues (Python interface).
-     *
-     * @return Python numpy array of eigenvalues with shape [n_slice]
-     */
-    pybind11::array_t<double> get_eigen_value_py() const {
-        return NumpyInterface::eigen_to_ndarray<double>(this->eigen_value, {model_parameters.n_slice});
-    }
-
-    /**
-     * @brief Get propagation constants (Python interface).
-     *
-     * @return Python numpy array of beta values with shape [n_slice]
-     */
-    pybind11::array_t<double> get_betas_py() const {
-        return NumpyInterface::eigen_to_ndarray<double>(this->betas, {model_parameters.n_slice});
-    }
-
-    /**
-     * @brief Get iteration list from model parameters (Python interface).
-     *
-     * @return Python numpy array of iteration values
-     */
-    pybind11::array_t<double> get_itr_list() const {
-        return NumpyInterface::eigen_to_ndarray<double>(this->model_parameters.itr_list, {model_parameters.n_slice});
-    }
-
-    /**
-     * @brief Get mesh gradient (Python interface).
-     *
-     * @return Python numpy array of mesh gradient with shape [nx, ny]
-     */
-    pybind11::array_t<double> get_mesh_gradient() const {
-        return NumpyInterface::eigen_to_ndarray<double>(this->model_parameters.mesh_gradient, {this->model_parameters.nx, this->model_parameters.ny});
-    }
-
-    /**
-     * @brief Get field data for a specific slice (Python interface).
-     *
-     * @param index The slice index to retrieve
-     * @return Python numpy array of field data with shape [nx, ny]
-     */
-    pybind11::array_t<double> get_field_py(const size_t index) const {
-        Eigen::MatrixXd output = this->fields.col(index);
-        return NumpyInterface::eigen_to_ndarray<double>(output, {this->model_parameters.nx, this->model_parameters.ny});
-    }
-
-    // Serialization methods for Python pickling
-
-    /**
-     * @brief Create a pickle tuple for Python serialization.
-     *
-     * @param supermode The SuperMode to serialize
-     * @return Python tuple containing all serializable data
-     */
-    static pybind11::tuple get_pickle(SuperMode &supermode);
-
-    /**
-     * @brief Reconstruct SuperMode from pickle tuple.
-     *
-     * @param tuple Python tuple containing serialized SuperMode data
-     * @return Reconstructed SuperMode object
-     */
-    static SuperMode build_from_tuple(pybind11::tuple tuple);
-
+    Eigen::VectorXd get_field_interpolation(const double itr) const;
 };

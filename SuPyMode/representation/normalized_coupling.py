@@ -2,17 +2,17 @@
 # # -*- coding: utf-8 -*-
 import numpy
 import matplotlib.pyplot as plt
+from MPSPlots.helper import post_mpl_plot
 
 from SuPyMode.binary.interface_supermode import SUPERMODE
-from SuPyMode.representation.base import InheritFromSuperMode, BaseMultiModePlot
 
 
-class NormalizedCoupling(InheritFromSuperMode, BaseMultiModePlot):
+class NormalizedCoupling:
     """
     Represents the normalized mode coupling between modes of different supermodes in optical fiber simulations.
 
-    This class extends from `InheritFromSuperMode` for accessing supermode-related data and `BaseMultiModePlot`
-    for plotting functionalities tailored to visualize mode coupling comparisons.
+    This class extends from `InheritFromSuperMode` for accessing supermode-related data and provides plotting functionalities
+    tailored to visualize mode coupling comparisons.
 
     Attributes
     ----------
@@ -53,17 +53,46 @@ class NormalizedCoupling(InheritFromSuperMode, BaseMultiModePlot):
 
         return output
 
-    def _dress_ax(self, ax: plt.Axes) -> None:
+    @post_mpl_plot
+    def plot(self, other_supermode: SUPERMODE, ax: plt.Axes = None) -> plt.Figure:
         """
-        Set axis labels for the normalized coupling plot.
+        Plot the normalized mode coupling between the parent supermode and another specified supermode.
+
+        This method generates a plot of the normalized coupling as a function of the inverse taper ratio (ITR),
+        formatted according to the predefined plot style.
 
         Parameters
         ----------
+        other_supermode : SUPERMODE
+            The supermode to compare against.
         ax : matplotlib.axes.Axes
-            The axis object on which to set the labels.
+            The axis on which to plot.
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+            The figure object containing the generated plot.
         """
+        if ax is None:
+            figure, ax = plt.subplots(nrows=1, ncols=1)
+        else:
+            figure = ax.figure
+
         ax.set_xlabel("Inverse taper ratio")
         ax.set_ylabel("Mode coupling")
+
+        if not self.supermode.is_computation_compatible(other_supermode):
+            return
+
+        y = self.get_values(other_supermode=other_supermode)
+
+        label = f"{self.supermode.stylized_label} - {other_supermode.stylized_label}"
+
+        ax.plot(self.supermode.model_parameters.itr_list, abs(y), label=label)
+
+        ax.legend()
+
+        return figure
 
 
 # -

@@ -4,9 +4,10 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from typing import Iterable
+
 if TYPE_CHECKING:
     from SuPyMode.superset import SuperSet
-    from SuPyMode.supermode import SuperMode
+    from SuPyMode._supermode import SuperMode
 
 import numpy
 import pickle
@@ -14,25 +15,27 @@ from pathlib import Path
 from SuPyMode.directories import instance_directory
 
 
-def load_superset(filename: str, directory: str = '.'):
+def load_superset(filename: str, directory: str = "."):
     """
     Saves the superset instance as a serialized pickle file.
 
     :param      filename:  The filename
     :type       filename:  str
     """
-    if directory == 'auto':
+    if directory == "auto":
         directory = instance_directory
 
-    filename = Path(directory).joinpath(filename).with_suffix('.pickle')
+    filename = Path(directory).joinpath(filename).with_suffix(".pickle")
 
-    with open(filename, 'rb') as input_file:
+    with open(filename, "rb") as input_file:
         superset = pickle.load(input_file)
 
     return superset
 
 
-def get_close_points(tolerane: float, y0: numpy.ndarray, y1: numpy.ndarray, x: numpy.ndarray = None):
+def get_close_points(
+    tolerane: float, y0: numpy.ndarray, y1: numpy.ndarray, x: numpy.ndarray = None
+):
     idx = numpy.argwhere(numpy.abs(y0 - y1) < tolerane)
 
     if x is not None:
@@ -41,7 +44,9 @@ def get_close_points(tolerane: float, y0: numpy.ndarray, y1: numpy.ndarray, x: n
     return y0[idx]
 
 
-def get_intersection(y0: numpy.ndarray, y1: numpy.ndarray, x: numpy.ndarray, average: bool = True):
+def get_intersection(
+    y0: numpy.ndarray, y1: numpy.ndarray, x: numpy.ndarray, average: bool = True
+):
 
     idx = numpy.argwhere(numpy.diff(numpy.sign(y0 - y1))).flatten()
 
@@ -58,9 +63,11 @@ def get_intersection(y0: numpy.ndarray, y1: numpy.ndarray, x: numpy.ndarray, ave
         return x_mean, y_mean
 
 
-def test_valid_input(user_input, valid_inputs: list, variable_name: str = '') -> None:
+def test_valid_input(user_input, valid_inputs: list, variable_name: str = "") -> None:
     if user_input not in valid_inputs:
-        raise ValueError(f"[{variable_name}] user_input: {user_input} argument not valid. Valid choices are: {valid_inputs}")
+        raise ValueError(
+            f"[{variable_name}] user_input: {user_input} argument not valid. Valid choices are: {valid_inputs}"
+        )
 
 
 def itr_to_slice(itr_list: numpy.ndarray, itr: float | list) -> int | list:
@@ -81,9 +88,7 @@ def itr_to_slice(itr_list: numpy.ndarray, itr: float | list) -> int | list:
         return_scalar = True
         itr = [itr]
 
-    slice_number = [
-        numpy.argmin(abs(itr_list - value)) for value in itr
-    ]
+    slice_number = [numpy.argmin(abs(itr_list - value)) for value in itr]
 
     if return_scalar:
         return slice_number[0]
@@ -118,10 +123,11 @@ def slice_to_itr(itr_list: numpy.ndarray, slice_number: int | list) -> float | l
 
 
 def interpret_slice_number_and_itr(
-        itr_baseline: numpy.ndarray,
-        slice_list: int | list[int] = [],
-        itr_list: float | list[float] = [],
-        sort_slice_number: bool = False) -> tuple:
+    itr_baseline: numpy.ndarray,
+    slice_list: int | list[int] = [],
+    itr_list: float | list[float] = [],
+    sort_slice_number: bool = False,
+) -> tuple:
     """
     Interprets slice numbers and corresponding inverse taper ratios (ITRs), returning arrays of slice numbers
     and their respective ITRs based on the provided lists of slices and ITRs.
@@ -172,7 +178,9 @@ def interpret_slice_number_and_itr(
     return slice_list, itr_list
 
 
-def interpret_mode_of_interest(superset: SuperSet, mode_of_interest: str | SuperMode | list[SuperMode]) -> list[SuperMode]:
+def interpret_mode_of_interest(
+    superset: SuperSet, mode_of_interest: str | SuperMode | list[SuperMode]
+) -> list[SuperMode]:
     """
     Resolves the mode of interest from user input to the appropriate list of SuperMode instances
     based on the specified criteria or direct references.
@@ -191,25 +199,33 @@ def interpret_mode_of_interest(superset: SuperSet, mode_of_interest: str | Super
     """
     if isinstance(mode_of_interest, str):
         match mode_of_interest:
-            case 'fundamental':
+            case "fundamental":
                 return superset.fundamental_supermodes
-            case 'non-fundamental':
+            case "non-fundamental":
                 return superset.non_fundamental_supermodes
-            case 'all':
+            case "all":
                 return superset.supermodes
             case _:
-                raise ValueError(f"Unrecognized mode category '{mode_of_interest}'. Expected 'fundamental', 'non-fundamental', or 'all'.")
+                raise ValueError(
+                    f"Unrecognized mode category '{mode_of_interest}'. Expected 'fundamental', 'non-fundamental', or 'all'."
+                )
 
     if isinstance(mode_of_interest, SuperMode):
         return [mode_of_interest]
 
-    if isinstance(mode_of_interest, list) and all(isinstance(item, SuperMode) for item in mode_of_interest):
+    if isinstance(mode_of_interest, list) and all(
+        isinstance(item, SuperMode) for item in mode_of_interest
+    ):
         return mode_of_interest
 
-    raise ValueError("mode_of_interest must be either 'fundamental', 'non-fundamental', 'all', a SuperMode instance, or a list of SuperMode instances.")
+    raise ValueError(
+        "mode_of_interest must be either 'fundamental', 'non-fundamental', 'all', a SuperMode instance, or a list of SuperMode instances."
+    )
 
 
-def get_symmetrized_vector(vector: numpy.ndarray, symmetry_type: str = 'last') -> numpy.ndarray:
+def get_symmetrized_vector(
+    vector: numpy.ndarray, symmetry_type: str = "last"
+) -> numpy.ndarray:
     """
     Generate a symmetric version of the input vector based on the specified symmetry type.
 
@@ -235,15 +251,17 @@ def get_symmetrized_vector(vector: numpy.ndarray, symmetry_type: str = 'last') -
     """
 
     if vector.ndim != 1:
-        raise ValueError(f"Expected a 1-dimensional vector, but got a {vector.ndim}-dimensional vector instead.")
+        raise ValueError(
+            f"Expected a 1-dimensional vector, but got a {vector.ndim}-dimensional vector instead."
+        )
 
-    if symmetry_type.lower() not in ['last', 'first']:
+    if symmetry_type.lower() not in ["last", "first"]:
         raise ValueError("Symmetry type must be 'last' or 'first'.")
 
     size = len(vector)
     dx = numpy.diff(vector)[0]  # More robust than assuming vector[1] - vector[0]
 
-    if symmetry_type.lower() == 'last':
+    if symmetry_type.lower() == "last":
         start_value = vector[-1]
         expanded = numpy.arange(0, 2 * size - 1) * dx
         return start_value - expanded[::-1] if dx > 0 else start_value + expanded[::-1]
@@ -251,5 +269,6 @@ def get_symmetrized_vector(vector: numpy.ndarray, symmetry_type: str = 'last') -
         start_value = vector[0]
         expanded = numpy.arange(0, 2 * size - 1) * dx
         return start_value + expanded
+
 
 # -

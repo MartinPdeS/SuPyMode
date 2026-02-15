@@ -3,17 +3,17 @@
 import numpy
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+from MPSPlots.helper import post_mpl_plot
 
 from SuPyMode.binary.interface_supermode import SUPERMODE
-from SuPyMode.representation.base import InheritFromSuperMode, BaseMultiModePlot
 
 
-class Adiabatic(InheritFromSuperMode, BaseMultiModePlot):
+class Adiabatic:
     """
     Represents the adiabatic criterion between modes of different supermodes in optical fiber simulations.
 
-    This class extends from `InheritFromSuperMode` for accessing supermode-related data and from `BaseMultiModePlot`
-    for plotting functionalities tailored to visualize adiabatic transition measurements.
+    This class extends from `InheritFromSuperMode` for accessing supermode-related data and provides plotting functionalities
+    tailored to visualize adiabatic transition measurements.
 
     Attributes
     ----------
@@ -55,15 +55,30 @@ class Adiabatic(InheritFromSuperMode, BaseMultiModePlot):
 
         return abs(output)
 
-    def _dress_ax(self, ax: plt.Axes) -> None:
+    @post_mpl_plot
+    def plot(self, other_supermode: SUPERMODE, ax: plt.Axes = None) -> plt.Figure:
         """
-        Set axis labels for the adiabatic criterion plot.
+        Plot the adiabatic criterion between the parent supermode and another specified supermode.
+        This method generates a plot of the adiabatic criterion as a function of the inverse taper ratio (ITR),
+        formatted according to the predefined plot style.
 
         Parameters
         ----------
-        ax : matplotlib.axes.Axes
-            The axis object on which to set the labels.
+        other_supermode : SUPERMODE
+            The supermode to compare against.
+        ax : matplotlib.axes.Axes, optional
+            The axis on which to plot. If `None`, a new axis is created (default is `None`).
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+            The figure object containing the generated plot.
         """
+        if ax is None:
+            figure, ax = plt.subplots(nrows=1, ncols=1)
+        else:
+            figure = ax.figure
+
         ax.set(
             yscale="log",
             xlabel="Inverse taper ratio",
@@ -76,6 +91,21 @@ class Adiabatic(InheritFromSuperMode, BaseMultiModePlot):
 
         # Apply the custom formatter for log scale
         ax.yaxis.set_major_formatter(ticker.FuncFormatter(log_scale_yaxis))
+
+        if not self.supermode.is_computation_compatible(other_supermode):
+            return
+
+        y = self.get_values(other_supermode=other_supermode)
+
+        label = f"{self.supermode.stylized_label} - {other_supermode.stylized_label}"
+
+        ax.plot(
+            self.supermode.model_parameters.itr_list, abs(y), label=label, linewidth=2
+        )
+
+        ax.legend()
+
+        return figure
 
 
 # -

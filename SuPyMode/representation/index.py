@@ -1,12 +1,12 @@
 # #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
+from MPSPlots.helper import post_mpl_plot
 
 from SuPyMode.binary.interface_supermode import SUPERMODE
-from SuPyMode.representation.base import InheritFromSuperMode, BaseSingleModePlot
 
 
-class Index(InheritFromSuperMode, BaseSingleModePlot):
+class Index:
     """
     Represents the effective refractive index of a mode derived from a supermode in optical fiber simulations.
 
@@ -33,20 +33,48 @@ class Index(InheritFromSuperMode, BaseSingleModePlot):
         self.supermode = supermode
         self.data = self.supermode.get_index()
 
-    def _dress_ax(self, ax: plt.Axes) -> None:
+    @post_mpl_plot
+    def plot(self, ax: plt.Axes = None, show: bool = True) -> plt.Figure:
         """
-        Set axis labels and limits for the effective refractive index plot.
+        Plot the propagation constant for a single mode.
+
+        This method generates a plot of the propagation constants as a function of the inverse taper ratio (ITR),
+        formatted according to the predefined plot style.
 
         Parameters
         ----------
-        ax : matplotlib.axes.Axes
-            The axis object on which to set the labels and limits.
+        ax : matplotlib.axes.Axes, optional
+            The axis on which to plot. If `None`, a new axis is created (default is `None`).
+        show : bool, optional
+            Whether to display the plot immediately (default is `True`).
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+            The figure object containing the generated plot.
+
         """
+        if ax is None:
+            figure, ax = plt.subplots(1, 1)
+        else:
+            figure = ax.figure
+
+        ax.plot(
+            self.supermode.model_parameters.itr_list,
+            self.data,
+            label=f"{self.supermode.stylized_label}",
+            linewidth=2,
+        )
+
+        ax.legend()
+
         ax.set(
             xlabel="Inverse taper ratio",
             ylabel="Effective refractive index",
             ylim=[1.44, 1.455],
         )
+
+        return figure
 
 
 # -

@@ -7,13 +7,17 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib import colors
 
-from SuPyMode.utils import interpret_slice_number_and_itr, slice_to_itr
+from SuPyMode.utils import (
+    interpret_slice_number_and_itr,
+    slice_to_itr,
+    get_symmetrized_vector,
+)
 from SuPyMode.binary.interface_boundaries import BoundaryValue
-from SuPyMode.representation.base import InheritFromSuperMode
+from SuPyMode.binary.interface_boundaries import BoundaryValue
 from SuPyMode.binary.interface_supermode import SUPERMODE
 
 
-class Field(InheritFromSuperMode):
+class Field:
     """
     Represents a field derived from a supermode in a modal analysis framework.
 
@@ -39,6 +43,91 @@ class Field(InheritFromSuperMode):
         """
         self.supermode = supermode
         self.data = self.supermode.get_fields()
+
+    def _get_symmetrize_vector(self, *args, **kwargs):
+        """
+        Get the symmetrization vector from the parent supermode.
+
+        Returns
+        -------
+        Any
+            The symmetrization vector computed by the parent supermode.
+        """
+        return self.supermode._get_symmetrize_vector(*args, **kwargs)
+
+    def _get_axis_vector(self, supermode: object, add_symmetries: bool = True) -> tuple:
+        """
+        Computes the full axis vectors, optionally including symmetries.
+
+        Parameters
+        ----------
+        add_symmetries : bool, optional, default=True
+            Whether to include symmetries when computing the axis vectors.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the full x-axis and y-axis vectors.
+        """
+        full_x_axis = self.supermode.model_parameters.x_vector
+        full_y_axis = self.supermode.model_parameters.y_vector
+
+        if not add_symmetries:
+            return full_x_axis, full_y_axis
+
+        if supermode.boundaries.right in [
+            BoundaryValue.Symmetric,
+            BoundaryValue.AntiSymmetric,
+        ]:
+            full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type="last")
+            full_x_axis.sort()
+
+        if supermode.boundaries.left in [
+            BoundaryValue.Symmetric,
+            BoundaryValue.AntiSymmetric,
+        ]:
+            full_x_axis = get_symmetrized_vector(full_x_axis, symmetry_type="first")
+            full_x_axis.sort()
+
+        if supermode.boundaries.top in [
+            BoundaryValue.Symmetric,
+            BoundaryValue.AntiSymmetric,
+        ]:
+            full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type="last")
+            full_y_axis.sort()
+
+        if supermode.boundaries.bottom in [
+            BoundaryValue.Symmetric,
+            BoundaryValue.AntiSymmetric,
+        ]:
+            full_y_axis = get_symmetrized_vector(full_y_axis, symmetry_type="first")
+            full_y_axis.sort()
+
+        return full_x_axis, full_y_axis
+
+    def get_axis(
+        self, supermode: object, slice_number: int, add_symmetries: bool = True
+    ) -> tuple:
+        """
+        Computes the scaled axis vectors for a specific slice, optionally including symmetries.
+
+        Parameters
+        ----------
+        slice_number : int
+            The slice index for which to compute the axis vectors.
+        add_symmetries : bool, optional, default=True
+            Whether to include symmetries in the computed axis vectors.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the scaled x-axis and y-axis vectors for the given slice.
+        """
+        itr = supermode.model_parameters.itr_list[slice_number]
+        x_axis, y_axis = self._get_axis_vector(
+            supermode=supermode, add_symmetries=add_symmetries
+        )
+        return (x_axis * itr, y_axis * itr)
 
     def get_norm(self, slice_number: int) -> float:
         """
