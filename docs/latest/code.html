@@ -672,12 +672,6 @@ depending on the formulation used. For vector modes, both
 components may be included.</p>
 <p>The sorting is based on the real part of the eigenvalue, which
 corresponds to the effective refractive index of the mode.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">eigenvals</span><span class="p">,</span> <span class="n">eigenvecs</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">get_mode</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">n_eff</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eigenvals</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>  <span class="c1"># Effective indices</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fundamental_mode</span> <span class="o">=</span> <span class="n">eigenvecs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>   <span class="c1"># Fundamental mode field</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="py method">
@@ -1359,15 +1353,6 @@ related to fiber optics simulations.</p>
 <dd class="field-odd"><p>None</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">superset_plots</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
-<span class="go">Generates an effective index plot.</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">superset_plots</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;invalid&#39;</span><span class="p">)</span>
-<span class="go">ValueError: Invalid plot type: invalid. Options are: index, beta, eigen-value, adiabatic, normalized-adiabatic, normalized-coupling, field, beating-length.</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="py method">
