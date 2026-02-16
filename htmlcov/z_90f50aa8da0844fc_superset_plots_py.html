@@ -64,10 +64,10 @@
         <p class="text">
             <a id="prevFileLink" class="nav" href="z_90f50aa8da0844fc_superset_py.html">&#xab; prev</a> &nbsp; &nbsp;
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
-            <a id="nextFileLink" class="nav" href="z_6fb7a612281ca84c_special_py.html">&#xbb; next</a>
+            <a id="nextFileLink" class="nav" href="z_90f50aa8da0844fc_utils_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-02-16 11:46 +0000
+            created at 2026-02-16 19:25 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -91,7 +91,7 @@
     <p class="run"><span class="n"><a id="t7" href="#t7">7</a></span><span class="t"><span class="key">from</span> <span class="nam">matplotlib</span><span class="op">.</span><span class="nam">backends</span><span class="op">.</span><span class="nam">backend_pdf</span> <span class="key">import</span> <span class="nam">PdfPages</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t8" href="#t8">8</a></span><span class="t"><span class="key">from</span> <span class="nam">MPSPlots</span> <span class="key">import</span> <span class="nam">helper</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t9" href="#t9">9</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t"><span class="key">from</span> <span class="nam">SuPyMode</span><span class="op">.</span><span class="nam">profiles</span> <span class="key">import</span> <span class="nam">AlphaProfile</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t"><span class="key">from</span> <span class="nam">SuPyMode</span><span class="op">.</span><span class="nam">binary</span><span class="op">.</span><span class="nam">interface_taper</span> <span class="key">import</span> <span class="nam">AlphaProfile</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t"><span class="key">from</span> <span class="nam">SuPyMode</span><span class="op">.</span><span class="nam">binary</span><span class="op">.</span><span class="nam">interface_supermode</span> <span class="key">import</span> <span class="nam">SUPERMODE</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t"><span class="key">from</span> <span class="nam">SuPyMode</span><span class="op">.</span><span class="nam">utils</span> <span class="key">import</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t">    <span class="nam">get_intersection</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -490,7 +490,7 @@
     <p class="run"><span class="n"><a id="t406" href="#t406">406</a></span><span class="t">        <span class="nam">kwargs</span> <span class="op">=</span> <span class="nam">dict</span><span class="op">(</span><span class="nam">show</span><span class="op">=</span><span class="key">False</span><span class="op">,</span> <span class="nam">mode_of_interest</span><span class="op">=</span><span class="nam">mode_of_interest</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t407" href="#t407">407</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t408" href="#t408">408</a></span><span class="t">        <span class="nam">figure_list</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t409" href="#t409">409</a></span><span class="t">            <span class="com"># self.geometry.plot(show=False),</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t409" href="#t409">409</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">geometry</span><span class="op">.</span><span class="nam">plot</span><span class="op">(</span><span class="nam">show</span><span class="op">=</span><span class="key">False</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t410" href="#t410">410</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">plot_field</span><span class="op">(</span><span class="nam">itr_list</span><span class="op">=</span><span class="nam">itr_list</span><span class="op">,</span> <span class="nam">slice_list</span><span class="op">=</span><span class="nam">slice_list</span><span class="op">,</span> <span class="op">**</span><span class="nam">kwargs</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t411" href="#t411">411</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">plot_index</span><span class="op">(</span><span class="op">**</span><span class="nam">kwargs</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t412" href="#t412">412</a></span><span class="t">            <span class="nam">self</span><span class="op">.</span><span class="nam">plot_beta</span><span class="op">(</span><span class="op">**</span><span class="nam">kwargs</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -545,10 +545,10 @@
         <p>
             <a class="nav" href="z_90f50aa8da0844fc_superset_py.html">&#xab; prev</a> &nbsp; &nbsp;
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
-            <a class="nav" href="z_6fb7a612281ca84c_special_py.html">&#xbb; next</a>
+            <a class="nav" href="z_90f50aa8da0844fc_utils_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-02-16 11:46 +0000
+            created at 2026-02-16 19:25 +0000
         </p>
     </div>
 </footer>
