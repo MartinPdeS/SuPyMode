@@ -5,14 +5,12 @@
 import numpy
 from PyFinitDiff.finite_difference_2D import FiniteDifference
 from PyFinitDiff.finite_difference_2D import Boundaries
-from FiberFusing.geometry import Geometry
 
 # Local imports
 from SuPyMode.superset import SuperSet
 from SuPyMode.binary.interface_supermode import SUPERMODE  # type: ignore
 from SuPyMode.binary.interface_eigensolver import EIGENSOLVER  # type: ignore
 from SuPyMode.binary.interface_model_parameters import ModelParameters  # type: ignore
-from SuPyMode.binary.interface_mesh import GEOMETRY
 
 
 class SuPySolver(EIGENSOLVER):
@@ -25,8 +23,12 @@ class SuPySolver(EIGENSOLVER):
 
     Parameters
     ----------
-    geometry : Geometry or numpy.ndarray
+    mesh : numpy.ndarray
         The refractive index geometry of the optical structure.
+    x : numpy.ndarray
+        The x-coordinate vector of the mesh.
+    y : numpy.ndarray
+        The y-coordinate vector of the mesh.
     tolerance : float, optional
         Absolute tolerance for the propagation constant computation (default is 1e-8).
     max_iteration : int, optional
@@ -41,7 +43,9 @@ class SuPySolver(EIGENSOLVER):
 
     def __init__(
         self,
-        geometry: Geometry,
+        mesh: numpy.typing.NDArray,
+        x: numpy.typing.NDArray,
+        y: numpy.typing.NDArray,
         tolerance: float = 1e-8,
         max_iteration: int = 10_000,
         accuracy: int = 2,
@@ -51,14 +55,17 @@ class SuPySolver(EIGENSOLVER):
         """
         Initialize the solver with the given parameters.
         """
-        self.geometry = geometry
+        self.mesh = mesh
+
+        dx = abs(x[0] - x[1])
+        dy = abs(y[0] - y[1])
 
         model_parameters = ModelParameters(
-            dx=geometry.coordinate_system.dx,
-            dy=geometry.coordinate_system.dy,
-            mesh=geometry.mesh,
-            x_vector=geometry.coordinate_system.x_vector,
-            y_vector=geometry.coordinate_system.y_vector,
+            dx=dx,
+            dy=dy,
+            mesh=mesh,
+            x_vector=x,
+            y_vector=y,
             debug_mode=debug_mode,
         )
 
@@ -135,11 +142,10 @@ class SuPySolver(EIGENSOLVER):
         )
 
         self.superset = SuperSet(
-            coordinate_system=self.geometry.coordinate_system,
             model_parameters=self.model_parameters,
         )
 
-        self.superset.geometry = self.geometry
+        self.superset.geometry = self.mesh
 
     def add_modes(
         self,

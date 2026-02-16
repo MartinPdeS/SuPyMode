@@ -34,7 +34,7 @@ fiber = fiber_loader.load_fiber(
 # Defining the boundaries of the system
 boundaries = [
     Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.SYMMETRIC),
-    # Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.ANTI_SYMMETRIC),
+    Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.ANTI_SYMMETRIC),
 ]
 
 # %%
@@ -44,7 +44,7 @@ boundaries = [
 workflow = Workflow(
     fiber_list=[fiber],  # List of fiber to be added in the mesh, the order matters.
     wavelength=wavelength,  # Wavelength used for the mode computation.
-    resolution=20,  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
+    resolution=30,  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
     x_bounds=DomainAlignment.LEFT,  # Mesh x-boundary structure.
     y_bounds=DomainAlignment.BOTTOM,  # Mesh y-boundary structure.
     boundaries=boundaries,  # Set of symmetries to be evaluated, each symmetry add a round of simulation
@@ -60,41 +60,26 @@ workflow.initialize_geometry(plot=False)  # Initialize the geometry and plot it
 
 workflow.run_solver()  # Run the solver to compute the modes
 
+_ = workflow.plot(plot_type="geometry")
 
-from SuPyMode.plotter import Plotter
-from SuPyMode.workflow import AlphaProfile
+# %%
+# Field computation: :math:`E_{i,j}`
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_ = workflow.plot(plot_type="field", itr_list=[1.0, 0.1])
 
-profile = AlphaProfile(symmetric=True, add_end_of_taper_section=True)
+# %%
+# Effective index: :math:`n^{eff}_{i,j}`
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_ = workflow.plot(plot_type="index")
 
-profile.add_taper_segment(
-    alpha=0, initial_heating_length=8e-3, stretching_length=0.2e-3 * 20
-)
+# %%
+# Modal normalized coupling: :math:`C_{i,j}`
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_ = workflow.plot(plot_type="normalized-coupling")
 
-profile.add_taper_segment(
-    alpha=0, initial_heating_length=2e-3, stretching_length=0.2e-3 * 20
-)
-
-profile.initialize()
-
-
-# # %%
-# # Field computation: :math:`E_{i,j}`
-# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# _ = workflow.plot(plot_type="field", itr_list=[1.0, 0.1])
-
-# # %%
-# # Effective index: :math:`n^{eff}_{i,j}`
-# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# _ = workflow.plot(plot_type="index")
-
-# # %%
-# # Modal normalized coupling: :math:`C_{i,j}`
-# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# _ = workflow.plot(plot_type="normalized-coupling")
-
-# # %%
-# # Adiabatic criterion: :math:`\tilde{C}_{i,j}`
-# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# _ = workflow.plot(plot_type="adiabatic")
+# %%
+# Adiabatic criterion: :math:`\tilde{C}_{i,j}`
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_ = workflow.plot(plot_type="adiabatic")
 
 # -

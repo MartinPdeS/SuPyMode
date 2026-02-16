@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Built-in imports
 import matplotlib.pyplot as plt
 import numpy
 from matplotlib.backends.backend_pdf import PdfPages
@@ -10,20 +8,74 @@ from MPSPlots import helper
 from SuPyMode.binary.interface_taper import AlphaProfile
 from SuPyMode.binary.interface_supermode import SUPERMODE
 from SuPyMode.utils import (
-    get_intersection,
-    interpret_mode_of_interest,
-    interpret_slice_number_and_itr,
     parse_filename,
+    interpret_slice_number_and_itr,
 )
 
 
 class SuperSetPlots(object):
+
+    @staticmethod
+    def test_valid_input(
+        user_input, valid_inputs: list, variable_name: str = ""
+    ) -> None:
+        if user_input not in valid_inputs:
+            raise ValueError(
+                f"[{variable_name}] user_input: {user_input} argument not valid. Valid choices are: {valid_inputs}"
+            )
+
+    @staticmethod
+    def interpret_mode_of_interest(
+        superset: "SuperSet", mode_of_interest: str | SUPERMODE | list[SUPERMODE]
+    ) -> list[SUPERMODE]:
+        """
+        Resolves the mode of interest from user input to the appropriate list of SUPERMODE instances
+        based on the specified criteria or direct references.
+
+        Parameters:
+            - superset (SuperSet): The superset containing all supermodes, including fundamental and non-fundamental modes.
+            - mode_of_interest (Union[str, SUPERMODE, List[SUPERMODE]]): This parameter can be a string specifying a category
+            of modes such as 'fundamental', 'non-fundamental', 'all', a single SUPERMODE instance, or a list of SUPERMODE instances.
+
+        Returns:
+            - List[SUPERMODE]: A list of SUPERMODE instances corresponding to the specified mode of interest.
+
+        Raises:
+            - ValueError: If the mode_of_interest is not one of the expected types or if the string input does not match
+            any known category.
+        """
+        from SuPyMode.binary.interface_supermode import SUPERMODE
+
+        if isinstance(mode_of_interest, str):
+            match mode_of_interest:
+                case "fundamental":
+                    return superset.fundamental_supermodes
+                case "non-fundamental":
+                    return superset.non_fundamental_supermodes
+                case "all":
+                    return superset.supermodes
+                case _:
+                    raise ValueError(
+                        f"Unrecognized mode category '{mode_of_interest}'. Expected 'fundamental', 'non-fundamental', or 'all'."
+                    )
+
+        if isinstance(mode_of_interest, SUPERMODE):
+            return [mode_of_interest]
+
+        if isinstance(mode_of_interest, list) and all(
+            isinstance(item, SUPERMODE) for item in mode_of_interest
+        ):
+            return mode_of_interest
+
+        raise ValueError(
+            "mode_of_interest must be either 'fundamental', 'non-fundamental', 'all', a SUPERMODE instance, or a list of SUPERMODE instances."
+        )
+
     @helper.pre_plot(nrows=1, ncols=1)
     def plot_index(
         self,
         axes: plt.Axes,
         mode_of_interest: list[SUPERMODE] = "all",
-        show_crossings: bool = False,
     ) -> plt.Figure:
         """
         Plot the effective index for each mode as a function of inverse taper ratio (ITR).
@@ -34,34 +86,24 @@ class SuperSetPlots(object):
             The axes object on which to plot.
         mode_of_interest : list of SUPERMODE
             List of modes to be plotted.
-        show_crossings : bool, optional
-            Whether to show crossings in the plot (default is False).
 
         Returns
         -------
         plt.Figure
             The figure object containing the generated plots. This can be customized further or saved to a file.
         """
-        mode_of_interest = interpret_mode_of_interest(
+        mode_of_interest = self.interpret_mode_of_interest(
             superset=self, mode_of_interest=mode_of_interest
         )
 
         for mode in mode_of_interest:
             mode.index.plot(ax=axes, show=False)
 
-        if show_crossings:
-            self.add_crossings_to_ax(
-                ax=axes, mode_of_interest=mode_of_interest, data_type="index"
-            )
-
         axes.legend()
 
     @helper.pre_plot(nrows=1, ncols=1)
     def plot_beta(
-        self,
-        axes: plt.Axes,
-        mode_of_interest: list[SUPERMODE] | str = "all",
-        show_crossings: bool = False,
+        self, axes: plt.Axes, mode_of_interest: list[SUPERMODE] | str = "all"
     ) -> plt.Figure:
         """
         Plot the effective propagation constant for each mode as a function of inverse taper ratio (ITR).
@@ -72,13 +114,11 @@ class SuperSetPlots(object):
             The axes object on which to plot.
         mode_of_interest : list of SUPERMODE
             List of modes to be plotted.
-        show_crossings : bool, optional
-            Whether to show crossings in the plot (default is False).
 
         Examples
         --------
         >>> fig, ax = plt.subplots()
-        >>> superset_plots.plot_index(ax=ax, mode_of_interest=[mode1, mode2], show_crossings=True)
+        >>> superset_plots.plot_index(ax=ax, mode_of_interest=[mode1, mode2])
         >>> plt.show()
 
         Returns
@@ -86,26 +126,18 @@ class SuperSetPlots(object):
         plt.Figure
             The figure object containing the generated plots. This can be customized further or saved to a file.
         """
-        mode_of_interest = interpret_mode_of_interest(
+        mode_of_interest = self.interpret_mode_of_interest(
             superset=self, mode_of_interest=mode_of_interest
         )
 
         for mode in mode_of_interest:
             mode.beta.plot(ax=axes, show=False)
 
-        if show_crossings:
-            self.add_crossings_to_ax(
-                ax=axes, mode_of_interest=mode_of_interest, data_type="beta"
-            )
-
         axes.legend()
 
     @helper.pre_plot(nrows=1, ncols=1)
     def plot_eigen_value(
-        self,
-        axes: plt.Axes,
-        mode_of_interest: list[SUPERMODE] | str = "all",
-        show_crossings: bool = False,
+        self, axes: plt.Axes, mode_of_interest: list[SUPERMODE] | str = "all"
     ) -> plt.Figure:
         """
         Plot the computed eigen-values for each mode as a function of inverse taper ratio (ITR).
@@ -116,13 +148,11 @@ class SuperSetPlots(object):
             The axes object on which to plot.
         mode_of_interest : list of SUPERMODE
             List of modes to be plotted.
-        show_crossings : bool, optional
-            Whether to show crossings in the plot (default is False).
 
         Examples
         --------
         >>> fig, ax = plt.subplots()
-        >>> superset_plots.plot_index(ax=ax, mode_of_interest=[mode1, mode2], show_crossings=True)
+        >>> superset_plots.plot_index(ax=ax, mode_of_interest=[mode1, mode2])
         >>> plt.show()
 
         Returns
@@ -130,17 +160,12 @@ class SuperSetPlots(object):
         plt.Figure
             The figure object containing the generated plots. This can be customized further or saved to a file.
         """
-        mode_of_interest = interpret_mode_of_interest(
+        mode_of_interest = self.interpret_mode_of_interest(
             superset=self, mode_of_interest=mode_of_interest
         )
 
         for mode in mode_of_interest:
             mode.eigenvalue.plot(ax=axes, show=False)
-
-        if show_crossings:
-            self.add_crossings_to_ax(
-                ax=axes, mode_of_interest=mode_of_interest, data_type="eigen_value"
-            )
 
         axes.legend()
 
@@ -168,7 +193,7 @@ class SuperSetPlots(object):
         plt.Figure
             The figure object containing the generated plots. This can be customized further or saved to a file.
         """
-        mode_of_interest = interpret_mode_of_interest(
+        mode_of_interest = self.interpret_mode_of_interest(
             superset=self, mode_of_interest=mode_of_interest
         )
 
@@ -205,7 +230,7 @@ class SuperSetPlots(object):
         plt.Figure
             The figure object containing the generated plots. This can be customized further or saved to a file.
         """
-        mode_of_interest = interpret_mode_of_interest(
+        mode_of_interest = self.interpret_mode_of_interest(
             superset=self, mode_of_interest=mode_of_interest
         )
 
@@ -243,7 +268,7 @@ class SuperSetPlots(object):
         plt.Figure
             The figure object containing the generated plots. This can be customized further or saved to a file.
         """
-        mode_of_interest = interpret_mode_of_interest(
+        mode_of_interest = self.interpret_mode_of_interest(
             superset=self, mode_of_interest=mode_of_interest
         )
 
@@ -291,7 +316,7 @@ class SuperSetPlots(object):
         plt.Figure
             The figure object containing the generated plots. This can be customized further or saved to a file.
         """
-        mode_of_interest = interpret_mode_of_interest(
+        mode_of_interest = self.interpret_mode_of_interest(
             superset=self, mode_of_interest=mode_of_interest
         )
 
@@ -302,7 +327,7 @@ class SuperSetPlots(object):
             slice_list=slice_list,
         )
 
-        mode_of_interest = interpret_mode_of_interest(
+        mode_of_interest = self.interpret_mode_of_interest(
             superset=self, mode_of_interest=mode_of_interest
         )
 
@@ -331,6 +356,33 @@ class SuperSetPlots(object):
 
         return figure
 
+    @helper.post_mpl_plot
+    def plot_geometry(self) -> plt.Figure:
+        """
+        Render the geometry of the taper on the provided axes.
+
+        Parameters
+        ----------
+        ax : matplotlib.axes.Axes
+            The axes object on which to plot the geometry.
+
+        Returns
+        -------
+        plt.Figure
+            The figure object containing the generated plot. This can be customized further or saved to a file.
+        """
+        figure, ax = plt.subplots(figsize=(5, 5))
+
+        ax.pcolormesh(
+            self.model_parameters.x_vector,
+            self.model_parameters.y_vector,
+            self.model_parameters.mesh,
+            shading="auto",
+            cmap="Blues",
+        )
+
+        return figure
+
     def plot(self, plot_type: str, **kwargs) -> None:
         """
         General plotting function to handle different types of supermode plots.
@@ -348,6 +400,8 @@ class SuperSetPlots(object):
             If an unrecognized plot type is specified.
         """
         match plot_type.lower().replace("_", "-"):
+            case "geometry":
+                return self.plot_geometry(**kwargs)
             case "index":
                 return self.plot_index(**kwargs)
             case "beta":
@@ -368,7 +422,7 @@ class SuperSetPlots(object):
                 return self.plot_normalized_adiabatic(**kwargs)
             case _:
                 raise ValueError(
-                    f"Invalid plot type: {plot_type}. Options are: index, beta, eigen-value, adiabatic, normalized-adiabatic, normalized-coupling, field, beating-length"
+                    f"Invalid plot type: {plot_type}. Options are: geometry, index, beta, eigen-value, adiabatic, normalized-adiabatic, normalized-coupling, field, beating-length"
                 )
 
     @parse_filename
@@ -406,7 +460,7 @@ class SuperSetPlots(object):
         kwargs = dict(show=False, mode_of_interest=mode_of_interest)
 
         figure_list = [
-            self.geometry.plot(show=False),
+            self.plot_geometry(show=False),
             self.plot_field(itr_list=itr_list, slice_list=slice_list, **kwargs),
             self.plot_index(**kwargs),
             self.plot_beta(**kwargs),
@@ -422,36 +476,3 @@ class SuperSetPlots(object):
         pp.close()
 
         plt.close()
-
-    def add_crossings_to_ax(
-        self, ax: plt.Axes, mode_of_interest: list, data_type: str
-    ) -> None:
-        """
-        Add mode crossings to the given axis.
-
-        Parameters
-        ----------
-        ax : matplotlib.axes.Axes
-            The axes object on which to plot.
-        mode_of_interest : list of SUPERMODE
-            List of modes of interest.
-        data_type : str
-            The type of data for which to find crossings (e.g., 'index', 'beta', etc.).
-
-        """
-        combination = self.interpret_combination(
-            mode_of_interest=mode_of_interest, combination="pairs"
-        )
-
-        for mode_0, mode_1 in combination:
-            x, y = get_intersection(
-                x=self.model_parameters.itr_list,
-                y0=getattr(mode_0, data_type).data,
-                y1=getattr(mode_1, data_type).data,
-                average=True,
-            )
-
-            if x is not None:
-                ax.scatter(
-                    x=x, y=y, marker="o", color="black", s=20, label="mode crossing"
-                )

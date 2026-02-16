@@ -22,7 +22,7 @@ from SuPyMode.binary.interface_supermode import SUPERMODE
 from SuPyMode.binary.interface_taper import AlphaProfile
 from SuPyMode.propagation import Propagation
 from SuPyMode.superset_plots import SuperSetPlots
-from SuPyMode.utils import interpret_mode_of_interest, parse_filename, test_valid_input
+from SuPyMode.utils import parse_filename
 
 
 @dataclass
@@ -37,12 +37,9 @@ class SuperSet(SuperSetPlots):
     ----------
     model_parameters : ModelParameters
         Parameters defining the model for simulation.
-    coordinate_system : Geometry
-        The coordinate system of the optical structure.
     """
 
     model_parameters: ModelParameters
-    coordinate_system: object
 
     def __post_init__(self):
         self._transmission_matrix = None
@@ -55,9 +52,6 @@ class SuperSet(SuperSetPlots):
 
     def __getitem__(self, idx: int) -> SUPERMODE:
         return self.supermodes[idx]
-
-    def __setitem__(self, idx: int, value: SUPERMODE) -> None:
-        self.supermodes[idx] = value
 
     @property
     def fundamental_supermodes(self) -> list[SUPERMODE]:
@@ -589,7 +583,7 @@ class SuperSet(SuperSetPlots):
         set of tuple
             Set of mode combinations.
         """
-        test_valid_input(
+        self.test_valid_input(
             variable_name="combination",
             user_input=combination,
             valid_inputs=["pairs", "specific"],
@@ -651,7 +645,7 @@ class SuperSet(SuperSetPlots):
         Path
             The path to the directory where the files were saved.
         """
-        mode_of_interest = interpret_mode_of_interest(
+        mode_of_interest = self.interpret_mode_of_interest(
             superset=self, mode_of_interest=mode_of_interest
         )
 

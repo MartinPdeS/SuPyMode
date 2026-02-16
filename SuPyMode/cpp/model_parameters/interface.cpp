@@ -323,35 +323,11 @@ PYBIND11_MODULE(interface_model_parameters, module) {
             )pbdoc"
         )
         .def_property_readonly(
-            "itr_list",
+            "mesh",
             [](const ModelParameters &self) {
-                return NumpyInterface::eigen_to_ndarray<double>(self.itr_list, {static_cast<unsigned long>(self.itr_list.size())});
+                pybind11::array_t<double> mesh_array = NumpyInterface::eigen_to_ndarray<double>(self.mesh, {static_cast<unsigned long>(self.ny), static_cast<unsigned long>(self.nx)});
+                return mesh_array;
             },
-            R"pbdoc(
-                Iteration parameter list for adaptive computations.
-
-                This read-only attribute provides access to the iteration
-                parameters used by adaptive solvers and mesh refinement
-                algorithms. These parameters control convergence behavior
-                and computational accuracy.
-
-                Type
-                ----
-                numpy.ndarray
-                    1D array of iteration parameters
-
-                Notes
-                -----
-                The iteration list is used by:
-                - Adaptive eigenvalue solvers
-                - Mesh refinement algorithms
-                - Convergence acceleration schemes
-                - Multi-grid methods
-
-                Typical values are monotonically increasing: [1.0, 1.5, 2.0]
-            )pbdoc"
-        )
-        .def_readonly("mesh", &ModelParameters::mesh_py,
             R"pbdoc(
                 Refractive index distribution mesh.
 
@@ -378,6 +354,35 @@ PYBIND11_MODULE(interface_model_parameters, module) {
 
                 The mesh should be smooth to avoid numerical artifacts, with
                 gradual transitions at material interfaces when possible.
+            )pbdoc"
+        )
+        .def_property_readonly(
+            "itr_list",
+            [](const ModelParameters &self) {
+                return NumpyInterface::eigen_to_ndarray<double>(self.itr_list, {static_cast<unsigned long>(self.itr_list.size())});
+            },
+            R"pbdoc(
+                Iteration parameter list for adaptive computations.
+
+                This read-only attribute provides access to the iteration
+                parameters used by adaptive solvers and mesh refinement
+                algorithms. These parameters control convergence behavior
+                and computational accuracy.
+
+                Type
+                ----
+                numpy.ndarray
+                    1D array of iteration parameters
+
+                Notes
+                -----
+                The iteration list is used by:
+                - Adaptive eigenvalue solvers
+                - Mesh refinement algorithms
+                - Convergence acceleration schemes
+                - Multi-grid methods
+
+                Typical values are monotonically increasing: [1.0, 1.5, 2.0]
             )pbdoc"
         )
         .def_readonly(

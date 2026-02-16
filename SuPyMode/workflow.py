@@ -5,6 +5,7 @@ from FiberFusing.fiber import FiberLoader  # noqa:
 from FiberFusing.profile import Profile, StructureType  # noqa: F401
 from FiberFusing.graded_index import GradedIndex  # noqa: F401
 from PyFinitDiff import BoundaryValue  # noqa: F401
+from SuPyMode.binary.interface_taper import AlphaProfile  # noqa: F401
 
 from FiberFusing import DomainAlignment
 from typing import List, Union, Optional, Tuple
@@ -15,7 +16,7 @@ from SuPyMode.solver import SuPySolver
 from PyFinitDiff.finite_difference_2D import Boundaries
 from pydantic.dataclasses import dataclass
 from pydantic import ConfigDict
-from SuPyMode.binary.interface_taper import AlphaProfile
+
 
 fiber_loader = FiberLoader()
 
@@ -115,7 +116,9 @@ class Workflow:
     def run_solver(self):
         """Initializes the solver with the set geometry and starts the mode computation process."""
         self.solver = SuPySolver(
-            geometry=self.geometry,
+            mesh=self.geometry.mesh,
+            x=self.geometry.coordinate_system.x_vector,
+            y=self.geometry.coordinate_system.y_vector,
             tolerance=1e-20,
             max_iteration=5000,
             accuracy=self.accuracy,
