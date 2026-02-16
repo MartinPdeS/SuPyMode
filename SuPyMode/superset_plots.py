@@ -3,6 +3,7 @@
 import matplotlib.pyplot as plt
 import numpy
 from matplotlib.backends.backend_pdf import PdfPages
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from MPSPlots import helper
 
 from SuPyMode.binary.interface_taper import AlphaProfile
@@ -373,13 +374,20 @@ class SuperSetPlots(object):
         """
         figure, ax = plt.subplots(figsize=(5, 5))
 
-        ax.pcolormesh(
+        pcm = ax.pcolormesh(
             self.model_parameters.x_vector,
             self.model_parameters.y_vector,
             self.model_parameters.mesh,
             shading="auto",
             cmap="Blues",
         )
+
+        ax.set_aspect("equal")
+
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes("right", size="5%", pad=0.05)
+
+        figure.colorbar(pcm, cax=cax)
 
         return figure
 
