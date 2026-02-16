@@ -7,7 +7,7 @@ import numpy
 from matplotlib.backends.backend_pdf import PdfPages
 from MPSPlots import helper
 
-from SuPyMode.profiles import AlphaProfile
+from SuPyMode.binary.interface_taper import AlphaProfile
 from SuPyMode.binary.interface_supermode import SUPERMODE
 from SuPyMode.utils import (
     get_intersection,
@@ -406,7 +406,7 @@ class SuperSetPlots(object):
         kwargs = dict(show=False, mode_of_interest=mode_of_interest)
 
         figure_list = [
-            # self.geometry.plot(show=False),
+            self.geometry.plot(show=False),
             self.plot_field(itr_list=itr_list, slice_list=slice_list, **kwargs),
             self.plot_index(**kwargs),
             self.plot_beta(**kwargs),

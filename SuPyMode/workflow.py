@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from FiberFusing.fiber import FiberLoader  # noqa:
-from SuPyMode.profiles import AlphaProfile  # noqa: F401
-from FiberFusing.profile import Profile, StructureType # noqa: F401
+from FiberFusing.profile import Profile, StructureType  # noqa: F401
 from FiberFusing.graded_index import GradedIndex  # noqa: F401
 from PyFinitDiff import BoundaryValue  # noqa: F401
 
@@ -16,11 +15,12 @@ from SuPyMode.solver import SuPySolver
 from PyFinitDiff.finite_difference_2D import Boundaries
 from pydantic.dataclasses import dataclass
 from pydantic import ConfigDict
+from SuPyMode.binary.interface_taper import AlphaProfile
 
 fiber_loader = FiberLoader()
 
 config_dict = ConfigDict(
-    extra='forbid',
+    extra="forbid",
     strict=True,
     arbitrary_types_allowed=True,
     kw_only=True,
@@ -28,7 +28,7 @@ config_dict = ConfigDict(
 
 
 @dataclass(config=config_dict)
-class Workflow():
+class Workflow:
     """
     Configures and executes optical simulations using finite difference methods on specified fiber geometries.
 
@@ -101,7 +101,7 @@ class Workflow():
     itr_initial: Optional[float] = 1.0
     extrapolation_order: Optional[int] = 2
     core_position_scrambling: Optional[float] = 0
-    index_scrambling: Optional[float] = 0.
+    index_scrambling: Optional[float] = 0.0
     accuracy: Optional[int] = 2
 
     # Extra attributes
@@ -120,14 +120,14 @@ class Workflow():
             max_iteration=5000,
             accuracy=self.accuracy,
             debug_mode=self.debug_mode,
-            extrapolation_order=self.extrapolation_order
+            extrapolation_order=self.extrapolation_order,
         )
 
         self.solver.init_superset(
             wavelength=self.wavelength,
             n_step=self.n_step,
             itr_initial=self.itr_initial,
-            itr_final=self.itr_final
+            itr_final=self.itr_final,
         )
 
         for boundary in self.boundaries:
@@ -135,14 +135,16 @@ class Workflow():
                 n_added_mode=self.n_added_mode,
                 n_sorted_mode=self.n_sorted_mode,
                 boundaries=boundary,
-                auto_label=self.auto_label
+                auto_label=self.auto_label,
             )
 
     def plot(self, *args, **kwargs):
         """Plots various types of data from the simulation based on the specified plot type."""
         return self.solver.superset.plot(*args, **kwargs)
 
-    def save_superset_instance(self, filename: str = 'auto', directory: str = 'auto') -> Path:
+    def save_superset_instance(
+        self, filename: str = "auto", directory: str = "auto"
+    ) -> Path:
         """
         Saves the superset instance to a file, defaulting to an auto-generated filename if not specified.
 
@@ -157,14 +159,13 @@ class Workflow():
         -------
         Path: Path to the saved file.
         """
-        self.solver.superset.save_instance(
-            filename=filename,
-            directory=directory
-        )
+        self.solver.superset.save_instance(filename=filename, directory=directory)
 
         return filename
 
-    def generate_pdf_report(self, filename: str = 'auto', directory: str = 'auto', **kwargs) -> Path:
+    def generate_pdf_report(
+        self, filename: str = "auto", directory: str = "auto", **kwargs
+    ) -> Path:
         """
         Generates a PDF report of all relevant simulation data and results.
 
@@ -180,9 +181,7 @@ class Workflow():
         Path: Path to the generated PDF report.
         """
         self.solver.superset.generate_pdf_report(
-            filename=filename,
-            directory=directory,
-            **kwargs
+            filename=filename, directory=directory, **kwargs
         )
 
         return filename
@@ -211,7 +210,7 @@ class Workflow():
         if self.clad_structure is not None:
             structures.append(self.clad_structure)
 
-        if self.index_scrambling != 0.:
+        if self.index_scrambling != 0.0:
             for fiber in self.fiber_list:
                 fiber.randomize_refractive_index(factor=self.index_scrambling)
 
@@ -223,7 +222,7 @@ class Workflow():
             resolution=self.resolution,
             index_scrambling=self.index_scrambling,
             boundary_pad_factor=self.air_padding_factor,
-            gaussian_filter=self.gaussian_filter_factor
+            gaussian_filter=self.gaussian_filter_factor,
         )
 
         self.geometry.add_structure(background, *structures)
@@ -240,9 +239,12 @@ class Workflow():
         if self.clad_structure is None:
             return
 
-        self.clad_structure.randomize_core_positions(random_factor=self.core_position_scrambling)
+        self.clad_structure.randomize_core_positions(
+            random_factor=self.core_position_scrambling
+        )
 
         if self.clad_rotation != 0:
             self.clad_structure.rotate(self.clad_rotation)
+
 
 # -

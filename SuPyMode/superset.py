@@ -19,7 +19,7 @@ from scipy.interpolate import interp1d
 from SuPyMode.binary.interface_model_parameters import ModelParameters
 from SuPyMode.binary.interface_supermode import SUPERMODE
 
-from SuPyMode.profiles import AlphaProfile
+from SuPyMode.binary.interface_taper import AlphaProfile
 from SuPyMode.propagation import Propagation
 from SuPyMode.superset_plots import SuperSetPlots
 from SuPyMode.utils import interpret_mode_of_interest, parse_filename, test_valid_input
