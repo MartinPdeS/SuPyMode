@@ -457,7 +457,7 @@
 <blockquote>
 <div><dl class="py class">
 <dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SuPySolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iteration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accuracy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrapolation_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SuPyMode/solver.html#SuPySolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SuPyMode.solver.SuPySolver" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SuPySolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iteration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accuracy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrapolation_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SuPyMode/solver.html#SuPySolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SuPyMode.solver.SuPySolver" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">EIGENSOLVER</span></code></p>
 <p>A solver for computing eigenvalues and supermodes of optical fiber geometries using a C++ eigensolver.</p>
 <p>This class manages the eigenvalue problem for optical structures and returns computed supermodes. The solver utilizes
@@ -466,7 +466,9 @@ boundary conditions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>geometry</strong> (<em>Geometry</em><em> or </em><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5.dev0)"><em>numpy.ndarray</em></a>) – The refractive index geometry of the optical structure.</p></li>
+<li><p><strong>mesh</strong> (<a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5.dev0)"><em>numpy.ndarray</em></a>) – The refractive index geometry of the optical structure.</p></li>
+<li><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5.dev0)"><em>numpy.ndarray</em></a>) – The x-coordinate vector of the mesh.</p></li>
+<li><p><strong>y</strong> (<a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5.dev0)"><em>numpy.ndarray</em></a>) – The y-coordinate vector of the mesh.</p></li>
 <li><p><strong>tolerance</strong> (<em>float</em><em>, </em><em>optional</em>) – Absolute tolerance for the propagation constant computation (default is 1e-8).</p></li>
 <li><p><strong>max_iteration</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum iterations for the C++ eigensolver (default is 10,000).</p></li>
 <li><p><strong>accuracy</strong> (<em>int</em><em>, </em><em>optional</em>) – Accuracy level of the finite difference method (default is 2).</p></li>
@@ -889,27 +891,19 @@ properties of the waveguide being modeled.</p>
 <blockquote>
 <div><dl class="py class">
 <dt class="sig sig-object py" id="SuPyMode.superset.SuperSet">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SuperSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate_system</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SuPyMode/superset.html#SuperSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SuPyMode.superset.SuperSet" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SuperSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_parameters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/SuPyMode/superset.html#SuperSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#SuPyMode.superset.SuperSet" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SuperSetPlots</span></code></p>
 <p>A set of supermodes calculated for a specific optical fiber configuration.</p>
 <p>This class manages operations on supermodes, including sorting, plotting, and calculations
 related to fiber optics simulations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model_parameters</strong> (<em>ModelParameters</em>) – Parameters defining the model for simulation.</p></li>
-<li><p><strong>coordinate_system</strong> (<em>Geometry</em>) – The coordinate system of the optical structure.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>model_parameters</strong> (<em>ModelParameters</em>) – Parameters defining the model for simulation.</p>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.model_parameters">
 <span class="sig-name descname"><span class="pre">model_parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ModelParameters</span></em><a class="headerlink" href="#SuPyMode.superset.SuperSet.model_parameters" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.coordinate_system">
-<span class="sig-name descname"><span class="pre">coordinate_system</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">object</span></em><a class="headerlink" href="#SuPyMode.superset.SuperSet.coordinate_system" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -1292,24 +1286,6 @@ related to fiber optics simulations.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.add_crossings_to_ax">
-<span class="sig-name descname"><span class="pre">add_crossings_to_ax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.add_crossings_to_ax" title="Link to this definition">#</a></dt>
-<dd><p>Add mode crossings to the given axis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><em>SUPERMODE</em>) – List of modes of interest.</p></li>
-<li><p><strong>data_type</strong> (<em>str</em>) – The type of data for which to find crossings (e.g., ‘index’, ‘beta’, etc.).</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.generate_pdf_report">
 <span class="sig-name descname"><span class="pre">generate_pdf_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pairs'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.generate_pdf_report" title="Link to this definition">#</a></dt>
 <dd><p>Generate a full report of the coupler properties as a PDF file.</p>
@@ -1333,6 +1309,41 @@ related to fiber optics simulations.</p>
 <span class="go">This will generate a PDF report named &#39;coupler_report.pdf&#39; containing plots for the specified modes at given ITR values.</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.interpret_mode_of_interest">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">interpret_mode_of_interest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">superset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.interpret_mode_of_interest" title="Link to this definition">#</a></dt>
+<dd><p>Resolves the mode of interest from user input to the appropriate list of SUPERMODE instances
+based on the specified criteria or direct references.</p>
+<dl>
+<dt>Parameters:</dt><dd><ul class="simple">
+<li><p>superset (SuperSet): The superset containing all supermodes, including fundamental and non-fundamental modes.</p></li>
+<li><p>mode_of_interest (Union[str, SUPERMODE, List[SUPERMODE]]): This parameter can be a string specifying a category</p></li>
+</ul>
+<p>of modes such as ‘fundamental’, ‘non-fundamental’, ‘all’, a single SUPERMODE instance, or a list of SUPERMODE instances.</p>
+</dd>
+<dt>Returns:</dt><dd><ul class="simple">
+<li><p>List[SUPERMODE]: A list of SUPERMODE instances corresponding to the specified mode of interest.</p></li>
+</ul>
+</dd>
+<dt>Raises:</dt><dd><ul class="simple">
+<li><p>ValueError: If the mode_of_interest is not one of the expected types or if the string input does not match</p></li>
+</ul>
+<p>any known category.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>superset</strong> (<a class="reference internal" href="#SuPyMode.superset.SuperSet" title="SuPyMode.superset.SuperSet"><em>SuperSet</em></a>)</p></li>
+<li><p><strong>mode_of_interest</strong> (<em>str</em><em> | </em><em>SUPERMODE</em><em> | </em><em>list</em><em>[</em><em>SUPERMODE</em><em>]</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[<em>SUPERMODE</em>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1471,14 +1482,13 @@ related to fiber optics simulations.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_beta">
-<span class="sig-name descname"><span class="pre">plot_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_crossings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_beta" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">plot_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_beta" title="Link to this definition">#</a></dt>
 <dd><p>Plot the effective propagation constant for each mode as a function of inverse taper ratio (ITR).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
 <li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><em>SUPERMODE</em>) – List of modes to be plotted.</p></li>
-<li><p><strong>show_crossings</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to show crossings in the plot (default is False).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1487,7 +1497,7 @@ related to fiber optics simulations.</p>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">superset_plots</span><span class="o">.</span><span class="n">plot_index</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">mode_of_interest</span><span class="o">=</span><span class="p">[</span><span class="n">mode1</span><span class="p">,</span> <span class="n">mode2</span><span class="p">],</span> <span class="n">show_crossings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">superset_plots</span><span class="o">.</span><span class="n">plot_index</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">mode_of_interest</span><span class="o">=</span><span class="p">[</span><span class="n">mode1</span><span class="p">,</span> <span class="n">mode2</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1502,7 +1512,6 @@ related to fiber optics simulations.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
 <li><p><strong>mode_of_interest</strong> (<em>list</em><em>[</em><em>SUPERMODE</em><em>] </em><em>| </em><em>str</em>)</p></li>
-<li><p><strong>show_crossings</strong> (<em>bool</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1545,14 +1554,13 @@ related to fiber optics simulations.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_eigen_value">
-<span class="sig-name descname"><span class="pre">plot_eigen_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_crossings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_eigen_value" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">plot_eigen_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_eigen_value" title="Link to this definition">#</a></dt>
 <dd><p>Plot the computed eigen-values for each mode as a function of inverse taper ratio (ITR).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
 <li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><em>SUPERMODE</em>) – List of modes to be plotted.</p></li>
-<li><p><strong>show_crossings</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to show crossings in the plot (default is False).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1561,7 +1569,7 @@ related to fiber optics simulations.</p>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">superset_plots</span><span class="o">.</span><span class="n">plot_index</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">mode_of_interest</span><span class="o">=</span><span class="p">[</span><span class="n">mode1</span><span class="p">,</span> <span class="n">mode2</span><span class="p">],</span> <span class="n">show_crossings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">superset_plots</span><span class="o">.</span><span class="n">plot_index</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">mode_of_interest</span><span class="o">=</span><span class="p">[</span><span class="n">mode1</span><span class="p">,</span> <span class="n">mode2</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1576,7 +1584,6 @@ related to fiber optics simulations.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
 <li><p><strong>mode_of_interest</strong> (<em>list</em><em>[</em><em>SUPERMODE</em><em>] </em><em>| </em><em>str</em>)</p></li>
-<li><p><strong>show_crossings</strong> (<em>bool</em>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -1694,24 +1701,19 @@ related to fiber optics simulations.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_index">
-<span class="sig-name descname"><span class="pre">plot_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_crossings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_index" title="Link to this definition">#</a></dt>
-<dd><p>Plot the effective index for each mode as a function of inverse taper ratio (ITR).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><em>SUPERMODE</em>) – List of modes to be plotted.</p></li>
-<li><p><strong>show_crossings</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to show crossings in the plot (default is False).</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>plt.Figure</p>
+<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_geometry">
+<span class="sig-name descname"><span class="pre">plot_geometry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_geometry" title="Link to this definition">#</a></dt>
+<dd><blockquote>
+<div><p>Render the geometry of the taper on the provided axes.</p>
+<dl class="simple">
+<dt>ax<span class="classifier">matplotlib.axes.Axes</span></dt><dd><p>The axes object on which to plot the geometry.</p>
 </dd>
 </dl>
+<dl class="simple">
+<dt>plt.Figure</dt><dd><p>The figure object containing the generated plot. This can be customized further or saved to a file.</p>
+</dd>
+</dl>
+</div></blockquote>
 <section id="id18">
 <h3>Extra Parameters<a class="headerlink" href="#id18" title="Link to this heading">#</a></h3>
 <dl class="simple">
@@ -1740,26 +1742,29 @@ related to fiber optics simulations.</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
+<dd class="field-odd"><p><strong>Figure</strong> – The figure with the market prices plot.</p>
 </dd>
 <dt class="field-even">rtype<span class="colon">:</span></dt>
-<dd class="field-even"><p>matplotlib.axes.Axes</p>
+<dd class="field-even"><p>matplotlib.figure.Figure</p>
 </dd>
 </dl>
 </section>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Figure</em></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_normalized_coupling">
-<span class="sig-name descname"><span class="pre">plot_normalized_coupling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pairs'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_normalized_coupling" title="Link to this definition">#</a></dt>
-<dd><p>Render a figure representing the normalized coupling for each mode combination as a function of inverse taper ratio (ITR).</p>
+<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_index">
+<span class="sig-name descname"><span class="pre">plot_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_index" title="Link to this definition">#</a></dt>
+<dd><p>Plot the effective index for each mode as a function of inverse taper ratio (ITR).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
+<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
 <li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><em>SUPERMODE</em>) – List of modes to be plotted.</p></li>
-<li><p><strong>combination</strong> (<em>list</em>) – List of mode combinations.</p></li>
-<li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1804,6 +1809,79 @@ related to fiber optics simulations.</p>
 </dd>
 </dl>
 </section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_normalized_coupling">
+<span class="sig-name descname"><span class="pre">plot_normalized_coupling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pairs'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_normalized_coupling" title="Link to this definition">#</a></dt>
+<dd><p>Render a figure representing the normalized coupling for each mode combination as a function of inverse taper ratio (ITR).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
+<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><em>SUPERMODE</em>) – List of modes to be plotted.</p></li>
+<li><p><strong>combination</strong> (<em>list</em>) – List of mode combinations.</p></li>
+<li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>plt.Figure</p>
+</dd>
+</dl>
+<section id="id24">
+<h3>Extra Parameters<a class="headerlink" href="#id24" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>show<span class="classifier">bool</span></dt><dd><p>Whether to display the plot after creation.</p>
+</dd>
+<dt>save_as<span class="classifier">str, optional</span></dt><dd><p>If provided, save the figure to this path.</p>
+</dd>
+<dt>figure_size<span class="classifier">tuple, optional</span></dt><dd><p>Size of the figure in inches.</p>
+</dd>
+<dt>tight_layout<span class="classifier">bool, default=True</span></dt><dd><p>Whether to use tight layout for the figure.</p>
+</dd>
+<dt>axes<span class="classifier">matplotlib.axes.Axes, optional</span></dt><dd><p>Axes to draw on. If None, a new figure+axes are created.</p>
+</dd>
+<dt>xscale<span class="classifier">str, optional</span></dt><dd><p>X-axis scale type (e.g., ‘linear’, ‘log’).</p>
+</dd>
+<dt>yscale<span class="classifier">str, optional</span></dt><dd><p>Y-axis scale type (e.g., ‘linear’, ‘log’).</p>
+</dd>
+<dt>xlim<span class="classifier">tuple, optional</span></dt><dd><p>X-axis limits as (min, max).</p>
+</dd>
+<dt>ylim<span class="classifier">tuple, optional</span></dt><dd><p>Y-axis limits as (min, max).</p>
+</dd>
+<dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
+</dd>
+<dt><a href="#id25"><span class="problematic" id="id26">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>matplotlib.axes.Axes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.test_valid_input">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_valid_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.test_valid_input" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>valid_inputs</strong> (<em>list</em>)</p></li>
+<li><p><strong>variable_name</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1867,7 +1945,6 @@ related to fiber optics simulations.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#superset">SuperSet</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet"><code class="docutils literal notranslate"><span class="pre">SuperSet</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.model_parameters"><code class="docutils literal notranslate"><span class="pre">SuperSet.model_parameters</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.coordinate_system"><code class="docutils literal notranslate"><span class="pre">SuperSet.coordinate_system</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.fundamental_supermodes"><code class="docutils literal notranslate"><span class="pre">SuperSet.fundamental_supermodes</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.non_fundamental_supermodes"><code class="docutils literal notranslate"><span class="pre">SuperSet.non_fundamental_supermodes</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.transmission_matrix"><code class="docutils literal notranslate"><span class="pre">SuperSet.transmission_matrix</span></code></a></li>
@@ -1891,16 +1968,18 @@ related to fiber optics simulations.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.interpret_combination"><code class="docutils literal notranslate"><span class="pre">SuperSet.interpret_combination()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.save_instance"><code class="docutils literal notranslate"><span class="pre">SuperSet.save_instance()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.export_data"><code class="docutils literal notranslate"><span class="pre">SuperSet.export_data()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.add_crossings_to_ax"><code class="docutils literal notranslate"><span class="pre">SuperSet.add_crossings_to_ax()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.generate_pdf_report"><code class="docutils literal notranslate"><span class="pre">SuperSet.generate_pdf_report()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.interpret_mode_of_interest"><code class="docutils literal notranslate"><span class="pre">SuperSet.interpret_mode_of_interest()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_adiabatic"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_adiabatic()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_beating_length"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_beating_length()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_beta"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_beta()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_eigen_value"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_eigen_value()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_field"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_field()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_geometry"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_geometry()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_index"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_index()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_normalized_coupling"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_normalized_coupling()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.test_valid_input"><code class="docutils literal notranslate"><span class="pre">SuperSet.test_valid_input()</span></code></a></li>
 </ul>
 </li>
 </ul>
