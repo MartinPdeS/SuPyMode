@@ -37,12 +37,6 @@ class SuperSetPlots(object):
         show_crossings : bool, optional
             Whether to show crossings in the plot (default is False).
 
-        Examples
-        --------
-        >>> fig, ax = plt.subplots()
-        >>> superset_plots.plot_index(ax=ax, mode_of_interest=[mode1, mode2], show_crossings=True)
-        >>> plt.show()
-
         Returns
         -------
         plt.Figure

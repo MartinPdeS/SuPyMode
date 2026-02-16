@@ -213,8 +213,11 @@ PYBIND11_MODULE(interface_model_parameters, module) {
 
                 The grid should extend sufficiently beyond the waveguide core
                 to capture evanescent field decay.
-            )pbdoc")
-        .def_readonly("ny", &ModelParameters::ny,
+            )pbdoc"
+        )
+        .def_readonly(
+            "ny",
+            &ModelParameters::ny,
             R"pbdoc(
                 Number of grid points in the y-direction.
 
@@ -232,8 +235,11 @@ PYBIND11_MODULE(interface_model_parameters, module) {
                 For circular fibers, nx and ny are typically equal to maintain
                 symmetry. For rectangular waveguides, they may differ based
                 on the aspect ratio and required resolution.
-            )pbdoc")
-        .def_readonly("dx", &ModelParameters::dx,
+            )pbdoc"
+        )
+        .def_readonly(
+            "dx",
+            &ModelParameters::dx,
             R"pbdoc(
                 Grid spacing in the x-direction.
 
@@ -314,7 +320,8 @@ PYBIND11_MODULE(interface_model_parameters, module) {
                 - Normalized parameters: V = k₀ * a * NA
 
                 It's automatically computed from the wavelength parameter.
-            )pbdoc")
+            )pbdoc"
+        )
         .def_property_readonly(
             "itr_list",
             [](const ModelParameters &self) {

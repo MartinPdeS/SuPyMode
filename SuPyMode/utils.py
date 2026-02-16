@@ -1,21 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from __future__ import annotations
-from typing import TYPE_CHECKING
 from typing import Union, List, Iterable, Callable
-
-if TYPE_CHECKING:
-    from SuPyMode.superset import SuperSet
-    from SuPyMode.supermode import SuperMode
-
 import numpy
 import pickle
 from pathlib import Path
-from SuPyMode.directories import user_data_directory
 from functools import wraps
 from pathvalidate import sanitize_filepath
 import logging
+
+from SuPyMode.binary.interface_supermode import SUPERMODE
+from SuPyMode.directories import user_data_directory
 
 
 def get_auto_generated_filename(superset) -> str:
@@ -220,19 +214,19 @@ def interpret_slice_number_and_itr(
 
 
 def interpret_mode_of_interest(
-    superset: SuperSet, mode_of_interest: str | SuperMode | list[SuperMode]
-) -> list[SuperMode]:
+    superset: "SuperSet", mode_of_interest: str | SUPERMODE | list[SUPERMODE]
+) -> list[SUPERMODE]:
     """
-    Resolves the mode of interest from user input to the appropriate list of SuperMode instances
+    Resolves the mode of interest from user input to the appropriate list of SUPERMODE instances
     based on the specified criteria or direct references.
 
     Parameters:
         - superset (SuperSet): The superset containing all supermodes, including fundamental and non-fundamental modes.
-        - mode_of_interest (Union[str, SuperMode, List[SuperMode]]): This parameter can be a string specifying a category
-          of modes such as 'fundamental', 'non-fundamental', 'all', a single SuperMode instance, or a list of SuperMode instances.
+        - mode_of_interest (Union[str, SUPERMODE, List[SUPERMODE]]): This parameter can be a string specifying a category
+          of modes such as 'fundamental', 'non-fundamental', 'all', a single SUPERMODE instance, or a list of SUPERMODE instances.
 
     Returns:
-        - List[SuperMode]: A list of SuperMode instances corresponding to the specified mode of interest.
+        - List[SUPERMODE]: A list of SUPERMODE instances corresponding to the specified mode of interest.
 
     Raises:
         - ValueError: If the mode_of_interest is not one of the expected types or if the string input does not match
@@ -262,7 +256,7 @@ def interpret_mode_of_interest(
         return mode_of_interest
 
     raise ValueError(
-        "mode_of_interest must be either 'fundamental', 'non-fundamental', 'all', a SuperMode instance, or a list of SuperMode instances."
+        "mode_of_interest must be either 'fundamental', 'non-fundamental', 'all', a SUPERMODE instance, or a list of SUPERMODE instances."
     )
 
 

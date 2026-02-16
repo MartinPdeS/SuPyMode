@@ -3,13 +3,20 @@
 
 import numpy
 import pyvista
+import matplotlib.pyplot as plt
 
 from SuPyMode.profiles import AlphaProfile
-import matplotlib.pyplot as plt
 
 
 class Propagation:
-    def __init__(self, superset: object, distance: numpy.ndarray, profile: AlphaProfile, amplitudes: numpy.ndarray, z_to_itr: object):
+    def __init__(
+        self,
+        superset: object,
+        distance: numpy.ndarray,
+        profile: AlphaProfile,
+        amplitudes: numpy.ndarray,
+        z_to_itr: object,
+    ):
         """
         Parameters
         ----------
@@ -26,7 +33,13 @@ class Propagation:
         self.amplitudes = amplitudes
         self.z_to_itr = self.profile.get_itr_vs_distance_interpolation()
 
-    def plot(self, sub_sampling: int = 5, show_energy: bool = True, show_amplitudes: bool = True, **kwargs: dict) -> None:
+    def plot(
+        self,
+        sub_sampling: int = 5,
+        show_energy: bool = True,
+        show_amplitudes: bool = True,
+        **kwargs: dict,
+    ) -> None:
         """
         Plots the propagation of amplitudes over a given profile, optionally showing energy and amplitude plots.
 
@@ -43,10 +56,7 @@ class Propagation:
 
         """
         fig, ax = plt.subplots()
-        ax.set(
-            xlabel='Propagation distance (z)',
-            ylabel='Inverse taper ratio (ITR)'
-        )
+        ax.set(xlabel="Propagation distance (z)", ylabel="Inverse taper ratio (ITR)")
 
         x_values = self.distance[::sub_sampling]
 
@@ -56,18 +66,43 @@ class Propagation:
             y_amplitude = self.amplitudes[idx, ::sub_sampling].real
 
             if show_energy:
-                ax.plot(x_values, y_energy, label=f'{mode.stylized_label} Energy', linewidth=2.0, linestyle='-', color=color)
+                ax.plot(
+                    x_values,
+                    y_energy,
+                    label=f"{mode.stylized_label} Energy",
+                    linewidth=2.0,
+                    linestyle="-",
+                    color=color,
+                )
             if show_amplitudes:
-                ax.plot(x_values, y_amplitude, label=f'{mode.stylized_label} Amplitude', linewidth=2.0, linestyle='--', color=color)
+                ax.plot(
+                    x_values,
+                    y_amplitude,
+                    label=f"{mode.stylized_label} Amplitude",
+                    linewidth=2.0,
+                    linestyle="--",
+                    color=color,
+                )
 
         if show_energy:
-            total_energy = numpy.sqrt(numpy.sum(numpy.abs(self.amplitudes) ** 2, axis=0))[::sub_sampling]
-            ax.plot(x_values, total_energy, label='Total Energy', linewidth=3.0, linestyle='--', color='black')
+            total_energy = numpy.sqrt(
+                numpy.sum(numpy.abs(self.amplitudes) ** 2, axis=0)
+            )[::sub_sampling]
+            ax.plot(
+                x_values,
+                total_energy,
+                label="Total Energy",
+                linewidth=3.0,
+                linestyle="--",
+                color="black",
+            )
 
         ax.legend()
         plt.show()
 
-    def get_field_combination(self, amplitudes: numpy.ndarray, itr: int) -> numpy.ndarray:
+    def get_field_combination(
+        self, amplitudes: numpy.ndarray, itr: int
+    ) -> numpy.ndarray:
 
         shape = self.superset.supermodes[0].field.data[0].shape
         total_field = numpy.zeros(shape).astype(complex)
@@ -79,13 +114,15 @@ class Propagation:
         return total_field
 
     def generate_gif(
-            self, *,
-            sub_sampling: int = 5,
-            mutliplicative_factor: float = -100,
-            delta_azimuth: float = 0,
-            save_directory: str = 'new_figure.gif',
-            colormap: str = 'bwr',
-            **kwargs) -> None:
+        self,
+        *,
+        sub_sampling: int = 5,
+        mutliplicative_factor: float = -100,
+        delta_azimuth: float = 0,
+        save_directory: str = "new_figure.gif",
+        colormap: str = "bwr",
+        **kwargs,
+    ) -> None:
         """
         Generates a gif video of the mode propagation.
 
@@ -114,7 +151,7 @@ class Propagation:
 
         total_field = self.get_field_combination(amplitudes=initial_amplitudes, itr=1.0)
 
-        x, y = numpy.mgrid[0: total_field.shape[0], 0: total_field.shape[1]]
+        x, y = numpy.mgrid[0 : total_field.shape[0], 0 : total_field.shape[1]]
         grid = pyvista.StructuredGrid(x, y, total_field)
 
         plotter = pyvista.Plotter(notebook=False, off_screen=True)
@@ -125,32 +162,41 @@ class Propagation:
         plotter.add_mesh(
             grid,
             scalars=total_field,
-            style='surface',
+            style="surface",
             show_edges=True,
-            edge_color='k',
+            edge_color="k",
             colormap=colormap,
             show_scalar_bar=False,
-            clim=[-100, 100]
+            clim=[-100, 100],
         )
 
         pts = grid.points.copy()
         azimuth = 0
         for z, amplitudes, itr in zip(sub_distance, sub_amplitudes.T, sub_itr):
-            print(f'itr: {itr}')
+            print(f"itr: {itr}")
             plotter.camera.elevation = -20
             plotter.camera.azimuth = azimuth
             azimuth += delta_azimuth
 
             structure = self.superset.get_slice_structure(itr=itr, add_symmetries=True)
-            total_field = structure.get_field_combination(amplitudes, Linf_normalization=True) * mutliplicative_factor
+            total_field = (
+                structure.get_field_combination(amplitudes, Linf_normalization=True)
+                * mutliplicative_factor
+            )
 
             pts[:, -1] = total_field.T.ravel()
             plotter.update_coordinates(pts, render=True)
             plotter.update_scalars(total_field.T.ravel(), render=False)
-            plotter.add_title(f'ITR: {itr: .3f}\t  z: {z: .3e}', font='courier', color='w', font_size=20)
+            plotter.add_title(
+                f"ITR: {itr: .3f}\t  z: {z: .3e}",
+                font="courier",
+                color="w",
+                font_size=20,
+            )
 
             plotter.write_frame()
 
         plotter.close()
+
 
 # -

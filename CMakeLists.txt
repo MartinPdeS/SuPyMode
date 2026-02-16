@@ -103,6 +103,7 @@ message(STATUS "")
 
 # ----------------- collect subdirectories --------------------
 add_subdirectory(SuPyMode/cpp/boundaries)            # boundaries
+add_subdirectory(SuPyMode/cpp/taper)                 # taper
 add_subdirectory(SuPyMode/cpp/mesh)                  # mesh
 add_subdirectory(SuPyMode/cpp/model_parameters)      # model_parameters
 add_subdirectory(SuPyMode/cpp/supermode)             # supermode
