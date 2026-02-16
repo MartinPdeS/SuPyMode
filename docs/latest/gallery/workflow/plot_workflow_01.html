@@ -47,7 +47,6 @@
     <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'gallery/workflow/plot_workflow_01';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
@@ -484,7 +483,7 @@ to download the full example code.</p>
 <p>Defining the boundaries of the system</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">boundaries</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">),</span>
-    <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">ANTI_SYMMETRIC</span><span class="p">),</span>
+    <span class="c1"># Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.ANTI_SYMMETRIC),</span>
 <span class="p">]</span>
 </pre></div>
 </div>
@@ -495,7 +494,7 @@ to download the full example code.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">workflow</span> <span class="o">=</span> <span class="n">Workflow</span><span class="p">(</span>
     <span class="n">fiber_list</span><span class="o">=</span><span class="p">[</span><span class="n">fiber</span><span class="p">],</span>  <span class="c1"># List of fiber to be added in the mesh, the order matters.</span>
     <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>  <span class="c1"># Wavelength used for the mode computation.</span>
-    <span class="n">resolution</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>  <span class="c1"># Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].</span>
+    <span class="n">resolution</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>  <span class="c1"># Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].</span>
     <span class="n">x_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span>  <span class="c1"># Mesh x-boundary structure.</span>
     <span class="n">y_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">BOTTOM</span><span class="p">,</span>  <span class="c1"># Mesh y-boundary structure.</span>
     <span class="n">boundaries</span><span class="o">=</span><span class="n">boundaries</span><span class="p">,</span>  <span class="c1"># Set of symmetries to be evaluated, each symmetry add a round of simulation</span>
@@ -507,41 +506,51 @@ to download the full example code.</p>
     <span class="n">clad_rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># Rotate the geoemtry in the given angle in degree</span>
 <span class="p">)</span>
 
-<span class="n">workflow</span><span class="o">.</span><span class="n">initialize_geometry</span><span class="p">(</span><span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Initialize the geometry and plot it</span>
+<span class="n">workflow</span><span class="o">.</span><span class="n">initialize_geometry</span><span class="p">(</span><span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># Initialize the geometry and plot it</span>
 
 <span class="n">workflow</span><span class="o">.</span><span class="n">run_solver</span><span class="p">()</span>  <span class="c1"># Run the solver to compute the modes</span>
-</pre></div>
-</div>
-<img src="../../_images/sphx_glr_plot_workflow_01_001.png" srcset="../../_images/sphx_glr_plot_workflow_01_001.png" alt="Fiber structure, Fiber structure" class = "sphx-glr-single-img"/></section>
-<section id="field-computation-e-i-j">
-<h2>Field computation: <span class="math notranslate nohighlight">\(E_{i,j}\)</span><a class="headerlink" href="#field-computation-e-i-j" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;field&quot;</span><span class="p">,</span> <span class="n">itr_list</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
-</pre></div>
-</div>
-<img src="../../_images/sphx_glr_plot_workflow_01_002.png" srcset="../../_images/sphx_glr_plot_workflow_01_002.png" alt="$LP01$ slice: 0  itr: 1.000, $LP21_a$ slice: 0  itr: 1.000, $LP02$ slice: 0  itr: 1.000, $LP41_a$ slice: 0  itr: 1.000, $LP11_b$ slice: 0  itr: 1.000, $LP31_b$ slice: 0  itr: 1.000, $LP12_b$ slice: 0  itr: 1.000, $LP51_b$ slice: 0  itr: 1.000, $LP01$ slice: 473  itr: 0.099, $LP21_a$ slice: 473  itr: 0.099, $LP02$ slice: 473  itr: 0.099, $LP41_a$ slice: 473  itr: 0.099, $LP11_b$ slice: 473  itr: 0.099, $LP31_b$ slice: 473  itr: 0.099, $LP12_b$ slice: 473  itr: 0.099, $LP51_b$ slice: 473  itr: 0.099" class = "sphx-glr-single-img"/></section>
-<section id="effective-index-n-eff-i-j">
-<h2>Effective index: <span class="math notranslate nohighlight">\(n^{eff}_{i,j}\)</span><a class="headerlink" href="#effective-index-n-eff-i-j" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<img src="../../_images/sphx_glr_plot_workflow_01_003.png" srcset="../../_images/sphx_glr_plot_workflow_01_003.png" alt="plot workflow 01" class = "sphx-glr-single-img"/></section>
-<section id="modal-normalized-coupling-c-i-j">
-<h2>Modal normalized coupling: <span class="math notranslate nohighlight">\(C_{i,j}\)</span><a class="headerlink" href="#modal-normalized-coupling-c-i-j" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;normalized-coupling&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<img src="../../_images/sphx_glr_plot_workflow_01_004.png" srcset="../../_images/sphx_glr_plot_workflow_01_004.png" alt="plot workflow 01" class = "sphx-glr-single-img"/></section>
-<section id="adiabatic-criterion-tilde-c-i-j">
-<h2>Adiabatic criterion: <span class="math notranslate nohighlight">\(\tilde{C}_{i,j}\)</span><a class="headerlink" href="#adiabatic-criterion-tilde-c-i-j" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;adiabatic&quot;</span><span class="p">)</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode.plotter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Plotter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlphaProfile</span>
+
+<span class="n">profile</span> <span class="o">=</span> <span class="n">AlphaProfile</span><span class="p">(</span><span class="n">symmetric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_end_of_taper_section</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">profile</span><span class="o">.</span><span class="n">add_taper_segment</span><span class="p">(</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">initial_heating_length</span><span class="o">=</span><span class="mf">8e-3</span><span class="p">,</span> <span class="n">stretching_length</span><span class="o">=</span><span class="mf">0.2e-3</span> <span class="o">*</span> <span class="mi">20</span>
+<span class="p">)</span>
+
+<span class="n">profile</span><span class="o">.</span><span class="n">add_taper_segment</span><span class="p">(</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">initial_heating_length</span><span class="o">=</span><span class="mf">2e-3</span><span class="p">,</span> <span class="n">stretching_length</span><span class="o">=</span><span class="mf">0.2e-3</span> <span class="o">*</span> <span class="mi">20</span>
+<span class="p">)</span>
+
+<span class="n">profile</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+
+<span class="c1"># # %%</span>
+<span class="c1"># # Field computation: :math:`E_{i,j}`</span>
+<span class="c1"># # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+<span class="c1"># _ = workflow.plot(plot_type=&quot;field&quot;, itr_list=[1.0, 0.1])</span>
+
+<span class="c1"># # %%</span>
+<span class="c1"># # Effective index: :math:`n^{eff}_{i,j}`</span>
+<span class="c1"># # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+<span class="c1"># _ = workflow.plot(plot_type=&quot;index&quot;)</span>
+
+<span class="c1"># # %%</span>
+<span class="c1"># # Modal normalized coupling: :math:`C_{i,j}`</span>
+<span class="c1"># # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+<span class="c1"># _ = workflow.plot(plot_type=&quot;normalized-coupling&quot;)</span>
+
+<span class="c1"># # %%</span>
+<span class="c1"># # Adiabatic criterion: :math:`\tilde{C}_{i,j}`</span>
+<span class="c1"># # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+<span class="c1"># _ = workflow.plot(plot_type=&quot;adiabatic&quot;)</span>
 
 <span class="c1"># -</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_workflow_01_005.png" srcset="../../_images/sphx_glr_plot_workflow_01_005.png" alt="plot workflow 01" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>INFO:matplotlib.mathtext:Substituting symbol \mu from STIXNonUnicode
-</pre></div>
-</div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 16.034 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.649 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-workflow-plot-workflow-01-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/343fb0088691fbee7af36540ebd91efe/plot_workflow_01.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_workflow_01.ipynb</span></code></a></p>
@@ -582,10 +591,6 @@ to download the full example code.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-the-fiber-structure">Generating the fiber structure</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-the-computing-workflow">Generating the computing workflow</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#field-computation-e-i-j">Field computation: <span class="math notranslate nohighlight">\(E_{i,j}\)</span></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#effective-index-n-eff-i-j">Effective index: <span class="math notranslate nohighlight">\(n^{eff}_{i,j}\)</span></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modal-normalized-coupling-c-i-j">Modal normalized coupling: <span class="math notranslate nohighlight">\(C_{i,j}\)</span></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adiabatic-criterion-tilde-c-i-j">Adiabatic criterion: <span class="math notranslate nohighlight">\(\tilde{C}_{i,j}\)</span></a></li>
 </ul>
   </nav></div>
 
