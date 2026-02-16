@@ -346,14 +346,6 @@ class SuperSetPlots(object):
         ------
         ValueError
             If an unrecognized plot type is specified.
-
-        Examples
-        --------
-        >>> superset_plots.plot(plot_type='index', ax=ax)
-        Generates an effective index plot.
-
-        >>> superset_plots.plot(plot_type='invalid')
-        ValueError: Invalid plot type: invalid. Options are: index, beta, eigen-value, adiabatic, normalized-adiabatic, normalized-coupling, field, beating-length.
         """
         match plot_type.lower().replace("_", "-"):
             case "index":

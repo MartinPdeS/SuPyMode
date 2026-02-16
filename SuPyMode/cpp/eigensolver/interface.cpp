@@ -337,12 +337,6 @@ PYBIND11_MODULE(interface_eigensolver, module)
 
             The sorting is based on the real part of the eigenvalue, which
             corresponds to the effective refractive index of the mode.
-
-            Examples
-            --------
-            >>> eigenvals, eigenvecs = solver.get_mode()
-            >>> n_eff = numpy.sqrt(eigenvals.real)  # Effective indices
-            >>> fundamental_mode = eigenvecs[:, 0]   # Fundamental mode field
         )pbdoc"
     )
     .def_readwrite(
