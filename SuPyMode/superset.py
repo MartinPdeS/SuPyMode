@@ -337,7 +337,6 @@ class SuperSet(SuperSetPlots):
         profile: AlphaProfile,
         initial_amplitude: list,
         max_step: Optional[float] = None,
-        n_step: Optional[int] = None,
         add_coupling: bool = True,
         method: str = "RK45",
         **kwargs: dict,
@@ -353,8 +352,6 @@ class SuperSet(SuperSetPlots):
             The initial amplitude as a list of complex numbers.
         max_step : float, optional
             The maximum step size used by the solver (default is None).
-        n_step : int, optional
-            Number of steps used by the solver (default is None).
         add_coupling : bool, optional
             Whether to add coupling to the transmission matrix (default is True).
         method : str, optional
@@ -384,6 +381,7 @@ class SuperSet(SuperSetPlots):
             bounds_error=False,
             fill_value="extrapolate",
         )
+
         itr_to_t_matrix = interp1d(
             sub_itr_vector, sub_t_matrix, bounds_error=False, fill_value="extrapolate"
         )

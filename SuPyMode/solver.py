@@ -145,8 +145,6 @@ class SuPySolver(EIGENSOLVER):
             model_parameters=self.model_parameters,
         )
 
-        self.superset.geometry = self.mesh
-
     def add_modes(
         self,
         n_sorted_mode: int,
