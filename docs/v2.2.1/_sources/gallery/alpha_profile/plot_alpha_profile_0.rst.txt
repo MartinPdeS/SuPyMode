@@ -32,7 +32,7 @@ Importing the script dependencies
     from SuPyMode.workflow import AlphaProfile
 
 
-    profile = AlphaProfile(symmetric=False, add_end_of_taper_section=True)
+    profile = AlphaProfile(symmetric=True, add_end_of_taper_section=True)
 
 
 
@@ -46,14 +46,12 @@ Importing the script dependencies
 
 Adding a first taper segment with large initial heating length (i.e. slow reduction)
 
-.. GENERATED FROM PYTHON SOURCE LINES 16-23
+.. GENERATED FROM PYTHON SOURCE LINES 16-21
 
 .. code-block:: Python
 
     profile.add_taper_segment(
-        alpha=0,
-        initial_heating_length=8e-3,
-        stretching_length=0.2e-3 * 20
+        alpha=0, initial_heating_length=8e-3, stretching_length=0.2e-3 * 20
     )
 
 
@@ -64,18 +62,16 @@ Adding a first taper segment with large initial heating length (i.e. slow reduct
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 24-25
+.. GENERATED FROM PYTHON SOURCE LINES 22-23
 
 Adding a first taper segment with small initial heating length (i.e. steep reduction)
 
-.. GENERATED FROM PYTHON SOURCE LINES 25-36
+.. GENERATED FROM PYTHON SOURCE LINES 23-32
 
 .. code-block:: Python
 
     profile.add_taper_segment(
-        alpha=0,
-        initial_heating_length=2e-3,
-        stretching_length=0.2e-3 * 20
+        alpha=0, initial_heating_length=2e-3, stretching_length=0.2e-3 * 20
     )
 
     profile.initialize()
@@ -98,7 +94,7 @@ Adding a first taper segment with small initial heating length (i.e. steep reduc
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.507 seconds)
+   **Total running time of the script:** (0 minutes 0.487 seconds)
 
 
 .. _sphx_glr_download_gallery_alpha_profile_plot_alpha_profile_0.py:

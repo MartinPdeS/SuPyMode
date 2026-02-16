@@ -456,7 +456,14 @@ to download the full example code.</p>
 <section class="sphx-glr-example-title" id="x4-coupler-linear">
 <span id="sphx-glr-gallery-extra-plot-propagation-py"></span><h1>4x4 Coupler [linear]<a class="headerlink" href="#x4-coupler-linear" title="Link to this heading">#</a></h1>
 <p>Importing the script dependencies</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">Workflow</span><span class="p">,</span> <span class="n">fiber_loader</span><span class="p">,</span> <span class="n">Boundaries</span><span class="p">,</span> <span class="n">DomainAlignment</span><span class="p">,</span> <span class="n">Profile</span><span class="p">,</span> <span class="n">StructureType</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Workflow</span><span class="p">,</span>
+    <span class="n">fiber_loader</span><span class="p">,</span>
+    <span class="n">Boundaries</span><span class="p">,</span>
+    <span class="n">DomainAlignment</span><span class="p">,</span>
+    <span class="n">Profile</span><span class="p">,</span>
+    <span class="n">StructureType</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlphaProfile</span>
 
 <span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1550e-9</span>
@@ -473,16 +480,28 @@ to download the full example code.</p>
     <span class="n">structure_type</span><span class="o">=</span><span class="n">StructureType</span><span class="o">.</span><span class="n">CIRCULAR</span><span class="p">,</span>
     <span class="n">number_of_fibers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">fusion_degree</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
-    <span class="n">fiber_radius</span><span class="o">=</span><span class="mf">62.5e-6</span>
+    <span class="n">fiber_radius</span><span class="o">=</span><span class="mf">62.5e-6</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">clad_structure</span><span class="o">.</span><span class="n">refractive_index</span> <span class="o">=</span> <span class="n">clad_refractive_index</span>
 
 
 <span class="n">fiber_list</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span><span class="s1">&#39;DCF1300S_20&#39;</span><span class="p">,</span> <span class="n">clad_refractive_index</span><span class="o">=</span><span class="n">clad_refractive_index</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span><span class="s1">&#39;DCF1300S_26&#39;</span><span class="p">,</span> <span class="n">clad_refractive_index</span><span class="o">=</span><span class="n">clad_refractive_index</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span><span class="s1">&#39;DCF1300S_33&#39;</span><span class="p">,</span> <span class="n">clad_refractive_index</span><span class="o">=</span><span class="n">clad_refractive_index</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span>
+        <span class="s2">&quot;DCF1300S_20&quot;</span><span class="p">,</span>
+        <span class="n">clad_refractive_index</span><span class="o">=</span><span class="n">clad_refractive_index</span><span class="p">,</span>
+        <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">),</span>
+    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span>
+        <span class="s2">&quot;DCF1300S_26&quot;</span><span class="p">,</span>
+        <span class="n">clad_refractive_index</span><span class="o">=</span><span class="n">clad_refractive_index</span><span class="p">,</span>
+        <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="p">),</span>
+    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span>
+        <span class="s2">&quot;DCF1300S_33&quot;</span><span class="p">,</span>
+        <span class="n">clad_refractive_index</span><span class="o">=</span><span class="n">clad_refractive_index</span><span class="p">,</span>
+        <span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="p">),</span>
 <span class="p">]</span>
 
 <span class="n">capillary_tube</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">()</span>
@@ -499,44 +518,46 @@ to download the full example code.</p>
 <h2>Generating the computing workflow<a class="headerlink" href="#generating-the-computing-workflow" title="Link to this heading">#</a></h2>
 <p>Workflow class to define all the computation parameters before initializing the solver</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">workflow</span> <span class="o">=</span> <span class="n">Workflow</span><span class="p">(</span>
-    <span class="n">fiber_list</span><span class="o">=</span><span class="n">fiber_list</span><span class="p">,</span>              <span class="c1"># List of fiber to be added in the mesh, the order matters.</span>
-    <span class="n">clad_structure</span><span class="o">=</span><span class="n">clad_structure</span><span class="p">,</span>      <span class="c1"># Cladding structure, if None provided then no cladding is set.</span>
+    <span class="n">fiber_list</span><span class="o">=</span><span class="n">fiber_list</span><span class="p">,</span>  <span class="c1"># List of fiber to be added in the mesh, the order matters.</span>
+    <span class="n">clad_structure</span><span class="o">=</span><span class="n">clad_structure</span><span class="p">,</span>  <span class="c1"># Cladding structure, if None provided then no cladding is set.</span>
     <span class="n">capillary_tube</span><span class="o">=</span><span class="n">capillary_tube</span><span class="p">,</span>
-    <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>              <span class="c1"># Wavelength used for the mode computation.</span>
-    <span class="n">resolution</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>                      <span class="c1"># Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].</span>
-    <span class="n">x_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">CENTERING</span><span class="p">,</span> <span class="c1"># Mesh x-boundary structure.</span>
-    <span class="n">y_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">CENTERING</span><span class="p">,</span> <span class="c1"># Mesh y-boundary structure.</span>
-    <span class="n">boundaries</span><span class="o">=</span><span class="p">[</span><span class="n">Boundaries</span><span class="p">()],</span>      <span class="c1"># Set of symmetries to be evaluated, each symmetry add a round of simulation</span>
-    <span class="n">n_sorted_mode</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>                <span class="c1"># Total computed and sorted mode.</span>
-    <span class="n">n_added_mode</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>                 <span class="c1"># Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].</span>
-    <span class="n">debug_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>                   <span class="c1"># Print the iteration step for the solver plus some other important steps. [Does not work properly on jupyter notebooks]</span>
-    <span class="n">auto_label</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>               <span class="c1"># Auto labeling the mode. Label are not always correct and should be verified afterwards.</span>
-    <span class="n">itr_final</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>                  <span class="c1"># Final value of inverse taper ratio to simulate</span>
+    <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>  <span class="c1"># Wavelength used for the mode computation.</span>
+    <span class="n">resolution</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>  <span class="c1"># Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].</span>
+    <span class="n">x_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">CENTERING</span><span class="p">,</span>  <span class="c1"># Mesh x-boundary structure.</span>
+    <span class="n">y_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">CENTERING</span><span class="p">,</span>  <span class="c1"># Mesh y-boundary structure.</span>
+    <span class="n">boundaries</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">Boundaries</span><span class="p">()</span>
+    <span class="p">],</span>  <span class="c1"># Set of symmetries to be evaluated, each symmetry add a round of simulation</span>
+    <span class="n">n_sorted_mode</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># Total computed and sorted mode.</span>
+    <span class="n">n_added_mode</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>  <span class="c1"># Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].</span>
+    <span class="n">debug_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># Print the iteration step for the solver plus some other important steps. [Does not work properly on jupyter notebooks]</span>
+    <span class="n">auto_label</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Auto labeling the mode. Label are not always correct and should be verified afterwards.</span>
+    <span class="n">itr_final</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>  <span class="c1"># Final value of inverse taper ratio to simulate</span>
 <span class="p">)</span>
 
 <span class="n">workflow</span><span class="o">.</span><span class="n">initialize_geometry</span><span class="p">(</span><span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Initialize the geometry and plot it</span>
 
 <span class="n">workflow</span><span class="o">.</span><span class="n">run_solver</span><span class="p">()</span>  <span class="c1"># Run the solver to compute the modes</span>
 
-<span class="n">profile</span> <span class="o">=</span> <span class="n">AlphaProfile</span><span class="p">(</span><span class="n">symmetric</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_end_of_taper_section</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">profile</span> <span class="o">=</span> <span class="n">AlphaProfile</span><span class="p">(</span><span class="n">symmetric</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_end_of_taper_section</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <img src="../../_images/sphx_glr_plot_propagation_001.png" srcset="../../_images/sphx_glr_plot_propagation_001.png" alt="Fiber structure, Fiber structure" class = "sphx-glr-single-img"/><p>Adding a first taper segment with large initial heating length (i.e. slow reduction)</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">profile</span><span class="o">.</span><span class="n">add_taper_segment</span><span class="p">(</span>
-    <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-    <span class="n">initial_heating_length</span><span class="o">=</span><span class="mf">0.1e-3</span><span class="p">,</span>
-    <span class="n">stretching_length</span><span class="o">=</span><span class="mf">0.1e-3</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">initial_heating_length</span><span class="o">=</span><span class="mf">0.1e-3</span><span class="p">,</span> <span class="n">stretching_length</span><span class="o">=</span><span class="mf">0.1e-3</span>
 <span class="p">)</span>
 
 <span class="n">profile</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
 
-<span class="n">propagation</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">superset</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="n">add_coupling</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span> <span class="n">initial_amplitude</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">propagation</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">superset</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span>
+    <span class="n">add_coupling</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="n">profile</span><span class="p">,</span> <span class="n">initial_amplitude</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="p">)</span>
 
 <span class="n">propagation</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 <span class="c1"># -</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_propagation_002.png" srcset="../../_images/sphx_glr_plot_propagation_002.png" alt="plot propagation" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 10.684 seconds)</p>
+<img src="../../_images/sphx_glr_plot_propagation_002.png" srcset="../../_images/sphx_glr_plot_propagation_002.png" alt="plot propagation" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 8.264 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-extra-plot-propagation-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/eecb649788261b10cf43c06e5a0dabdc/plot_propagation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_propagation.ipynb</span></code></a></p>
