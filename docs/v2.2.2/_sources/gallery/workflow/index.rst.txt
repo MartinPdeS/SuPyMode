@@ -129,6 +129,23 @@ Standard workflow
     </div>
 
 
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="1x1 Coupler -- Base Workflow">
+
+.. only:: html
+
+  .. image:: /gallery/workflow/images/thumb/sphx_glr_plot_workflow_base_thumb.png
+    :alt:
+
+  :doc:`/gallery/workflow/plot_workflow_base`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">1x1 Coupler -- Base Workflow</div>
+    </div>
+
+
 .. thumbnail-parent-div-close
 
 .. raw:: html
@@ -146,6 +163,7 @@ Standard workflow
    /gallery/workflow/plot_workflow_05
    /gallery/workflow/plot_workflow_06
    /gallery/workflow/plot_workflow_07
+   /gallery/workflow/plot_workflow_base
 
 
 
