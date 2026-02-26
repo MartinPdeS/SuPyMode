@@ -161,8 +161,8 @@ def get_symmetrized_vector(
         - 'first': Symmetrize using the first element as reference.
         Default is 'last'.
 
-    Returns:
-    --------
+    Returns
+    -------
     numpy.ndarray
         A new vector that is the symmetrized version of the input vector.
 
