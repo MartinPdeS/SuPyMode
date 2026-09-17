@@ -1,0 +1,4 @@
+# Generated documentation and gallery notebooks should not determine the
+# repository's primary language. Core Python and C++ sources remain counted.
+docs/** linguist-documentation
+notebook.ipynb linguist-documentation
