@@ -57,7 +57,7 @@ def generate_version_file(version: str) -> None:
     """Generate ``_version.py`` through the configured SCM-versioning tool."""
     environment = os.environ.copy()
     environment["SETUPTOOLS_SCM_PRETEND_VERSION"] = version
-    run(sys.executable, "-m", "vcs_versioning", "--force-write-version-files", env=environment)
+    run(sys.executable, "-m", "setuptools_scm", "--force-write-version-files", env=environment)
     if not VERSION_FILE.exists():
         raise RuntimeError("SCM versioning did not generate SuPyMode/_version.py")
 
