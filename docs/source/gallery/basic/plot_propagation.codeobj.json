@@ -1,0 +1,502 @@
+{
+ "AlphaProfile": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "SuPyMode.profiles",
+   "module_short": "SuPyMode.profiles",
+   "name": "AlphaProfile"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "AlphaProfile"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "AlphaProfile"
+  }
+ ],
+ "Boundaries": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "PyFinitDiff.finite_difference_2D.boundaries",
+   "module_short": "PyFinitDiff.finite_difference_2D",
+   "name": "Boundaries"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "PyFinitDiff.finite_difference_2D",
+   "module_short": "PyFinitDiff.finite_difference_2D",
+   "name": "Boundaries"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "PyFinitDiff",
+   "module_short": "PyFinitDiff",
+   "name": "Boundaries"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Boundaries"
+  }
+ ],
+ "DomainAlignment.CENTERING": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.geometry",
+   "module_short": "FiberFusing",
+   "name": "DomainAlignment"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "DomainAlignment"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow.DomainAlignment",
+   "module_short": "SuPyMode.workflow.DomainAlignment",
+   "name": "CENTERING"
+  }
+ ],
+ "Profile": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "FiberFusing.profile",
+   "module_short": "FiberFusing.profile",
+   "name": "Profile"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "Profile"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "FiberFusing.helper",
+   "module_short": "FiberFusing.helper",
+   "name": "OverlayStructureBaseClass"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "OverlayStructureBaseClass"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Profile"
+  }
+ ],
+ "StructureType.CIRCULAR": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.profile",
+   "module_short": "FiberFusing.profile",
+   "name": "StructureType"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "StructureType"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow.StructureType",
+   "module_short": "SuPyMode.workflow.StructureType",
+   "name": "CIRCULAR"
+  }
+ ],
+ "Workflow": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Workflow"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "Workflow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Workflow"
+  }
+ ],
+ "capillary_tube": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.profile",
+   "module_short": "FiberFusing.profile",
+   "name": "Profile"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "Profile"
+  }
+ ],
+ "capillary_tube.add_center_fiber": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.profile",
+   "module_short": "FiberFusing.profile",
+   "name": "Profile.add_center_fiber"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "Profile.add_center_fiber"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.helper",
+   "module_short": "FiberFusing.helper",
+   "name": "OverlayStructureBaseClass.add_center_fiber"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "OverlayStructureBaseClass.add_center_fiber"
+  }
+ ],
+ "capillary_tube.refractive_index": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  }
+ ],
+ "clad_refractive_index": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  }
+ ],
+ "clad_structure": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.profile",
+   "module_short": "FiberFusing.profile",
+   "name": "Profile"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "Profile"
+  }
+ ],
+ "clad_structure.add_structure": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.profile",
+   "module_short": "FiberFusing.profile",
+   "name": "Profile.add_structure"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "Profile.add_structure"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.helper",
+   "module_short": "FiberFusing.helper",
+   "name": "OverlayStructureBaseClass.add_structure"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "OverlayStructureBaseClass.add_structure"
+  }
+ ],
+ "clad_structure.cores": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.profile",
+   "module_short": "FiberFusing.profile",
+   "name": "Profile.cores"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "Profile.cores"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.helper",
+   "module_short": "FiberFusing.helper",
+   "name": "OverlayStructureBaseClass.cores"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "OverlayStructureBaseClass.cores"
+  }
+ ],
+ "clad_structure.refractive_index": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  }
+ ],
+ "fiber_list": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list"
+  }
+ ],
+ "fiber_loader.load_fiber": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.fiber.loader",
+   "module_short": "FiberFusing.fiber",
+   "name": "FiberLoader.load_fiber"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.fiber",
+   "module_short": "FiberFusing.fiber",
+   "name": "FiberLoader.load_fiber"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "FiberLoader.load_fiber"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow.fiber_loader",
+   "module_short": "SuPyMode.workflow.fiber_loader",
+   "name": "load_fiber"
+  }
+ ],
+ "profile": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.profiles",
+   "module_short": "SuPyMode.profiles",
+   "name": "AlphaProfile"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "AlphaProfile"
+  }
+ ],
+ "profile.add_taper_segment": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.profiles",
+   "module_short": "SuPyMode.profiles",
+   "name": "AlphaProfile.add_taper_segment"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "AlphaProfile.add_taper_segment"
+  }
+ ],
+ "profile.initialize": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.profiles",
+   "module_short": "SuPyMode.profiles",
+   "name": "AlphaProfile.initialize"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "AlphaProfile.initialize"
+  }
+ ],
+ "propagation": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.propagation",
+   "module_short": "SuPyMode.propagation",
+   "name": "Propagation"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "Propagation"
+  }
+ ],
+ "propagation.plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.propagation",
+   "module_short": "SuPyMode.propagation",
+   "name": "Propagation.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "Propagation.plot"
+  }
+ ],
+ "superset": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.superset",
+   "module_short": "SuPyMode.superset",
+   "name": "SuperSet"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "SuperSet"
+  }
+ ],
+ "wavelength": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  }
+ ],
+ "workflow": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Workflow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "Workflow"
+  }
+ ],
+ "workflow.get_superset": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Workflow.get_superset"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "Workflow.get_superset"
+  }
+ ],
+ "workflow.superset.propagate": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Workflow.superset"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "Workflow.superset"
+  }
+ ]
+}

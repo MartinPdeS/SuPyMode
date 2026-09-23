@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "SuPyMode/cpp/eigensolver",
+		"source" : "SuPyMode/cpp/eigensolver"
+	}
+}

@@ -1,0 +1,129 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 104,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/SuPyMode/SuPyMode/binary",
+			"paths" : 
+			[
+				"SuPyMode/cpp/mesh/libmesh.a"
+			],
+			"targetId" : "mesh::@9734687cec8fe779adc5",
+			"targetIndex" : 5,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/SuPyMode/SuPyMode/binary",
+			"paths" : 
+			[
+				"SuPyMode/cpp/mesh/interface_mesh.cpython-313-darwin.so"
+			],
+			"targetId" : "interface_mesh::@9734687cec8fe779adc5",
+			"targetIndex" : 2,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/SuPyMode/SuPyMode/binary",
+			"paths" : 
+			[
+				"SuPyMode/cpp/model_parameters/libmodel_parameters.a"
+			],
+			"targetId" : "model_parameters::@c70c38d070abd2732137",
+			"targetIndex" : 6,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/SuPyMode/SuPyMode/binary",
+			"paths" : 
+			[
+				"SuPyMode/cpp/model_parameters/interface_model_parameters.cpython-313-darwin.so"
+			],
+			"targetId" : "interface_model_parameters::@c70c38d070abd2732137",
+			"targetIndex" : 3,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/SuPyMode/SuPyMode/binary",
+			"paths" : 
+			[
+				"SuPyMode/cpp/supermode/libsupermode.a"
+			],
+			"targetId" : "supermode::@466f56980356a976076e",
+			"targetIndex" : 7,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/SuPyMode/SuPyMode/binary",
+			"paths" : 
+			[
+				"SuPyMode/cpp/supermode/interface_supermode.cpython-313-darwin.so"
+			],
+			"targetId" : "interface_supermode::@466f56980356a976076e",
+			"targetIndex" : 4,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/SuPyMode/SuPyMode/binary",
+			"paths" : 
+			[
+				"SuPyMode/cpp/eigensolver/libeigensolver.a"
+			],
+			"targetId" : "eigensolver::@25773cfa607499fbd7f5",
+			"targetIndex" : 0,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/SuPyMode/SuPyMode/binary",
+			"paths" : 
+			[
+				"SuPyMode/cpp/eigensolver/interface_eigensolver.cpython-313-darwin.so"
+			],
+			"targetId" : "interface_eigensolver::@25773cfa607499fbd7f5",
+			"targetIndex" : 1,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	}
+}

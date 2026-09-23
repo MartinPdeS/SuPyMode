@@ -4,7 +4,6 @@ build-backend = "scikit_build_core.build"
 
 [tool.scikit-build]
 build-dir = ".skbuild/{wheel_tag}"
-metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
 logging.level = "INFO"
 wheel.exclude = ["SuPyMode/cpp"]
 install.strip = false
@@ -17,35 +16,32 @@ sdist.exclude = [
 ]
 
 [tool.setuptools_scm]
-
 write_to = "SuPyMode/_version.py"
 version_scheme = "only-version"
 local_scheme = "no-local-version"
 
 [project]
 name = "SuPyMode"
-dynamic = ["version"]
+version = "2.2.2"
 description = "A package for light propagation in fiber optics."
 license = {file = "LICENSE"}
 readme = "README.rst"
 requires-python = ">=3.11"
 authors = [{ name="Martin Poinsinet de Sivry-Houle", email="martin.poinsinet.de.sivry@gmail.com"}]
 classifiers = [
-    'Programming Language :: Python',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.11',
-    'Programming Language :: Python :: 3.12',
-    'Programming Language :: Python :: Implementation :: CPython',
-    'Development Status :: 4 - Beta',
-    'Topic :: Scientific/Engineering :: Physics',
-    'License :: OSI Approved :: MIT License',
-    'Intended Audience :: Science/Research',
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Development Status :: 4 - Beta",
+    "Topic :: Scientific/Engineering :: Physics",
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Science/Research",
 ]
-
 dependencies = [
     "setuptools_scm[toml]>=8.0",
     "numpy>=2.0.0",
-    # "scipy",
     "MPSPlots",
     "pydantic",
     "PyFinitDiff",
@@ -54,11 +50,16 @@ dependencies = [
     "PyFiberModes",
     "pathvalidate",
 ]
-
 keywords = [
     "coupled-mode theory",
     "waveguide",
 ]
+
+[project.urls]
+Homepage = "https://github.com/MartinPdeS/SuPyMode"
+Repository = "https://github.com/MartinPdeS/SuPyMode"
+Issues = "https://github.com/MartinPdeS/SuPyMode/issues"
+Documentation = "https://martinpdes.github.io/SuPyMode/"
 
 [project.optional-dependencies]
 testing = [
@@ -74,21 +75,28 @@ documentation = [
     "sphinx-rtd-theme==3.1.0",
     "sphinx-gallery==0.20.0",
     "sphinx_design==0.6.1",
-    "pydata-sphinx-theme==0.16.1"
+    "pydata-sphinx-theme==0.16.1",
 ]
 dev = [
-    "flake8==7.3.0"
+    "ruff>=0.8,<1",
 ]
 
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F"]
+
 [tool.coverage.run]
-source = ['SuPyMode']
+source = ["SuPyMode"]
 omit = [
-    '*\__init__.py',
-    'SuPyMode/_version.py',
-    'SuPyMode/directories.py',
-    'SuPyMode/tools/special.py',
-    'SuPyMode/tools/utils.py',
-    'SuPyMode/special.py'
+    "*\\__init__.py",
+    "SuPyMode/_version.py",
+    "SuPyMode/directories.py",
+    "SuPyMode/tools/special.py",
+    "SuPyMode/tools/utils.py",
+    "SuPyMode/special.py",
 ]
 branch = true
 relative_files = true
@@ -108,10 +116,10 @@ test-command = "cd {project}; python -m pytest --config-file=pytest.ini --ignore
 [tool.cibuildwheel.macos]
 archs = ["arm64"]
 build = ["cp311-*", "cp312-*"]
-repair-wheel-command = "delocate-wheel -w {dest_dir} -v {wheel}"  # --exclude=libomp.dylib
-test-command = 'cd {project}; python -m pytest --config-file=pytest.ini'  # DYLD_PRINT_LIBRARIES=NO
+repair-wheel-command = "delocate-wheel -w {dest_dir} -v {wheel}"
+test-command = "cd {project}; python -m pytest --config-file=pytest.ini"
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
 build = ["cp311-*", "cp312-*"]
-test-command = 'cd /d {project} && python -m pytest --config-file=pytest.ini'
+test-command = "cd /d {project} && python -m pytest --config-file=pytest.ini"

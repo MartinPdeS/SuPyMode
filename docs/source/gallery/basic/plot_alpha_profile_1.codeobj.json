@@ -1,0 +1,105 @@
+{
+ "AlphaProfile": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "SuPyMode.profiles",
+   "module_short": "SuPyMode.profiles",
+   "name": "AlphaProfile"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "AlphaProfile"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "AlphaProfile"
+  }
+ ],
+ "profile": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.profiles",
+   "module_short": "SuPyMode.profiles",
+   "name": "AlphaProfile"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "AlphaProfile"
+  }
+ ],
+ "profile.add_taper_segment": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.profiles",
+   "module_short": "SuPyMode.profiles",
+   "name": "AlphaProfile.add_taper_segment"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "AlphaProfile.add_taper_segment"
+  }
+ ],
+ "profile.adiabatic": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.profiles",
+   "module_short": "SuPyMode.profiles",
+   "name": "AlphaProfile.adiabatic"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "AlphaProfile.adiabatic"
+  }
+ ],
+ "profile.initialize": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.profiles",
+   "module_short": "SuPyMode.profiles",
+   "name": "AlphaProfile.initialize"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "AlphaProfile.initialize"
+  }
+ ],
+ "profile.plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.profiles",
+   "module_short": "SuPyMode.profiles",
+   "name": "AlphaProfile.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "AlphaProfile.plot"
+  }
+ ]
+}

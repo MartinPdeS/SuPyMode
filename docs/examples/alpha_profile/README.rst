@@ -1,2 +1,0 @@
-Coupler Alpha Profile
-~~~~~~~~~~~~~~~~~~~~~

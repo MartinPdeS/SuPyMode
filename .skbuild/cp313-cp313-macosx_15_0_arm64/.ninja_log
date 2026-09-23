@@ -1,0 +1,17 @@
+# ninja log v5
+9	10136	1764945409050862152	SuPyMode/cpp/model_parameters/CMakeFiles/interface_model_parameters.dir/interface.cpp.o	68cd9cc9ed61b6bf
+8	10620	1764945409789634402	SuPyMode/cpp/mesh/CMakeFiles/interface_mesh.dir/interface.cpp.o	9154d8d63183a051
+9	10847	1764945409987852748	SuPyMode/cpp/model_parameters/CMakeFiles/model_parameters.dir/model_parameters.cpp.o	121f263c68948851
+8	10994	1764945410194438549	SuPyMode/cpp/mesh/CMakeFiles/mesh.dir/mesh.cpp.o	dc544085a90eb2b4
+10994	11260	1764945410505339000	SuPyMode/cpp/mesh/libmesh.a	de6f5b313b6cdc89
+10	11340	1764945410521125905	SuPyMode/cpp/supermode/CMakeFiles/interface_supermode.dir/interface.cpp.o	888b3d8fc2aacaf9
+11261	11457	1764945410701759000	SuPyMode/cpp/model_parameters/libmodel_parameters.a	ab389dcdfce23eb0
+12	11718	1764945410931953881	SuPyMode/cpp/eigensolver/CMakeFiles/interface_eigensolver.dir/interface.cpp.o	5068005c57999b61
+11260	13495	1764945412740163069	SuPyMode/cpp/mesh/interface_mesh.cpython-313-darwin.so	eeb2f48ef620be6e
+11457	13501	1764945412746355774	SuPyMode/cpp/model_parameters/interface_model_parameters.cpython-313-darwin.so	360d4dfce44137c6
+10	13835	1764945413062717554	SuPyMode/cpp/supermode/CMakeFiles/supermode.dir/supermode.cpp.o	e817965fcb56b2b0
+13836	13890	1764945413135752000	SuPyMode/cpp/supermode/libsupermode.a	f7643418efa4442a
+13890	15352	1764945414596994395	SuPyMode/cpp/supermode/interface_supermode.cpython-313-darwin.so	6cd64648e57ddf8e
+11	20464	1764945419679716233	SuPyMode/cpp/eigensolver/CMakeFiles/eigensolver.dir/eigensolver.cpp.o	3c308b2e088568c0
+20465	20514	1764945419759941000	SuPyMode/cpp/eigensolver/libeigensolver.a	b9d2c746a4ef4fc
+20514	21629	1764945420875086475	SuPyMode/cpp/eigensolver/interface_eigensolver.cpython-313-darwin.so	750fa7a05218511f

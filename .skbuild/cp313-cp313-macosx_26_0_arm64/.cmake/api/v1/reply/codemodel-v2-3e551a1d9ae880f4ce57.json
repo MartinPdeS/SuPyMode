@@ -1,0 +1,256 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Release-e0099171065e72efb79e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "SuPyMode/cpp/boundaries",
+					"jsonFile" : "directory-SuPyMode.cpp.boundaries-Release-81ad6ef4296c2d85ebfb.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "SuPyMode/cpp/boundaries",
+					"targetIndexes" : 
+					[
+						0,
+						2
+					]
+				},
+				{
+					"build" : "SuPyMode/cpp/taper",
+					"jsonFile" : "directory-SuPyMode.cpp.taper-Release-49d0cecd459f75cf1e09.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "SuPyMode/cpp/taper",
+					"targetIndexes" : 
+					[
+						7,
+						11
+					]
+				},
+				{
+					"build" : "SuPyMode/cpp/mesh",
+					"jsonFile" : "directory-SuPyMode.cpp.mesh-Release-2527624b25d6ac40b397.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "SuPyMode/cpp/mesh",
+					"targetIndexes" : 
+					[
+						4,
+						8
+					]
+				},
+				{
+					"build" : "SuPyMode/cpp/model_parameters",
+					"jsonFile" : "directory-SuPyMode.cpp.model_parameters-Release-1c3b7175d303e5bfb003.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "SuPyMode/cpp/model_parameters",
+					"targetIndexes" : 
+					[
+						5,
+						9
+					]
+				},
+				{
+					"build" : "SuPyMode/cpp/supermode",
+					"jsonFile" : "directory-SuPyMode.cpp.supermode-Release-281cc49aa52d68f3f58c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "SuPyMode/cpp/supermode",
+					"targetIndexes" : 
+					[
+						6,
+						10
+					]
+				},
+				{
+					"build" : "SuPyMode/cpp/eigensolver",
+					"jsonFile" : "directory-SuPyMode.cpp.eigensolver-Release-4c13589af97fd64bd3c3.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "SuPyMode/cpp/eigensolver",
+					"targetIndexes" : 
+					[
+						1,
+						3
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					],
+					"name" : "SuPyMode",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "boundaries::@ae73d9d9ac06bef3852a",
+					"jsonFile" : "target-boundaries-Release-62f02ca8171456315729.json",
+					"name" : "boundaries",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "eigensolver::@25773cfa607499fbd7f5",
+					"jsonFile" : "target-eigensolver-Release-42b33f3474cc06f4f6e2.json",
+					"name" : "eigensolver",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "interface_boundaries::@ae73d9d9ac06bef3852a",
+					"jsonFile" : "target-interface_boundaries-Release-ecf39b07daa79330a101.json",
+					"name" : "interface_boundaries",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "interface_eigensolver::@25773cfa607499fbd7f5",
+					"jsonFile" : "target-interface_eigensolver-Release-bbbf93c5bfdc2e99c8f8.json",
+					"name" : "interface_eigensolver",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "interface_mesh::@9734687cec8fe779adc5",
+					"jsonFile" : "target-interface_mesh-Release-896eb804d8d9bda1ef5d.json",
+					"name" : "interface_mesh",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "interface_model_parameters::@c70c38d070abd2732137",
+					"jsonFile" : "target-interface_model_parameters-Release-f347fd0ccf973d67fbde.json",
+					"name" : "interface_model_parameters",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "interface_supermode::@466f56980356a976076e",
+					"jsonFile" : "target-interface_supermode-Release-a5bca3cd8dd7688a0ebd.json",
+					"name" : "interface_supermode",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "interface_taper::@ba01dbe9cc3ed2615f78",
+					"jsonFile" : "target-interface_taper-Release-bb846f581055aedb534c.json",
+					"name" : "interface_taper",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "mesh::@9734687cec8fe779adc5",
+					"jsonFile" : "target-mesh-Release-d6073162afb2d4a2710a.json",
+					"name" : "mesh",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "model_parameters::@c70c38d070abd2732137",
+					"jsonFile" : "target-model_parameters-Release-3f7f4895f1288fcfda6a.json",
+					"name" : "model_parameters",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "supermode::@466f56980356a976076e",
+					"jsonFile" : "target-supermode-Release-29074848c03479fb7859.json",
+					"name" : "supermode",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "taper::@ba01dbe9cc3ed2615f78",
+					"jsonFile" : "target-taper-Release-cffefb2b070944e171d2.json",
+					"name" : "taper",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/SuPyMode/.skbuild/cp313-cp313-macosx_26_0_arm64",
+		"source" : "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/SuPyMode"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

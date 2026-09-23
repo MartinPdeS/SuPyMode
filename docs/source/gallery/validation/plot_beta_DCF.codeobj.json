@@ -1,0 +1,905 @@
+{
+ "Boundaries": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "PyFinitDiff.finite_difference_2D.boundaries",
+   "module_short": "PyFinitDiff.finite_difference_2D",
+   "name": "Boundaries"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "PyFinitDiff.finite_difference_2D",
+   "module_short": "PyFinitDiff.finite_difference_2D",
+   "name": "Boundaries"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "PyFinitDiff",
+   "module_short": "PyFinitDiff",
+   "name": "Boundaries"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Boundaries"
+  }
+ ],
+ "BoundaryValue.ANTI_SYMMETRIC": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFinitDiff.boundary_values",
+   "module_short": "PyFinitDiff",
+   "name": "BoundaryValue"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFinitDiff",
+   "module_short": "PyFinitDiff",
+   "name": "BoundaryValue"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow.BoundaryValue",
+   "module_short": "SuPyMode.workflow.BoundaryValue",
+   "name": "ANTI_SYMMETRIC"
+  }
+ ],
+ "BoundaryValue.SYMMETRIC": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFinitDiff.boundary_values",
+   "module_short": "PyFinitDiff",
+   "name": "BoundaryValue"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFinitDiff",
+   "module_short": "PyFinitDiff",
+   "name": "BoundaryValue"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow.BoundaryValue",
+   "module_short": "SuPyMode.workflow.BoundaryValue",
+   "name": "SYMMETRIC"
+  }
+ ],
+ "DomainAlignment.LEFT": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.geometry",
+   "module_short": "FiberFusing",
+   "name": "DomainAlignment"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "DomainAlignment"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow.DomainAlignment",
+   "module_short": "SuPyMode.workflow.DomainAlignment",
+   "name": "LEFT"
+  }
+ ],
+ "DomainAlignment.TOP": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.geometry",
+   "module_short": "FiberFusing",
+   "name": "DomainAlignment"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "DomainAlignment"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow.DomainAlignment",
+   "module_short": "SuPyMode.workflow.DomainAlignment",
+   "name": "TOP"
+  }
+ ],
+ "LP01": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes.mode",
+   "module_short": "PyFiberModes",
+   "name": "Mode"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes",
+   "module_short": "PyFiberModes",
+   "name": "Mode"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes",
+   "module_short": "PyFiberModes",
+   "name": "LP01"
+  }
+ ],
+ "MaterialBank.fused_silica.compute_refractive_index": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyOptik.material.sellmeier_class",
+   "module_short": "PyOptik",
+   "name": "SellmeierMaterial.compute_refractive_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyOptik.material",
+   "module_short": "PyOptik",
+   "name": "SellmeierMaterial.compute_refractive_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyOptik",
+   "module_short": "PyOptik",
+   "name": "SellmeierMaterial.compute_refractive_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyOptik.material.base_class",
+   "module_short": "PyOptik.material.base_class",
+   "name": "BaseMaterial.compute_refractive_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyOptik.material",
+   "module_short": "PyOptik.material",
+   "name": "BaseMaterial.compute_refractive_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyOptik",
+   "module_short": "PyOptik",
+   "name": "BaseMaterial.compute_refractive_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyOptik.MaterialBank.fused_silica",
+   "module_short": "PyOptik.MaterialBank.fused_silica",
+   "name": "compute_refractive_index"
+  }
+ ],
+ "Workflow": [
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Workflow"
+  },
+  {
+   "is_class": true,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "Workflow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Workflow"
+  }
+ ],
+ "_fiber": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes.fiber",
+   "module_short": "PyFiberModes.fiber",
+   "name": "Fiber"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes",
+   "module_short": "PyFiberModes",
+   "name": "Fiber"
+  }
+ ],
+ "_fiber.get_effective_index": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes.fiber",
+   "module_short": "PyFiberModes.fiber",
+   "name": "Fiber.get_effective_index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes",
+   "module_short": "PyFiberModes",
+   "name": "Fiber.get_effective_index"
+  }
+ ],
+ "analytical": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "ax": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes"
+  }
+ ],
+ "ax.legend": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.legend"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.legend"
+  }
+ ],
+ "ax.plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.plot"
+  }
+ ],
+ "ax.scatter": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.scatter"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.scatter"
+  }
+ ],
+ "ax.set": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "Axes.set"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Axes.set"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes._base",
+   "module_short": "matplotlib.axes._base",
+   "name": "_AxesBase.set"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.axes",
+   "module_short": "matplotlib.axes",
+   "name": "_AxesBase.set"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "_AxesBase.set"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.artist",
+   "module_short": "matplotlib.artist",
+   "name": "Artist.set"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Artist.set"
+  }
+ ],
+ "boundaries": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list"
+  }
+ ],
+ "dcf_fiber": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes.fiber",
+   "module_short": "PyFiberModes.fiber",
+   "name": "Fiber"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes",
+   "module_short": "PyFiberModes",
+   "name": "Fiber"
+  }
+ ],
+ "dcf_fiber.scale": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes.fiber",
+   "module_short": "PyFiberModes.fiber",
+   "name": "Fiber.scale"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes",
+   "module_short": "PyFiberModes",
+   "name": "Fiber.scale"
+  }
+ ],
+ "fiber_list": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "list"
+  }
+ ],
+ "fiber_loader.load_fiber": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.fiber.loader",
+   "module_short": "FiberFusing.fiber",
+   "name": "FiberLoader.load_fiber"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.fiber",
+   "module_short": "FiberFusing.fiber",
+   "name": "FiberLoader.load_fiber"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "FiberLoader.load_fiber"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow.fiber_loader",
+   "module_short": "SuPyMode.workflow.fiber_loader",
+   "name": "load_fiber"
+  }
+ ],
+ "fiber_name": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "str"
+  }
+ ],
+ "figure": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.figure",
+   "module_short": "matplotlib.figure",
+   "name": "Figure"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib",
+   "module_short": "matplotlib",
+   "name": "Figure"
+  }
+ ],
+ "idx": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "int"
+  }
+ ],
+ "itr": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "float64"
+  }
+ ],
+ "itr_list": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "ndarray"
+  }
+ ],
+ "itr_list.shape": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "tuple"
+  }
+ ],
+ "load_fiber": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes.fiber",
+   "module_short": "PyFiberModes.fiber",
+   "name": "load_fiber"
+  }
+ ],
+ "numpy.empty": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "builtin_function_or_method"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "numpy",
+   "module_short": "numpy",
+   "name": "empty"
+  }
+ ],
+ "plt.show": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "show"
+  }
+ ],
+ "plt.subplots": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "matplotlib.pyplot",
+   "module_short": "matplotlib.pyplot",
+   "name": "subplots"
+  }
+ ],
+ "pyfibermodes_mode": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes.mode",
+   "module_short": "PyFiberModes",
+   "name": "Mode"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PyFiberModes",
+   "module_short": "PyFiberModes",
+   "name": "Mode"
+  }
+ ],
+ "supymode_mode": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.binary.interface_supermode",
+   "module_short": "SuPyMode.binary.interface_supermode",
+   "name": "SUPERMODE"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.binary",
+   "module_short": "SuPyMode.binary",
+   "name": "SUPERMODE"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "SUPERMODE"
+  }
+ ],
+ "supymode_mode.index.data": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.binary.interface_supermode",
+   "module_short": "SuPyMode.binary.interface_supermode",
+   "name": "SUPERMODE.index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.binary",
+   "module_short": "SuPyMode.binary",
+   "name": "SUPERMODE.index"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "SUPERMODE.index"
+  }
+ ],
+ "wavelength": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  }
+ ],
+ "workflow": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Workflow"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "Workflow"
+  }
+ ],
+ "workflow.geometry.plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing.geometry",
+   "module_short": "FiberFusing",
+   "name": "Geometry.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "FiberFusing",
+   "module_short": "FiberFusing",
+   "name": "Geometry.plot"
+  }
+ ],
+ "workflow.initialize_geometry": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Workflow.initialize_geometry"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "Workflow.initialize_geometry"
+  }
+ ],
+ "workflow.plot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Workflow.plot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "Workflow.plot"
+  }
+ ],
+ "workflow.run_solver": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Workflow.run_solver"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "Workflow.run_solver"
+  }
+ ],
+ "workflow.superset.LP01": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Workflow.superset"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "Workflow.superset"
+  }
+ ],
+ "workflow.superset.model_parameters.itr_list": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode.workflow",
+   "module_short": "SuPyMode.workflow",
+   "name": "Workflow.superset"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "SuPyMode",
+   "module_short": "SuPyMode",
+   "name": "Workflow.superset"
+  }
+ ]
+}

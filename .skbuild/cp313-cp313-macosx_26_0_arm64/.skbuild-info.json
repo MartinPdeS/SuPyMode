@@ -1,0 +1,8 @@
+{
+  "source_dir": "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/SuPyMode",
+  "build_dir": "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/SuPyMode/.skbuild/cp313-cp313-macosx_26_0_arm64",
+  "cmake_path": "/opt/homebrew/bin/cmake",
+  "skbuild_path": "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/git-repo_venv/lib/python3.13/site-packages/scikit_build_core",
+  "skbuild_version": "0.11.6",
+  "python_executable": "/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/git-repo_venv/bin/python3.13"
+}
