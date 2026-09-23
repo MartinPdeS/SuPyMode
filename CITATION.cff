@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use SuPyMode in your research, please cite this software and the associated publication."
+title: "SuPyMode"
+type: software
+authors:
+  - family-names: "Poinsinet de Sivry-Houle"
+    given-names: "Martin"
+  - family-names: "Becerra Deana"
+    given-names: "Rodrigo Itzamna"
+  - family-names: "Virally"
+    given-names: "Stephane"
+  - family-names: "Godbout"
+    given-names: "Nicolas"
+  - family-names: "Boudoux"
+    given-names: "Caroline"
+abstract: >
+  SuPyMode is an open-source Python package for the design and optimization of
+  fiber-optic tapered components using finite-difference and coupled-mode theory.
+license: "MIT"
+repository-code: "https://github.com/MartinPdeS/SuPyMode"
+keywords:
+  - fiber optics
+  - coupled-mode theory
+  - tapered components
+  - finite-difference methods

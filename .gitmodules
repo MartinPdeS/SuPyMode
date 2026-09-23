@@ -1,0 +1,8 @@
+[submodule "extern/eigen"]
+	path = extern/eigen
+	url = https://gitlab.com/libeigen/eigen.git
+	ignore = dirty
+[submodule "extern/spectra"]
+	path = extern/spectra
+	url = https://github.com/yixuan/spectra.git
+	ignore = dirty

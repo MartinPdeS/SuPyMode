@@ -1,0 +1,59 @@
+
+# Ignore all
+/*
+
+# Except ...
+!.github
+!conda.recipe
+!conda.recipe/meta.yaml
+!.gitmodules
+!extern
+!SuPyMode
+!development
+!docs
+!tests
+!tools
+!tools/*.py
+!.flake8
+!.gitignore
+!.pre-commit-config.yaml
+!CITATION.cff
+!LICENSE
+!meta.yaml
+!.zenodo.json
+!pyproject.toml
+!README.rst
+!notebook.ipynb
+!CMakeLists.txt
+!.coveragerc
+!pytest.ini
+!Makefile
+!CONTRIBUTING.md
+
+# But ignore docs/build inside docs and code
+docs/build/
+docs/source/gallery/
+
+# Local Python and test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Native build and package artifacts
+.skbuild/
+build/
+dist/
+*.egg-info/
+*.so
+*.a
+cmake_install.cmake
+*.dir
+
+# Operating-system artifacts
+.DS_Store
+
+# Package specifics
+SuPyMode/user_data/*

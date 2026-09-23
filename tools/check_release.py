@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Check that SuPyMode release metadata agrees across project files."""
 import argparse
+import json
 from pathlib import Path
 import re
 import subprocess
@@ -9,6 +10,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 CONDA_RECIPE_PATH = ROOT / "conda.recipe" / "meta.yaml"
+ZENODO_PATH = ROOT / ".zenodo.json"
 VERSION_FILE = ROOT / "SuPyMode" / "_version.py"
 
 
@@ -28,8 +30,10 @@ def extract(pattern: str, path: Path, description: str) -> str:
 def versions() -> dict[str, str]:
     """Return release versions declared by each project artifact."""
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    zenodo = json.loads(ZENODO_PATH.read_text(encoding="utf-8"))
     return {
         "pyproject.toml": str(project["project"]["version"]),
+        ".zenodo.json": str(zenodo["version"]),
         "conda.recipe/meta.yaml": extract(
             r"^\s*version:\s*['\"]?([^'\"\s]+)", CONDA_RECIPE_PATH, "Conda version"
         ),
@@ -50,7 +54,11 @@ def main() -> int:
     except (KeyError, RuntimeError) as error:
         print(f"release check failed: {error}", file=sys.stderr)
         return 1
-    expected = normalized_version(arguments.version) if arguments.version else declared["pyproject.toml"]
+    expected = (
+        normalized_version(arguments.version)
+        if arguments.version
+        else declared["pyproject.toml"]
+    )
     failures = []
     for source, version in declared.items():
         status = "OK" if version == expected else "MISMATCH"
@@ -59,13 +67,18 @@ def main() -> int:
             failures.append(f"{source} declares {version}; expected {expected}")
 
     tag = f"v{expected}"
-    tag_exists = subprocess.run(
-        ["git", "rev-parse", "--verify", "--quiet", f"refs/tags/{tag}"],
-        cwd=ROOT,
-        check=False,
-        stdout=subprocess.DEVNULL,
-    ).returncode == 0
-    print(f"{'OK' if tag_exists else 'INFO':8} Git tag: {tag} {'exists' if tag_exists else 'not created'}")
+    tag_exists = (
+        subprocess.run(
+            ["git", "rev-parse", "--verify", "--quiet", f"refs/tags/{tag}"],
+            cwd=ROOT,
+            check=False,
+            stdout=subprocess.DEVNULL,
+        ).returncode
+        == 0
+    )
+    print(
+        f"{'OK' if tag_exists else 'INFO':8} Git tag: {tag} {'exists' if tag_exists else 'not created'}"
+    )
 
     if failures:
         for failure in failures:
@@ -73,6 +86,7 @@ def main() -> int:
         return 1
     print(f"Release metadata consistently declares {expected}.")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

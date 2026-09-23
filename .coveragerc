@@ -1,0 +1,21 @@
+# .coveragerc
+[run]
+source = SuPyMode
+branch = True
+relative_files = True
+parallel = True
+omit =
+    **/__init__.py
+    SuPyMode/_version.py
+    SuPyMode/directories.py
+
+[report]
+skip_covered = True
+show_missing = True
+precision = 2
+
+[html]
+directory = htmlcov
+
+[xml]
+output = coverage.xml
