@@ -9,7 +9,7 @@
  * enabling efficient computation of optical fiber modes using finite
  * difference methods and eigenvalue decomposition.
  */
-PYBIND11_MODULE(interface_eigensolver, module)
+PYBIND11_MODULE(eigensolver, module)
 {
     module.doc() = R"pbdoc(
         SuPyMode EigenSolver Module

@@ -6,7 +6,7 @@
 namespace py = pybind11;
 
 
-PYBIND11_MODULE(interface_boundaries, module) {
+PYBIND11_MODULE(boundaries, module) {
 
     py::enum_<BoundaryCondition>(module, "BoundaryValue")
         .value("Zero", BoundaryCondition::Zero)

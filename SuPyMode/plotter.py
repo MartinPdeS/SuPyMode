@@ -6,7 +6,7 @@ from MPSPlots import colormaps
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, PillowWriter
 
-from SuPyMode.binary.interface_taper import AlphaProfile
+from SuPyMode.taper import AlphaProfile
 
 
 def generate_propagation_gif(

@@ -6,6 +6,7 @@
 !.github
 !conda.recipe
 !conda.recipe/meta.yaml
+!cpp
 !.gitmodules
 !extern
 !SuPyMode

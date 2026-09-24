@@ -5,7 +5,7 @@ import numpy
 import pyvista
 import matplotlib.pyplot as plt
 
-from SuPyMode.binary.interface_taper import AlphaProfile
+from SuPyMode.taper import AlphaProfile
 
 
 class Propagation:

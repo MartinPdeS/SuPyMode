@@ -13,8 +13,8 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build")
 
 
 # --------------------- Set the output directory for libraries --------------------
-set(LOCAL_CXX_DIR "${PROJECT_NAME}/cpp")
-set(LOCAL_BIN_DIR "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}/binary")
+set(LOCAL_CXX_DIR "cpp")
+set(LOCAL_BIN_DIR "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}")
 include_directories(${NAME} ${LOCAL_CXX_DIR})
 # --------------------- Set the output directory for libraries --------------------
 
@@ -102,12 +102,12 @@ message(STATUS "")
 # ----------------- logging build configuration --------------------
 
 # ----------------- collect subdirectories --------------------
-add_subdirectory(SuPyMode/cpp/boundaries)            # boundaries
-add_subdirectory(SuPyMode/cpp/taper)                 # taper
-add_subdirectory(SuPyMode/cpp/mesh)                  # mesh
-add_subdirectory(SuPyMode/cpp/model_parameters)      # model_parameters
-add_subdirectory(SuPyMode/cpp/supermode)             # supermode
-add_subdirectory(SuPyMode/cpp/eigensolver)           # eigen_solver
+add_subdirectory(cpp/boundaries)            # boundaries
+add_subdirectory(cpp/taper)                 # taper
+add_subdirectory(cpp/mesh)                  # mesh
+add_subdirectory(cpp/model_parameters)      # model_parameters
+add_subdirectory(cpp/supermode)             # supermode
+add_subdirectory(cpp/eigensolver)           # eigen_solver
 # ----------------- collect subdirectories --------------------
 
 get_property(SUPYMODE_TARGETS GLOBAL PROPERTY SUPYMODE_TARGETS)

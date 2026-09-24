@@ -8,7 +8,7 @@
  * management, encapsulating all physical and computational parameters
  * needed for waveguide mode analysis.
  */
-PYBIND11_MODULE(interface_model_parameters, module) {
+PYBIND11_MODULE(model_parameters, module) {
     module.doc() = R"pbdoc(
         SuPyMode ModelParameters Module
 

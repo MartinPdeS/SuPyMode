@@ -3,7 +3,7 @@
 import matplotlib.pyplot as plt
 from MPSPlots.helper import post_mpl_plot
 
-from SuPyMode.binary.interface_supermode import SUPERMODE
+from SuPyMode.supermode import SUPERMODE
 
 
 class Index:

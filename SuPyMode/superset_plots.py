@@ -6,8 +6,8 @@ from matplotlib.backends.backend_pdf import PdfPages
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from MPSPlots import helper
 
-from SuPyMode.binary.interface_taper import AlphaProfile
-from SuPyMode.binary.interface_supermode import SUPERMODE
+from SuPyMode.taper import AlphaProfile
+from SuPyMode.supermode import SUPERMODE
 from SuPyMode.utils import (
     parse_filename,
     interpret_slice_number_and_itr,
@@ -45,7 +45,7 @@ class SuperSetPlots(object):
             - ValueError: If the mode_of_interest is not one of the expected types or if the string input does not match
             any known category.
         """
-        from SuPyMode.binary.interface_supermode import SUPERMODE
+        from SuPyMode.supermode import SUPERMODE
 
         if isinstance(mode_of_interest, str):
             match mode_of_interest:

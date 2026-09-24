@@ -20,7 +20,7 @@ static py::array make_vector_view_1d(const std::vector<double>& values, py::hand
     );
 }
 
-PYBIND11_MODULE(interface_taper, module_handle) {
+PYBIND11_MODULE(taper, module_handle) {
     module_handle.doc() = R"pdoc(
         C++ implementation of an optical fiber taper alpha profile.
 

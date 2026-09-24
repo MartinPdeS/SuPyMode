@@ -10,7 +10,7 @@ namespace py = pybind11;
  * enabling computation and analysis of coupled mode systems in multi-core
  * optical fibers and waveguide arrays.
  */
-PYBIND11_MODULE(interface_supermode, module)
+PYBIND11_MODULE(supermode, module)
 {
     module.doc() = R"pbdoc(
         SuPyMode SuperMode Module

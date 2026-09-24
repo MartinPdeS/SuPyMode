@@ -5,7 +5,6 @@ build-backend = "scikit_build_core.build"
 [tool.scikit-build]
 build-dir = ".skbuild/{wheel_tag}"
 logging.level = "INFO"
-wheel.exclude = ["SuPyMode/cpp"]
 install.strip = false
 sdist.include = ["SuPyMode/binary/*"]
 sdist.exclude = [

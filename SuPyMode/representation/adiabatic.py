@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from MPSPlots.helper import post_mpl_plot
 
-from SuPyMode.binary.interface_supermode import SUPERMODE
+from SuPyMode.supermode import SUPERMODE
 
 
 class Adiabatic:

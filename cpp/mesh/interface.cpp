@@ -1,6 +1,6 @@
 #include "mesh.h"
 
-PYBIND11_MODULE(interface_mesh, module) {
+PYBIND11_MODULE(mesh, module) {
     module.def(
         "get_rho_gradient_5p",
         &get_rho_gradient_py,

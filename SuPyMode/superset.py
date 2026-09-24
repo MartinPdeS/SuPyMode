@@ -16,10 +16,10 @@ from scipy.integrate import solve_ivp
 from scipy.interpolate import interp1d
 
 # Local imports
-from SuPyMode.binary.interface_model_parameters import ModelParameters
-from SuPyMode.binary.interface_supermode import SUPERMODE
+from SuPyMode.model_parameters import ModelParameters
+from SuPyMode.supermode import SUPERMODE
 
-from SuPyMode.binary.interface_taper import AlphaProfile
+from SuPyMode.taper import AlphaProfile
 from SuPyMode.propagation import Propagation
 from SuPyMode.superset_plots import SuperSetPlots
 from SuPyMode.utils import parse_filename

@@ -12,9 +12,9 @@ from SuPyMode.utils import (
     slice_to_itr,
     get_symmetrized_vector,
 )
-from SuPyMode.binary.interface_boundaries import BoundaryValue
-from SuPyMode.binary.interface_boundaries import BoundaryValue
-from SuPyMode.binary.interface_supermode import SUPERMODE
+from SuPyMode.boundaries import BoundaryValue
+from SuPyMode.boundaries import BoundaryValue
+from SuPyMode.supermode import SUPERMODE
 
 
 class Field:
