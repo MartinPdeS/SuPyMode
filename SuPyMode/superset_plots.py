@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from typing import TYPE_CHECKING
+
 import matplotlib.pyplot as plt
 import numpy
 from matplotlib.backends.backend_pdf import PdfPages
@@ -12,6 +14,9 @@ from SuPyMode.utils import (
     parse_filename,
     interpret_slice_number_and_itr,
 )
+
+if TYPE_CHECKING:
+    from SuPyMode.superset import SuperSet
 
 
 class SuperSetPlots(object):

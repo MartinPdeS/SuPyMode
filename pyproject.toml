@@ -6,7 +6,7 @@ build-backend = "scikit_build_core.build"
 build-dir = ".skbuild/{wheel_tag}"
 logging.level = "INFO"
 install.strip = false
-sdist.include = ["SuPyMode/binary/*"]
+sdist.include = ["cpp/**", "extern/eigen/**", "extern/spectra/**"]
 sdist.exclude = [
     "tests",
     "docs",
@@ -46,7 +46,7 @@ dependencies = [
     "PyFinitDiff",
     "FiberFusing",
     "pyvista",
-    "PyFiberModes",
+    "PyFiberModes<0.13",
     "pathvalidate",
 ]
 keywords = [
@@ -86,6 +86,7 @@ line-length = 100
 
 [tool.ruff.lint]
 select = ["E", "F"]
+ignore = ["E501"]
 
 [tool.coverage.run]
 source = ["SuPyMode"]

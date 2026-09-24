@@ -14,7 +14,7 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Type of build")
 
 # --------------------- Set the output directory for libraries --------------------
 set(LOCAL_CXX_DIR "cpp")
-set(LOCAL_BIN_DIR "${CMAKE_SOURCE_DIR}/${PROJECT_NAME}")
+set(LOCAL_BIN_DIR "${PROJECT_NAME}")
 include_directories(${NAME} ${LOCAL_CXX_DIR})
 # --------------------- Set the output directory for libraries --------------------
 

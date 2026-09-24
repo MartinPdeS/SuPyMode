@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from FiberFusing.fiber import FiberLoader  # noqa:
+from FiberFusing.fiber import FiberLoader
 from FiberFusing.profile import Profile, StructureType  # noqa: F401
 from FiberFusing.graded_index import GradedIndex  # noqa: F401
 from PyFinitDiff import BoundaryValue  # noqa: F401

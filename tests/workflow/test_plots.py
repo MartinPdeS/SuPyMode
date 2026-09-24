@@ -118,7 +118,8 @@ def test_representation_plot(mock_show, setup_workflow, plot_type):
     """
     mode = setup_workflow.superset[0]  # Use the first mode from the superset
 
-    representation = getattr(mode, plot_type, None)
+    representation_name = "eigenvalue" if plot_type == "eigen_value" else plot_type
+    representation = getattr(mode, representation_name, None)
 
     representation.plot()
 
@@ -129,7 +130,7 @@ def test_representation_plot(mock_show, setup_workflow, plot_type):
 
 @pytest.mark.parametrize("plot_type", COUPLED_PLOTS)
 @patch("matplotlib.pyplot.show")
-def test_representation_plot(mock_show, setup_workflow, plot_type):
+def test_coupled_representation_plot(mock_show, setup_workflow, plot_type):
     """
     Test plotting functionalities for individual modes within the superset.
 

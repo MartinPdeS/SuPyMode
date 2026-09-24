@@ -13,7 +13,6 @@ from SuPyMode.utils import (
     get_symmetrized_vector,
 )
 from SuPyMode.boundaries import BoundaryValue
-from SuPyMode.boundaries import BoundaryValue
 from SuPyMode.supermode import SUPERMODE
 
 

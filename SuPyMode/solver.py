@@ -8,7 +8,6 @@ from PyFinitDiff.finite_difference_2D import Boundaries
 
 # Local imports
 from SuPyMode.superset import SuperSet
-from SuPyMode.supermode import SUPERMODE  # type: ignore
 from SuPyMode.eigensolver import EIGENSOLVER  # type: ignore
 from SuPyMode.model_parameters import ModelParameters  # type: ignore
 
