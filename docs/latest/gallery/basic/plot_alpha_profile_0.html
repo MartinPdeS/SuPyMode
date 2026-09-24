@@ -32,7 +32,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -47,6 +47,7 @@
     <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'gallery/basic/plot_alpha_profile_0';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
@@ -485,34 +486,31 @@ to download the full example code.</p>
 <section class="sphx-glr-example-title" id="non-symmetric-coupler-z-profile">
 <span id="sphx-glr-gallery-basic-plot-alpha-profile-0-py"></span><h1>Non-symmetric coupler z-profile<a class="headerlink" href="#non-symmetric-coupler-z-profile" title="Link to this heading">#</a></h1>
 <p>Importing the script dependencies</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlphaProfile</span>
-
-
-<span class="n">profile</span> <span class="o">=</span> <span class="n">AlphaProfile</span><span class="p">(</span><span class="n">symmetric</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_end_of_taper_section</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode</span><span class="nn">.</span><span class="nn">workflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlphaProfile</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="n">profile</span> <span class="o">=</span> <span class="n">AlphaProfile</span><span class="p">(</span><span class="n">symmetric</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_end_of_taper_section</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>Adding a first taper segment with large initial heating length (i.e. slow reduction)</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">profile</span><span class="o">.</span><span class="n">add_taper_segment</span><span class="p">(</span>
-    <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-    <span class="n">initial_heating_length</span><span class="o">=</span><span class="mf">8e-3</span><span class="p">,</span>
-    <span class="n">stretching_length</span><span class="o">=</span><span class="mf">0.2e-3</span> <span class="o">*</span> <span class="mi">20</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">profile</span><span class="o">.</span><span class="n">add_taper_segment</span><span class="p">(</span><span class="w">
+</span>    <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w">
+</span>    <span class="n">initial_heating_length</span><span class="o">=</span><span class="mf">8e-3</span><span class="p">,</span><span class="w">
+</span>    <span class="n">stretching_length</span><span class="o">=</span><span class="mf">0.2e-3</span> <span class="o">*</span> <span class="mi">20</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>Adding a first taper segment with small initial heating length (i.e. steep reduction)</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">profile</span><span class="o">.</span><span class="n">add_taper_segment</span><span class="p">(</span>
-    <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-    <span class="n">initial_heating_length</span><span class="o">=</span><span class="mf">2e-3</span><span class="p">,</span>
-    <span class="n">stretching_length</span><span class="o">=</span><span class="mf">0.2e-3</span> <span class="o">*</span> <span class="mi">20</span>
-<span class="p">)</span>
-
-<span class="n">profile</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
-
-<span class="n">profile</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-
-<span class="c1"># -</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">profile</span><span class="o">.</span><span class="n">add_taper_segment</span><span class="p">(</span><span class="w">
+</span>    <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w">
+</span>    <span class="n">initial_heating_length</span><span class="o">=</span><span class="mf">2e-3</span><span class="p">,</span><span class="w">
+</span>    <span class="n">stretching_length</span><span class="o">=</span><span class="mf">0.2e-3</span> <span class="o">*</span> <span class="mi">20</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">profile</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">profile</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># -</span><span class="w">
+</span></pre></div></div>
 <img src="../../_images/sphx_glr_plot_alpha_profile_0_001.png" srcset="../../_images/sphx_glr_plot_alpha_profile_0_001.png" alt="Minimum ITR: 0.2895" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/Users/m.poinsinetdesivry-houle/Desktop/GitRepositories/SuPyMode/SuPyMode/profiles.py:648: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
   ax.legend()
 

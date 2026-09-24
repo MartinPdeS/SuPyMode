@@ -32,7 +32,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -47,6 +47,7 @@
     <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'gallery/validation/plot_beta_SMF28';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
@@ -486,117 +487,111 @@ to download the full example code.</p>
 <span id="sphx-glr-gallery-validation-plot-beta-smf28-py"></span><h1>Propagation constant: DCFC<a class="headerlink" href="#propagation-constant-dcfc" title="Link to this heading">#</a></h1>
 <section id="imports">
 <h2>Imports<a class="headerlink" href="#imports" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Workflow</span><span class="p">,</span>
-    <span class="n">fiber_loader</span><span class="p">,</span>
-    <span class="n">Boundaries</span><span class="p">,</span>
-    <span class="n">BoundaryValue</span><span class="p">,</span>
-    <span class="n">DomainAlignment</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">PyOptik</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaterialBank</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">PyFiberModes</span><span class="w"> </span><span class="kn">import</span> <span class="n">LP01</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">PyFiberModes.fiber</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_fiber</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-
-<span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1550e-9</span>
-<span class="n">fiber_name</span> <span class="o">=</span> <span class="s2">"SMF28"</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode</span><span class="nn">.</span><span class="nn">workflow</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="w">
+</span>    <span class="n">Workflow</span><span class="p">,</span><span class="w">
+</span>    <span class="n">fiber_loader</span><span class="p">,</span><span class="w">
+</span>    <span class="n">Boundaries</span><span class="p">,</span><span class="w">
+</span>    <span class="n">BoundaryValue</span><span class="p">,</span><span class="w">
+</span>    <span class="n">DomainAlignment</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">PyOptik</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaterialBank</span><span class="w">
+</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">PyFiberModes</span><span class="w"> </span><span class="kn">import</span> <span class="n">LP01</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">PyFiberModes</span><span class="nn">.</span><span class="nn">fiber</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_fiber</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
+</span><span class="w">
+</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1550e-9</span><span class="w">
+</span><span class="n">fiber_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">SMF28</span><span class="s2">&quot;</span><span class="w">
+</span></pre></div></div>
 </section>
 <section id="generating-the-fiber-structure">
 <h2>Generating the fiber structure<a class="headerlink" href="#generating-the-fiber-structure" title="Link to this heading">#</a></h2>
 <p>Here we define the cladding and fiber structure to model the problem</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fiber_list</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span>
-        <span class="n">fiber_name</span><span class="p">,</span>
-        <span class="n">clad_refractive_index</span><span class="o">=</span><span class="n">MaterialBank</span><span class="o">.</span><span class="n">fused_silica</span><span class="o">.</span><span class="n">compute_refractive_index</span><span class="p">(</span>
-            <span class="n">wavelength</span>
-        <span class="p">),</span>
-    <span class="p">)</span>  <span class="c1"># Refractive index of silica at the specified wavelength</span>
-<span class="p">]</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">fiber_list</span> <span class="o">=</span> <span class="p">[</span><span class="w">
+</span>    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span><span class="w">
+</span>        <span class="n">fiber_name</span><span class="p">,</span><span class="w">
+</span>        <span class="n">clad_refractive_index</span><span class="o">=</span><span class="n">MaterialBank</span><span class="o">.</span><span class="n">fused_silica</span><span class="o">.</span><span class="n">compute_refractive_index</span><span class="p">(</span><span class="w">
+</span>            <span class="n">wavelength</span><span class="w">
+</span>        <span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="p">)</span>  <span class="c1"># Refractive index of silica at the specified wavelength</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></pre></div></div>
 <p>Defining the boundaries of the system</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">boundaries</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">),</span>
-    <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">ANTI_SYMMETRIC</span><span class="p">),</span>
-<span class="p">]</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">boundaries</span> <span class="o">=</span> <span class="p">[</span><span class="w">
+</span>    <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">ANTI_SYMMETRIC</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></pre></div></div>
 </section>
 <section id="generating-the-computing-workflow">
 <h2>Generating the computing workflow<a class="headerlink" href="#generating-the-computing-workflow" title="Link to this heading">#</a></h2>
 <p>Workflow class to define all the computation parameters before initializing the solver</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">workflow</span> <span class="o">=</span> <span class="n">Workflow</span><span class="p">(</span>
-    <span class="n">fiber_list</span><span class="o">=</span><span class="n">fiber_list</span><span class="p">,</span>  <span class="c1"># List of fiber to be added in the mesh, the order matters.</span>
-    <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>  <span class="c1"># Wavelength used for the mode computation.</span>
-    <span class="n">resolution</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>  <span class="c1"># Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].</span>
-    <span class="n">x_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span>  <span class="c1"># Mesh x-boundary structure.</span>
-    <span class="n">y_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">TOP</span><span class="p">,</span>  <span class="c1"># Mesh y-boundary structure.</span>
-    <span class="n">air_padding_factor</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span>
-    <span class="n">boundaries</span><span class="o">=</span><span class="n">boundaries</span><span class="p">,</span>  <span class="c1"># Set of symmetries to be evaluated, each symmetry add a round of simulation</span>
-    <span class="n">n_sorted_mode</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>  <span class="c1"># Total computed and sorted mode.</span>
-    <span class="n">n_added_mode</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>  <span class="c1"># Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].</span>
-    <span class="n">debug_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># Print the iteration step for the solver plus some other important steps.</span>
-    <span class="n">auto_label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Auto labeling the mode. Label are not always correct and should be verified afterwards.</span>
-    <span class="n">itr_final</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>  <span class="c1"># Final value of inverse taper ratio to simulate</span>
-    <span class="n">n_step</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">workflow</span><span class="o">.</span><span class="n">initialize_geometry</span><span class="p">(</span><span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Initialize the geometry and plot it</span>
-
-<span class="n">workflow</span><span class="o">.</span><span class="n">run_solver</span><span class="p">()</span>  <span class="c1"># Run the solver to compute the modes</span>
-
-<a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">itr_list</span></a> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">superset</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">itr_list</span></a>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">workflow</span> <span class="o">=</span> <span class="n">Workflow</span><span class="p">(</span><span class="w">
+</span>    <span class="n">fiber_list</span><span class="o">=</span><span class="n">fiber_list</span><span class="p">,</span>  <span class="c1"># List of fiber to be added in the mesh, the order matters.</span><span class="w">
+</span>    <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>  <span class="c1"># Wavelength used for the mode computation.</span><span class="w">
+</span>    <span class="n">resolution</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>  <span class="c1"># Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].</span><span class="w">
+</span>    <span class="n">x_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span>  <span class="c1"># Mesh x-boundary structure.</span><span class="w">
+</span>    <span class="n">y_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">TOP</span><span class="p">,</span>  <span class="c1"># Mesh y-boundary structure.</span><span class="w">
+</span>    <span class="n">air_padding_factor</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span><span class="w">
+</span>    <span class="n">boundaries</span><span class="o">=</span><span class="n">boundaries</span><span class="p">,</span>  <span class="c1"># Set of symmetries to be evaluated, each symmetry add a round of simulation</span><span class="w">
+</span>    <span class="n">n_sorted_mode</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>  <span class="c1"># Total computed and sorted mode.</span><span class="w">
+</span>    <span class="n">n_added_mode</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>  <span class="c1"># Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].</span><span class="w">
+</span>    <span class="n">debug_mode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="c1"># Print the iteration step for the solver plus some other important steps.</span><span class="w">
+</span>    <span class="n">auto_label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Auto labeling the mode. Label are not always correct and should be verified afterwards.</span><span class="w">
+</span>    <span class="n">itr_final</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>  <span class="c1"># Final value of inverse taper ratio to simulate</span><span class="w">
+</span>    <span class="n">n_step</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">workflow</span><span class="o">.</span><span class="n">initialize_geometry</span><span class="p">(</span><span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Initialize the geometry and plot it</span><span class="w">
+</span><span class="w">
+</span><span class="n">workflow</span><span class="o">.</span><span class="n">run_solver</span><span class="p">(</span><span class="p">)</span>  <span class="c1"># Run the solver to compute the modes</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">itr_list</span></a> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">superset</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">itr_list</span><span class="w">
+</span></pre></div></div>
 <img src="../../_images/sphx_glr_plot_beta_SMF28_001.png" srcset="../../_images/sphx_glr_plot_beta_SMF28_001.png" alt="Fiber structure, Fiber structure" class = "sphx-glr-single-img"/><p>Computing the analytical values using FiberModes solver.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">dcf_fiber</span> <span class="o">=</span> <span class="n">load_fiber</span><span class="p">(</span><span class="n">fiber_name</span><span class="o">=</span><span class="n">fiber_name</span><span class="p">,</span> <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span> <span class="n">add_air_layer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">dcf_fiber</span> <span class="o">=</span> <span class="n">load_fiber</span><span class="p">(</span><span class="n">fiber_name</span><span class="o">=</span><span class="n">fiber_name</span><span class="p">,</span> <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span> <span class="n">add_air_layer</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>Preparing the figure</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-    <span class="n">xlabel</span><span class="o">=</span><span class="s2">"Inverse taper ratio"</span><span class="p">,</span>
-    <span class="n">ylabel</span><span class="o">=</span><span class="s2">"Effective index"</span><span class="p">,</span>
-<span class="p">)</span>
-
-
-<span class="n">pyfibermodes_mode</span> <span class="o">=</span> <span class="n">LP01</span>
-<span class="n">supymode_mode</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">superset</span><span class="o">.</span><span class="n">LP01</span>
-
-<a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">analytical</span></a> <span class="o">=</span> <a href="https://numpy.org/devdocs/reference/generated/numpy.empty.html#numpy.empty" title="numpy.empty" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">numpy</span><span class="o">.</span><span class="n">empty</span></a><span class="p">(</span><a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">itr_list</span></a><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">itr</span></a> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">itr_list</span></a><span class="p">):</span>
-    <span class="n">_fiber</span> <span class="o">=</span> <span class="n">dcf_fiber</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="o">=</span><a href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">itr</span></a><span class="p">)</span>
-    <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">analytical</span></a><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">_fiber</span><span class="o">.</span><span class="n">get_effective_index</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">pyfibermodes_mode</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">itr_list</span></a><span class="p">,</span>
-    <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">analytical</span></a><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pyfibermodes_mode</span><span class="p">)</span> <span class="o">+</span> <span class="s2">": PyFiberModes"</span><span class="p">,</span>
-    <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span>
-    <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
-    <a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">itr_list</span></a><span class="p">,</span>
-    <span class="n">supymode_mode</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">supymode_mode</span><span class="p">)</span> <span class="o">+</span> <span class="s2">": SuPyMode"</span><span class="p">,</span>
-    <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>
-    <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-
-<span class="c1"># -</span>
-</pre></div>
-</div>
-<img src="../../_images/sphx_glr_plot_beta_SMF28_002.png" srcset="../../_images/sphx_glr_plot_beta_SMF28_002.png" alt="plot beta SMF28" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 18.631 seconds)</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">figure</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="w">
+</span><span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="w">
+</span>    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Inverse taper ratio</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Effective index</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="n">pyfibermodes_mode</span> <span class="o">=</span> <span class="n">LP01</span><span class="w">
+</span><span class="n">supymode_mode</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">superset</span><span class="o">.</span><span class="n">LP01</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">analytical</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/devdocs/reference/generated/numpy.empty.html#numpy.empty" title="numpy.empty"><span class="n">numpy</span><span class="o">.</span><span class="n">empty</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">itr_list</span></a><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="w">
+</span><span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">itr</span></a> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">itr_list</span></a><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <span class="n">_fiber</span> <span class="o">=</span> <span class="n">dcf_fiber</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">itr</span></a><span class="p">)</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">analytical</span></a><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">_fiber</span><span class="o">.</span><span class="n">get_effective_index</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">pyfibermodes_mode</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">itr_list</span></a><span class="p">,</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">analytical</span></a><span class="p">,</span><span class="w">
+</span>    <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">pyfibermodes_mode</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="s2">: PyFiberModes</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">-</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w">
+</span>    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">red</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">itr_list</span></a><span class="p">,</span><span class="w">
+</span>    <span class="n">supymode_mode</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="w">
+</span>    <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">supymode_mode</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="s2">: SuPyMode</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">black</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w">
+</span>    <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># -</span><span class="w">
+</span></pre></div></div>
+<img src="../../_images/sphx_glr_plot_beta_SMF28_002.png" srcset="../../_images/sphx_glr_plot_beta_SMF28_002.png" alt="plot beta SMF28" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 18.235 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-validation-plot-beta-smf28-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/24e9c7742f3834fdb4623bee0a721a1a/plot_beta_SMF28.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_beta_SMF28.ipynb</span></code></a></p>

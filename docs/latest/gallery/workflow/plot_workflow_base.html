@@ -32,7 +32,7 @@
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -47,6 +47,7 @@
     <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'gallery/workflow/plot_workflow_base';</script>
     <script>
@@ -457,129 +458,124 @@ to download the full example code.</p>
 <section class="sphx-glr-example-title" id="x1-coupler-base-workflow">
 <span id="sphx-glr-gallery-workflow-plot-workflow-base-py"></span><h1>1x1 Coupler – Base Workflow<a class="headerlink" href="#x1-coupler-base-workflow" title="Link to this heading">#</a></h1>
 <p>Importing the script dependencies</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Profile</span><span class="p">,</span>
-    <span class="n">GenericFiber</span><span class="p">,</span>
-    <span class="n">Boundaries</span><span class="p">,</span>
-    <span class="n">BoundaryValue</span><span class="p">,</span>
-    <span class="n">DomainAlignment</span><span class="p">,</span>
-    <span class="n">BackGround</span><span class="p">,</span>
-    <span class="n">Geometry</span><span class="p">,</span>
-    <span class="n">SuPySolver</span><span class="p">,</span>
-    <span class="n">StructureType</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1550e-9</span>
-
-<span class="n">clad_structure</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">()</span>
-
-<span class="n">clad_structure</span><span class="o">.</span><span class="n">add_structure</span><span class="p">(</span>
-    <span class="n">structure_type</span><span class="o">=</span><span class="n">StructureType</span><span class="o">.</span><span class="n">CIRCULAR</span><span class="p">,</span>
-    <span class="n">number_of_fibers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">fusion_degree</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
-    <span class="n">fiber_radius</span><span class="o">=</span><span class="mf">62.5e-6</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">clad_structure</span><span class="o">.</span><span class="n">refractive_index</span> <span class="o">=</span> <span class="mf">1.4444</span>
-
-<span class="n">fiber_0</span> <span class="o">=</span> <span class="n">GenericFiber</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-<span class="n">fiber_0</span><span class="o">.</span><span class="n">create_and_add_new_structure</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">"core"</span><span class="p">,</span> <span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.4480</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">4.2</span> <span class="o">*</span> <span class="mf">1e-6</span>
-<span class="p">)</span>
-
-<span class="n">fiber_1</span> <span class="o">=</span> <span class="n">GenericFiber</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-
-<span class="n">fiber_1</span><span class="o">.</span><span class="n">create_and_add_new_structure</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">"core"</span><span class="p">,</span> <span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.4460</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">6.2</span> <span class="o">*</span> <span class="mf">1e-6</span>
-<span class="p">)</span>
-
-<span class="n">background</span> <span class="o">=</span> <span class="n">BackGround</span><span class="p">(</span><span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-
-<span class="n">geometry</span> <span class="o">=</span> <span class="n">Geometry</span><span class="p">(</span>
-    <span class="n">x_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span>
-    <span class="n">y_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">CENTERING</span><span class="p">,</span>
-    <span class="n">resolution</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
-    <span class="n">boundary_pad_factor</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">geometry</span><span class="o">.</span><span class="n">add_structure</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">clad_structure</span><span class="p">,</span> <span class="n">fiber_0</span><span class="p">,</span> <span class="n">fiber_1</span><span class="p">)</span>
-
-<span class="n">geometry</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
-
-<span class="n">geometry</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-
-<span class="n">solver</span> <span class="o">=</span> <span class="n">SuPySolver</span><span class="p">(</span>
-    <span class="n">mesh</span><span class="o">=</span><a href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">geometry</span><span class="o">.</span><span class="n">mesh</span></a><span class="p">,</span>
-    <span class="n">x</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">coordinate_system</span><span class="o">.</span><span class="n">x_vector</span><span class="p">,</span>
-    <span class="n">y</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">coordinate_system</span><span class="o">.</span><span class="n">y_vector</span><span class="p">,</span>
-    <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span>
-    <span class="n">max_iteration</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
-    <span class="n">accuracy</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">debug_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">extrapolation_order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">solver</span><span class="o">.</span><span class="n">init_superset</span><span class="p">(</span>
-    <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span>
-    <span class="n">n_step</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
-    <span class="n">itr_initial</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-    <span class="n">itr_final</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">boundary</span> <span class="o">=</span> <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">)</span>
-
-<span class="n">solver</span><span class="o">.</span><span class="n">add_modes</span><span class="p">(</span>
-    <span class="n">n_added_mode</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="n">n_sorted_mode</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">boundaries</span><span class="o">=</span><span class="n">boundary</span><span class="p">,</span>
-    <span class="n">auto_label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">boundary</span> <span class="o">=</span> <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">ANTI_SYMMETRIC</span><span class="p">)</span>
-
-<span class="n">solver</span><span class="o">.</span><span class="n">add_modes</span><span class="p">(</span>
-    <span class="n">n_added_mode</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="n">n_sorted_mode</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">boundaries</span><span class="o">=</span><span class="n">boundary</span><span class="p">,</span>
-    <span class="n">auto_label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">superset</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">superset</span>
-
-<span class="n">_</span> <span class="o">=</span> <span class="n">superset</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">"geometry"</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">SuPyMode</span><span class="nn">.</span><span class="nn">workflow</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="w">
+</span>    <span class="n">Profile</span><span class="p">,</span><span class="w">
+</span>    <span class="n">GenericFiber</span><span class="p">,</span><span class="w">
+</span>    <span class="n">Boundaries</span><span class="p">,</span><span class="w">
+</span>    <span class="n">BoundaryValue</span><span class="p">,</span><span class="w">
+</span>    <span class="n">DomainAlignment</span><span class="p">,</span><span class="w">
+</span>    <span class="n">BackGround</span><span class="p">,</span><span class="w">
+</span>    <span class="n">Geometry</span><span class="p">,</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-SuPyMode-solver sphx-glr-backref-type-py-class reference internal" href="../../code.html#SuPyMode.solver.SuPySolver" title="SuPyMode.solver.SuPySolver"><span class="n">SuPySolver</span></a><span class="p">,</span><span class="w">
+</span>    <span class="n">StructureType</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1550e-9</span><span class="w">
+</span><span class="w">
+</span><span class="n">clad_structure</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">add_structure</span><span class="p">(</span><span class="w">
+</span>    <span class="n">structure_type</span><span class="o">=</span><span class="n">StructureType</span><span class="o">.</span><span class="n">CIRCULAR</span><span class="p">,</span><span class="w">
+</span>    <span class="n">number_of_fibers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w">
+</span>    <span class="n">fusion_degree</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span><span class="w">
+</span>    <span class="n">fiber_radius</span><span class="o">=</span><span class="mf">62.5e-6</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">refractive_index</span> <span class="o">=</span> <span class="mf">1.4444</span><span class="w">
+</span><span class="w">
+</span><span class="n">fiber_0</span> <span class="o">=</span> <span class="n">GenericFiber</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">fiber_0</span><span class="o">.</span><span class="n">create_and_add_new_structure</span><span class="p">(</span><span class="w">
+</span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">core</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.4480</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">4.2</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">fiber_1</span> <span class="o">=</span> <span class="n">GenericFiber</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">clad_structure</span><span class="o">.</span><span class="n">cores</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">fiber_1</span><span class="o">.</span><span class="n">create_and_add_new_structure</span><span class="p">(</span><span class="w">
+</span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">core</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.4460</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">6.2</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">background</span> <span class="o">=</span> <span class="n">BackGround</span><span class="p">(</span><span class="n">refractive_index</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">Geometry</span><span class="p">(</span><span class="w">
+</span>    <span class="n">x_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">LEFT</span><span class="p">,</span><span class="w">
+</span>    <span class="n">y_bounds</span><span class="o">=</span><span class="n">DomainAlignment</span><span class="o">.</span><span class="n">CENTERING</span><span class="p">,</span><span class="w">
+</span>    <span class="n">resolution</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span><span class="w">
+</span>    <span class="n">boundary_pad_factor</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">geometry</span><span class="o">.</span><span class="n">add_structure</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="n">clad_structure</span><span class="p">,</span> <span class="n">fiber_0</span><span class="p">,</span> <span class="n">fiber_1</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">geometry</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">geometry</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-SuPyMode-solver sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../code.html#SuPyMode.solver.SuPySolver" title="SuPyMode.solver.SuPySolver"><span class="n">solver</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-SuPyMode-solver sphx-glr-backref-type-py-class reference internal" href="../../code.html#SuPyMode.solver.SuPySolver" title="SuPyMode.solver.SuPySolver"><span class="n">SuPySolver</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">mesh</span><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">geometry</span><span class="o">.</span><span class="n">mesh</span></a><span class="p">,</span><span class="w">
+</span>    <span class="n">x</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">coordinate_system</span><span class="o">.</span><span class="n">x_vector</span><span class="p">,</span><span class="w">
+</span>    <span class="n">y</span><span class="o">=</span><span class="n">geometry</span><span class="o">.</span><span class="n">coordinate_system</span><span class="o">.</span><span class="n">y_vector</span><span class="p">,</span><span class="w">
+</span>    <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span><span class="w">
+</span>    <span class="n">max_iteration</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span><span class="w">
+</span>    <span class="n">accuracy</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w">
+</span>    <span class="n">debug_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w">
+</span>    <span class="n">extrapolation_order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-SuPyMode-solver sphx-glr-backref-type-py-method reference internal" href="../../code.html#SuPyMode.solver.SuPySolver.init_superset" title="SuPyMode.solver.SuPySolver.init_superset"><span class="n">solver</span><span class="o">.</span><span class="n">init_superset</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span><span class="w">
+</span>    <span class="n">n_step</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="w">
+</span>    <span class="n">itr_initial</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="w">
+</span>    <span class="n">itr_final</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">boundary</span> <span class="o">=</span> <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-SuPyMode-solver sphx-glr-backref-type-py-method reference internal" href="../../code.html#SuPyMode.solver.SuPySolver.add_modes" title="SuPyMode.solver.SuPySolver.add_modes"><span class="n">solver</span><span class="o">.</span><span class="n">add_modes</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">n_added_mode</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="w">
+</span>    <span class="n">n_sorted_mode</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w">
+</span>    <span class="n">boundaries</span><span class="o">=</span><span class="n">boundary</span><span class="p">,</span><span class="w">
+</span>    <span class="n">auto_label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">boundary</span> <span class="o">=</span> <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">ANTI_SYMMETRIC</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-SuPyMode-solver sphx-glr-backref-type-py-method reference internal" href="../../code.html#SuPyMode.solver.SuPySolver.add_modes" title="SuPyMode.solver.SuPySolver.add_modes"><span class="n">solver</span><span class="o">.</span><span class="n">add_modes</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">n_added_mode</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="w">
+</span>    <span class="n">n_sorted_mode</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w">
+</span>    <span class="n">boundaries</span><span class="o">=</span><span class="n">boundary</span><span class="p">,</span><span class="w">
+</span>    <span class="n">auto_label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-SuPyMode-superset sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../code.html#SuPyMode.superset.SuperSet" title="SuPyMode.superset.SuperSet"><span class="n">superset</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-SuPyMode-superset sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../code.html#SuPyMode.superset.SuperSet" title="SuPyMode.superset.SuperSet"><span class="n">solver</span><span class="o">.</span><span class="n">superset</span></a><span class="w">
+</span><span class="w">
+</span><span class="n">_</span> <span class="o">=</span> <a class="sphx-glr-backref-module-SuPyMode-superset sphx-glr-backref-type-py-method reference internal" href="../../code.html#SuPyMode.superset.SuperSet.plot" title="SuPyMode.superset.SuperSet.plot"><span class="n">superset</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">geometry</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <ul class="sphx-glr-horizontal">
 <li><img src="../../_images/sphx_glr_plot_workflow_base_001.png" srcset="../../_images/sphx_glr_plot_workflow_base_001.png" alt="Fiber structure, Fiber structure" class = "sphx-glr-multi-img"/></li>
 <li><img src="../../_images/sphx_glr_plot_workflow_base_002.png" srcset="../../_images/sphx_glr_plot_workflow_base_002.png" alt="plot workflow base" class = "sphx-glr-multi-img"/></li>
 </ul>
 <section id="field-computation-e-i-j">
 <h2>Field computation: <span class="math notranslate nohighlight">\(E_{i,j}\)</span><a class="headerlink" href="#field-computation-e-i-j" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">superset</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">"field"</span><span class="p">,</span> <span class="n">itr_list</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">_</span> <span class="o">=</span> <a class="sphx-glr-backref-module-SuPyMode-superset sphx-glr-backref-type-py-method reference internal" href="../../code.html#SuPyMode.superset.SuperSet.plot" title="SuPyMode.superset.SuperSet.plot"><span class="n">superset</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">field</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">itr_list</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <img src="../../_images/sphx_glr_plot_workflow_base_003.png" srcset="../../_images/sphx_glr_plot_workflow_base_003.png" alt="$LP01$ slice: 0  itr: 1.000, $LP11_b$ slice: 0  itr: 1.000, $LP11_a$ slice: 0  itr: 1.000, $LP21_b$ slice: 0  itr: 1.000, $LP01$ slice: 473  itr: 0.099, $LP11_b$ slice: 473  itr: 0.099, $LP11_a$ slice: 473  itr: 0.099, $LP21_b$ slice: 473  itr: 0.099" class = "sphx-glr-single-img"/></section>
 <section id="effective-index-n-eff-i-j">
 <h2>Effective index: <span class="math notranslate nohighlight">\(n^{eff}_{i,j}\)</span><a class="headerlink" href="#effective-index-n-eff-i-j" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">superset</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">"index"</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">_</span> <span class="o">=</span> <a class="sphx-glr-backref-module-SuPyMode-superset sphx-glr-backref-type-py-method reference internal" href="../../code.html#SuPyMode.superset.SuperSet.plot" title="SuPyMode.superset.SuperSet.plot"><span class="n">superset</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">index</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <img src="../../_images/sphx_glr_plot_workflow_base_004.png" srcset="../../_images/sphx_glr_plot_workflow_base_004.png" alt="plot workflow base" class = "sphx-glr-single-img"/></section>
 <section id="modal-normalized-coupling-c-i-j">
 <h2>Modal normalized coupling: <span class="math notranslate nohighlight">\(C_{i,j}\)</span><a class="headerlink" href="#modal-normalized-coupling-c-i-j" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">superset</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">"normalized-coupling"</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">_</span> <span class="o">=</span> <a class="sphx-glr-backref-module-SuPyMode-superset sphx-glr-backref-type-py-method reference internal" href="../../code.html#SuPyMode.superset.SuperSet.plot" title="SuPyMode.superset.SuperSet.plot"><span class="n">superset</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">normalized-coupling</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <img src="../../_images/sphx_glr_plot_workflow_base_005.png" srcset="../../_images/sphx_glr_plot_workflow_base_005.png" alt="plot workflow base" class = "sphx-glr-single-img"/></section>
 <section id="adiabatic-criterion-tilde-c-i-j">
 <h2>Adiabatic criterion: <span class="math notranslate nohighlight">\(\tilde{C}_{i,j}\)</span><a class="headerlink" href="#adiabatic-criterion-tilde-c-i-j" title="Link to this heading">#</a></h2>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">superset</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">"adiabatic"</span><span class="p">)</span>
-
-<span class="c1"># -</span>
-</pre></div>
-</div>
-<img src="../../_images/sphx_glr_plot_workflow_base_006.png" srcset="../../_images/sphx_glr_plot_workflow_base_006.png" alt="plot workflow base" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 26.561 seconds)</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">_</span> <span class="o">=</span> <a class="sphx-glr-backref-module-SuPyMode-superset sphx-glr-backref-type-py-method reference internal" href="../../code.html#SuPyMode.superset.SuperSet.plot" title="SuPyMode.superset.SuperSet.plot"><span class="n">superset</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">adiabatic</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># -</span><span class="w">
+</span></pre></div></div>
+<img src="../../_images/sphx_glr_plot_workflow_base_006.png" srcset="../../_images/sphx_glr_plot_workflow_base_006.png" alt="plot workflow base" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 26.253 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-workflow-plot-workflow-base-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/015ea8acab29302ab98216f234abba0a/plot_workflow_base.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_workflow_base.ipynb</span></code></a></p>
