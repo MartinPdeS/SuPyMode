@@ -16,8 +16,7 @@ version = SuPyMode.__version__
 try:
     import pyvista
 
-    if sys.platform in ["linux", "linux2"]:
-        pyvista.start_xvfb()  # Works only on linux system!
+    pyvista.OFF_SCREEN = True
 except ImportError:
     print("Could not load pyvista library for 3D rendering")
 
