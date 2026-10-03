@@ -46,7 +46,7 @@ dependencies = [
     "PyFinitDiff",
     "FiberFusing",
     "pyvista",
-    "PyFiberModes<0.13",
+    "PyFiberModes<0.17",
     "pathvalidate",
 ]
 keywords = [
