@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core>=0.3.3", "pybind11", "setuptools_scm[toml]>=8.0"]
+requires = ["scikit-build-core>=0.3.3", "pybind11; python_version < '3.14'", "pybind11>=3.0.1; python_version >= '3.14'", "setuptools_scm[toml]>=8.0"]
 build-backend = "scikit_build_core.build"
 
 [tool.scikit-build]
@@ -32,6 +32,8 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
     "Development Status :: 4 - Beta",
     "Topic :: Scientific/Engineering :: Physics",
@@ -104,22 +106,22 @@ relative_files = true
 [tool.cibuildwheel]
 build-frontend = "build"
 test-extras = ["testing"]
-environment = { PIP_ONLY_BINARY=":all:", PIP_PREFER_BINARY="1" }
+environment = { PIP_ONLY_BINARY=":all:", PIP_PREFER_BINARY="1", MPLBACKEND="Agg" }
 
 [tool.cibuildwheel.linux]
 archs = ["x86_64"]
-build = ["cp311-manylinux*", "cp312-manylinux*"]
-manylinux-x86_64-image = "manylinux2014"
+build = ["cp311-manylinux*", "cp312-manylinux*", "cp313-manylinux*", "cp314-manylinux*"]
+manylinux-x86_64-image = "manylinux_2_28"
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
-test-command = "cd {project}; python -m pytest --config-file=pytest.ini --ignore=tests/extra/test_system_plot.py --ignore=tests/single/representation.py"
+test-command = "cd /tmp && python -m pytest --import-mode=importlib --config-file={project}/pytest.ini {project}/tests --ignore={project}/tests/extra/test_system_plot.py --ignore={project}/tests/single/representation.py"
 
 [tool.cibuildwheel.macos]
 archs = ["arm64"]
-build = ["cp311-*", "cp312-*"]
+build = ["cp311-*", "cp312-*", "cp313-*", "cp314-*"]
 repair-wheel-command = "delocate-wheel -w {dest_dir} -v {wheel}"
-test-command = "cd {project}; python -m pytest --config-file=pytest.ini"
+test-command = "cd /tmp && python -m pytest --import-mode=importlib --config-file={project}/pytest.ini {project}/tests"
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64"]
-build = ["cp311-*", "cp312-*"]
-test-command = "cd /d {project} && python -m pytest --config-file=pytest.ini"
+build = ["cp311-*", "cp312-*", "cp313-*", "cp314-*"]
+test-command = "cd /d %TEMP% && python -m pytest --import-mode=importlib --config-file={project}/pytest.ini {project}/tests"
