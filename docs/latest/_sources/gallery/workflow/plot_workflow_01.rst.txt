@@ -36,7 +36,7 @@ Importing the script dependencies
         BoundaryValue,
         DomainAlignment,
     )
-    from PyOptik import MaterialBank
+    from PyOptik import material
 
     wavelength = 1550e-9
 
@@ -59,7 +59,7 @@ Here we define the cladding and fiber structure to model the problem
 .. code-block:: Python
 
 
-    clad_refractive_index = MaterialBank.fused_silica.compute_refractive_index(
+    clad_refractive_index = material("SiO2").compute_refractive_index(
         wavelength
     )  # Refractive index of silica at the specified wavelength
 
@@ -70,6 +70,15 @@ Here we define the cladding and fiber structure to model the problem
 
 
 
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    INFO:PyOptik.catalog:Downloading upstream database snapshot from https://github.com/polyanskiy/refractiveindex.info-database/archive/refs/heads/main.zip
+    INFO:PyOptik.catalog:Loaded 3559 material pages from /home/runner/.local/share/PyOptik/rii/catalog-nk.yml
+    INFO:PyOptik.catalog:Initialized catalog with 3559 material pages
+    INFO:PyOptik.catalog:Extracted upstream snapshot with 3559 catalog pages
 
 
 
@@ -245,7 +254,7 @@ Adiabatic criterion: :math:`\tilde{C}_{i,j}`
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 3.984 seconds)
+   **Total running time of the script:** (0 minutes 11.186 seconds)
 
 
 .. _sphx_glr_download_gallery_workflow_plot_workflow_01.py:

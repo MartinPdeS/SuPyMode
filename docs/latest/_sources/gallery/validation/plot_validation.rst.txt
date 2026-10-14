@@ -26,7 +26,7 @@ Propagation constant: DCFC
 Imports
 ~~~~~~~
 
-.. GENERATED FROM PYTHON SOURCE LINES 9-34
+.. GENERATED FROM PYTHON SOURCE LINES 9-32
 
 .. code-block:: Python
 
@@ -38,19 +38,17 @@ Imports
         BoundaryValue,
         DomainAlignment,
     )
-    from PyOptik import MaterialBank
+    from PyOptik import material
 
     import PyFiberModes
     from PyFiberModes.fiber import load_fiber
-    from PyFiberModes.__future__ import get_normalized_LP_coupling
     import matplotlib.pyplot as plt
-    import itertools
 
     wavelength = 1550e-9
     fiber_name = "test_multimode_fiber"
     scale_factor = 4
 
-    clad_refractive_index = MaterialBank.fused_silica.compute_refractive_index(
+    clad_refractive_index = material("SiO2").compute_refractive_index(
         wavelength
     )  # Refractive index of silica at the specified wavelength
 
@@ -62,13 +60,13 @@ Imports
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-38
+.. GENERATED FROM PYTHON SOURCE LINES 33-36
 
 Generating the fiber structure
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Here we define the cladding and fiber structure to model the problem
 
-.. GENERATED FROM PYTHON SOURCE LINES 38-44
+.. GENERATED FROM PYTHON SOURCE LINES 36-42
 
 .. code-block:: Python
 
@@ -85,11 +83,11 @@ Here we define the cladding and fiber structure to model the problem
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 45-46
+.. GENERATED FROM PYTHON SOURCE LINES 43-44
 
 Defining the boundaries of the system
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-50
+.. GENERATED FROM PYTHON SOURCE LINES 44-48
 
 .. code-block:: Python
 
@@ -104,13 +102,13 @@ Defining the boundaries of the system
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-54
+.. GENERATED FROM PYTHON SOURCE LINES 49-52
 
 Generating the computing workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Workflow class to define all the computation parameters before initializing the solver
 
-.. GENERATED FROM PYTHON SOURCE LINES 54-75
+.. GENERATED FROM PYTHON SOURCE LINES 52-73
 
 .. code-block:: Python
 
@@ -147,11 +145,11 @@ Workflow class to define all the computation parameters before initializing the 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 76-77
+.. GENERATED FROM PYTHON SOURCE LINES 74-75
 
 Plotting the geometry
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-83
+.. GENERATED FROM PYTHON SOURCE LINES 75-81
 
 .. code-block:: Python
 
@@ -173,11 +171,11 @@ Plotting the geometry
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-85
+.. GENERATED FROM PYTHON SOURCE LINES 82-83
 
 Plotting the field distribution
 
-.. GENERATED FROM PYTHON SOURCE LINES 85-90
+.. GENERATED FROM PYTHON SOURCE LINES 83-88
 
 .. code-block:: Python
 
@@ -198,11 +196,11 @@ Plotting the field distribution
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 91-92
+.. GENERATED FROM PYTHON SOURCE LINES 89-90
 
 Computing the analytical values using FiberModes solver.
 
-.. GENERATED FROM PYTHON SOURCE LINES 92-97
+.. GENERATED FROM PYTHON SOURCE LINES 90-95
 
 .. code-block:: Python
 
@@ -218,11 +216,11 @@ Computing the analytical values using FiberModes solver.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 98-99
+.. GENERATED FROM PYTHON SOURCE LINES 96-97
 
 Preparing the figure
 
-.. GENERATED FROM PYTHON SOURCE LINES 99-145
+.. GENERATED FROM PYTHON SOURCE LINES 97-141
 
 .. code-block:: Python
 
@@ -273,8 +271,6 @@ Preparing the figure
 
 
 
-
-
 .. image-sg:: /gallery/validation/images/sphx_glr_plot_validation_004.png
    :alt: plot validation
    :srcset: /gallery/validation/images/sphx_glr_plot_validation_004.png
@@ -284,92 +280,10 @@ Preparing the figure
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 146-148
-
-Computing the analytical values using FiberModes solver.
-Preparing the figure
-
-.. GENERATED FROM PYTHON SOURCE LINES 148-209
-
-.. code-block:: Python
-
-    figure, ax = plt.subplots(1, 1, figsize=(12, 6))
-
-    ax.set(xlabel="Inverse taper ratio", ylabel="Normalized coupling")
-
-    initial_fiber = load_fiber(
-        fiber_name=fiber_name, wavelength=wavelength, add_air_layer=False
-    )
-
-
-    def get_normalized_coupling_pyfibermodes(mode_0, mode_1, itr_list, initial_fiber):
-        analytical = numpy.empty(itr_list.shape)
-
-        for idx, itr in enumerate(itr_list):
-            tapered_fiber = initial_fiber.scale(factor=itr)
-
-            analytical[idx] = get_normalized_LP_coupling(
-                fiber=tapered_fiber, mode_0=mode_0, mode_1=mode_1
-            )
-
-        return analytical
-
-
-    for idx, (mode_0, mode_1) in enumerate(
-        itertools.combinations(["LP01", "LP02", "LP03"], 2)
-    ):
-        color = f"C{idx}"
-
-        analytical = get_normalized_coupling_pyfibermodes(
-            mode_0=getattr(PyFiberModes, mode_0),
-            mode_1=getattr(PyFiberModes, mode_1),
-            itr_list=itr_list[::2],
-            initial_fiber=initial_fiber,
-        )
-
-        ax.plot(
-            itr_list[::2],
-            abs(analytical),
-            label="Analytical",
-            linestyle="-",
-            linewidth=2,
-            color=color,
-        )
-
-        simulation = getattr(workflow.superset, mode_0).normalized_coupling.get_values(
-            getattr(workflow.superset, mode_1)
-        ) / (3.1415 * 2)
-
-        ax.scatter(
-            workflow.superset.model_parameters.itr_list,
-            abs(simulation),
-            color=color,
-            s=80,
-            linestyle="-",
-            label=mode_0 + "-" + mode_1,
-        )
-
-    plt.legend()
-    plt.grid()
-    plt.show()
-
-    # -
-
-
-
-.. image-sg:: /gallery/validation/images/sphx_glr_plot_validation_005.png
-   :alt: plot validation
-   :srcset: /gallery/validation/images/sphx_glr_plot_validation_005.png
-   :class: sphx-glr-single-img
-
-
-
-
-
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 18.670 seconds)
+   **Total running time of the script:** (0 minutes 19.221 seconds)
 
 
 .. _sphx_glr_download_gallery_validation_plot_validation.py:

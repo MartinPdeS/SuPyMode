@@ -30,7 +30,7 @@
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
@@ -51,7 +51,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.22.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/SuPyMode/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v2.3.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v2.4.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -63,7 +63,7 @@
     <link rel="prev" title="Propagation constant: DCFC" href="plot_beta_DCF.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2.3.0" />
+  <meta name="docsearch:version" content="2.4.1" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -519,7 +519,7 @@ to download the full example code.</p>
 </span>    <span class="n">BoundaryValue</span><span class="p">,</span><span class="w">
 </span>    <span class="n">DomainAlignment</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
-</span><span class="kn">from</span><span class="w"> </span><span class="nn">PyOptik</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaterialBank</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">PyOptik</span><span class="w"> </span><span class="kn">import</span> <span class="n">material</span><span class="w">
 </span><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">PyFiberModes</span><span class="w"> </span><span class="kn">import</span> <span class="n">LP01</span><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">PyFiberModes</span><span class="nn">.</span><span class="nn">fiber</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_fiber</span><span class="w">
@@ -535,9 +535,7 @@ to download the full example code.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">fiber_list</span> <span class="o">=</span> <span class="p">[</span><span class="w">
 </span>    <span class="n">fiber_loader</span><span class="o">.</span><span class="n">load_fiber</span><span class="p">(</span><span class="w">
 </span>        <span class="n">fiber_name</span><span class="p">,</span><span class="w">
-</span>        <span class="n">clad_refractive_index</span><span class="o">=</span><span class="n">MaterialBank</span><span class="o">.</span><span class="n">fused_silica</span><span class="o">.</span><span class="n">compute_refractive_index</span><span class="p">(</span><span class="w">
-</span>            <span class="n">wavelength</span><span class="w">
-</span>        <span class="p">)</span><span class="p">,</span><span class="w">
+</span>        <span class="n">clad_refractive_index</span><span class="o">=</span><span class="n">material</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">SiO2</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">compute_refractive_index</span><span class="p">(</span><span class="n">wavelength</span><span class="p">)</span><span class="p">,</span><span class="w">
 </span>    <span class="p">)</span>  <span class="c1"># Refractive index of silica at the specified wavelength</span><span class="w">
 </span><span class="p">]</span><span class="w">
 </span></pre></div></div>
@@ -615,7 +613,7 @@ to download the full example code.</p>
 </span><span class="w">
 </span><span class="c1"># -</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_plot_beta_SMF28_002.png" srcset="../../_images/sphx_glr_plot_beta_SMF28_002.png" alt="plot beta SMF28" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 9.704 seconds)</p>
+<img src="../../_images/sphx_glr_plot_beta_SMF28_002.png" srcset="../../_images/sphx_glr_plot_beta_SMF28_002.png" alt="plot beta SMF28" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 37.105 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-validation-plot-beta-smf28-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/24e9c7742f3834fdb4623bee0a721a1a/plot_beta_SMF28.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_beta_SMF28.ipynb</span></code></a></p>

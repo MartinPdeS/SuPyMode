@@ -39,7 +39,7 @@ Importing the script dependencies
         StructureType,
     )
 
-    from PyOptik import MaterialBank
+    from PyOptik import material
 
 
 
@@ -77,7 +77,7 @@ Here we define the cladding and fiber structure to model the problem
 
 .. code-block:: Python
 
-    clad_refractive_index = MaterialBank.fused_silica.compute_refractive_index(
+    clad_refractive_index = material("SiO2").compute_refractive_index(
         wavelength
     )  # Refractive index of silica at the specified wavelength
 
@@ -277,7 +277,7 @@ Adiabatic criterion: :math:`\tilde{C}_{i,j}`
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 5.755 seconds)
+   **Total running time of the script:** (0 minutes 11.065 seconds)
 
 
 .. _sphx_glr_download_gallery_workflow_plot_workflow_03.py:

@@ -14,7 +14,7 @@ from SuPyMode.workflow import (
     BoundaryValue,
     DomainAlignment,
 )
-from PyOptik import MaterialBank
+from PyOptik import material
 
 from PyFiberModes import LP01
 from PyFiberModes.fiber import load_fiber
@@ -31,9 +31,7 @@ fiber_name = "DCF1300S_33"
 fiber_list = [
     fiber_loader.load_fiber(
         fiber_name,
-        clad_refractive_index=MaterialBank.fused_silica.compute_refractive_index(
-            wavelength
-        ),
+        clad_refractive_index=material("SiO2").compute_refractive_index(wavelength),
     )  # Refractive index of silica at the specified wavelength
 ]
 

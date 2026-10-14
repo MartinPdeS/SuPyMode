@@ -30,7 +30,7 @@
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
@@ -51,7 +51,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.22.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/SuPyMode/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v2.3.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v2.4.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -63,7 +63,7 @@
     <link rel="prev" title="Propagation constant: DCFC" href="plot_beta_SMF28.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2.3.0" />
+  <meta name="docsearch:version" content="2.4.1" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -519,19 +519,17 @@ to download the full example code.</p>
 </span>    <span class="n">BoundaryValue</span><span class="p">,</span><span class="w">
 </span>    <span class="n">DomainAlignment</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
-</span><span class="kn">from</span><span class="w"> </span><span class="nn">PyOptik</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaterialBank</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">PyOptik</span><span class="w"> </span><span class="kn">import</span> <span class="n">material</span><span class="w">
 </span><span class="w">
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">PyFiberModes</span><span class="w">
 </span><span class="kn">from</span><span class="w"> </span><span class="nn">PyFiberModes</span><span class="nn">.</span><span class="nn">fiber</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_fiber</span><span class="w">
-</span><span class="kn">from</span><span class="w"> </span><span class="nn">PyFiberModes</span><span class="nn">.</span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_normalized_LP_coupling</span><span class="w">
 </span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
-</span><span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span><span class="w">
 </span><span class="w">
 </span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1550e-9</span><span class="w">
 </span><span class="n">fiber_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">test_multimode_fiber</span><span class="s2">&quot;</span><span class="w">
 </span><span class="n">scale_factor</span> <span class="o">=</span> <span class="mi">4</span><span class="w">
 </span><span class="w">
-</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">clad_refractive_index</span></a> <span class="o">=</span> <span class="n">MaterialBank</span><span class="o">.</span><span class="n">fused_silica</span><span class="o">.</span><span class="n">compute_refractive_index</span><span class="p">(</span><span class="w">
+</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">clad_refractive_index</span></a> <span class="o">=</span> <span class="n">material</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">SiO2</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">compute_refractive_index</span><span class="p">(</span><span class="w">
 </span>    <span class="n">wavelength</span><span class="w">
 </span><span class="p">)</span>  <span class="c1"># Refractive index of silica at the specified wavelength</span><span class="w">
 </span></pre></div></div>
@@ -636,71 +634,7 @@ to download the full example code.</p>
 </span><span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_plot_validation_004.png" srcset="../../_images/sphx_glr_plot_validation_004.png" alt="plot validation" class = "sphx-glr-single-img"/><p>Computing the analytical values using FiberModes solver.
-Preparing the figure</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">figure</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Inverse taper ratio</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Normalized coupling</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="n">initial_fiber</span> <span class="o">=</span> <span class="n">load_fiber</span><span class="p">(</span><span class="w">
-</span>    <span class="n">fiber_name</span><span class="o">=</span><span class="n">fiber_name</span><span class="p">,</span> <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelength</span><span class="p">,</span> <span class="n">add_air_layer</span><span class="o">=</span><span class="kc">False</span><span class="w">
-</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="w">
-</span><span class="k">def</span><span class="w"> </span><span class="nf">get_normalized_coupling_pyfibermodes</span><span class="p">(</span><span class="n">mode_0</span><span class="p">,</span> <span class="n">mode_1</span><span class="p">,</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">itr_list</span></a><span class="p">,</span> <span class="n">initial_fiber</span><span class="p">)</span><span class="p">:</span><span class="w">
-</span>    <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">analytical</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/devdocs/reference/generated/numpy.empty.html#numpy.empty" title="numpy.empty"><span class="n">numpy</span><span class="o">.</span><span class="n">empty</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">itr_list</span></a><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span>    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">itr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">itr_list</span></a><span class="p">)</span><span class="p">:</span><span class="w">
-</span>        <span class="n">tapered_fiber</span> <span class="o">=</span> <span class="n">initial_fiber</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">factor</span><span class="o">=</span><span class="n">itr</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span>        <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">analytical</span></a><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_normalized_LP_coupling</span><span class="p">(</span><span class="w">
-</span>            <span class="n">fiber</span><span class="o">=</span><span class="n">tapered_fiber</span><span class="p">,</span> <span class="n">mode_0</span><span class="o">=</span><span class="n">mode_0</span><span class="p">,</span> <span class="n">mode_1</span><span class="o">=</span><span class="n">mode_1</span><span class="w">
-</span>        <span class="p">)</span><span class="w">
-</span><span class="w">
-</span>    <span class="k">return</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">analytical</span></a><span class="w">
-</span><span class="w">
-</span><span class="w">
-</span><span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">mode_0</span><span class="p">,</span> <span class="n">mode_1</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="w">
-</span>    <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">LP01</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">LP02</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">LP03</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="w">
-</span><span class="p">)</span><span class="p">:</span><span class="w">
-</span>    <span class="n">color</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="s2">C</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="w">
-</span><span class="w">
-</span>    <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">analytical</span></a> <span class="o">=</span> <span class="n">get_normalized_coupling_pyfibermodes</span><span class="p">(</span><span class="w">
-</span>        <span class="n">mode_0</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">PyFiberModes</span><span class="p">,</span> <span class="n">mode_0</span><span class="p">)</span><span class="p">,</span><span class="w">
-</span>        <span class="n">mode_1</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">PyFiberModes</span><span class="p">,</span> <span class="n">mode_1</span><span class="p">)</span><span class="p">,</span><span class="w">
-</span>        <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">itr_list</span></a><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">itr_list</span></a><span class="p">[</span><span class="p">:</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="p">,</span><span class="w">
-</span>        <span class="n">initial_fiber</span><span class="o">=</span><span class="n">initial_fiber</span><span class="p">,</span><span class="w">
-</span>    <span class="p">)</span><span class="w">
-</span><span class="w">
-</span>    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="w">
-</span>        <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">itr_list</span></a><span class="p">[</span><span class="p">:</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="p">,</span><span class="w">
-</span>        <span class="nb">abs</span><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">analytical</span></a><span class="p">)</span><span class="p">,</span><span class="w">
-</span>        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Analytical</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>        <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">-</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>        <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w">
-</span>        <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span><span class="w">
-</span>    <span class="p">)</span><span class="w">
-</span><span class="w">
-</span>    <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">simulation</span></a> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">workflow</span><span class="o">.</span><span class="n">superset</span><span class="p">,</span> <span class="n">mode_0</span><span class="p">)</span><span class="o">.</span><span class="n">normalized_coupling</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span><span class="w">
-</span>        <span class="nb">getattr</span><span class="p">(</span><span class="n">workflow</span><span class="o">.</span><span class="n">superset</span><span class="p">,</span> <span class="n">mode_1</span><span class="p">)</span><span class="w">
-</span>    <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">3.1415</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span>    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="w">
-</span>        <span class="n">workflow</span><span class="o">.</span><span class="n">superset</span><span class="o">.</span><span class="n">model_parameters</span><span class="o">.</span><span class="n">itr_list</span><span class="p">,</span><span class="w">
-</span>        <span class="nb">abs</span><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">simulation</span></a><span class="p">)</span><span class="p">,</span><span class="w">
-</span>        <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span><span class="w">
-</span>        <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span><span class="w">
-</span>        <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">-</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
-</span>        <span class="n">label</span><span class="o">=</span><span class="n">mode_0</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="s2">-</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">mode_1</span><span class="p">,</span><span class="w">
-</span>    <span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="p">)</span><span class="w">
-</span><span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="p">)</span><span class="w">
-</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
-</span><span class="w">
-</span><span class="c1"># -</span><span class="w">
-</span></pre></div></div>
-<img src="../../_images/sphx_glr_plot_validation_005.png" srcset="../../_images/sphx_glr_plot_validation_005.png" alt="plot validation" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 18.670 seconds)</p>
+<img src="../../_images/sphx_glr_plot_validation_004.png" srcset="../../_images/sphx_glr_plot_validation_004.png" alt="plot validation" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 19.221 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-validation-plot-validation-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/25913de4cdca34841319df05201a5f6f/plot_validation.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_validation.ipynb</span></code></a></p>

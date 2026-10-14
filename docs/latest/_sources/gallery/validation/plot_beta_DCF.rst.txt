@@ -38,7 +38,7 @@ Imports
         BoundaryValue,
         DomainAlignment,
     )
-    from PyOptik import MaterialBank
+    from PyOptik import material
 
     from PyFiberModes import LP01
     from PyFiberModes.fiber import load_fiber
@@ -61,16 +61,14 @@ Generating the fiber structure
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Here we define the cladding and fiber structure to model the problem
 
-.. GENERATED FROM PYTHON SOURCE LINES 31-41
+.. GENERATED FROM PYTHON SOURCE LINES 31-39
 
 .. code-block:: Python
 
     fiber_list = [
         fiber_loader.load_fiber(
             fiber_name,
-            clad_refractive_index=MaterialBank.fused_silica.compute_refractive_index(
-                wavelength
-            ),
+            clad_refractive_index=material("SiO2").compute_refractive_index(wavelength),
         )  # Refractive index of silica at the specified wavelength
     ]
 
@@ -82,11 +80,11 @@ Here we define the cladding and fiber structure to model the problem
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 42-43
+.. GENERATED FROM PYTHON SOURCE LINES 40-41
 
 Defining the boundaries of the system
 
-.. GENERATED FROM PYTHON SOURCE LINES 43-48
+.. GENERATED FROM PYTHON SOURCE LINES 41-46
 
 .. code-block:: Python
 
@@ -102,13 +100,13 @@ Defining the boundaries of the system
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 49-52
+.. GENERATED FROM PYTHON SOURCE LINES 47-50
 
 Generating the computing workflow
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Workflow class to define all the computation parameters before initializing the solver
 
-.. GENERATED FROM PYTHON SOURCE LINES 52-72
+.. GENERATED FROM PYTHON SOURCE LINES 50-70
 
 .. code-block:: Python
 
@@ -139,11 +137,11 @@ Workflow class to define all the computation parameters before initializing the 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-74
+.. GENERATED FROM PYTHON SOURCE LINES 71-72
 
 Plotting the geometry
 
-.. GENERATED FROM PYTHON SOURCE LINES 74-76
+.. GENERATED FROM PYTHON SOURCE LINES 72-74
 
 .. code-block:: Python
 
@@ -167,11 +165,11 @@ Plotting the geometry
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-78
+.. GENERATED FROM PYTHON SOURCE LINES 75-76
 
 Plotting the field distribution
 
-.. GENERATED FROM PYTHON SOURCE LINES 78-82
+.. GENERATED FROM PYTHON SOURCE LINES 76-80
 
 .. code-block:: Python
 
@@ -191,11 +189,11 @@ Plotting the field distribution
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 83-84
+.. GENERATED FROM PYTHON SOURCE LINES 81-82
 
 Computing the analytical values using FiberModes solver.
 
-.. GENERATED FROM PYTHON SOURCE LINES 84-86
+.. GENERATED FROM PYTHON SOURCE LINES 82-84
 
 .. code-block:: Python
 
@@ -208,11 +206,11 @@ Computing the analytical values using FiberModes solver.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 87-88
+.. GENERATED FROM PYTHON SOURCE LINES 85-86
 
 Preparing the figure
 
-.. GENERATED FROM PYTHON SOURCE LINES 88-126
+.. GENERATED FROM PYTHON SOURCE LINES 86-124
 
 .. code-block:: Python
 
@@ -269,7 +267,7 @@ Preparing the figure
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 18.558 seconds)
+   **Total running time of the script:** (1 minutes 4.971 seconds)
 
 
 .. _sphx_glr_download_gallery_validation_plot_beta_DCF.py:

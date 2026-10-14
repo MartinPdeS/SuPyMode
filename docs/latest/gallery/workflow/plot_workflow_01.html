@@ -30,7 +30,7 @@
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
+    <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
@@ -52,7 +52,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.22.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/SuPyMode/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v2.3.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v2.4.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -62,7 +62,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2.3.0" />
+  <meta name="docsearch:version" content="2.4.1" />
   
     
     <script src="../../_static/searchtools.js"></script>
@@ -489,14 +489,14 @@ to download the full example code.</p>
 </span>    <span class="n">BoundaryValue</span><span class="p">,</span><span class="w">
 </span>    <span class="n">DomainAlignment</span><span class="p">,</span><span class="w">
 </span><span class="p">)</span><span class="w">
-</span><span class="kn">from</span><span class="w"> </span><span class="nn">PyOptik</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaterialBank</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">PyOptik</span><span class="w"> </span><span class="kn">import</span> <span class="n">material</span><span class="w">
 </span><span class="w">
 </span><span class="n">wavelength</span> <span class="o">=</span> <span class="mf">1550e-9</span><span class="w">
 </span></pre></div></div>
 <section id="generating-the-fiber-structure">
 <h2>Generating the fiber structure<a class="headerlink" href="#generating-the-fiber-structure" title="Link to this heading">#</a></h2>
 <p>Here we define the cladding and fiber structure to model the problem</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">clad_refractive_index</span></a> <span class="o">=</span> <span class="n">MaterialBank</span><span class="o">.</span><span class="n">fused_silica</span><span class="o">.</span><span class="n">compute_refractive_index</span><span class="p">(</span><span class="w">
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">clad_refractive_index</span></a> <span class="o">=</span> <span class="n">material</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">SiO2</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">compute_refractive_index</span><span class="p">(</span><span class="w">
 </span>    <span class="n">wavelength</span><span class="w">
 </span><span class="p">)</span>  <span class="c1"># Refractive index of silica at the specified wavelength</span><span class="w">
 </span><span class="w">
@@ -504,6 +504,12 @@ to download the full example code.</p>
 </span>    <span class="s2">&quot;</span><span class="s2">SMF28</span><span class="s2">&quot;</span><span class="p">,</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">clad_refractive_index</span></a><span class="o">=</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/devdocs/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">clad_refractive_index</span></a><span class="p">,</span> <span class="n">remove_cladding</span><span class="o">=</span><span class="kc">False</span><span class="w">
 </span><span class="p">)</span><span class="w">
 </span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>INFO:PyOptik.catalog:Downloading upstream database snapshot from https://github.com/polyanskiy/refractiveindex.info-database/archive/refs/heads/main.zip
+INFO:PyOptik.catalog:Loaded 3559 material pages from /home/runner/.local/share/PyOptik/rii/catalog-nk.yml
+INFO:PyOptik.catalog:Initialized catalog with 3559 material pages
+INFO:PyOptik.catalog:Extracted upstream snapshot with 3559 catalog pages
+</pre></div>
+</div>
 <p>Defining the boundaries of the system</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">boundaries</span> <span class="o">=</span> <span class="p">[</span><span class="w">
 </span>    <span class="n">Boundaries</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="n">BoundaryValue</span><span class="o">.</span><span class="n">SYMMETRIC</span><span class="p">)</span><span class="p">,</span><span class="w">
@@ -566,7 +572,7 @@ WARNING:matplotlib.font_manager:findfont: Generic family 'cursive' not found bec
 </span><span class="w">
 </span><span class="c1"># -</span><span class="w">
 </span></pre></div></div>
-<img src="../../_images/sphx_glr_plot_workflow_01_005.png" srcset="../../_images/sphx_glr_plot_workflow_01_005.png" alt="plot workflow 01" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 3.984 seconds)</p>
+<img src="../../_images/sphx_glr_plot_workflow_01_005.png" srcset="../../_images/sphx_glr_plot_workflow_01_005.png" alt="plot workflow 01" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 11.186 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-gallery-workflow-plot-workflow-01-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/343fb0088691fbee7af36540ebd91efe/plot_workflow_01.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_workflow_01.ipynb</span></code></a></p>
