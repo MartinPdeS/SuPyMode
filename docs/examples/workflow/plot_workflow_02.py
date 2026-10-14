@@ -15,7 +15,7 @@ from SuPyMode.workflow import (
     StructureType,
 )
 
-from PyOptik import MaterialBank
+from PyOptik import material
 
 wavelength = 1550e-9
 
@@ -32,7 +32,7 @@ clad_structure.add_structure(
     fiber_radius=62.5e-6,
 )
 
-clad_structure.refractive_index = MaterialBank.fused_silica.compute_refractive_index(
+clad_structure.refractive_index = material("SiO2").compute_refractive_index(
     wavelength
 )  # Refractive index of silica at the specified wavelength
 

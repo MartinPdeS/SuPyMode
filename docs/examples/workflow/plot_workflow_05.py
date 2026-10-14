@@ -15,7 +15,7 @@ from SuPyMode.workflow import (
     BoundaryValue,
 )
 
-from PyOptik import MaterialBank
+from PyOptik import material
 
 # %%
 # Creating the fiber list for mesh
@@ -28,7 +28,7 @@ wavelength = 1550e-9
 # Generating the fiber structure
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Here we define the cladding and fiber structure to model the problem
-clad_refractive_index = MaterialBank.fused_silica.compute_refractive_index(
+clad_refractive_index = material("SiO2").compute_refractive_index(
     wavelength
 )  # Refractive index of silica at the specified wavelength
 

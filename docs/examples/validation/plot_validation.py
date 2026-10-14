@@ -14,7 +14,7 @@ from SuPyMode.workflow import (
     BoundaryValue,
     DomainAlignment,
 )
-from PyOptik import MaterialBank
+from PyOptik import material
 
 import PyFiberModes
 from PyFiberModes.fiber import load_fiber
@@ -26,7 +26,7 @@ wavelength = 1550e-9
 fiber_name = "test_multimode_fiber"
 scale_factor = 4
 
-clad_refractive_index = MaterialBank.fused_silica.compute_refractive_index(
+clad_refractive_index = material("SiO2").compute_refractive_index(
     wavelength
 )  # Refractive index of silica at the specified wavelength
 
