@@ -1,3 +1,4 @@
+#include <string>
 #include "supermode.h"
 
 double SuperMode::get_norm(const size_t &slice, const std::string &normalization_type) const {

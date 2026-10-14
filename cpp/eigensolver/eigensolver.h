@@ -15,6 +15,7 @@
 #include "mode_labeler.h"
 
 #include <iostream>
+#include <string>
 
 class EigenSolver
 {

@@ -9,12 +9,17 @@ build:
   number: 0
   script:
     - export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"  # [osx]
+    # conda-build exports a stale Visual Studio generator on the Windows runner.
+    # CMake 4 no longer recognises it; clearing the variable lets CMake select
+    # the installed Visual Studio toolchain.
+    - set "CMAKE_GENERATOR="  # [win]
     - "{{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation"
 
 requirements:
   build:
     - {{ compiler('cxx') }}
     - llvm-openmp  # [osx]
+    - cmake >=3.20
   host:
     - python {{ PY_VER }}*
     - python_abi 3.13.* *_cp313   # [py==313]
