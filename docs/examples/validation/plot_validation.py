@@ -18,9 +18,7 @@ from PyOptik import material
 
 import PyFiberModes
 from PyFiberModes.fiber import load_fiber
-from PyFiberModes.__future__ import get_normalized_LP_coupling
 import matplotlib.pyplot as plt
-import itertools
 
 wavelength = 1550e-9
 fiber_name = "test_multimode_fiber"
@@ -140,69 +138,3 @@ for idx, mode in enumerate(["LP01", "LP02", "LP03"]):
 plt.legend()
 plt.grid()
 plt.show()
-
-
-# %%
-# Computing the analytical values using FiberModes solver.
-# Preparing the figure
-figure, ax = plt.subplots(1, 1, figsize=(12, 6))
-
-ax.set(xlabel="Inverse taper ratio", ylabel="Normalized coupling")
-
-initial_fiber = load_fiber(
-    fiber_name=fiber_name, wavelength=wavelength, add_air_layer=False
-)
-
-
-def get_normalized_coupling_pyfibermodes(mode_0, mode_1, itr_list, initial_fiber):
-    analytical = numpy.empty(itr_list.shape)
-
-    for idx, itr in enumerate(itr_list):
-        tapered_fiber = initial_fiber.scale(factor=itr)
-
-        analytical[idx] = get_normalized_LP_coupling(
-            fiber=tapered_fiber, mode_0=mode_0, mode_1=mode_1
-        )
-
-    return analytical
-
-
-for idx, (mode_0, mode_1) in enumerate(
-    itertools.combinations(["LP01", "LP02", "LP03"], 2)
-):
-    color = f"C{idx}"
-
-    analytical = get_normalized_coupling_pyfibermodes(
-        mode_0=getattr(PyFiberModes, mode_0),
-        mode_1=getattr(PyFiberModes, mode_1),
-        itr_list=itr_list[::2],
-        initial_fiber=initial_fiber,
-    )
-
-    ax.plot(
-        itr_list[::2],
-        abs(analytical),
-        label="Analytical",
-        linestyle="-",
-        linewidth=2,
-        color=color,
-    )
-
-    simulation = getattr(workflow.superset, mode_0).normalized_coupling.get_values(
-        getattr(workflow.superset, mode_1)
-    ) / (3.1415 * 2)
-
-    ax.scatter(
-        workflow.superset.model_parameters.itr_list,
-        abs(simulation),
-        color=color,
-        s=80,
-        linestyle="-",
-        label=mode_0 + "-" + mode_1,
-    )
-
-plt.legend()
-plt.grid()
-plt.show()
-
-# -
