@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Source code &#8212; SuPyMode  documentation</title>
+    <title>API reference &#8212; SuPyMode  documentation</title>
   
   
   
@@ -26,42 +26,45 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-    <link rel="stylesheet" type="text/css" href="/opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages/docs/source/_static/default.css" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="_static/default.css?v=4340df76" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/default.css?v=02978338" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
     <script src="_static/documentation_options.js?v=5929fcd5"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'code';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.22.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/SuPyMode/documentation_page/version_switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v2.4.2';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="_static/thumbnail.png"/>
+    <link rel="icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Coding examples" href="examples.html" />
-    <link rel="prev" title="Theoretical background" href="theory.html" />
+    <link rel="next" title="Resources" href="resources.html" />
+    <link rel="prev" title="4x4 Coupler [linear]" href="gallery/extra/plot_propagation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="2.4.2" />
   
@@ -133,8 +136,8 @@
     
     
     
-    <img src="_static/thumbnail.png" class="logo__image only-dark" alt=""/>
-    <img src="_static/thumbnail.png" class="logo__image only-light pst-js-only" alt=""/>
+    <img src="_static/logo.svg" class="logo__image only-dark" alt="SuPyMode logo"/>
+    <img src="_static/logo.svg" class="logo__image only-light pst-js-only" alt="SuPyMode logo"/>
   
   
     <p class="title logo__title">SuPyMode</p>
@@ -152,29 +155,36 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="theory.html">
-    Theoretical background
+  <a class="nav-link nav-internal" href="getting_started.html">
+    Start
   </a>
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#" aria-current="page">
-    Source code
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guide.html">
+    Guide
   </a>
 </li>
 
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="examples.html">
-    Coding examples
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    API
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="references.html">
-    References
+  <a class="nav-link nav-internal" href="resources.html">
+    Resources
   </a>
 </li>
 
@@ -234,6 +244,17 @@
       
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MartinPdeS/SuPyMode" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
         <li class="nav-item">
           
           
@@ -305,29 +326,36 @@
   <ul class="bd-navbar-elements navbar-nav">
     
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="theory.html">
-    Theoretical background
+  <a class="nav-link nav-internal" href="getting_started.html">
+    Start
   </a>
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#" aria-current="page">
-    Source code
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guide.html">
+    Guide
   </a>
 </li>
 
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="examples.html">
-    Coding examples
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    API
   </a>
 </li>
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="references.html">
-    References
+  <a class="nav-link nav-internal" href="resources.html">
+    Resources
   </a>
 </li>
 
@@ -378,6 +406,17 @@
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/MartinPdeS/SuPyMode" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
         <li class="nav-item">
           
           
@@ -458,7 +497,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Source code</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">API reference</span></li>
   </ul>
 </nav>
 </div>
@@ -475,8 +514,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="source-code">
-<span id="code"></span><h1>Source code<a class="headerlink" href="#source-code" title="Link to this heading">#</a></h1>
+  <section id="api-reference">
+<span id="code"></span><h1>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h1>
 <section id="supysolver">
 <h2>SuPySolver<a class="headerlink" href="#supysolver" title="Link to this heading">#</a></h2>
 <blockquote>
@@ -565,348 +604,6 @@ boundary conditions.</p>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.accuracy">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">accuracy</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.accuracy" title="Link to this definition">#</a></dt>
-<dd><p>Accuracy order of the finite difference scheme.</p>
-<p>This parameter controls the order of accuracy for the finite difference
-approximation used in the eigenvalue solver. Higher values provide better
-accuracy at the cost of increased computational complexity.</p>
-<p>Common values:
-- 1: First-order accuracy (simplest, least accurate)
-- 2: Second-order accuracy (standard choice for many problems)
-- 4: Fourth-order accuracy (more accurate, especially for smooth solutions)</p>
-<p>The optimal choice depends on the specific problem and desired balance
-between accuracy and computational resources.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.alpha_vector">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">alpha_vector</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.alpha_vector" title="Link to this definition">#</a></dt>
-<dd><p>Vector of alpha parameters used in iterative extrapolation.</p>
-<p>This attribute stores the sequence of alpha values used during
-Richardson extrapolation in the iterative solver. It provides
-insight into the convergence behavior and can be used for
-diagnostic purposes.</p>
-<section id="type">
-<h3>Type<a class="headerlink" href="#type" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>numpy.ndarray</dt><dd><p>Array of float values representing the alpha parameters
-used in each iteration step.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This vector is populated during the execution of loop_over_itr()
-and can be examined to understand the solver’s convergence
-characteristics. Large variations in alpha values may indicate
-convergence difficulties.</p>
-<p>The optimal alpha value often lies between 0.5 and 2.0, but
-this can vary significantly depending on the problem characteristics
-and the condition number of the eigenvalue problem.</p>
-</section>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.boundaries">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">boundaries</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.boundaries" title="Link to this definition">#</a></dt>
-<dd><p>Boundary condition applied to the left edge of the computational domain.</p>
-<p>This read-only attribute specifies the type of boundary condition
-used at the left boundary of the finite difference grid. The
-boundary condition affects how the wave equation is discretized
-near the domain edges.</p>
-<section id="id1">
-<h3>Type<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>str</dt><dd><p>One of “PML”, “PEC”, or “PMC”</p>
-</dd>
-</dl>
-</section>
-<section id="options">
-<h3>Options<a class="headerlink" href="#options" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p>“PML”: Perfectly Matched Layer - absorbing boundary that
-minimizes reflections, recommended for most applications</p></li>
-<li><p>“PEC”: Perfect Electric Conductor - electric field tangential
-component is zero at the boundary</p></li>
-<li><p>“PMC”: Perfect Magnetic Conductor - magnetic field tangential
-component is zero at the boundary</p></li>
-</ul>
-</section>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.eigenvalue_to_index">
-<span class="sig-name descname"><span class="pre">eigenvalue_to_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SuPyMode.eigensolver.EIGENSOLVER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eigenvalue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsFloat</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SupportsIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.eigenvalue_to_index" title="Link to this definition">#</a></dt>
-<dd><p>Convert eigenvalue (propagation constant) to mode index.</p>
-<p>This method takes an eigenvalue (propagation constant) and returns the
-corresponding mode index, which can be used to identify the mode order
-(e.g., 0 for fundamental mode, 1 for first higher-order mode, etc.).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>eigenvalue</strong> (<em>complex</em>) – The eigenvalue (propagation constant) for which to compute the mode index.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The mode index corresponding to the given eigenvalue.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>double</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.extrapolation_order">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">extrapolation_order</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.extrapolation_order" title="Link to this definition">#</a></dt>
-<dd><p>Extrapolation order for iterative eigenvalue computation.
-This parameter specifies the order of Richardson extrapolation used in
-the iterative eigenvalue solver. Extrapolation can accelerate convergence
-and improve accuracy, especially for challenging problems.</p>
-<p>Recommended values:
-- 1: No extrapolation (standard iterative solver)
-- 2: Second-order extrapolation (common choice for improved convergence)
-- 3 or higher: Higher-order extrapolation (can provide better accuracy but may introduce instability)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.get_sorted_mode">
-<span class="sig-name descname"><span class="pre">get_sorted_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SuPyMode.eigensolver.EIGENSOLVER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsInt</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SupportsIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SuPyMode.supermode.SUPERMODE</span></span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.get_sorted_mode" title="Link to this definition">#</a></dt>
-<dd><p>Retrieve computed and sorted eigenmodes.</p>
-<p>Returns the computed eigenmodes sorted by their effective indices
-(propagation constants). Only the first n_sorted_mode modes are
-returned, as specified during initialization.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><p>A tuple containing:
-- eigenvalues (numpy.ndarray): Complex propagation constants</p>
-<blockquote>
-<div><p>of the modes, sorted by decreasing real part (effective index)</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>eigenvectors (numpy.ndarray): Mode field distributions as
-complex arrays with shape (n_grid_points, n_sorted_mode)</p></li>
-</ul>
-</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>tuple</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This method should be called after the eigenvalue computation
-has been performed (either through loop_over_itr or direct solving).</p>
-<p>The eigenvectors represent the electric or magnetic field components
-depending on the formulation used. For vector modes, both
-components may be included.</p>
-<p>The sorting is based on the real part of the eigenvalue, which
-corresponds to the effective refractive index of the mode.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.index_to_eigenvalue">
-<span class="sig-name descname"><span class="pre">index_to_eigenvalue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SuPyMode.eigensolver.EIGENSOLVER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsFloat</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SupportsIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.index_to_eigenvalue" title="Link to this definition">#</a></dt>
-<dd><p>Convert mode index to eigenvalue (propagation constant).
-This method takes a mode index (e.g., 0 for the fundamental mode, 1 for
-the first higher-order mode, etc.) and returns the corresponding eigenvalue
-(propagation constant) for that mode.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mode_index</strong> (<em>double</em>) – The refractive index of the mode for which to compute the eigenvalue.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The eigenvalue (propagation constant) corresponding to the given mode index.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>complex</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.initialize">
-<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SuPyMode.eigensolver.EIGENSOLVER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SuPyMode.model_parameters.ModelParameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finit_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.typing.ArrayLike</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_computed_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsInt</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SupportsIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_sorted_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsInt</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SupportsIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.initialize" title="Link to this definition">#</a></dt>
-<dd><p>Initialize the eigenvalue solver with the provided parameters.</p>
-<p>This method sets up the solver with the necessary parameters and
-prepares it for mode computation. It should be called before any
-eigenvalue solving methods.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model_parameters</strong> (<em>ModelParameters</em>) – Physical and geometric parameters of the waveguide model.</p></li>
-<li><p><strong>finit_matrix</strong> (<a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)"><em>numpy.ndarray</em></a>) – Finite difference matrix representing the discretized wave equation.</p></li>
-<li><p><strong>n_computed_mode</strong> (<em>int</em>) – Number of eigenmodes to compute.</p></li>
-<li><p><strong>n_sorted_mode</strong> (<em>int</em>)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If boundary conditions are not recognized or parameters are invalid.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.loop_over_itr">
-<span class="sig-name descname"><span class="pre">loop_over_itr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SuPyMode.eigensolver.EIGENSOLVER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsFloat</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SupportsIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.loop_over_itr" title="Link to this definition">#</a></dt>
-<dd><p>Perform iterative eigenvalue computation with extrapolation.</p>
-<p>This method implements an iterative algorithm to solve the eigenvalue
-problem with Richardson extrapolation for improved convergence and
-accuracy. It’s particularly useful for challenging problems where
-direct methods might struggle.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>alpha</strong> (<em>float</em>) – Extrapolation parameter controlling the step size in the
-iterative process. Optimal values depend on the problem
-characteristics. Typical range: 0.1-2.0.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if convergence was achieved within max_iter iterations,
-False otherwise.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This method modifies the internal state of the solver and should
-be called after initialization but before retrieving modes.
-The extrapolation helps accelerate convergence especially for
-problems with slowly converging eigenvalues.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">converged</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">loop_over_itr</span><span class="p">(</span><span class="n">extrapolation_order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="ow">not</span> <span class="n">converged</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">"Warning: Solver did not converge"</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.mode_number">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mode_number</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.mode_number" title="Link to this definition">#</a></dt>
-<dd><p>Current mode number being processed.
-This parameter keeps track of the mode index currently being computed or
-sorted. It is used internally to manage the mode computation process and
-can be accessed for informational purposes.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.model_parameters">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">model_parameters</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.model_parameters" title="Link to this definition">#</a></dt>
-<dd><p>Model parameters for the eigenvalue solver.</p>
-<p>This parameter provides access to the model parameters used in the
-eigenvalue solver, including grid spacing, mesh size, and other
-relevant physical and numerical parameters.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.n_computed_mode">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_computed_mode</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.n_computed_mode" title="Link to this definition">#</a></dt>
-<dd><p>Number of eigenmodes to compute during eigenvalue solving.</p>
-<p>This attribute determines how many eigenvalues and eigenvectors
-the solver will compute. A larger number provides more modes
-but increases computational cost and memory usage.</p>
-<section id="id2">
-<h3>Type<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>int</dt><dd><p>Typical range: 10-100 depending on the application.
-For single-mode analysis, 5-10 is often sufficient.
-For multimode analysis, 20-100 may be needed.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Changing this value after initialization requires rerunning
-the eigenvalue computation to take effect. The computational
-cost scales roughly linearly with this parameter.</p>
-<p>It’s recommended to compute more modes than needed (n_computed_mode
-&gt; n_sorted_mode) to ensure that all physically relevant modes
-are captured, especially in the presence of numerical noise.</p>
-</section>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.n_sorted_mode">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_sorted_mode</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.n_sorted_mode" title="Link to this definition">#</a></dt>
-<dd><p>Number of modes to keep after sorting by effective index.</p>
-<p>This attribute controls how many of the computed eigenmodes are
-retained and returned by get_mode(). The modes are sorted by
-their effective refractive index (real part of eigenvalue) in
-descending order.</p>
-<section id="id3">
-<h3>Type<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>int</dt><dd><p>Must be &lt;= n_computed_mode. Typical values range from 1
-(fundamental mode only) to 10-20 for multimode analysis.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Changing this value after initialization will affect subsequent
-calls to get_mode() but does not trigger recomputation of
-eigenvalues. The sorting and selection is performed on the
-already computed modes.</p>
-</section>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.reset_solver">
-<span class="sig-name descname"><span class="pre">reset_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SuPyMode.eigensolver.EIGENSOLVER</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.reset_solver" title="Link to this definition">#</a></dt>
-<dd><p>Reset the eigenvalue solver to its initial state.</p>
-<p>This method clears all internal data structures and resets the
-solver’s state, allowing it to be reused for a new computation
-without needing to reinitialize.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The solver is reset and ready for a new computation.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>This method is useful when you want to run multiple computations
-with different parameters without creating a new solver instance.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.set_boundaries">
-<span class="sig-name descname"><span class="pre">set_boundaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SuPyMode.eigensolver.EIGENSOLVER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bottom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.set_boundaries" title="Link to this definition">#</a></dt>
-<dd><p>Set the boundary conditions for the eigenvalue solver.</p>
-<p>This method configures the boundary conditions for the waveguide
-model. It should be called after initializing the solver and before
-running the eigenvalue computation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>left</strong> (<em>str</em>) – Boundary condition for the left edge.</p></li>
-<li><p><strong>right</strong> (<em>str</em>) – Boundary condition for the right edge.</p></li>
-<li><p><strong>top</strong> (<em>str</em>) – Boundary condition for the top edge.</p></li>
-<li><p><strong>bottom</strong> (<em>str</em>) – Boundary condition for the bottom edge.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If boundary conditions are not recognized.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.solver_number">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">solver_number</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.solver_number" title="Link to this definition">#</a></dt>
-<dd><p>Current solver iteration number.
-This parameter tracks the current iteration of the eigenvalue solver, which
-can be useful for monitoring convergence and debugging. It is updated
-during the iterative eigenvalue computation process.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="SuPyMode.solver.SuPySolver.wavelength">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">wavelength</span></span><a class="headerlink" href="#SuPyMode.solver.SuPySolver.wavelength" title="Link to this definition">#</a></dt>
-<dd><p>Operating wavelength for the eigenmode solver.</p>
-<p>This parameter specifies the wavelength of light for which the modes are
-being computed. It is used in the calculation of the propagation constants
-and mode field distributions.</p>
-<p>Units: meters (m)</p>
-<p>The wavelength should be chosen based on the application and the physical
-properties of the waveguide being modeled.</p>
-</dd></dl>
-
 </dd></dl>
 
 </div></blockquote>
@@ -933,28 +630,28 @@ related to fiber optics simulations.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.fundamental_supermodes">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fundamental_supermodes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">SUPERMODE</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#SuPyMode.superset.SuperSet.fundamental_supermodes" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fundamental_supermodes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SUPERMODE</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#SuPyMode.superset.SuperSet.fundamental_supermodes" title="Link to this definition">#</a></dt>
 <dd><p>Returns the fundamental supermodes based on the highest beta values and minimal spatial overlap.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A list of fundamental supermodes.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of SUPERMODE</p>
+<dd class="field-even"><p>list of <a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE">SUPERMODE</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.non_fundamental_supermodes">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">non_fundamental_supermodes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">SUPERMODE</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#SuPyMode.superset.SuperSet.non_fundamental_supermodes" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">non_fundamental_supermodes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SUPERMODE</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#SuPyMode.superset.SuperSet.non_fundamental_supermodes" title="Link to this definition">#</a></dt>
 <dd><p>Returns the non-fundamental supermodes based on the specified spatial overlap tolerance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A list of non-fundamental supermodes.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of SUPERMODE</p>
+<dd class="field-even"><p>list of <a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE">SUPERMODE</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1002,7 +699,7 @@ related to fiber optics simulations.</p>
 <dd class="field-even"><p>List of fundamental supermodes.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of SUPERMODE</p>
+<dd class="field-odd"><p>list of <a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE">SUPERMODE</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1019,7 +716,7 @@ related to fiber optics simulations.</p>
 <dd class="field-even"><p>List of non-fundamental supermodes.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of SUPERMODE</p>
+<dd class="field-odd"><p>list of <a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE">SUPERMODE</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1033,7 +730,7 @@ related to fiber optics simulations.</p>
 <dd class="field-odd"><p>List of lists containing modes classified by solver number.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of list of SUPERMODE</p>
+<dd class="field-even"><p>list of list of <a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE">SUPERMODE</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1161,7 +858,7 @@ related to fiber optics simulations.</p>
 <dd><p>Interpret the initial amplitude input to ensure compatibility with the expected number of supermodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>initial_amplitude</strong> (<em>list</em><em> or </em><em>SUPERMODE</em>) – The initial amplitude as either a list of complex numbers or a SUPERMODE object.</p>
+<dd class="field-odd"><p><strong>initial_amplitude</strong> (<em>list</em><em> or </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – The initial amplitude as either a list of complex numbers or a SUPERMODE object.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The initial amplitudes as a NumPy array of complex numbers.</p>
@@ -1340,32 +1037,22 @@ related to fiber optics simulations.</p>
 <span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">interpret_mode_of_interest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">superset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.interpret_mode_of_interest" title="Link to this definition">#</a></dt>
 <dd><p>Resolves the mode of interest from user input to the appropriate list of SUPERMODE instances
 based on the specified criteria or direct references.</p>
-<dl>
-<dt>Parameters:</dt><dd><ul class="simple">
-<li><p>superset (SuperSet): The superset containing all supermodes, including fundamental and non-fundamental modes.</p></li>
-<li><p>mode_of_interest (Union[str, SUPERMODE, List[SUPERMODE]]): This parameter can be a string specifying a category</p></li>
-</ul>
-<p>of modes such as ‘fundamental’, ‘non-fundamental’, ‘all’, a single SUPERMODE instance, or a list of SUPERMODE instances.</p>
-</dd>
-<dt>Returns:</dt><dd><ul class="simple">
-<li><p>List[SUPERMODE]: A list of SUPERMODE instances corresponding to the specified mode of interest.</p></li>
-</ul>
-</dd>
-<dt>Raises:</dt><dd><ul class="simple">
-<li><p>ValueError: If the mode_of_interest is not one of the expected types or if the string input does not match</p></li>
-</ul>
-<p>any known category.</p>
-</dd>
-</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>superset</strong> (<a class="reference internal" href="#SuPyMode.superset.SuperSet" title="SuPyMode.superset.SuperSet"><em>SuperSet</em></a>)</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>str</em><em> | </em><em>SUPERMODE</em><em> | </em><em>list</em><em>[</em><em>SUPERMODE</em><em>]</em>)</p></li>
+<li><p><strong>superset</strong> (<a class="reference internal" href="#SuPyMode.superset.SuperSet" title="SuPyMode.superset.SuperSet"><em>SuperSet</em></a>) – Superset containing the available modes.</p></li>
+<li><p><strong>mode_of_interest</strong> (<em>str</em><em> or </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a><em> or </em><em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – A category (“fundamental”, “non-fundamental”, or “all”), one mode,
+or an explicit list of modes.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list[<em>SUPERMODE</em>]</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Modes selected by the request.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of <a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE">SUPERMODE</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the category or input type is unsupported.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1398,7 +1085,7 @@ based on the specified criteria or direct references.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><em>SUPERMODE</em>) – List of modes to be plotted.</p></li>
+<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – List of modes to be plotted.</p></li>
 <li><p><strong>combination</strong> (<em>list</em>) – List of mode combinations.</p></li>
 <li><p><strong>add_profile</strong> (<em>list</em><em> of </em><em>AlphaProfile</em><em>, </em><em>optional</em>) – List of profiles to add to the plot (default is an empty list).</p></li>
 <li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
@@ -1410,42 +1097,28 @@ based on the specified criteria or direct references.</p>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>plt.Figure</p>
 </dd>
-</dl>
-<section id="extra-parameters">
-<h3>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>show<span class="classifier">bool</span></dt><dd><p>Whether to display the plot after creation.</p>
+<dt class="field-even">Extra Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
+<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
+<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
+<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
+<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
+<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
+<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
+<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
+</ul>
 </dd>
-<dt>save_as<span class="classifier">str, optional</span></dt><dd><p>If provided, save the figure to this path.</p>
-</dd>
-<dt>figure_size<span class="classifier">tuple, optional</span></dt><dd><p>Size of the figure in inches.</p>
-</dd>
-<dt>tight_layout<span class="classifier">bool, default=True</span></dt><dd><p>Whether to use tight layout for the figure.</p>
-</dd>
-<dt>axes<span class="classifier">matplotlib.axes.Axes, optional</span></dt><dd><p>Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-<dt>xscale<span class="classifier">str, optional</span></dt><dd><p>X-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>yscale<span class="classifier">str, optional</span></dt><dd><p>Y-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>xlim<span class="classifier">tuple, optional</span></dt><dd><p>X-axis limits as (min, max).</p>
-</dd>
-<dt>ylim<span class="classifier">tuple, optional</span></dt><dd><p>Y-axis limits as (min, max).</p>
-</dd>
-<dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
-</dd>
-<dt><a href="#id4"><span class="problematic" id="id5">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
 </dd>
-<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib.axes.Axes</p>
 </dd>
 </dl>
-</section>
 </dd></dl>
 
 <dl class="py method">
@@ -1456,7 +1129,7 @@ based on the specified criteria or direct references.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><em>SUPERMODE</em>) – List of modes to be plotted.</p></li>
+<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – List of modes to be plotted.</p></li>
 <li><p><strong>combination</strong> (<em>list</em>) – List of mode combinations.</p></li>
 </ul>
 </dd>
@@ -1466,42 +1139,28 @@ based on the specified criteria or direct references.</p>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>plt.Figure</p>
 </dd>
-</dl>
-<section id="id6">
-<h3>Extra Parameters<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>show<span class="classifier">bool</span></dt><dd><p>Whether to display the plot after creation.</p>
+<dt class="field-even">Extra Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
+<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
+<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
+<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
+<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
+<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
+<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
+<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
+</ul>
 </dd>
-<dt>save_as<span class="classifier">str, optional</span></dt><dd><p>If provided, save the figure to this path.</p>
-</dd>
-<dt>figure_size<span class="classifier">tuple, optional</span></dt><dd><p>Size of the figure in inches.</p>
-</dd>
-<dt>tight_layout<span class="classifier">bool, default=True</span></dt><dd><p>Whether to use tight layout for the figure.</p>
-</dd>
-<dt>axes<span class="classifier">matplotlib.axes.Axes, optional</span></dt><dd><p>Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-<dt>xscale<span class="classifier">str, optional</span></dt><dd><p>X-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>yscale<span class="classifier">str, optional</span></dt><dd><p>Y-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>xlim<span class="classifier">tuple, optional</span></dt><dd><p>X-axis limits as (min, max).</p>
-</dd>
-<dt>ylim<span class="classifier">tuple, optional</span></dt><dd><p>Y-axis limits as (min, max).</p>
-</dd>
-<dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
-</dd>
-<dt><a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
 </dd>
-<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib.axes.Axes</p>
 </dd>
 </dl>
-</section>
 </dd></dl>
 
 <dl class="py method">
@@ -1512,7 +1171,7 @@ based on the specified criteria or direct references.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><em>SUPERMODE</em>) – List of modes to be plotted.</p></li>
+<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – List of modes to be plotted.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1532,48 +1191,34 @@ based on the specified criteria or direct references.</p>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>plt.Figure</p>
 </dd>
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Extra Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
+<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
+<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
+<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
+<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
+<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
+<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
+<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>axes</strong> – The axes with the market prices plot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.axes.Axes</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
 <li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em>[</em><em>SUPERMODE</em><em>] </em><em>| </em><em>str</em>)</p></li>
+<li><p><strong>mode_of_interest</strong> (<em>list</em><em>[</em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a><em>] </em><em>| </em><em>str</em>)</p></li>
 </ul>
 </dd>
 </dl>
-<section id="id9">
-<h3>Extra Parameters<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>show<span class="classifier">bool</span></dt><dd><p>Whether to display the plot after creation.</p>
-</dd>
-<dt>save_as<span class="classifier">str, optional</span></dt><dd><p>If provided, save the figure to this path.</p>
-</dd>
-<dt>figure_size<span class="classifier">tuple, optional</span></dt><dd><p>Size of the figure in inches.</p>
-</dd>
-<dt>tight_layout<span class="classifier">bool, default=True</span></dt><dd><p>Whether to use tight layout for the figure.</p>
-</dd>
-<dt>axes<span class="classifier">matplotlib.axes.Axes, optional</span></dt><dd><p>Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-<dt>xscale<span class="classifier">str, optional</span></dt><dd><p>X-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>yscale<span class="classifier">str, optional</span></dt><dd><p>Y-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>xlim<span class="classifier">tuple, optional</span></dt><dd><p>X-axis limits as (min, max).</p>
-</dd>
-<dt>ylim<span class="classifier">tuple, optional</span></dt><dd><p>Y-axis limits as (min, max).</p>
-</dd>
-<dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
-</dd>
-<dt><a href="#id10"><span class="problematic" id="id11">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
-</dd>
-<dt class="field-even">rtype<span class="colon">:</span></dt>
-<dd class="field-even"><p>matplotlib.axes.Axes</p>
-</dd>
-</dl>
-</section>
 </dd></dl>
 
 <dl class="py method">
@@ -1584,7 +1229,7 @@ based on the specified criteria or direct references.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><em>SUPERMODE</em>) – List of modes to be plotted.</p></li>
+<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – List of modes to be plotted.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -1604,48 +1249,34 @@ based on the specified criteria or direct references.</p>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>plt.Figure</p>
 </dd>
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Extra Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
+<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
+<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
+<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
+<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
+<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
+<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
+<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>axes</strong> – The axes with the market prices plot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.axes.Axes</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
 <li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em>[</em><em>SUPERMODE</em><em>] </em><em>| </em><em>str</em>)</p></li>
+<li><p><strong>mode_of_interest</strong> (<em>list</em><em>[</em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a><em>] </em><em>| </em><em>str</em>)</p></li>
 </ul>
 </dd>
 </dl>
-<section id="id12">
-<h3>Extra Parameters<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>show<span class="classifier">bool</span></dt><dd><p>Whether to display the plot after creation.</p>
-</dd>
-<dt>save_as<span class="classifier">str, optional</span></dt><dd><p>If provided, save the figure to this path.</p>
-</dd>
-<dt>figure_size<span class="classifier">tuple, optional</span></dt><dd><p>Size of the figure in inches.</p>
-</dd>
-<dt>tight_layout<span class="classifier">bool, default=True</span></dt><dd><p>Whether to use tight layout for the figure.</p>
-</dd>
-<dt>axes<span class="classifier">matplotlib.axes.Axes, optional</span></dt><dd><p>Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-<dt>xscale<span class="classifier">str, optional</span></dt><dd><p>X-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>yscale<span class="classifier">str, optional</span></dt><dd><p>Y-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>xlim<span class="classifier">tuple, optional</span></dt><dd><p>X-axis limits as (min, max).</p>
-</dd>
-<dt>ylim<span class="classifier">tuple, optional</span></dt><dd><p>Y-axis limits as (min, max).</p>
-</dd>
-<dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
-</dd>
-<dt><a href="#id13"><span class="problematic" id="id14">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
-</dd>
-<dt class="field-even">rtype<span class="colon">:</span></dt>
-<dd class="field-even"><p>matplotlib.axes.Axes</p>
-</dd>
-</dl>
-</section>
 </dd></dl>
 
 <dl class="py method">
@@ -1672,44 +1303,30 @@ based on the specified criteria or direct references.</p>
 </dd>
 </dl>
 </div></blockquote>
-<section id="id15">
-<h3>Extra Parameters<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>show<span class="classifier">bool</span></dt><dd><p>Whether to display the plot after creation.</p>
-</dd>
-<dt>save_as<span class="classifier">str, optional</span></dt><dd><p>If provided, save the figure to this path.</p>
-</dd>
-<dt>figure_size<span class="classifier">tuple, optional</span></dt><dd><p>Size of the figure in inches.</p>
-</dd>
-<dt>tight_layout<span class="classifier">bool, default=True</span></dt><dd><p>Whether to use tight layout for the figure.</p>
-</dd>
-<dt>axes<span class="classifier">matplotlib.axes.Axes, optional</span></dt><dd><p>Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-<dt>xscale<span class="classifier">str, optional</span></dt><dd><p>X-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>yscale<span class="classifier">str, optional</span></dt><dd><p>Y-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>xlim<span class="classifier">tuple, optional</span></dt><dd><p>X-axis limits as (min, max).</p>
-</dd>
-<dt>ylim<span class="classifier">tuple, optional</span></dt><dd><p>Y-axis limits as (min, max).</p>
-</dd>
-<dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
-</dd>
-<dt><a href="#id16"><span class="problematic" id="id17">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
-</dd>
-</dl>
 <dl class="field-list simple">
-<dt class="field-odd">returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>Figure</strong> – The figure with the market prices plot.</p>
-</dd>
-<dt class="field-even">rtype<span class="colon">:</span></dt>
-<dd class="field-even"><p>matplotlib.figure.Figure</p>
-</dd>
-</dl>
-</section>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Extra Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
+<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
+<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
+<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
+<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
+<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
+<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
+<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Figure</strong> – The figure with the market prices plot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
 <li><p><strong>mode_of_interest</strong> (<em>list</em>)</p></li>
 <li><p><strong>itr_list</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>)</p></li>
 <li><p><strong>slice_list</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>)</p></li>
@@ -1717,9 +1334,6 @@ based on the specified criteria or direct references.</p>
 <li><p><strong>show_itr</strong> (<em>bool</em>)</p></li>
 <li><p><strong>show_slice</strong> (<em>bool</em>)</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>Figure</em></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1738,44 +1352,27 @@ based on the specified criteria or direct references.</p>
 </dd>
 </dl>
 </div></blockquote>
-<section id="id18">
-<h3>Extra Parameters<a class="headerlink" href="#id18" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>show<span class="classifier">bool</span></dt><dd><p>Whether to display the plot after creation.</p>
-</dd>
-<dt>save_as<span class="classifier">str, optional</span></dt><dd><p>If provided, save the figure to this path.</p>
-</dd>
-<dt>figure_size<span class="classifier">tuple, optional</span></dt><dd><p>Size of the figure in inches.</p>
-</dd>
-<dt>tight_layout<span class="classifier">bool, default=True</span></dt><dd><p>Whether to use tight layout for the figure.</p>
-</dd>
-<dt>axes<span class="classifier">matplotlib.axes.Axes, optional</span></dt><dd><p>Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-<dt>xscale<span class="classifier">str, optional</span></dt><dd><p>X-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>yscale<span class="classifier">str, optional</span></dt><dd><p>Y-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>xlim<span class="classifier">tuple, optional</span></dt><dd><p>X-axis limits as (min, max).</p>
-</dd>
-<dt>ylim<span class="classifier">tuple, optional</span></dt><dd><p>Y-axis limits as (min, max).</p>
-</dd>
-<dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
-</dd>
-<dt><a href="#id19"><span class="problematic" id="id20">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
-</dd>
-</dl>
 <dl class="field-list simple">
-<dt class="field-odd">returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>Figure</strong> – The figure with the market prices plot.</p>
+<dt class="field-odd">Extra Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
+<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
+<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
+<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
+<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
+<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
+<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
+<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
+</ul>
 </dd>
-<dt class="field-even">rtype<span class="colon">:</span></dt>
-<dd class="field-even"><p>matplotlib.figure.Figure</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Figure</strong> – The figure with the market prices plot.</p>
 </dd>
-</dl>
-</section>
-<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>Figure</em></p>
+<dd class="field-odd"><p>matplotlib.figure.Figure</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1788,7 +1385,7 @@ based on the specified criteria or direct references.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><em>SUPERMODE</em>) – List of modes to be plotted.</p></li>
+<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – List of modes to be plotted.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1797,42 +1394,28 @@ based on the specified criteria or direct references.</p>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>plt.Figure</p>
 </dd>
-</dl>
-<section id="id21">
-<h3>Extra Parameters<a class="headerlink" href="#id21" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>show<span class="classifier">bool</span></dt><dd><p>Whether to display the plot after creation.</p>
+<dt class="field-even">Extra Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
+<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
+<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
+<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
+<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
+<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
+<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
+<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
+</ul>
 </dd>
-<dt>save_as<span class="classifier">str, optional</span></dt><dd><p>If provided, save the figure to this path.</p>
-</dd>
-<dt>figure_size<span class="classifier">tuple, optional</span></dt><dd><p>Size of the figure in inches.</p>
-</dd>
-<dt>tight_layout<span class="classifier">bool, default=True</span></dt><dd><p>Whether to use tight layout for the figure.</p>
-</dd>
-<dt>axes<span class="classifier">matplotlib.axes.Axes, optional</span></dt><dd><p>Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-<dt>xscale<span class="classifier">str, optional</span></dt><dd><p>X-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>yscale<span class="classifier">str, optional</span></dt><dd><p>Y-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>xlim<span class="classifier">tuple, optional</span></dt><dd><p>X-axis limits as (min, max).</p>
-</dd>
-<dt>ylim<span class="classifier">tuple, optional</span></dt><dd><p>Y-axis limits as (min, max).</p>
-</dd>
-<dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
-</dd>
-<dt><a href="#id22"><span class="problematic" id="id23">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
 </dd>
-<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib.axes.Axes</p>
 </dd>
 </dl>
-</section>
 </dd></dl>
 
 <dl class="py method">
@@ -1843,7 +1426,7 @@ based on the specified criteria or direct references.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><em>SUPERMODE</em>) – List of modes to be plotted.</p></li>
+<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – List of modes to be plotted.</p></li>
 <li><p><strong>combination</strong> (<em>list</em>) – List of mode combinations.</p></li>
 <li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
 </ul>
@@ -1854,42 +1437,28 @@ based on the specified criteria or direct references.</p>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>plt.Figure</p>
 </dd>
-</dl>
-<section id="id24">
-<h3>Extra Parameters<a class="headerlink" href="#id24" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>show<span class="classifier">bool</span></dt><dd><p>Whether to display the plot after creation.</p>
+<dt class="field-even">Extra Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
+<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
+<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
+<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
+<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
+<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
+<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
+<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
+<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
+</ul>
 </dd>
-<dt>save_as<span class="classifier">str, optional</span></dt><dd><p>If provided, save the figure to this path.</p>
-</dd>
-<dt>figure_size<span class="classifier">tuple, optional</span></dt><dd><p>Size of the figure in inches.</p>
-</dd>
-<dt>tight_layout<span class="classifier">bool, default=True</span></dt><dd><p>Whether to use tight layout for the figure.</p>
-</dd>
-<dt>axes<span class="classifier">matplotlib.axes.Axes, optional</span></dt><dd><p>Axes to draw on. If None, a new figure+axes are created.</p>
-</dd>
-<dt>xscale<span class="classifier">str, optional</span></dt><dd><p>X-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>yscale<span class="classifier">str, optional</span></dt><dd><p>Y-axis scale type (e.g., ‘linear’, ‘log’).</p>
-</dd>
-<dt>xlim<span class="classifier">tuple, optional</span></dt><dd><p>X-axis limits as (min, max).</p>
-</dd>
-<dt>ylim<span class="classifier">tuple, optional</span></dt><dd><p>Y-axis limits as (min, max).</p>
-</dd>
-<dt>style<span class="classifier">str, default=plot_style</span></dt><dd><p>Matplotlib style to use for the plot.</p>
-</dd>
-<dt><a href="#id25"><span class="problematic" id="id26">**</span></a>kwargs</dt><dd><p>Additional keyword arguments to pass to the plotting function.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
 </dd>
-<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>matplotlib.axes.Axes</p>
 </dd>
 </dl>
-</section>
 </dd></dl>
 
 <dl class="py method">
@@ -1914,6 +1483,621 @@ based on the specified criteria or direct references.</p>
 </section>
 <section id="supermode">
 <h2>SuperMode<a class="headerlink" href="#supermode" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><dl class="py class">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">SUPERMODE</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pybind11_object</span></code></p>
+<p>Supermode analysis class for coupled waveguide systems.</p>
+<p>This class represents a collection of supermodes in a coupled waveguide
+system and provides methods for analyzing their properties and interactions.
+Supermodes are the eigenmodes of the entire coupled system, each with
+its own propagation constant and field distribution.</p>
+<p>In a system of N coupled waveguides, there are N supermodes, each
+representing a different way energy can propagate through the system.
+The superposition of these modes determines the overall behavior of
+light in the coupled structure.</p>
+<p>Key Features:
+- Field distribution access and manipulation
+- Mode coupling analysis between different supermodes
+- Beating length calculation for power oscillations
+- Overlap integral computation for mode matching
+- Adiabatic coupling analysis for varying structures</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.ID">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ID</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.ID" title="Link to this definition">#</a></dt>
+<dd><p>Unique identifier for the supermode instance.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.adiabatic">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">adiabatic</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.adiabatic" title="Link to this definition">#</a></dt>
+<dd><p>Property to access the Adiabatic representation of the supermode.</p>
+<p>This property allows users to access the Adiabatic representation, which
+provides a convenient interface for analyzing adiabatic coupling and mode evolution characteristics of the supermodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of the Adiabatic class representing the adiabatic coupling and mode evolution properties of the supermodes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Adiabatic</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The Adiabatic representation is useful for:
+- Analyzing adiabatic coupling conditions and mode evolution
+- Evaluating transition probabilities in varying structures
+- Designing adiabatic tapers and mode converters</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.beating_length">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">beating_length</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.beating_length" title="Link to this definition">#</a></dt>
+<dd><p>Property to access the Beating Length representation of the supermode.
+This property allows users to access the Beating Length representation, which
+provides a convenient interface for analyzing the beating lengths that characterize the periodic power exchange between supermodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of the BeatingLength class representing the beating lengths between supermodes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>BeatingLength</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The Beating Length representation is useful for:
+- Analyzing mode coupling and power transfer characteristics
+- Designing directional couplers and multi-core fibers
+- Understanding interference effects in coupled systems</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.beta">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">beta</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.beta" title="Link to this definition">#</a></dt>
+<dd><p>Property to access the Beta representation (propagation constants) of the supermode.</p>
+<p>This property allows users to access the Beta representation, which
+provides a convenient interface for analyzing the propagation constants
+and related properties of the supermodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of the Beta class representing the propagation constants
+and related properties of the supermodes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Beta</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The Beta representation is useful for:
+- Analyzing effective indices and phase velocities
+- Calculating beating lengths and coupling characteristics
+- Visualizing mode dispersion and propagation behavior</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.binding_number">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">binding_number</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.binding_number" title="Link to this definition">#</a></dt>
+<dd><p>Binding number or mode identifier for the supermode set.</p>
+<p>This attribute specifies which supermode or set of supermodes
+this object represents. It’s used for indexing and identification
+purposes in multi-mode calculations.</p>
+<section id="type">
+<h3>Type<a class="headerlink" href="#type" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>int</dt><dd><p>Mode index or binding number. For single supermode analysis,
+this identifies which supermode (0 = fundamental, 1 = first
+higher-order, etc.). For multi-mode analysis, it may represent
+a mode group or calculation identifier.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The binding number is particularly important when dealing with
+multiple supermode calculations or when tracking specific modes
+through parameter variations (e.g., in bend or taper analysis).</p>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.boundaries">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">boundaries</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.boundaries" title="Link to this definition">#</a></dt>
+<dd><p>Boundary conditions for the supermode.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.eigenvalue">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">eigenvalue</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.eigenvalue" title="Link to this definition">#</a></dt>
+<dd><p>Property to access the EigenValue representation of the supermode.</p>
+<p>This property allows users to access the EigenValue representation, which
+provides a convenient interface for analyzing the raw eigenvalues obtained
+from the supermode eigenvalue problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of the EigenValue class representing the raw eigenvalues
+from the supermode eigenvalue problem.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>EigenValue</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The EigenValue representation is useful for:
+- Analyzing the raw output of the numerical eigenvalue solver
+- Understanding the relationship between eigenvalues and physical propagation constants
+- Diagnosing convergence and computational issues in the eigenvalue problem</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.field">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">field</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.field" title="Link to this definition">#</a></dt>
+<dd><p>Property to access the Field representation of the supermode.</p>
+<p>This property allows users to access the Field representation, which
+provides a convenient interface for analyzing the electric field
+distributions and related properties of the supermodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of the Field class representing the electric field
+distributions and related properties of the supermodes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Field</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The Field representation is useful for:
+- Visualizing mode profiles and spatial distributions
+- Analyzing mode overlap and coupling characteristics
+- Calculating power flow and intensity distributions</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.fields">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">fields</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.fields" title="Link to this definition">#</a></dt>
+<dd><p>Electric field distributions of all supermodes.</p>
+<p>This attribute provides read-only access to the computed electric
+field distributions for all supermodes in the coupled system.
+The fields are stored as complex arrays representing the spatial
+distribution of each supermode.</p>
+<section id="id1">
+<h3>Type<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>numpy.ndarray</dt><dd><p>Complex array with shape (n_points, n_modes) where n_points
+is the number of grid points and n_modes is the number of
+computed supermodes.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The field amplitudes are typically normalized according to power
+or energy conservation. The phase information is preserved and
+is crucial for understanding interference effects in coupled systems.</p>
+<p>Each column represents one supermode, and the spatial distribution
+shows how that particular supermode extends across all waveguides
+in the coupled system.</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.get_adiabatic_with_mode">
+<span class="sig-name descname"><span class="pre">get_adiabatic_with_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.get_adiabatic_with_mode" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the adiabaticity parameter between supermodes and another mode set.
+Evaluates the adiabaticity parameter, which quantifies how closely the transition between two supermode configurations follows adiabatic evolution. A low adiabaticity parameter indicates that the system is evolving slowly enough to maintain mode purity, while a high value suggests significant non-adiabatic coupling and potential mode mixing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other_mode</strong> (<em>SuperMode</em>) – Another SuperMode object representing a different configuration or position along a varying structure.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matrix of adiabaticity parameters with shape (n_modes_self, n_modes_other).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The adiabaticity parameter is typically defined as:
+<span class="math notranslate nohighlight">\(A_{ij} = |d\gamma_{ij}/dz| / |\Delta\beta_{ij}|^2\)</span>
+where γ_ij are the coupling coefficients between modes i and j, and Δβ_ij are the differences in propagation constants. A value of A_ij &lt;&lt; 1 indicates adiabatic evolution, while A_ij ~ 1 or greater indicates non-adiabatic behavior.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.get_beating_length_with_mode">
+<span class="sig-name descname"><span class="pre">get_beating_length_with_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.get_beating_length_with_mode" title="Link to this definition">#</a></dt>
+<dd><p>Calculate beating lengths between supermodes and another mode set.</p>
+<p>Computes the beating lengths that characterize the periodic power
+exchange between supermodes. The beating length is the distance
+over which power oscillates between coupled modes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other_mode</strong> (<em>SuperMode</em>) – Another SuperMode object representing a different supermode
+configuration (typically at a different position).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matrix of beating lengths with shape (n_modes_self, n_modes_other).
+Element (i,j) is the beating length between mode i in this
+object and mode j in the other object, in units of length.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The beating length is calculated from the difference in propagation
+constants: <span class="math notranslate nohighlight">\(L_{\mathrm{beat}} = 2\pi / |\beta_1 - \beta_2|\)</span></p>
+<p>Short beating lengths indicate strong coupling and rapid power
+oscillation, while long beating lengths indicate weak coupling.</p>
+<p>In practical devices:
+- Directional couplers use specific lengths related to beating length
+- Multi-core fibers have beating lengths that determine crosstalk
+- Mode multiplexers require understanding of beating characteristics</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">beating_lengths</span> <span class="o">=</span> <span class="n">supermode1</span><span class="o">.</span><span class="n">get_beating_length_with_mode</span><span class="p">(</span><span class="n">supermode2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">min_beating</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">beating_lengths</span><span class="p">[</span><span class="n">beating_lengths</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.get_betas">
+<span class="sig-name descname"><span class="pre">get_betas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.get_betas" title="Link to this definition">#</a></dt>
+<dd><p>Get the propagation constants (beta values) of all supermodes.</p>
+<p>Returns the complex propagation constants for all computed
+supermodes. The propagation constant determines how the phase
+and amplitude of each supermode evolve along the propagation
+direction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Complex array containing the propagation constants (β) in
+units of rad/m. The real part determines phase evolution,
+while the imaginary part represents attenuation.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The propagation constant is related to the effective index by:
+β = n_eff * k₀, where k₀ is the free-space wave number.</p>
+<p>The difference in propagation constants between supermodes
+determines the beating length: <span class="math notranslate nohighlight">\(L_{\mathrm{beat}} = 2\pi / |\beta_1 - \beta_2|\)</span>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.get_eigen_value">
+<span class="sig-name descname"><span class="pre">get_eigen_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.get_eigen_value" title="Link to this definition">#</a></dt>
+<dd><p>Get the eigenvalues from the supermode eigenvalue problem.</p>
+<p>Returns the raw eigenvalues obtained from solving the wave
+equation eigenvalue problem. These are related to but not
+identical to the propagation constants.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Complex array of eigenvalues from the matrix eigenvalue
+problem. The relationship to physical propagation constants
+depends on the specific formulation used.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The eigenvalues are the direct output of the numerical eigenvalue
+solver and may require transformation to obtain physically
+meaningful propagation constants. The transformation depends
+on the specific wave equation formulation and discretization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.get_field_interpolation">
+<span class="sig-name descname"><span class="pre">get_field_interpolation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsFloat</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SupportsIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.get_field_interpolation" title="Link to this definition">#</a></dt>
+<dd><p>Get interpolated field data for a specific iteration.</p>
+<p>This method provides access to the interpolated field data for a given iteration parameter, allowing users to retrieve the mode field distribution at specific points in the iteration process.
+:param itr: The iteration value for which to retrieve the interpolated field data.
+:type itr: float</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A 2D array of shape (ny, nx) containing the interpolated field data</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This method is useful for:
+- Visualizing mode field evolution during iterative solvers
+- Analyzing convergence behavior of mode calculations
+- Extracting intermediate field distributions for diagnostics</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.get_fields">
+<span class="sig-name descname"><span class="pre">get_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.get_fields" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve all supermode field distributions.</p>
+<p>Returns the complete set of electric field distributions for all
+computed supermodes in the coupled waveguide system. Each supermode
+represents a normal mode of the entire coupled structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array containing electric field distributions with
+shape (n_slice, ny, nx). Each element represents
+the spatial field distribution of one supermode.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The returned fields are typically normalized to unit power or
+energy. The values include both amplitude and phase
+information, which is essential for understanding interference
+and beating effects in coupled systems.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.get_index">
+<span class="sig-name descname"><span class="pre">get_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.get_index" title="Link to this definition">#</a></dt>
+<dd><p>Get the effective refractive indices of all supermodes.</p>
+<p>Returns the effective refractive indices (real part of the
+propagation constants divided by the free-space wave number)
+for all computed supermodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Real array containing the effective indices of all supermodes,
+typically sorted in descending order.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The effective index determines the phase velocity of each supermode.
+In coupled systems, the difference in effective indices between
+supermodes determines the beating length and power transfer
+characteristics.</p>
+<p>For weakly coupled systems, the supermode effective indices
+are close to those of the individual uncoupled waveguides.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.get_mesh_gradient">
+<span class="sig-name descname"><span class="pre">get_mesh_gradient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.get_mesh_gradient" title="Link to this definition">#</a></dt>
+<dd><p>Get the mesh gradients used in the supermode computation.
+This method returns the spatial gradients of the computational mesh,
+which are essential for accurate finite-difference calculations of the supermodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array of shape (n_grid_points, 2) containing the x and y gradients
+of the computational mesh. The first column corresponds to the x-gradient,
+and the second column corresponds to the y-gradient.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.get_norm">
+<span class="sig-name descname"><span class="pre">get_norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SupportsInt</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">SupportsIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.get_norm" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the normalization factors for all supermodes.</p>
+<p>Computes the normalization constants used to ensure proper
+scaling of the supermode fields. This is important for
+power conservation and accurate coupling calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array of real normalization factors, one for each supermode.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The normalization typically ensures unit power flow for each
+supermode, which is essential for accurate coupling coefficient
+calculations and power transfer analysis.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.get_normalized_coupling_with_mode">
+<span class="sig-name descname"><span class="pre">get_normalized_coupling_with_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.complex128</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.get_normalized_coupling_with_mode" title="Link to this definition">#</a></dt>
+<dd><p>Calculate normalized coupling coefficients with another supermode set.</p>
+<p>Computes the normalized coupling coefficients between the supermodes
+in this object and those in another SuperMode object. This is
+essential for analyzing power transfer and mode evolution in
+varying coupled systems.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other_mode</strong> (<em>SuperMode</em>) – Another SuperMode object representing a different configuration
+or position along a varying structure.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matrix of normalized coupling coefficients with shape
+(n_modes_self, n_modes_other). Element (i,j) represents
+the coupling between mode i in this object and mode j
+in the other object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Normalized coupling coefficients are dimensionless and represent
+the fraction of power that can be transferred between modes.
+Values close to 1 indicate strong coupling, while values near
+0 indicate weak coupling.</p>
+<p>This is particularly useful for analyzing adiabatic tapers,
+where the coupling coefficients should remain close to unity
+for adiabatic mode evolution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.get_overlap_integrals_with_mode">
+<span class="sig-name descname"><span class="pre">get_overlap_integrals_with_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.get_overlap_integrals_with_mode" title="Link to this definition">#</a></dt>
+<dd><p>Compute the absolute discrete field overlap with another mode at each taper slice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other_mode</strong> (<a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – Mode sampled on the same transverse grid and taper slices.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Real array with shape <code class="docutils literal notranslate"><span class="pre">(n_slice,)</span></code>. Each entry is the absolute
+sum of the products of the two discrete fields at that slice.
+Grid-cell area factors are not included.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.index">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">index</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.index" title="Link to this definition">#</a></dt>
+<dd><p>Property to access the Index representation of the supermode.</p>
+<p>This property allows users to access the Index representation, which
+provides a convenient interface for analyzing the effective refractive indices
+and related properties of the supermodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of the Index class representing the effective refractive indices
+and related properties of the supermodes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Index</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The Index representation is useful for:
+- Analyzing effective indices and phase velocities
+- Calculating beating lengths and coupling characteristics
+- Visualizing mode dispersion and propagation behavior</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.is_computation_compatible">
+<span class="sig-name descname"><span class="pre">is_computation_compatible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.is_computation_compatible" title="Link to this definition">#</a></dt>
+<dd><p>Check computational compatibility with another SuperMode object.</p>
+<p>Verifies whether this SuperMode object is computationally compatible
+with another one, meaning they can be used together in coupled
+calculations. Compatibility requires matching grid sizes, coordinate
+systems, and computational parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other_mode</strong> (<em>SuperMode</em>) – Another SuperMode object to check compatibility with.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the objects are compatible for joint calculations,
+False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Compatibility is required for:
+- Coupling coefficient calculations
+- Overlap integral computation
+- Adiabatic analysis
+- Mode evolution tracking</p>
+<p>Incompatibility typically arises from:
+- Different grid resolutions
+- Mismatched coordinate systems
+- Different wavelengths or frequencies
+- Inconsistent boundary conditions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.itr_list">
+<span class="sig-name descname"><span class="pre">itr_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><span class="pre">SuPyMode.supermode.SUPERMODE</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.typing.NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.float64</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.itr_list" title="Link to this definition">#</a></dt>
+<dd><p>Get the list of iteration parameters used in supermode computation.</p>
+<p>This method returns information about the iterative process used
+to compute the supermodes, including convergence history and
+computational parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of iteration parameters, convergence criteria, and
+computational metrics from the eigenvalue solver.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.label">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.label" title="Link to this definition">#</a></dt>
+<dd><p>Label or identifier for the supermode.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.mode_number">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mode_number</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.mode_number" title="Link to this definition">#</a></dt>
+<dd><p>Mode number or identifier for the supermode.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.model_parameters">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">model_parameters</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.model_parameters" title="Link to this definition">#</a></dt>
+<dd><p>Physical and computational parameters for the supermode model.</p>
+<p>This attribute contains all the parameters that define the coupled
+waveguide system, including geometric dimensions, refractive index
+profiles, wavelength, and computational settings.</p>
+<section id="id2">
+<h3>Type<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<dl class="simple">
+<dt>ModelParameters</dt><dd><p>Structure containing:
+- Wavelength and frequency information
+- Refractive index distributions
+- Geometric parameters (core sizes, separations)
+- Grid resolution and boundary conditions
+- Material properties and dispersion</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Modifying these parameters requires recomputation of the supermodes.
+The parameters directly affect the coupling strength, effective
+indices, and field distributions of the supermodes.</p>
+<p>Key parameters for coupled systems include:
+- Core separation distance (affects coupling strength)
+- Individual core parameters (size, index contrast)
+- Operating wavelength (affects normalized frequency)</p>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.normalized_coupling">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">normalized_coupling</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.normalized_coupling" title="Link to this definition">#</a></dt>
+<dd><p>Property to access the Normalized Coupling representation of the supermode.</p>
+<p>This property allows users to access the Normalized Coupling representation, which
+provides a convenient interface for analyzing the normalized coupling characteristics
+of the supermodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of the NormalizedCoupling class representing the normalized coupling
+characteristics of the supermodes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>NormalizedCoupling</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The Normalized Coupling representation is useful for:
+- Analyzing mode overlap and coupling efficiency
+- Evaluating power transfer between modes
+- Designing mode converters and couplers</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.solver_number">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">solver_number</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.solver_number" title="Link to this definition">#</a></dt>
+<dd><p>Solver number or identifier for the supermode.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SuPyMode.supermode.SUPERMODE.stylized_label">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">stylized_label</span></span><a class="headerlink" href="#SuPyMode.supermode.SUPERMODE.stylized_label" title="Link to this definition">#</a></dt>
+<dd><p>Stylized label for the supermode, combining the mode number and label.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
 </section>
 </section>
 
@@ -1923,6 +2107,30 @@ based on the specified criteria or direct references.</p>
               
               
               
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="gallery/extra/plot_propagation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">4x4 Coupler [linear]</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="resources.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Resources</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
               
             </div>
             
@@ -1945,23 +2153,6 @@ based on the specified criteria or direct references.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.get_finit_difference_array"><code class="docutils literal notranslate"><span class="pre">SuPySolver.get_finit_difference_array()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.init_superset"><code class="docutils literal notranslate"><span class="pre">SuPySolver.init_superset()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.add_modes"><code class="docutils literal notranslate"><span class="pre">SuPySolver.add_modes()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.accuracy"><code class="docutils literal notranslate"><span class="pre">SuPySolver.accuracy</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.alpha_vector"><code class="docutils literal notranslate"><span class="pre">SuPySolver.alpha_vector</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.boundaries"><code class="docutils literal notranslate"><span class="pre">SuPySolver.boundaries</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.eigenvalue_to_index"><code class="docutils literal notranslate"><span class="pre">SuPySolver.eigenvalue_to_index()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.extrapolation_order"><code class="docutils literal notranslate"><span class="pre">SuPySolver.extrapolation_order</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.get_sorted_mode"><code class="docutils literal notranslate"><span class="pre">SuPySolver.get_sorted_mode()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.index_to_eigenvalue"><code class="docutils literal notranslate"><span class="pre">SuPySolver.index_to_eigenvalue()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.initialize"><code class="docutils literal notranslate"><span class="pre">SuPySolver.initialize()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.loop_over_itr"><code class="docutils literal notranslate"><span class="pre">SuPySolver.loop_over_itr()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.mode_number"><code class="docutils literal notranslate"><span class="pre">SuPySolver.mode_number</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.model_parameters"><code class="docutils literal notranslate"><span class="pre">SuPySolver.model_parameters</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.n_computed_mode"><code class="docutils literal notranslate"><span class="pre">SuPySolver.n_computed_mode</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.n_sorted_mode"><code class="docutils literal notranslate"><span class="pre">SuPySolver.n_sorted_mode</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.reset_solver"><code class="docutils literal notranslate"><span class="pre">SuPySolver.reset_solver()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.set_boundaries"><code class="docutils literal notranslate"><span class="pre">SuPySolver.set_boundaries()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.solver_number"><code class="docutils literal notranslate"><span class="pre">SuPySolver.solver_number</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.solver.SuPySolver.wavelength"><code class="docutils literal notranslate"><span class="pre">SuPySolver.wavelength</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -2008,7 +2199,41 @@ based on the specified criteria or direct references.</p>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supermode">SuperMode</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supermode">SuperMode</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE"><code class="docutils literal notranslate"><span class="pre">SUPERMODE</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.ID"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.ID</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.adiabatic"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.adiabatic</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.beating_length"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.beating_length</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.beta"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.beta</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.binding_number"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.binding_number</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.boundaries"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.boundaries</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.eigenvalue"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.eigenvalue</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.field"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.field</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.fields"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.fields</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.get_adiabatic_with_mode"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.get_adiabatic_with_mode()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.get_beating_length_with_mode"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.get_beating_length_with_mode()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.get_betas"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.get_betas()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.get_eigen_value"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.get_eigen_value()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.get_field_interpolation"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.get_field_interpolation()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.get_fields"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.get_fields()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.get_index"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.get_index()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.get_mesh_gradient"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.get_mesh_gradient()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.get_norm"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.get_norm()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.get_normalized_coupling_with_mode"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.get_normalized_coupling_with_mode()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.get_overlap_integrals_with_mode"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.get_overlap_integrals_with_mode()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.index"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.index</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.is_computation_compatible"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.is_computation_compatible()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.itr_list"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.itr_list()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.label"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.label</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.mode_number"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.mode_number</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.model_parameters"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.model_parameters</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.normalized_coupling"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.normalized_coupling</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.solver_number"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.solver_number</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.supermode.SUPERMODE.stylized_label"><code class="docutils literal notranslate"><span class="pre">SUPERMODE.stylized_label</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
@@ -2034,8 +2259,8 @@ based on the specified criteria or direct references.</p>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -2068,7 +2293,7 @@ based on the specified criteria or direct references.</p>
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
 </p></div>
       
     </div>
