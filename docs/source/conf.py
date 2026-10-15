@@ -3,15 +3,16 @@
 
 import sys
 import os
-from sphinx_gallery.sorting import FileNameSortKey
 from MPSPlots.styles import use_mpsplots_style
 from pathlib import Path
 import SuPyMode
-from SuPyMode.directories import doc_css_path
 
 
 package_name = "SuPyMode"
 version = SuPyMode.__version__
+
+# Keep gallery reset hooks importable so Sphinx can cache its configuration.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 try:
     import pyvista
@@ -25,23 +26,13 @@ current_dir = Path(".")
 sys.path.append(str(current_dir.resolve()))
 
 
-def setup(app):
-    app.add_css_file(str(doc_css_path))
-
-
-autodoc_mock_imports = [
-    "numpy",
-    "matplotlib",
-    "numpydoc",
-]
-
-
 project = package_name
 copyright = "2025, Martin Poinsinet de Sivry-Houle"
 author = "Martin Poinsinet de Sivry-Houle"
 
 extensions = [
     "sphinx.ext.mathjax",
+    "sphinx_design",
     "pyvista.ext.plot_directive",
     "sphinx_gallery.gen_gallery",
     "sphinx.ext.autodoc",
@@ -57,9 +48,11 @@ autosummary_generate = True
 # Napoleon settings for docstrings
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
+napoleon_use_ivar = True
+napoleon_custom_sections = [("Extra Parameters", "params_style")]
 
-html_logo = "_static/thumbnail.png"
-html_favicon = "_static/thumbnail.png"
+html_logo = "_static/logo.svg"
+html_favicon = "_static/favicon.ico"
 
 
 def reset_mpl(gallery_conf, fname):
@@ -76,13 +69,16 @@ sphinx_gallery_conf = {
     "filename_pattern": r"\.py",
     "plot_gallery": True,
     "thumbnail_size": [600, 600],
+    "default_thumb_file": str(
+        Path(__file__).resolve().parent / "_static" / "gallery-default.png"
+    ),
     "download_all_examples": False,
-    "reset_modules": reset_mpl,
+    "reset_modules": "conf.reset_mpl",
     "line_numbers": False,
     "remove_config_comments": True,
     "capture_repr": ("_repr_html_", "__repr__"),
     "nested_sections": True,
-    "within_subsection_order": FileNameSortKey,
+    "within_subsection_order": "FileNameSortKey",
 }
 
 
@@ -91,10 +87,11 @@ autodoc_default_options = {
     "undoc-members": False,
     "show-inheritance": True,
     "exclude-members": "__annotations__",
-    "members-order": "bysource",
+    "member-order": "bysource",
 }
 
 autosectionlabel_prefix_document = True
+autosectionlabel_maxdepth = 1
 numpydoc_show_class_members = False
 add_module_names = False
 
@@ -113,26 +110,33 @@ show_authors = True
 pygments_style = "sphinx"
 
 # -- Sphinx-gallery configuration --------------------------------------------
-major, minor = version[:2]
+major, minor = version.split(".")[:2]
 binder_branch = f"v{major}.{minor}.x"
 
 html_context = {
     "github_url": "https://github.com",  # or your GitHub Enterprise site
-    "github_user": package_name,
+    "github_user": "MartinPdeS",
     "github_repo": package_name,
     "github_version": "master",
-    "doc_path": "doc/source",
+    "doc_path": "docs/source",
     "default_mode": "dark",
 }
 
 html_theme_options = dict()
 
-html_theme_options["logo"] = dict(text=package_name, image="_static/thumbnail.png")
-html_theme_options["show_nav_level"] = 0
+html_theme_options["logo"] = dict(
+    text=package_name, image="_static/logo.svg", alt_text="SuPyMode logo"
+)
+html_theme_options["show_nav_level"] = 1
 
 html_theme_options.update(
     {
         "icon_links": [
+            {
+                "name": "GitHub",
+                "url": f"https://github.com/MartinPdeS/{package_name}",
+                "icon": "fa-brands fa-github",
+            },
             {
                 "name": "PyPI",
                 "url": f"https://pypi.org/project/{package_name}/",
@@ -146,7 +150,7 @@ html_theme_options.update(
         ],
         "navbar_align": "left",
         "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
-        "show_prev_next": False,
+        "show_prev_next": True,
         "show_version_warning_banner": True,
         # Footer
         "footer_start": ["copyright"],
@@ -206,3 +210,11 @@ epub_exclude_files = ["search.html"]
 intersphinx_mapping = {
     "numpy": ("https://numpy.org/devdocs", None),
 }
+
+
+from _docstrings import normalize_plot_docstrings
+
+
+def setup(app):
+    """Prepare decorator-added parameter sections before Napoleon processes them."""
+    app.connect("autodoc-process-docstring", normalize_plot_docstrings, priority=100)

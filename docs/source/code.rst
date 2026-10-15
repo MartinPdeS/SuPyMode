@@ -1,9 +1,7 @@
-:orphan:
-
 .. _code:
 
-Source code
-===========
+API reference
+=============
 
 
 SuPySolver
@@ -11,7 +9,6 @@ SuPySolver
 
  .. autoclass:: SuPyMode.solver.SuPySolver
      :members:
-     :inherited-members:
      :member-order: bysource
 
 
@@ -27,7 +24,7 @@ SuperSet
 SuperMode
 ---------
 
- .. autoclass:: SuPyMode.supermode.SuperMode
+ .. autoclass:: SuPyMode.supermode.SUPERMODE
      :members:
      :inherited-members:
      :member-order: bysource

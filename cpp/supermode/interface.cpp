@@ -411,7 +411,7 @@ PYBIND11_MODULE(supermode, module)
             β = n_eff * k₀, where k₀ is the free-space wave number.
 
             The difference in propagation constants between supermodes
-            determines the beating length: L_beat = 2π / |β₁ - β₂|.
+            determines the beating length: :math:`L_{\mathrm{beat}} = 2\pi / |\beta_1 - \beta_2|`.
         )pbdoc"
     )
     .def(
@@ -490,67 +490,19 @@ PYBIND11_MODULE(supermode, module)
         },
         pybind11::arg("other_mode"),
         R"pbdoc(
-            Compute overlap integrals between supermodes and another mode set.
-
-            Calculates the spatial overlap integrals between the field
-            distributions of supermodes in this object and those in another
-            SuperMode object. Overlap integrals quantify the similarity
-            between mode field distributions.
+            Compute the absolute discrete field overlap with another mode at each taper slice.
 
             Parameters
             ----------
-            other_mode : SuperMode
-                Another SuperMode object with which to compute overlaps.
+            other_mode : SUPERMODE
+                Mode sampled on the same transverse grid and taper slices.
 
             Returns
             -------
             numpy.ndarray
-                Matrix of complex overlap integrals with shape
-                (n_modes_self, n_modes_other). The overlap integral
-                between modes i and j is: ∫ E₁ᵢ* · E₂ⱼ dA
-
-            Notes
-            -----
-            Overlap integrals are fundamental to understanding mode coupling
-            and power transfer efficiency. They appear in coupled mode theory
-            and are essential for calculating coupling coefficients.
-
-            The overlap integral is defined as:
-            S₁₂ = ∫∫ E₁*(x,y) · E₂(x,y) dx dy
-
-            For identical modes, the overlap integral equals 1 (assuming
-            proper normalization). For orthogonal modes, it equals 0.
-
-            Examples
-            --------
-            >>> overlaps = supermode1.get_overlap_integrals_with_mode(supermode2)
-            >>> diagonal_overlaps = numpy.diag(overlaps)  # Same mode overlaps
-        )pbdoc"
-    )
-    .def(
-        "get_overlap_integrals_with_mode",
-        [](const SuperMode &self, const SuperMode &other) {
-            Eigen::MatrixXd overlaps = self.get_overlap_integrals_with_mode(other);
-            return NumpyInterface::eigen_to_ndarray<double>(overlaps, {self.model_parameters.n_slice});
-        },
-        pybind11::arg("other_mode"),
-        R"pbdoc(
-            Compute normalized overlap integrals between supermodes and another mode set.
-
-            Calculates the normalized spatial overlap integrals between the field
-            distributions of supermodes in this object and those in another SuperMode object. Normalized overlap integrals provide a dimensionless measure of mode similarity.
-
-
-            Parameters
-            ----------
-            other_mode : SuperMode
-                Another SuperMode object with which to compute normalized overlaps.
-
-
-            Returns
-            -------
-            numpy.ndarray
-                Matrix of complex normalized overlap integrals with shape (n_modes_self, n_modes_other).
+                Real array with shape ``(n_slice,)``. Each entry is the absolute
+                sum of the products of the two discrete fields at that slice.
+                Grid-cell area factors are not included.
         )pbdoc"
     )
     .def(
@@ -576,7 +528,7 @@ PYBIND11_MODULE(supermode, module)
             Notes
             -----
             The adiabaticity parameter is typically defined as:
-            A_ij = |dγ_ij/dz| / |Δβ_ij|²
+            :math:`A_{ij} = |d\gamma_{ij}/dz| / |\Delta\beta_{ij}|^2`
             where γ_ij are the coupling coefficients between modes i and j, and Δβ_ij are the differences in propagation constants. A value of A_ij << 1 indicates adiabatic evolution, while A_ij ~ 1 or greater indicates non-adiabatic behavior.
         )pbdoc"
     )
@@ -609,7 +561,7 @@ PYBIND11_MODULE(supermode, module)
             Notes
             -----
             The beating length is calculated from the difference in propagation
-            constants: L_beat = 2π / |β₁ - β₂|
+            constants: :math:`L_{\mathrm{beat}} = 2\pi / |\beta_1 - \beta_2|`
 
             Short beating lengths indicate strong coupling and rapid power
             oscillation, while long beating lengths indicate weak coupling.

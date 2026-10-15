@@ -38,17 +38,23 @@ class SuperSetPlots(object):
         Resolves the mode of interest from user input to the appropriate list of SUPERMODE instances
         based on the specified criteria or direct references.
 
-        Parameters:
-            - superset (SuperSet): The superset containing all supermodes, including fundamental and non-fundamental modes.
-            - mode_of_interest (Union[str, SUPERMODE, List[SUPERMODE]]): This parameter can be a string specifying a category
-            of modes such as 'fundamental', 'non-fundamental', 'all', a single SUPERMODE instance, or a list of SUPERMODE instances.
+        Parameters
+        ----------
+        superset : SuperSet
+            Superset containing the available modes.
+        mode_of_interest : str or SUPERMODE or list of SUPERMODE
+            A category ("fundamental", "non-fundamental", or "all"), one mode,
+            or an explicit list of modes.
 
-        Returns:
-            - List[SUPERMODE]: A list of SUPERMODE instances corresponding to the specified mode of interest.
+        Returns
+        -------
+        list of SUPERMODE
+            Modes selected by the request.
 
-        Raises:
-            - ValueError: If the mode_of_interest is not one of the expected types or if the string input does not match
-            any known category.
+        Raises
+        ------
+        ValueError
+            If the category or input type is unsupported.
         """
         from SuPyMode.supermode import SUPERMODE
 

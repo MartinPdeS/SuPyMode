@@ -47,7 +47,7 @@ Installation
    pip install SuPyMode
    conda install SuPyMode
 
-See the `online documentation <https://supymode.readthedocs.io/>`_ for detailed
+See the `online documentation <https://martinpdes.github.io/SuPyMode/>`_ for detailed
 usage and additional examples.
 
 

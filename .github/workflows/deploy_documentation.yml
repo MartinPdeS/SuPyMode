@@ -1,26 +1,99 @@
+# Simple workflow for deploying static content to GitHub Pages
 name: Documentation
 
 on:
   push:
-    branches: ["**"]
-    tags: ["v*"]
+    branches: [ "**" ]
+    tags: [ "v*" ]
+
   pull_request:
-    branches: ["master"]
+    branches:
+      - master
+
+concurrency:
+  group: documentation-build-${{ github.repository }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
   pages: write
   id-token: write
 
-concurrency:
-  group: documentation-page-deployment
-  cancel-in-progress: false
-
 jobs:
-  documentation:
+  ManyLinux_x86_64:
     uses: MartinPdeS/MPSActions/.github/workflows/publish_documentation.yml@v5
     with:
       python-version: "3.11"
       package-name: "SuPyMode"
       apt-package: xvfb jq
       deploy-pages: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')) }}
+
+  maintain_documentation:
+    needs: ManyLinux_x86_64
+    if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')) }}
+    runs-on: ubuntu-latest
+    env:
+      DOCUMENTATION_BRANCH: documentation_page
+
+    steps:
+      - name: Checkout documentation branch
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+          ref: ${{ env.DOCUMENTATION_BRANCH }}
+
+      - name: Install documentation landing page
+        run: |
+          set -Eeuo pipefail
+          git show "${GITHUB_SHA}:docs/redirect.html" > index.html
+          test -s docs/latest/index.html
+
+      - name: Rebuild version switcher
+        run: |
+          set -Eeuo pipefail
+
+          base_url="https://martinpdes.github.io/SuPyMode/docs"
+          mapfile -t versions < <(
+            find docs \
+              -mindepth 1 \
+              -maxdepth 1 \
+              -type d \
+              -printf "%f\n" \
+              | grep -v "^latest$" \
+              | sort -V -r
+          )
+
+          jq -n \
+            --arg base_url "${base_url}" \
+            --argjson versions "$(printf '%s\n' "${versions[@]}" | jq -R . | jq -s .)" \
+            '[
+              {
+                name: "latest",
+                version: "latest",
+                url: ($base_url + "/latest")
+              }
+            ] + [
+              $versions[] | {
+                name: .,
+                version: .,
+                url: ($base_url + "/" + .)
+              }
+            ]' > version_switcher.json
+
+          jq . version_switcher.json
+
+      - name: Commit documentation landing page
+        run: |
+          set -Eeuo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html version_switcher.json
+
+          if git diff --cached --quiet; then
+            echo "Documentation landing page and version switcher are up to date."
+            exit 0
+          fi
+
+          git commit -m "Update documentation landing page and version switcher [skip ci]"
+          git push origin "HEAD:${DOCUMENTATION_BRANCH}"
