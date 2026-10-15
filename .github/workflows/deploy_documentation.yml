@@ -97,3 +97,20 @@ jobs:
 
           git commit -m "Update documentation landing page and version switcher [skip ci]"
           git push origin "HEAD:${DOCUMENTATION_BRANCH}"
+
+      - name: Upload GitHub Pages site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  publish_pages:
+    needs: maintain_documentation
+    if: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')) }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy GitHub Pages site
+        id: deployment
+        uses: actions/deploy-pages@v4
