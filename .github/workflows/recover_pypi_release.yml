@@ -1,0 +1,93 @@
+name: Recover PyPI publication
+
+on:
+  workflow_dispatch:
+    inputs:
+      run-id:
+        description: Release workflow run containing successfully tested wheels
+        required: true
+        type: string
+      tag:
+        description: Existing release tag to publish
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      SOURCE_RUN_ID: ${{ inputs.run-id }}
+      RELEASE_TAG: ${{ inputs.tag }}
+    steps:
+      - name: Verify source release run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          [[ "$SOURCE_RUN_ID" =~ ^[0-9]+$ ]]
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN_ID}" > run.json
+          jq -e --arg tag "$RELEASE_TAG" '
+            .event == "push" and .head_branch == $tag and
+            .path == ".github/workflows/deploy_release.yml" and
+            .status == "completed"
+          ' run.json
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN_ID}/jobs?per_page=100" \
+            --jq '.jobs[] | select(.name | test("release / pypi / (linux|macos|windows)$")) | .conclusion' > results.txt
+          test "$(wc -l < results.txt)" -eq 3
+          test "$(grep -c '^success$' results.txt)" -eq 3
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.11"
+
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.run-id }}
+          pattern: "*_wheels"
+          path: downloaded
+          merge-multiple: true
+
+      - name: Select and validate release wheels
+        run: |
+          python -m pip install packaging twine
+          python - <<'PYTHON'
+          from email.parser import BytesParser
+          import os
+          from pathlib import Path
+          import shutil
+          from zipfile import ZipFile
+          from packaging.utils import parse_wheel_filename
+          from packaging.version import Version
+
+          expected = Version(os.environ["RELEASE_TAG"].removeprefix("v"))
+          output = Path("dist")
+          output.mkdir()
+          selected = []
+          for wheel in Path("downloaded").glob("*.whl"):
+              name, version, _, _ = parse_wheel_filename(wheel.name)
+              if name != "supymode" or version != expected:
+                  print(f"Exclude unrelated artifact: {wheel.name}")
+                  continue
+              with ZipFile(wheel) as archive:
+                  metadata_paths = [p for p in archive.namelist() if p.endswith(".dist-info/METADATA")]
+                  assert len(metadata_paths) == 1, wheel.name
+                  metadata = BytesParser().parsebytes(archive.read(metadata_paths[0]))
+                  assert metadata["Name"].lower() == "supymode", wheel.name
+                  assert Version(metadata["Version"]) == expected, wheel.name
+              shutil.copy2(wheel, output / wheel.name)
+              selected.append(wheel.name)
+          assert len(selected) == 12, selected
+          print("Validated 12 release wheels:", *sorted(selected), sep="\n")
+          PYTHON
+          python -m twine check dist/*.whl
+
+      - name: Publish validated wheels
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}

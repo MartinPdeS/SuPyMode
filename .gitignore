@@ -9,7 +9,6 @@
 !.coverage
 !.DS_Store
 !cpp
-!dist
 !.gitmodules
 !extern
 !SuPyMode
