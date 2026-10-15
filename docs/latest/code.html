@@ -1282,30 +1282,26 @@ or an explicit list of modes.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_field">
 <span class="sig-name descname"><span class="pre">plot_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_mode_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_itr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_slice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_field" title="Link to this definition">#</a></dt>
-<dd><blockquote>
-<div><p>Render the mode field for different ITR values or slice numbers.</p>
-<dl class="simple">
-<dt>mode_of_interest<span class="classifier">list, optional</span></dt><dd><p>List of modes to be plotted (default is ‘all’).</p>
-</dd>
-<dt>itr_list<span class="classifier">list of float, optional</span></dt><dd><p>List of ITR values for plotting (default is None).</p>
-</dd>
-<dt>slice_list<span class="classifier">list of int, optional</span></dt><dd><p>List of slice numbers for plotting (default is None).</p>
-</dd>
-<dt>show_mode_label<span class="classifier">bool, optional</span></dt><dd><p>Flag to display mode labels (default is True).</p>
-</dd>
-<dt>show_itr<span class="classifier">bool, optional</span></dt><dd><p>Flag to display ITR values (default is True).</p>
-</dd>
-<dt>show_slice<span class="classifier">bool, optional</span></dt><dd><p>Flag to display slice numbers (default is True).</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>plt.Figure</dt><dd><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
-</dd>
-</dl>
-</div></blockquote>
+<dd><p>Render the mode field for different ITR values or slice numbers.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Extra Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>mode_of_interest</strong> (<em>list</em><em>, </em><em>optional</em>) – List of modes to be plotted (default is ‘all’).</p></li>
+<li><p><strong>itr_list</strong> (<em>list</em><em> of </em><em>float</em><em>, </em><em>optional</em>) – List of ITR values for plotting (default is None).</p></li>
+<li><p><strong>slice_list</strong> (<em>list</em><em> of </em><em>int</em><em>, </em><em>optional</em>) – List of slice numbers for plotting (default is None).</p></li>
+<li><p><strong>show_mode_label</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag to display mode labels (default is True).</p></li>
+<li><p><strong>show_itr</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag to display ITR values (default is True).</p></li>
+<li><p><strong>show_slice</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag to display slice numbers (default is True).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>plt.Figure</p>
+</dd>
+<dt class="field-even">Extra Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
 <li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
 <li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
 <li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
@@ -1319,21 +1315,11 @@ or an explicit list of modes.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>Figure</strong> – The figure with the market prices plot.</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Figure</strong> – The figure with the market prices plot.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>matplotlib.figure.Figure</p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>mode_of_interest</strong> (<em>list</em>)</p></li>
-<li><p><strong>itr_list</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>)</p></li>
-<li><p><strong>slice_list</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>)</p></li>
-<li><p><strong>show_mode_label</strong> (<em>bool</em>)</p></li>
-<li><p><strong>show_itr</strong> (<em>bool</em>)</p></li>
-<li><p><strong>show_slice</strong> (<em>bool</em>)</p></li>
-</ul>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>matplotlib.figure.Figure</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1341,20 +1327,19 @@ or an explicit list of modes.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_geometry">
 <span class="sig-name descname"><span class="pre">plot_geometry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_geometry" title="Link to this definition">#</a></dt>
-<dd><blockquote>
-<div><p>Render the geometry of the taper on the provided axes.</p>
-<dl class="simple">
-<dt>ax<span class="classifier">matplotlib.axes.Axes</span></dt><dd><p>The axes object on which to plot the geometry.</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>plt.Figure</dt><dd><p>The figure object containing the generated plot. This can be customized further or saved to a file.</p>
-</dd>
-</dl>
-</div></blockquote>
+<dd><p>Render the geometry of the taper on the provided axes.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Extra Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot the geometry.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The figure object containing the generated plot. This can be customized further or saved to a file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>plt.Figure</p>
+</dd>
+<dt class="field-even">Extra Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
 <li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
 <li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
 <li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
@@ -1368,11 +1353,11 @@ or an explicit list of modes.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>Figure</strong> – The figure with the market prices plot.</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Figure</strong> – The figure with the market prices plot.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>matplotlib.figure.Figure</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>matplotlib.figure.Figure</p>
 </dd>
 </dl>
 </dd></dl>
