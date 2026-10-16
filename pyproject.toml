@@ -21,7 +21,7 @@ local_scheme = "no-local-version"
 
 [project]
 name = "SuPyMode"
-version = "2.4.3"
+version = "2.4.4"
 description = "A package for light propagation in fiber optics."
 license = {file = "LICENSE"}
 readme = "README.rst"
