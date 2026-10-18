@@ -168,3 +168,6 @@ For questions or contributions, contact `martin.poinsinet.de.sivry@gmail.com <ma
 .. |anaconda_date| image:: https://anaconda.org/martinpdes/supymode/badges/latest_release_relative_date.svg
     :alt: Latest release date
     :target: https://anaconda.org/martinpdes/supymode
+.. image:: https://raw.githubusercontent.com/MartinPdeS/SuPyMode/master/docs/source/_static/logo.png
+   :width: 100%
+   :alt: SuPyMode logo

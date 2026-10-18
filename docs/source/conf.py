@@ -51,8 +51,8 @@ napoleon_numpy_docstring = True
 napoleon_use_ivar = True
 napoleon_custom_sections = [("Extra Parameters", "params_style")]
 
-html_logo = "_static/logo.svg"
-html_favicon = "_static/favicon.ico"
+html_logo = "_static/logo.png"
+html_favicon = "_static/favicon.png"
 
 
 def reset_mpl(gallery_conf, fname):
@@ -125,7 +125,7 @@ html_context = {
 html_theme_options = dict()
 
 html_theme_options["logo"] = dict(
-    text=package_name, image="_static/logo.svg", alt_text="SuPyMode logo"
+    text=package_name, image="_static/logo.png", alt_text="SuPyMode logo"
 )
 html_theme_options["show_nav_level"] = 1
 
