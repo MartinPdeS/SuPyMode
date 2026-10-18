@@ -1,3 +1,7 @@
+.. image:: https://raw.githubusercontent.com/MartinPdeS/SuPyMode/master/docs/source/_static/logo.png
+   :width: 100%
+   :alt: SuPyMode logo
+
 ..  figure:: https://github.com/MartinPdeS/SuPyMode/blob/master/docs/images/mode_propagation.gif?raw=true
    :alt: Propagation of mode in an adiabatic 2x1 modally-specific photonic lantern.
    :class: with-shadow float-left
@@ -168,9 +172,3 @@ For questions or contributions, contact `martin.poinsinet.de.sivry@gmail.com <ma
 .. |anaconda_date| image:: https://anaconda.org/martinpdes/supymode/badges/latest_release_relative_date.svg
     :alt: Latest release date
     :target: https://anaconda.org/martinpdes/supymode
-.. image:: https://raw.githubusercontent.com/MartinPdeS/SuPyMode/master/docs/source/_static/logo.png
-   :width: 100%
-   :alt: SuPyMode logo
-.. image:: https://raw.githubusercontent.com/MartinPdeS/SuPyMode/master/docs/source/_static/logo.png
-   :width: 100%
-   :alt: SuPyMode logo
