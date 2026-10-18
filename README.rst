@@ -171,3 +171,6 @@ For questions or contributions, contact `martin.poinsinet.de.sivry@gmail.com <ma
 .. image:: https://raw.githubusercontent.com/MartinPdeS/SuPyMode/master/docs/source/_static/logo.png
    :width: 100%
    :alt: SuPyMode logo
+.. image:: https://raw.githubusercontent.com/MartinPdeS/SuPyMode/master/docs/source/_static/logo.png
+   :width: 100%
+   :alt: SuPyMode logo
