@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <string>
+#include <stdexcept>
 #include "supermode.h"
 
 double SuperMode::get_norm(const size_t &slice, const std::string &normalization_type) const {
@@ -179,8 +181,17 @@ bool SuperMode::is_same_symmetry(const SuperMode &other_supermode) const {
 }
 
 Eigen::VectorXd SuperMode::get_field_interpolation(const double itr) const {
+    const size_t n_slice = model_parameters.n_slice;
+    const size_t field_size = model_parameters.nx * model_parameters.ny;
+
+    if (n_slice == 0 || model_parameters.itr_list.size() != n_slice ||
+        fields.rows() != static_cast<Eigen::Index>(field_size) ||
+        fields.cols() != static_cast<Eigen::Index>(n_slice)) {
+        throw std::runtime_error("Cannot interpolate a field with incomplete model data.");
+    }
+
     // Create an output array to hold the interpolated field data
-    Eigen::VectorXd interpolated_field(model_parameters.nx * model_parameters.ny);
+    Eigen::VectorXd interpolated_field(field_size);
 
     // Map the output array to an Eigen matrix for easier manipulation
     Eigen::Map<Eigen::MatrixXd> interpolated_field_map(
@@ -195,10 +206,13 @@ Eigen::VectorXd SuperMode::get_field_interpolation(const double itr) const {
         for (size_t j = 0; j < model_parameters.ny; ++j) {
             // Find the two slices that bracket the desired iteration value
             size_t slice_0 = 0;
-            while (slice_0 < model_parameters.n_slice - 1 && model_parameters.itr_list[slice_0 + 1] < itr) {
+            while (slice_0 + 1 < n_slice && model_parameters.itr_list[slice_0 + 1] < itr) {
                 ++slice_0;
             }
-            size_t slice_1 = slice_0 + 1;
+            // At the final sample there is no slice to the right.  Reuse the
+            // endpoint so an exact (or out-of-range) query cannot read past
+            // the fields and iteration arrays.
+            const size_t slice_1 = std::min(slice_0 + 1, n_slice - 1);
 
             // Get the field values at the two slices
             double field_0 = this->fields(i + j * model_parameters.nx, slice_0);
