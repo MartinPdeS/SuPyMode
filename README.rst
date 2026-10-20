@@ -4,12 +4,14 @@
 
 ..  figure:: https://github.com/MartinPdeS/SuPyMode/blob/master/docs/images/mode_propagation.gif?raw=true
    :alt: Propagation of mode in an adiabatic 2x1 modally-specific photonic lantern.
-   :class: with-shadow float-left
+   :class: with-shadow
    :width: 800px
+   :align: center
 
 .. list-table::
    :widths: 35 65
    :header-rows: 1
+   :align: center
 
    * - Badge
      - Status
