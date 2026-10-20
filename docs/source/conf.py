@@ -1,216 +1,68 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""SuPyMode documentation using the shared MartinPdeS-docs configuration."""
 
-import sys
 import os
-from MPSPlots.styles import use_mpsplots_style
 from pathlib import Path
-import SuPyMode
+import sys
+import tomllib
+from importlib.metadata import distribution as package_distribution
+
+from martinpdes_docs import configure
 
 
-package_name = "SuPyMode"
-version = SuPyMode.__version__
+ROOT = Path(__file__).resolve().parents[2]
+DOCS_SOURCE = Path(__file__).resolve().parent
+sys.path.insert(0, str(DOCS_SOURCE))
+installed_site = str(package_distribution("SuPyMode").locate_file(""))
+if installed_site in sys.path:
+    sys.path.remove(installed_site)
+sys.path.insert(0, installed_site)
 
-# Keep gallery reset hooks importable so Sphinx can cache its configuration.
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+examples_sections = ["workflow", "alpha_profile", "validation", "extra"]
 
-try:
-    import pyvista
+globals().update(
+    configure(
+        project="SuPyMode",
+        package="SuPyMode",
+        repository="MartinPdeS/SuPyMode",
+        logo="_static/logo.png",
+        favicon="_static/favicon.png",
+        version=os.getenv("tag", "latest"),
+        html_theme_options={
+            "logo": {
+                "text": "",
+                "image": "_static/logo.png",
+                "alt_text": "SuPyMode logo",
+            },
+        },
+        sphinx_gallery_conf={
+            "examples_dirs": [f"../examples/{name}" for name in examples_sections],
+            "gallery_dirs": [f"gallery/{name}" for name in examples_sections],
+            "image_scrapers": ("matplotlib", "pyvista"),
+            "default_thumb_file": str(
+                Path(__file__).resolve().parent / "_static" / "gallery-default.png"
+            ),
+            "within_subsection_order": "FileNameSortKey",
+            "abort_on_example_error": True,
+        },
+    )
+)
 
-    pyvista.OFF_SCREEN = True
-except ImportError:
-    print("Could not load pyvista library for 3D rendering")
-
-current_dir = Path(".")
-
-sys.path.append(str(current_dir.resolve()))
-
-
-project = package_name
-copyright = "2025, Martin Poinsinet de Sivry-Houle"
-author = "Martin Poinsinet de Sivry-Houle"
-
-extensions = [
+extensions += [
     "sphinx.ext.mathjax",
-    "sphinx_design",
     "pyvista.ext.plot_directive",
-    "sphinx_gallery.gen_gallery",
-    "sphinx.ext.autodoc",
-    "sphinx.ext.napoleon",
-    "sphinx.ext.viewcode",
     "sphinx.ext.autosectionlabel",
-    "sphinx.ext.intersphinx",
 ]
-
-autodoc_typehints = "description"
-autosummary_generate = True
-
-# Napoleon settings for docstrings
-napoleon_google_docstring = False
-napoleon_numpy_docstring = True
+autodoc_default_options.update(
+    {"members": True, "exclude-members": "__annotations__", "member-order": "bysource"}
+)
 napoleon_use_ivar = True
 napoleon_custom_sections = [("Extra Parameters", "params_style")]
-
-html_logo = "_static/logo.png"
-html_favicon = "_static/favicon.png"
-
-
-def reset_mpl(gallery_conf, fname):
-    use_mpsplots_style()
-
-
-examples_files = ["workflow", "alpha_profile", "validation", "extra"]
-
-sphinx_gallery_conf = {
-    "examples_dirs": ["../examples/" + f for f in examples_files],
-    "gallery_dirs": ["gallery/" + f for f in examples_files],
-    "image_scrapers": ("matplotlib", "pyvista"),
-    "ignore_pattern": "/__",
-    "filename_pattern": r"\.py",
-    "plot_gallery": True,
-    "thumbnail_size": [600, 600],
-    "default_thumb_file": str(
-        Path(__file__).resolve().parent / "_static" / "gallery-default.png"
-    ),
-    "download_all_examples": False,
-    "reset_modules": "conf.reset_mpl",
-    "line_numbers": False,
-    "remove_config_comments": True,
-    "capture_repr": ("_repr_html_", "__repr__"),
-    "nested_sections": True,
-    "within_subsection_order": "FileNameSortKey",
-}
-
-
-autodoc_default_options = {
-    "members": True,
-    "undoc-members": False,
-    "show-inheritance": True,
-    "exclude-members": "__annotations__",
-    "member-order": "bysource",
-}
-
-autosectionlabel_prefix_document = True
 autosectionlabel_maxdepth = 1
-numpydoc_show_class_members = False
-add_module_names = False
+html_context.update({"doc_path": "docs/source", "default_mode": "dark"})
+intersphinx_mapping = {"numpy": ("https://numpy.org/devdocs", None)}
 
-source_suffix = ".rst"
-master_doc = "index"
-language = "en"
-highlight_language = "python3"
-html_theme = "pydata_sphinx_theme"
-
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-exclude_trees = []
-# default_role = "autolink"
-show_authors = True
-pygments_style = "sphinx"
-
-# -- Sphinx-gallery configuration --------------------------------------------
-major, minor = version.split(".")[:2]
-binder_branch = f"v{major}.{minor}.x"
-
-html_context = {
-    "github_url": "https://github.com",  # or your GitHub Enterprise site
-    "github_user": "MartinPdeS",
-    "github_repo": package_name,
-    "github_version": "master",
-    "doc_path": "docs/source",
-    "default_mode": "dark",
-}
-
-html_theme_options = dict()
-
-html_theme_options["logo"] = dict(
-    text=package_name, image="_static/logo.png", alt_text="SuPyMode logo"
-)
-html_theme_options["show_nav_level"] = 1
-
-html_theme_options.update(
-    {
-        "icon_links": [
-            {
-                "name": "GitHub",
-                "url": f"https://github.com/MartinPdeS/{package_name}",
-                "icon": "fa-brands fa-github",
-            },
-            {
-                "name": "PyPI",
-                "url": f"https://pypi.org/project/{package_name}/",
-                "icon": "fa-solid fa-box",
-            },
-            {
-                "name": "Anaconda",
-                "url": f"https://anaconda.org/MartinPdeS/{package_name}",
-                "icon": "fa-brands fa-python",
-            },
-        ],
-        "navbar_align": "content",
-        "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
-        "show_prev_next": True,
-        "show_version_warning_banner": True,
-        # Footer
-        "footer_start": ["copyright"],
-        "footer_end": ["sphinx-version", "theme-version"],
-        # Other
-        "pygments_light_style": "default",
-        "pygments_dark_style": "github-dark",
-    }
-)
-
-current_version = os.getenv("tag", "latest")
-
-html_theme_options["switcher"] = dict(
-    json_url=f"https://raw.githubusercontent.com/MartinPdeS/{package_name}/documentation_page/version_switcher.json",
-    version_match=current_version,
-)
-
-htmlhelp_basename = f"{package_name}doc"
-
-latex_elements = {}
-
-
-latex_documents = [
-    (
-        master_doc,
-        f"{package_name}.tex",
-        f"{package_name} Documentation",
-        "Martin Poinsinet de Sivry-Houle",
-        "manual",
-    ),
-]
-
-man_pages = [
-    (master_doc, f"{package_name}", f"{package_name} Documentation", [author], 1)
-]
-
-texinfo_documents = [
-    (
-        master_doc,
-        package_name,
-        f"{package_name} Documentation",
-        author,
-        package_name,
-        "One line description of project.",
-        "Miscellaneous",
-    ),
-]
-
-epub_title = project
-
-html_static_path = ["_static"]
-templates_path = ["_templates"]
-html_css_files = ["default.css", "layout.css"]
-epub_exclude_files = ["search.html"]
-
-# Intersphinx to get NumPy, SciPy, and other targets
-intersphinx_mapping = {
-    "numpy": ("https://numpy.org/devdocs", None),
-}
-
+metadata = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+version = release = metadata["project"]["version"]
 
 from _docstrings import normalize_plot_docstrings
 

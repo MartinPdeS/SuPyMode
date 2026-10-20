@@ -1,12 +1,14 @@
 .DEFAULT_GOAL := help
 PYTHON ?= python3
+SPHINXOPTS ?=
+DOCS_BUILD_DIR ?= docs/build
 BUILD_DIR ?= build
 ROOT_DIR := $(CURDIR)
 TAG_VERSION ?= $(or $(VERSION),$(filter v%,$(MAKECMDGOALS)))
 PYBIND11_DIR = $(shell $(PYTHON) -m pybind11 --cmakedir)
 RELEASE_KIND := $(filter major minor patch,$(MAKECMDGOALS))
 
-.PHONY: help setup configure build install editable test quality check release-check tag release major minor patch clean
+.PHONY: help docs docs-install setup configure build install editable test quality check release-check tag release major minor patch clean
 
 ifneq ($(filter tag,$(MAKECMDGOALS)),)
 ifneq ($(strip $(TAG_VERSION)),)
@@ -18,6 +20,8 @@ endif
 
 help:
 	@echo "SuPyMode development commands"
+	@echo "  make docs                  Build documentation and execute gallery examples"
+	@echo "  make docs-install          Install documentation dependencies"
 	@echo "  make setup                 Install editable development dependencies"
 	@echo "  make editable              Build and install an editable package"
 	@echo "  make test                  Run the test suite"
@@ -30,6 +34,10 @@ help:
 
 setup:
 	$(PYTHON) -m pip install -e ".[testing,documentation,dev]"
+docs-install:
+	$(PYTHON) -m pip install -e ".[documentation]"
+docs:
+	MPLBACKEND=Agg $(PYTHON) -m sphinx -M html docs/source "$(DOCS_BUILD_DIR)" $(SPHINXOPTS)
 configure:
 	cmake -S . -B $(BUILD_DIR) -Dpybind11_DIR="$(PYBIND11_DIR)" -DPython_EXECUTABLE="$$(which $(PYTHON))" -DCMAKE_INSTALL_PREFIX="$(ROOT_DIR)"
 build:
