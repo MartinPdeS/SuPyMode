@@ -8,24 +8,30 @@
    :width: 800px
 
 .. list-table::
-   :widths: 10 25 25 25
-   :header-rows: 0
+   :widths: 35 65
+   :header-rows: 1
 
-   * - Meta
+   * - Badge
+     - Status
+   * - Python versions
      - |python|
+   * - Documentation
      - |docs|
-     - |zenodo|
-   * - Testing
+   * - Continuous integration
      - |ci/cd|
+   * - Test coverage
      - |coverage|
+   * - Google Colab
      - |colab|
-   * - PyPI
-     - |PyPI|
-     - |PyPI_download|
-     -
-   * - Anaconda
+   * - PyPI package
+     - |PyPi|
+   * - PyPI downloads
+     - |PyPi_download|
+   * - Anaconda package
      - |anaconda|
+   * - Anaconda downloads
      - |anaconda_download|
+   * - Latest Anaconda release
      - |anaconda_date|
 
 SuPyMode
