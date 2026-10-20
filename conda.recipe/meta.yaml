@@ -7,6 +7,8 @@ source:
 
 build:
   number: 0
+  # Keep matrix artifacts distinct when the release validator merges them.
+  string: py{{ PY_VER | replace(".", "") }}
   script:
     - export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"  # [osx]
     # conda-build exports a stale Visual Studio generator on the Windows runner.
