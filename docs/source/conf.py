@@ -1,23 +1,16 @@
 """SuPyMode documentation using the shared MartinPdeS-docs configuration."""
 
-import os
 from pathlib import Path
 import sys
 import tomllib
-from importlib.metadata import distribution as package_distribution
 
 from martinpdes_docs import configure
 
 
 ROOT = Path(__file__).resolve().parents[2]
-DOCS_SOURCE = Path(__file__).resolve().parent
-sys.path.insert(0, str(DOCS_SOURCE))
-installed_site = str(package_distribution("SuPyMode").locate_file(""))
-if installed_site in sys.path:
-    sys.path.remove(installed_site)
-sys.path.insert(0, installed_site)
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-examples_sections = ["workflow", "alpha_profile", "validation", "extra"]
+gallery_sections = ["workflow", "alpha_profile", "validation", "extra"]
 
 globals().update(
     configure(
@@ -26,7 +19,13 @@ globals().update(
         repository="MartinPdeS/SuPyMode",
         logo="_static/logo.png",
         favicon="_static/favicon.png",
-        version=os.getenv("tag", "latest"),
+        prefer_installed_package=True,
+        gallery_sections=gallery_sections,
+        gallery_default_thumb="_static/gallery-default.png",
+        gallery_options={
+            "image_scrapers": ("matplotlib", "pyvista"),
+            "abort_on_example_error": True,
+        },
         html_theme_options={
             "logo": {
                 "text": "",
@@ -34,24 +33,10 @@ globals().update(
                 "alt_text": "SuPyMode logo",
             },
         },
-        sphinx_gallery_conf={
-            "examples_dirs": [f"../examples/{name}" for name in examples_sections],
-            "gallery_dirs": [f"gallery/{name}" for name in examples_sections],
-            "image_scrapers": ("matplotlib", "pyvista"),
-            "default_thumb_file": str(
-                Path(__file__).resolve().parent / "_static" / "gallery-default.png"
-            ),
-            "within_subsection_order": "FileNameSortKey",
-            "abort_on_example_error": True,
-        },
     )
 )
 
-extensions += [
-    "sphinx.ext.mathjax",
-    "pyvista.ext.plot_directive",
-    "sphinx.ext.autosectionlabel",
-]
+extensions += ["pyvista.ext.plot_directive"]
 autodoc_default_options.update(
     {"members": True, "exclude-members": "__annotations__", "member-order": "bysource"}
 )
