@@ -1,22 +1,18 @@
-name: Static quality checks
+name: Quality
+
 on:
   push:
-    branches: ["master"]
+    branches: [master]
   pull_request:
-    branches: ["master"]
+    branches: [master]
+
 permissions:
   contents: read
+
 jobs:
-  python-quality:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11", "3.12"]
-    steps:
-      - name: Set up Python and CI dependencies
-        uses: MartinPdeS/MPSActions/actions/setup-python@a01969bc5af90666281f9d37acffdf6a4629763a
-        with:
-          python-version: "${{ matrix.python-version }}"
-          install-command: >-
-            python -m pip install "ruff>=0.6,<1"
-      - run: python -m ruff check SuPyMode tests
+  quality:
+    uses: MartinPdeS/MPSActions/.github/workflows/run_quality.yml@v7
+    with:
+      python-versions: '["3.11", "3.12"]'
+      install-command: python -m pip install "ruff>=0.6,<1"
+      quality-command: python -m ruff check SuPyMode tests

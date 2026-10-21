@@ -11,17 +11,10 @@ permissions:
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python: ["3.11", "3.14"]
-    steps:
-      - name: Set up Python and CI dependencies
-        uses: MartinPdeS/MPSActions/actions/setup-python@a01969bc5af90666281f9d37acffdf6a4629763a
-        with:
-          python-version: ${{ matrix.python }}
-          install-command: >-
-            python -m pip install --upgrade pip && python -m pip install -e ".[testing]"
-          submodules: "true"
-      - run: python -m pytest -q
+    uses: MartinPdeS/MPSActions/.github/workflows/run_tests.yml@v7
+    with:
+      python-versions: '["3.11", "3.14"]'
+      submodules: 'true'
+      install-command: >-
+        python -m pip install --upgrade pip && python -m pip install -e ".[testing]"
+      test-command: python -m pytest -q
