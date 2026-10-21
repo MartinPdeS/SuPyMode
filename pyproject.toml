@@ -15,7 +15,6 @@ sdist.exclude = [
 ]
 
 [tool.setuptools_scm]
-write_to = "SuPyMode/_version.py"
 version_scheme = "only-version"
 local_scheme = "no-local-version"
 
