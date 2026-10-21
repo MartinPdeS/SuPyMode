@@ -26,24 +26,20 @@ globals().update(
             "image_scrapers": ("matplotlib", "pyvista"),
             "abort_on_example_error": True,
         },
-        html_theme_options={
-            "logo": {
-                "text": "",
-                "image": "_static/logo.png",
-                "alt_text": "SuPyMode logo",
-            },
+        extension_additions=["pyvista.ext.plot_directive"],
+        logo_text="",
+        logo_alt_text="SuPyMode logo",
+        autodoc_default_options={
+            "members": True,
+            "exclude-members": "__annotations__",
+            "member-order": "bysource",
         },
     )
 )
 
-extensions += ["pyvista.ext.plot_directive"]
-autodoc_default_options.update(
-    {"members": True, "exclude-members": "__annotations__", "member-order": "bysource"}
-)
 napoleon_use_ivar = True
 napoleon_custom_sections = [("Extra Parameters", "params_style")]
 autosectionlabel_maxdepth = 1
-html_context.update({"doc_path": "docs/source", "default_mode": "dark"})
 intersphinx_mapping = {"numpy": ("https://numpy.org/devdocs", None)}
 
 metadata = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
