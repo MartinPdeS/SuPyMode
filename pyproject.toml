@@ -69,7 +69,7 @@ testing = [
     "coverage==7.16.2",
 ]
 documentation = [
-    "MartinPdeS-docs>=0.2.1,<0.3",
+    "MartinPdeS-docs>=0.2.3,<0.3",
     "PyFiberModes",
     "PyOptik",
 ]
