@@ -99,7 +99,7 @@ jobs:
           git push origin "HEAD:${DOCUMENTATION_BRANCH}"
 
       - name: Upload GitHub Pages site
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: .
 
@@ -113,4 +113,4 @@ jobs:
     steps:
       - name: Deploy GitHub Pages site
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
