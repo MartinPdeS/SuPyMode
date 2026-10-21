@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   quality:
-    uses: MartinPdeS/MPSActions/.github/workflows/run_quality.yml@v14
+    uses: MartinPdeS/MPSActions/.github/workflows/run_quality.yml@v15
     with:
       python-versions: '["3.11", "3.12"]'
       install-command: python -m pip install "ruff>=0.6,<1"
