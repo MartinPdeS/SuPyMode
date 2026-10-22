@@ -1,5 +1,5 @@
 .. image:: https://raw.githubusercontent.com/MartinPdeS/SuPyMode/master/docs/source/_static/logo.png
-   :width: 100%
+   :width: 760px
    :alt: SuPyMode logo
 
 ..  figure:: https://github.com/MartinPdeS/SuPyMode/blob/master/docs/images/mode_propagation.gif?raw=true
