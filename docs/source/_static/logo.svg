@@ -1,1 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="SuPyMode logo"><g fill="none" stroke-linecap="round" stroke-width="13"><path stroke="#26d8b0" d="M30 58C100 58 90 128 128 128S180 58 226 58"/><path stroke="#5b86ff" d="M30 198C100 198 90 128 128 128S180 198 226 198"/><path stroke="#7cebd1" d="M30 128H226"/></g><circle cx="128" cy="128" r="25" fill="#121820" stroke="#26d8b0" stroke-width="8"/><circle cx="128" cy="128" r="10" fill="#7cebd1"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 280" role="img" aria-label="SuPyMode Adiabatic logo">
+  <!-- Raster-backed SVG preserving the selected original artwork. -->
+  <image href="logo.png" width="1480" height="280"/>
+</svg>
