@@ -1,5 +1,11 @@
 /* Responsive layout and shared styling for the PyData Sphinx theme. */
 
+/* Preserve the colors in the project logo used by the shared docs theme. */
+.bd-header .navbar-brand img.logo__image,
+#pst-header .navbar-brand img.logo__image {
+    filter: none !important;
+}
+
 html {
     --pst-sidebar-secondary: 15rem;
 }
