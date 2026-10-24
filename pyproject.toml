@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core>=0.3.3", "pybind11; python_version < '3.14'", "pybind11>=3.0.1; python_version >= '3.14'", "setuptools_scm[toml]>=8.0"]
+requires = ["scikit-build-core>=0.3.3", "pybind11; python_version < '3.14'", "pybind11>=3.0.1; python_version >= '3.14'"]
 build-backend = "scikit_build_core.build"
 
 [tool.scikit-build]
@@ -13,10 +13,6 @@ sdist.exclude = [
     ".git*",
     "developments",
 ]
-
-[tool.setuptools_scm]
-version_scheme = "only-version"
-local_scheme = "no-local-version"
 
 [project]
 name = "SuPyMode"
@@ -40,7 +36,6 @@ classifiers = [
     "Intended Audience :: Science/Research",
 ]
 dependencies = [
-    "setuptools_scm[toml]>=8.0",
     "numpy>=2.0.0",
     "MPSPlots",
     "pydantic",
@@ -62,9 +57,9 @@ Issues = "https://github.com/MartinPdeS/SuPyMode/issues"
 Documentation = "https://martinpdes.github.io/SuPyMode/"
 
 [project.optional-dependencies]
-release = ["martinpdes-maintenance[scm]==0.2.1"]
+release = ["martinpdes-maintenance==0.2.1"]
 testing = [
-    "martinpdes-maintenance[scm]==0.2.1",
+    "martinpdes-maintenance==0.2.1",
     "pytest>=0.6",
     "pytest-cov>=2.0",
     "pytest-json-report==1.5.0",
@@ -125,6 +120,6 @@ test-command = "cd /d %TEMP% && python -m pytest --import-mode=importlib --confi
 
 [tool.mps-maintenance]
 version-file = "SuPyMode/_version.py"
-version-method = "setuptools-scm"
+version-method = "literal"
 conda-recipe = "conda.recipe/meta.yaml"
 zenodo = ".zenodo.json"
