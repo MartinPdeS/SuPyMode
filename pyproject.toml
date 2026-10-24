@@ -62,7 +62,9 @@ Issues = "https://github.com/MartinPdeS/SuPyMode/issues"
 Documentation = "https://martinpdes.github.io/SuPyMode/"
 
 [project.optional-dependencies]
+release = ["martinpdes-maintenance[scm]==0.2.1"]
 testing = [
+    "martinpdes-maintenance[scm]==0.2.1",
     "pytest>=0.6",
     "pytest-cov>=2.0",
     "pytest-json-report==1.5.0",
@@ -120,3 +122,9 @@ test-command = "cd /tmp && python -m pytest --import-mode=importlib --config-fil
 archs = ["AMD64"]
 build = ["cp311-*", "cp312-*", "cp313-*", "cp314-*"]
 test-command = "cd /d %TEMP% && python -m pytest --import-mode=importlib --config-file={project}/pytest.ini {project}/tests"
+
+[tool.mps-maintenance]
+version-file = "SuPyMode/_version.py"
+version-method = "setuptools-scm"
+conda-recipe = "conda.recipe/meta.yaml"
+zenodo = ".zenodo.json"
