@@ -57,9 +57,9 @@ Issues = "https://github.com/MartinPdeS/SuPyMode/issues"
 Documentation = "https://martinpdes.github.io/SuPyMode/"
 
 [project.optional-dependencies]
-release = ["martinpdes-maintenance==0.2.1"]
+release = ["martinpdes-maintenance==0.2.2"]
 testing = [
-    "martinpdes-maintenance==0.2.1",
+    "martinpdes-maintenance==0.2.2",
     "pytest>=0.6",
     "pytest-cov>=2.0",
     "pytest-json-report==1.5.0",
