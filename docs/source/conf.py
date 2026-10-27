@@ -6,22 +6,26 @@ import sys
 from martinpdes_docs import configure
 
 
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+package_name = "SuPyMode"
+docs_source = Path(__file__).resolve().parent
+sys.path.insert(0, str(docs_source))
 
 gallery_sections = ["workflow", "alpha_profile", "validation", "extra"]
 
 globals().update(
     configure(
-        project="SuPyMode",
-        package="SuPyMode",
+        project=package_name,
+        package=package_name,
         version="auto",
-        repository="MartinPdeS/SuPyMode",
+        author="Martin Poinsinet de Sivry-Houle",
+        repository=f"MartinPdeS/{package_name}",
         logo="_static/logo.png",
         favicon="_static/favicon.png",
         prefer_installed_package=True,
+        docs_root=docs_source.parent,
+        profile="scientific-gallery",
         gallery_sections=gallery_sections,
-        gallery_default_thumb="_static/gallery-default.png",
+        gallery_default_thumb=str(docs_source / "_static" / "gallery-default.png"),
         gallery_options={
             "image_scrapers": ("matplotlib", "pyvista"),
             "abort_on_example_error": True,
@@ -37,10 +41,8 @@ globals().update(
     )
 )
 
-napoleon_use_ivar = True
 napoleon_custom_sections = [("Extra Parameters", "params_style")]
 autosectionlabel_maxdepth = 1
-intersphinx_mapping = {"numpy": ("https://numpy.org/devdocs", None)}
 
 
 from _docstrings import normalize_plot_docstrings

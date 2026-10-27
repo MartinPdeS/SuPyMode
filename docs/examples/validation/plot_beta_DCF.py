@@ -1,6 +1,6 @@
 """
-Propagation constant: DCFC
-==========================
+Effective index: DCF1300S
+=========================
 """
 
 # %%
