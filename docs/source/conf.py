@@ -2,7 +2,6 @@
 
 from pathlib import Path
 import sys
-import tomllib
 
 from martinpdes_docs import configure
 
@@ -16,6 +15,7 @@ globals().update(
     configure(
         project="SuPyMode",
         package="SuPyMode",
+        version="auto",
         repository="MartinPdeS/SuPyMode",
         logo="_static/logo.png",
         favicon="_static/favicon.png",
@@ -42,8 +42,6 @@ napoleon_custom_sections = [("Extra Parameters", "params_style")]
 autosectionlabel_maxdepth = 1
 intersphinx_mapping = {"numpy": ("https://numpy.org/devdocs", None)}
 
-metadata = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
-version = release = metadata["project"]["version"]
 
 from _docstrings import normalize_plot_docstrings
 
