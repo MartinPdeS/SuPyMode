@@ -49,6 +49,40 @@ Coupler Alpha Profile
     </div>
 
 
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="For the same stretch, a longer hot zone produces a gentler radius reduction. Distances and heating lengths are in metres; the radius is normalised to its initial value. This example compares profiles, not optical mode solutions.">
+
+.. only:: html
+
+  .. image:: /gallery/alpha_profile/images/thumb/sphx_glr_plot_heating_length_thumb.png
+    :alt:
+
+  :doc:`/gallery/alpha_profile/plot_heating_length`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Compare heating lengths</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A constant section after the taper models a uniform waist. The mirror option produces an output transition with the same radius profile as the input.">
+
+.. only:: html
+
+  .. image:: /gallery/alpha_profile/images/thumb/sphx_glr_plot_waist_section_thumb.png
+    :alt:
+
+  :doc:`/gallery/alpha_profile/plot_waist_section`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Add a constant waist</div>
+    </div>
+
+
 .. thumbnail-parent-div-close
 
 .. raw:: html
@@ -61,6 +95,8 @@ Coupler Alpha Profile
 
    /gallery/alpha_profile/plot_alpha_profile_0
    /gallery/alpha_profile/plot_alpha_profile_1
+   /gallery/alpha_profile/plot_heating_length
+   /gallery/alpha_profile/plot_waist_section
 
 
 

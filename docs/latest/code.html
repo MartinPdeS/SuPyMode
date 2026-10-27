@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>API reference &#8212; SuPyMode 2.4.11 documentation</title>
+    <title>API reference &#8212; SuPyMode 2.4.13 documentation</title>
   
   
   
@@ -44,7 +44,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="_static/documentation_options.js?v=df4d101a"></script>
+    <script src="_static/documentation_options.js?v=56bcfe97"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/sg-tags.js?v=d80f6fa4"></script>
@@ -54,7 +54,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://raw.githubusercontent.com/MartinPdeS/SuPyMode/documentation_page/version_switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v2.4.11';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.4.13';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             true;
         </script>
@@ -63,11 +63,11 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Resources" href="resources.html" />
-    <link rel="prev" title="4x4 Coupler [linear]" href="gallery/extra/plot_propagation.html" />
+    <link rel="prev" title="Inspect taper angle" href="gallery/extra/plot_taper_angles.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="2.4.11" />
+  <meta name="docsearch:version" content="2.4.13" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -226,6 +226,21 @@
   </div>
 </div></div>
       
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
         <li class="nav-item">
@@ -373,6 +388,21 @@
   </div>
 </div></div>
         
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
         <li class="nav-item">
@@ -499,9 +529,9 @@ boundary conditions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mesh</strong> (<a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)"><em>numpy.ndarray</em></a>) – The refractive index geometry of the optical structure.</p></li>
-<li><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)"><em>numpy.ndarray</em></a>) – The x-coordinate vector of the mesh.</p></li>
-<li><p><strong>y</strong> (<a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)"><em>numpy.ndarray</em></a>) – The y-coordinate vector of the mesh.</p></li>
+<li><p><strong>mesh</strong> (<em>numpy.ndarray</em>) – The refractive index geometry of the optical structure.</p></li>
+<li><p><strong>x</strong> (<em>numpy.ndarray</em>) – The x-coordinate vector of the mesh.</p></li>
+<li><p><strong>y</strong> (<em>numpy.ndarray</em>) – The y-coordinate vector of the mesh.</p></li>
 <li><p><strong>tolerance</strong> (<em>float</em><em>, </em><em>optional</em>) – Absolute tolerance for the propagation constant computation (default is 1e-8).</p></li>
 <li><p><strong>max_iteration</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum iterations for the C++ eigensolver (default is 10,000).</p></li>
 <li><p><strong>accuracy</strong> (<em>int</em><em>, </em><em>optional</em>) – Accuracy level of the finite difference method (default is 2).</p></li>
@@ -627,14 +657,14 @@ related to fiber optics simulations.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.transmission_matrix">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">transmission_matrix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)"><span class="pre">ndarray</span></a></span><a class="headerlink" href="#SuPyMode.superset.SuperSet.transmission_matrix" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">transmission_matrix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></span><a class="headerlink" href="#SuPyMode.superset.SuperSet.transmission_matrix" title="Link to this definition">#</a></dt>
 <dd><p>Returns the supermode transmission matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The transmission matrix for the supermodes.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-even"><p>numpy.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -747,15 +777,15 @@ related to fiber optics simulations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>t_matrix</strong> (<a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)"><em>numpy.ndarray</em></a>) – Transmission matrix to which coupling values are added.</p></li>
-<li><p><strong>adiabatic_factor</strong> (<a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)"><em>numpy.ndarray</em></a>) – Adiabatic factor, set to one if None (normalized coupling).</p></li>
+<li><p><strong>t_matrix</strong> (<em>numpy.ndarray</em>) – Transmission matrix to which coupling values are added.</p></li>
+<li><p><strong>adiabatic_factor</strong> (<em>numpy.ndarray</em>) – Adiabatic factor, set to one if None (normalized coupling).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Updated transmission matrix with coupling values.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -772,7 +802,7 @@ related to fiber optics simulations.</p>
 <dd class="field-even"><p>Coupling factor as a function of distance in the coupler.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -833,7 +863,7 @@ related to fiber optics simulations.</p>
 <dd class="field-even"><p>The initial amplitudes as a NumPy array of complex numbers.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – If the length of the initial amplitude list does not match the number of supermodes.</p>
@@ -1047,375 +1077,6 @@ or an explicit list of modes.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_adiabatic">
-<span class="sig-name descname"><span class="pre">plot_adiabatic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pairs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_adiabatic" title="Link to this definition">#</a></dt>
-<dd><p>Render a figure representing the adiabatic criterion for each mode combination as a function of inverse taper ratio (ITR).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – List of modes to be plotted.</p></li>
-<li><p><strong>combination</strong> (<em>list</em>) – List of mode combinations.</p></li>
-<li><p><strong>add_profile</strong> (<em>list</em><em> of </em><em>AlphaProfile</em><em>, </em><em>optional</em>) – List of profiles to add to the plot (default is an empty list).</p></li>
-<li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>plt.Figure</p>
-</dd>
-<dt class="field-even">Extra Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
-<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
-<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
-<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
-<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
-<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
-<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
-<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>matplotlib.axes.Axes</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_beating_length">
-<span class="sig-name descname"><span class="pre">plot_beating_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pairs'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_beating_length" title="Link to this definition">#</a></dt>
-<dd><p>Render a figure representing the beating length for each mode combination as a function of inverse taper ratio (ITR).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – List of modes to be plotted.</p></li>
-<li><p><strong>combination</strong> (<em>list</em>) – List of mode combinations.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>plt.Figure</p>
-</dd>
-<dt class="field-even">Extra Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
-<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
-<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
-<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
-<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
-<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
-<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
-<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>matplotlib.axes.Axes</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_beta">
-<span class="sig-name descname"><span class="pre">plot_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_beta" title="Link to this definition">#</a></dt>
-<dd><p>Plot the effective propagation constant for each mode as a function of inverse taper ratio (ITR).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – List of modes to be plotted.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>Figure</em></p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">superset_plots</span><span class="o">.</span><span class="n">plot_index</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">mode_of_interest</span><span class="o">=</span><span class="p">[</span><span class="n">mode1</span><span class="p">,</span> <span class="n">mode2</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>plt.Figure</p>
-</dd>
-<dt class="field-odd">Extra Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
-<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
-<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
-<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
-<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
-<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
-<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
-<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>axes</strong> – The axes with the market prices plot.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>matplotlib.axes.Axes</p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em>[</em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a><em>] </em><em>| </em><em>str</em>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_eigen_value">
-<span class="sig-name descname"><span class="pre">plot_eigen_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_eigen_value" title="Link to this definition">#</a></dt>
-<dd><p>Plot the computed eigen-values for each mode as a function of inverse taper ratio (ITR).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – List of modes to be plotted.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>Figure</em></p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">superset_plots</span><span class="o">.</span><span class="n">plot_index</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">mode_of_interest</span><span class="o">=</span><span class="p">[</span><span class="n">mode1</span><span class="p">,</span> <span class="n">mode2</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>plt.Figure</p>
-</dd>
-<dt class="field-odd">Extra Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
-<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
-<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
-<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
-<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
-<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
-<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
-<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>axes</strong> – The axes with the market prices plot.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>matplotlib.axes.Axes</p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em>[</em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a><em>] </em><em>| </em><em>str</em>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_field">
-<span class="sig-name descname"><span class="pre">plot_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">itr_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slice_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_mode_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_itr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_slice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_field" title="Link to this definition">#</a></dt>
-<dd><p>Render the mode field for different ITR values or slice numbers.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em>, </em><em>optional</em>) – List of modes to be plotted (default is ‘all’).</p></li>
-<li><p><strong>itr_list</strong> (<em>list</em><em> of </em><em>float</em><em>, </em><em>optional</em>) – List of ITR values for plotting (default is None).</p></li>
-<li><p><strong>slice_list</strong> (<em>list</em><em> of </em><em>int</em><em>, </em><em>optional</em>) – List of slice numbers for plotting (default is None).</p></li>
-<li><p><strong>show_mode_label</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag to display mode labels (default is True).</p></li>
-<li><p><strong>show_itr</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag to display ITR values (default is True).</p></li>
-<li><p><strong>show_slice</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag to display slice numbers (default is True).</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>plt.Figure</p>
-</dd>
-<dt class="field-even">Extra Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
-<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
-<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
-<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
-<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
-<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
-<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
-<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>Figure</strong> – The figure with the market prices plot.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>matplotlib.figure.Figure</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_geometry">
-<span class="sig-name descname"><span class="pre">plot_geometry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_geometry" title="Link to this definition">#</a></dt>
-<dd><p>Render the geometry of the taper on the provided axes.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot the geometry.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The figure object containing the generated plot. This can be customized further or saved to a file.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>plt.Figure</p>
-</dd>
-<dt class="field-even">Extra Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
-<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
-<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
-<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
-<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
-<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
-<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
-<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>Figure</strong> – The figure with the market prices plot.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>matplotlib.figure.Figure</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_index">
-<span class="sig-name descname"><span class="pre">plot_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_index" title="Link to this definition">#</a></dt>
-<dd><p>Plot the effective index for each mode as a function of inverse taper ratio (ITR).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – List of modes to be plotted.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>plt.Figure</p>
-</dd>
-<dt class="field-even">Extra Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
-<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
-<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
-<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
-<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
-<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
-<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
-<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>matplotlib.axes.Axes</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.plot_normalized_coupling">
-<span class="sig-name descname"><span class="pre">plot_normalized_coupling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_of_interest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pairs'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.plot_normalized_coupling" title="Link to this definition">#</a></dt>
-<dd><p>Render a figure representing the normalized coupling for each mode combination as a function of inverse taper ratio (ITR).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ax</strong> (<em>matplotlib.axes.Axes</em>) – The axes object on which to plot.</p></li>
-<li><p><strong>mode_of_interest</strong> (<em>list</em><em> of </em><a class="reference internal" href="#SuPyMode.supermode.SUPERMODE" title="SuPyMode.supermode.SUPERMODE"><em>SUPERMODE</em></a>) – List of modes to be plotted.</p></li>
-<li><p><strong>combination</strong> (<em>list</em>) – List of mode combinations.</p></li>
-<li><p><strong>axes</strong> (<em>Axes</em>)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The figure object containing the generated plots. This can be customized further or saved to a file.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>plt.Figure</p>
-</dd>
-<dt class="field-even">Extra Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>show</strong> (<em>bool</em>) – Whether to display the plot after creation.</p></li>
-<li><p><strong>save_as</strong> (<em>str, optional</em>) – If provided, save the figure to this path.</p></li>
-<li><p><strong>figure_size</strong> (<em>tuple, optional</em>) – Size of the figure in inches.</p></li>
-<li><p><strong>tight_layout</strong> (<em>bool, default=True</em>) – Whether to use tight layout for the figure.</p></li>
-<li><p><strong>axes</strong> (<em>matplotlib.axes.Axes, optional</em>) – Axes to draw on. If None, a new figure+axes are created.</p></li>
-<li><p><strong>xscale</strong> (<em>str, optional</em>) – X-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>yscale</strong> (<em>str, optional</em>) – Y-axis scale type (e.g., ‘linear’, ‘log’).</p></li>
-<li><p><strong>xlim</strong> (<em>tuple, optional</em>) – X-axis limits as (min, max).</p></li>
-<li><p><strong>ylim</strong> (<em>tuple, optional</em>) – Y-axis limits as (min, max).</p></li>
-<li><p><strong>style</strong> (<em>str, default=plot_style</em>) – Matplotlib style to use for the plot.</p></li>
-<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>axes</strong> – The axes with the market prices plot.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>matplotlib.axes.Axes</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="SuPyMode.superset.SuperSet.test_valid_input">
 <span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">test_valid_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#SuPyMode.superset.SuperSet.test_valid_input" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
@@ -1535,20 +1196,6 @@ and related properties of the supermodes.</p>
 <p>This attribute specifies which supermode or set of supermodes
 this object represents. It’s used for indexing and identification
 purposes in multi-mode calculations.</p>
-<section id="type">
-<h3>Type<a class="headerlink" href="#type" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>int</dt><dd><p>Mode index or binding number. For single supermode analysis,
-this identifies which supermode (0 = fundamental, 1 = first
-higher-order, etc.). For multi-mode analysis, it may represent
-a mode group or calculation identifier.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>The binding number is particularly important when dealing with
-multiple supermode calculations or when tracking specific modes
-through parameter variations (e.g., in bend or taper analysis).</p>
-</section>
 </dd></dl>
 
 <dl class="py property">
@@ -1611,22 +1258,6 @@ distributions and related properties of the supermodes.</p>
 field distributions for all supermodes in the coupled system.
 The fields are stored as complex arrays representing the spatial
 distribution of each supermode.</p>
-<section id="id1">
-<h3>Type<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>numpy.ndarray</dt><dd><p>Complex array with shape (n_points, n_modes) where n_points
-is the number of grid points and n_modes is the number of
-computed supermodes.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>The field amplitudes are typically normalized according to power
-or energy conservation. The phase information is preserved and
-is crucial for understanding interference effects in coupled systems.</p>
-<p>Each column represents one supermode, and the spatial distribution
-shows how that particular supermode extends across all waveguides
-in the coupled system.</p>
-</section>
 </dd></dl>
 
 <dl class="py method">
@@ -1642,7 +1273,7 @@ Evaluates the adiabaticity parameter, which quantifies how closely the transitio
 <dd class="field-even"><p>Matrix of adiabaticity parameters with shape (n_modes_self, n_modes_other).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1669,7 +1300,7 @@ Element (i,j) is the beating length between mode i in this
 object and mode j in the other object, in units of length.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1703,7 +1334,7 @@ units of rad/m. The real part determines phase evolution,
 while the imaginary part represents attenuation.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-even"><p>numpy.ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1727,7 +1358,7 @@ problem. The relationship to physical propagation constants
 depends on the specific formulation used.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-even"><p>numpy.ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1749,7 +1380,7 @@ on the specific wave equation formulation and discretization.</p>
 <dd class="field-odd"><p>A 2D array of shape (ny, nx) containing the interpolated field data</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-even"><p>numpy.ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1773,7 +1404,7 @@ shape (n_slice, ny, nx). Each element represents
 the spatial field distribution of one supermode.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-even"><p>numpy.ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1796,7 +1427,7 @@ for all computed supermodes.</p>
 typically sorted in descending order.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-even"><p>numpy.ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1821,7 +1452,7 @@ of the computational mesh. The first column corresponds to the x-gradient,
 and the second column corresponds to the y-gradient.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-even"><p>numpy.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1838,7 +1469,7 @@ power conservation and accurate coupling calculations.</p>
 <dd class="field-odd"><p>Array of real normalization factors, one for each supermode.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-even"><p>numpy.ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1867,7 +1498,7 @@ the coupling between mode i in this object and mode j
 in the other object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -1894,7 +1525,7 @@ sum of the products of the two discrete fields at that slice.
 Grid-cell area factors are not included.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/devdocs/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.6.dev0)">numpy.ndarray</a></p>
+<dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1992,26 +1623,6 @@ computational metrics from the eigenvalue solver.</p>
 <p>This attribute contains all the parameters that define the coupled
 waveguide system, including geometric dimensions, refractive index
 profiles, wavelength, and computational settings.</p>
-<section id="id2">
-<h3>Type<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
-<dl class="simple">
-<dt>ModelParameters</dt><dd><p>Structure containing:
-- Wavelength and frequency information
-- Refractive index distributions
-- Geometric parameters (core sizes, separations)
-- Grid resolution and boundary conditions
-- Material properties and dispersion</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>Modifying these parameters requires recomputation of the supermodes.
-The parameters directly affect the coupling strength, effective
-indices, and field distributions of the supermodes.</p>
-<p>Key parameters for coupled systems include:
-- Core separation distance (affects coupling strength)
-- Individual core parameters (size, index contrast)
-- Operating wavelength (affects normalized frequency)</p>
-</section>
 </dd></dl>
 
 <dl class="py property">
@@ -2061,6 +1672,30 @@ characteristics of the supermodes.</p>
               
               
               
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="gallery/extra/plot_taper_angles.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Inspect taper angle</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="resources.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Resources</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
               
             </div>
             
@@ -2116,14 +1751,6 @@ characteristics of the supermodes.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.generate_pdf_report"><code class="docutils literal notranslate"><span class="pre">SuperSet.generate_pdf_report()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.interpret_mode_of_interest"><code class="docutils literal notranslate"><span class="pre">SuperSet.interpret_mode_of_interest()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_adiabatic"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_adiabatic()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_beating_length"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_beating_length()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_beta"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_beta()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_eigen_value"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_eigen_value()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_field"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_field()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_geometry"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_geometry()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_index"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_index()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.plot_normalized_coupling"><code class="docutils literal notranslate"><span class="pre">SuperSet.plot_normalized_coupling()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#SuPyMode.superset.SuperSet.test_valid_input"><code class="docutils literal notranslate"><span class="pre">SuperSet.test_valid_input()</span></code></a></li>
 </ul>
 </li>
@@ -2171,7 +1798,7 @@ characteristics of the supermodes.</p>
 
   
   <div class="tocsection editthispage">
-    <a href="https://github.com/MartinPdeS/SuPyMode/edit/v2.4.11/docs/source/code.rst">
+    <a href="https://github.com/MartinPdeS/SuPyMode/edit/v2.4.13/docs/source/code.rst">
       <i class="fa-solid fa-pencil"></i>
       
       
@@ -2226,23 +1853,6 @@ characteristics of the supermodes.</p>
     </div>
   
   
-  
-    <div class="footer-items__end">
-      
-        <div class="footer-item">
-
-  <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
-  </p>
-</div>
-      
-        <div class="footer-item">
-<p class="theme-version">
-  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
-</p></div>
-      
-    </div>
   
 </div>
 

@@ -9,7 +9,7 @@ from SuPyMode.workflow import AlphaProfile
 import matplotlib.pyplot as plt
 
 
-profile = AlphaProfile(symmetric=True, add_end_of_taper_section=True)
+profile = AlphaProfile(symmetric=False, add_end_of_taper_section=True)
 
 
 # %%

@@ -1,6 +1,6 @@
 """
-Propagation constant: DCFC
-==========================
+Effective index: SMF28
+======================
 """
 
 # %%

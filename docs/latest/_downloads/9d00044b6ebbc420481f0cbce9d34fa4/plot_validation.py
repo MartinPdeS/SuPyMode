@@ -1,6 +1,6 @@
 """
-Propagation constant: DCFC
-==========================
+Multimode effective-index comparison
+====================================
 """
 
 # %%

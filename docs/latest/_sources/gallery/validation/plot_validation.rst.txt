@@ -18,8 +18,8 @@
 .. _sphx_glr_gallery_validation_plot_validation.py:
 
 
-Propagation constant: DCFC
-==========================
+Multimode effective-index comparison
+====================================
 
 .. GENERATED FROM PYTHON SOURCE LINES 7-9
 
@@ -283,7 +283,7 @@ Preparing the figure
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 20.529 seconds)
+   **Total running time of the script:** (0 minutes 19.047 seconds)
 
 
 .. _sphx_glr_download_gallery_validation_plot_validation.py:

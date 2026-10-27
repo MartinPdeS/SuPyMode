@@ -34,6 +34,23 @@ Extra examples
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="Compare two sampling densities of the same taper. A coarse grid is useful for exploration; increase the sampling and check convergence before using a profile in a propagation calculation.">
+
+.. only:: html
+
+  .. image:: /gallery/extra/images/thumb/sphx_glr_plot_profile_sampling_thumb.png
+    :alt:
+
+  :doc:`/gallery/extra/plot_profile_sampling`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Inspect taper sampling</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="4x4 Coupler [linear]">
 
 .. only:: html
@@ -49,6 +66,23 @@ Extra examples
     </div>
 
 
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The taper-angle quantity is the magnitude of the sampled radius slope, |dr/dz|. Compare two heating lengths before choosing a profile for an optical calculation.">
+
+.. only:: html
+
+  .. image:: /gallery/extra/images/thumb/sphx_glr_plot_taper_angles_thumb.png
+    :alt:
+
+  :doc:`/gallery/extra/plot_taper_angles`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Inspect taper angle</div>
+    </div>
+
+
 .. thumbnail-parent-div-close
 
 .. raw:: html
@@ -60,7 +94,9 @@ Extra examples
    :hidden:
 
    /gallery/extra/plot_graded_index
+   /gallery/extra/plot_profile_sampling
    /gallery/extra/plot_propagation
+   /gallery/extra/plot_taper_angles
 
 
 

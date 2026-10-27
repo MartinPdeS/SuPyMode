@@ -17,7 +17,7 @@ Validation workflow
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Propagation constant: DCFC">
+    <div class="sphx-glr-thumbcontainer" tooltip="Effective index: DCF1300S">
 
 .. only:: html
 
@@ -28,13 +28,13 @@ Validation workflow
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Propagation constant: DCFC</div>
+      <div class="sphx-glr-thumbnail-title">Effective index: DCF1300S</div>
     </div>
 
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Propagation constant: DCFC">
+    <div class="sphx-glr-thumbcontainer" tooltip="Effective index: SMF28">
 
 .. only:: html
 
@@ -45,13 +45,30 @@ Validation workflow
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Propagation constant: DCFC</div>
+      <div class="sphx-glr-thumbnail-title">Effective index: SMF28</div>
     </div>
 
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Propagation constant: DCFC">
+    <div class="sphx-glr-thumbcontainer" tooltip="For one unsymmetrised alpha segment, compare the assembled sampled radius with the analytical segment expression. The numerical profile interpolates segment samples; a small discrepancy is expected away from those samples. This validates the taper geometry, not the optical mode solver.">
+
+.. only:: html
+
+  .. image:: /gallery/validation/images/thumb/sphx_glr_plot_taper_radius_reference_thumb.png
+    :alt:
+
+  :doc:`/gallery/validation/plot_taper_radius_reference`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Validate a taper against its radius formula</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Multimode effective-index comparison">
 
 .. only:: html
 
@@ -62,7 +79,7 @@ Validation workflow
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Propagation constant: DCFC</div>
+      <div class="sphx-glr-thumbnail-title">Multimode effective-index comparison</div>
     </div>
 
 
@@ -78,6 +95,7 @@ Validation workflow
 
    /gallery/validation/plot_beta_DCF
    /gallery/validation/plot_beta_SMF28
+   /gallery/validation/plot_taper_radius_reference
    /gallery/validation/plot_validation
 
 
