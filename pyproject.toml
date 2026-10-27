@@ -16,7 +16,7 @@ sdist.exclude = [
 
 [project]
 name = "SuPyMode"
-version = "2.4.12"
+version = "2.4.13"
 description = "A package for light propagation in fiber optics."
 license = {file = "LICENSE"}
 readme = "README.rst"
