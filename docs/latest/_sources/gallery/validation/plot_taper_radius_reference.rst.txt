@@ -82,7 +82,7 @@ This validates the taper geometry, not the optical mode solver.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.118 seconds)
+   **Total running time of the script:** (0 minutes 0.128 seconds)
 
 
 .. _sphx_glr_download_gallery_validation_plot_taper_radius_reference.py:
