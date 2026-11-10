@@ -31,12 +31,12 @@ pybind11::array_t<T> eigen_to_ndarray(const MatrixType &eigen_matrix, const std:
     // Calculate the stride from the given dimensions
     std::vector<size_t> stride = get_stride_from_dimension<T>(dimension);
 
-    // Define a capsule to manage memory. This lambda ensures the allocated matrix is properly deleted
+    // Eigen owns its data and may use an aligned allocator. Keep the matrix
+    // alive until the NumPy array is released and let Eigen free its storage.
     pybind11::capsule free_when_done(
-        matrix_pointer->data(), [](void *f)
+        matrix_pointer, [](void *pointer)
         {
-            T* data_pointer = reinterpret_cast<T*>(f);
-            delete[] data_pointer; // Make sure to delete the matrix data, not the matrix object itself
+            delete static_cast<MatrixType*>(pointer);
         }
     );
 
