@@ -1,53 +1,98 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-import pytest
+"""Validate scalar LP mode coupling against a radial fiber calculation."""
+
 import numpy
+import pytest
+import PyFiberModes
 from SuPyMode.workflow import (
-    Workflow,
-    fiber_loader,
+    BoundaryValue,
     Boundaries,
     DomainAlignment,
-    BoundaryValue,
+    Workflow,
+    fiber_loader,
 )
-import PyFiberModes
 
 
-@pytest.mark.skip(
-    reason="The analytical reference get_normalized_LP_coupling was removed from PyFiberModes and must be ported into SuPyMode."
-)
-def test_normalized_coupling(
-    wavelength: float = 1550e-9,
-    resolution: int = 140,
-    fiber_name: str = "test_multimode_fiber",
-    n_step: int = 80,
-    itr_final: float = 0.8,
-    **kwargs,
-):
+def radial_normalized_coupling(*, fiber, modes, radial_samples=400, radial_extent=4):
+    r"""Evaluate the step-index interface expression for two LP0m modes.
+
+    This uses the interface expression attributed to Bures, *Optical Fiber
+    Theory*, equation 7.39, in the former PyFiberModes implementation
+    (commit ff7dd86f^). Unlike that implementation, contributions from all
+    interfaces are summed. The scalar radial norm is integrated to four core
+    radii; this cutoff is suitable only for the well-confined modes tested here.
+
+    Parameters
+    ----------
+    fiber : PyFiberModes.Fiber
+        Step-index fiber with dimensions and wavelength in meters.
+    modes : tuple
+        Two axisymmetric scalar LP modes.
+    radial_samples : int
+        Number of radial integration samples.
+    radial_extent : float
+        Integration cutoff in units of the core radius.
+
+    Returns
+    -------
+    float
+        Magnitude of the dimensionless normalized coupling.
     """
-    Test the normalized coupling between LP01 and LP02 modes using both analytical and simulation methods.
+    radii = numpy.linspace(0.0, radial_extent * fiber.radius, radial_samples)
+    norms = []
+    propagation_constants = []
+    for mode in modes:
+        field = numpy.array(
+            [
+                fiber.get_radial_field(mode=mode, radius=float(radius))[0].rho
+                for radius in radii
+            ]
+        )
+        norms.append(2 * numpy.pi * numpy.trapezoid(field**2 * radii, x=radii))
+        propagation_constants.append(fiber.get_propagation_constant(mode=mode))
 
-    This test compares the analytical normalized coupling derived from PyFiberModes with the simulation output
-    from SuPyMode. If significant discrepancies exist beyond the acceptable threshold, it raises an assertion error.
+    interface_sum = 0.0
+    for inner_layer, outer_layer in fiber.iterate_interfaces():
+        radius = inner_layer.radius_out
+        fields = [
+            fiber.get_radial_field(mode=mode, radius=radius)[0].rho for mode in modes
+        ]
+        index_difference = (
+            inner_layer.refractive_index**2 - outer_layer.refractive_index**2
+        )
+        interface_sum += (
+            2 * numpy.pi * index_difference * radius**2 * numpy.prod(fields)
+        )
 
-    Args:
-        wavelength (float): Operating wavelength of the fiber.
-        resolution (int): Spatial resolution of the simulation.
-        n_step (int): Number of steps in the simulation.
-        itr_final (float): Final iteration value.
-        plot_results (bool): Whether to plot results using MPSPlots.
-        x_bounds (list | str): Horizontal bounds for the simulation.
-        y_bounds (list | str): Vertical bounds for the simulation.
-        **kwargs: Additional keyword arguments to pass to the Workflow.
-    """
-    fiber = fiber_loader.load_fiber(
-        fiber_name, clad_refractive_index=1.4444, remove_cladding=False
+    beta_0, beta_1 = propagation_constants
+    wavenumber = 2 * numpy.pi / fiber.wavelength
+    return abs(
+        0.5
+        * wavenumber**2
+        * interface_sum
+        / (
+            numpy.sqrt(numpy.prod(norms))
+            * (beta_0 - beta_1)
+            * numpy.sqrt(beta_0 * beta_1)
+        )
     )
 
-    # Set up the workflow with specified parameters and boundaries
+
+def test_normalized_coupling():
+    """Compare the simulated LP01–LP02 coupling with a radial reference."""
+    wavelength = 1550e-9
+    fiber_name = "test_multimode_fiber"
+    reference_fiber = PyFiberModes.fiber.load_fiber(
+        fiber_name=fiber_name, wavelength=wavelength, add_air_layer=False
+    )
+    cladding_index = reference_fiber.index_list[-1]
+    fiber = fiber_loader.load_fiber(
+        fiber_name, clad_refractive_index=cladding_index, remove_cladding=False
+    )
     workflow = Workflow(
         fiber_list=[fiber],
         wavelength=wavelength,
-        resolution=resolution,
+        resolution=140,
+        background_index=cladding_index,
         x_bounds=DomainAlignment.LEFT,
         y_bounds=DomainAlignment.BOTTOM,
         boundaries=[
@@ -55,47 +100,33 @@ def test_normalized_coupling(
         ],
         n_sorted_mode=4,
         n_added_mode=8,
-        debug_mode=1,
+        debug_mode=0,
         auto_label=True,
-        itr_final=itr_final,
-        n_step=n_step,
-        **kwargs,
+        itr_final=0.9,
+        n_step=12,
     )
-
     workflow.initialize_geometry()
     workflow.run_solver()
 
-    itr_list = workflow.superset.model_parameters.itr_list
-
-    # Load and scale the analytical fiber
-    smf28 = PyFiberModes.fiber.load_fiber(
-        fiber_name, wavelength=wavelength, add_air_layer=False
+    modes = (PyFiberModes.LP01, PyFiberModes.LP02)
+    analytical = numpy.array(
+        [
+            radial_normalized_coupling(
+                fiber=reference_fiber.scale(factor=itr), modes=modes
+            )
+            for itr in workflow.superset.model_parameters.itr_list
+        ]
     )
-
-    # Compute the analytical normalized coupling
-    analytical = numpy.empty(itr_list.shape)
-    for idx, itr in enumerate(itr_list):
-        scaled_fiber = smf28.scale(factor=itr)
-        analytical[idx] = get_normalized_LP_coupling(  # noqa: F821
-            fiber=scaled_fiber, mode_0=PyFiberModes.LP01, mode_1=PyFiberModes.LP02
-        )
-
-    analytical = numpy.abs(analytical)
-    # Extract the simulation data
+    refined_reference = radial_normalized_coupling(
+        fiber=reference_fiber, modes=modes, radial_samples=1600, radial_extent=8
+    )
+    numpy.testing.assert_allclose(analytical[0], refined_reference, rtol=1e-3)
     simulation = numpy.abs(
         workflow.superset.LP01.normalized_coupling.get_values(workflow.superset.LP02)
     )
-
-    # Calculate error metrics and validate against acceptable threshold
-    error = numpy.abs(analytical - simulation)
-    relative_error = error / numpy.abs(analytical)
-    mean_relative_error = relative_error.mean()
-
-    if mean_relative_error > 0.1:
-        raise AssertionError(
-            f"Discrepancy between computed and analytical normalized coupling: [Mean Error: {error.mean()}, Mean Relative Error: {mean_relative_error}]"
-        )
+    assert numpy.all(numpy.isfinite(analytical))
+    numpy.testing.assert_allclose(simulation, analytical, rtol=0.10, atol=0)
 
 
 if __name__ == "__main__":
-    pytest.main(["-W error", __file__])
+    raise SystemExit(pytest.main([__file__]))
