@@ -9,6 +9,41 @@ Install and verify
    $ python -m pip install SuPyMode
    $ python -c "import SuPyMode; print(SuPyMode.__version__)"
 
+Units and validation
+--------------------
+
+SuPyMode shares TypedUnit's registry, available as ``SuPyMode.ureg``.
+Wavelengths, coordinate vectors, grid spacings, taper radii, and segment lengths
+accept explicit compatible quantities. Existing bare values continue to mean
+SI metres. Workflow rotation angles accept explicit angular quantities or
+legacy bare degrees.
+
+TypedUnit validates inputs before conversion. Native model data, taper arrays,
+and numerical outputs retain their existing SI conventions. Supplied quantity
+objects and their display units are preserved; the conversion happens at the
+numerical or external geometry boundary.
+
+Refractive indices, taper ratios, alpha parameters, and amplitudes require plain
+numbers. ``NoUnit`` contracts reject Pint quantities for these values, even if
+the quantity is dimensionless. Shape, finiteness, and positivity checks use
+TypedUnit; geometry, interpolation, and solver relationships stay in SuPyMode.
+The generic interpolators continue to operate on numerical SI arrays.
+
+.. code-block:: python
+
+   from SuPyMode import ureg
+   from SuPyMode.taper import AlphaProfile
+
+   profile = AlphaProfile(initial_radius=62.5 * ureg.micrometer)
+
+   profile.add_taper_segment(
+       alpha=0.0,
+       initial_heating_length=10 * ureg.millimeter,
+       stretching_length=20 * ureg.millimeter,
+   )
+
+   profile.initialize()
+
 Run a first fiber model
 -----------------------
 

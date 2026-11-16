@@ -102,6 +102,9 @@ message(STATUS "")
 # ----------------- logging build configuration --------------------
 
 # ----------------- collect subdirectories --------------------
+add_library(typedunit_bridge STATIC cpp/utils/units.cpp)
+target_link_libraries(typedunit_bridge PUBLIC pybind11::pybind11)
+
 add_subdirectory(cpp/boundaries)            # boundaries
 add_subdirectory(cpp/taper)                 # taper
 add_subdirectory(cpp/mesh)                  # mesh
@@ -118,3 +121,7 @@ install(
     ARCHIVE DESTINATION ${LOCAL_BIN_DIR}
     RUNTIME DESTINATION ${LOCAL_BIN_DIR}
 )
+
+foreach(target model_parameters taper mesh)
+    target_link_libraries(${target} PRIVATE typedunit_bridge)
+endforeach()

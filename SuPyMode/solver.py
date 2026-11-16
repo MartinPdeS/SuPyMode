@@ -1,15 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-# Third-party imports
 import numpy
-from PyFinitDiff.finite_difference_2D import FiniteDifference
-from PyFinitDiff.finite_difference_2D import Boundaries
-
-# Local imports
-from SuPyMode.superset import SuperSet
+from PyFinitDiff.finite_difference_2D import Boundaries, FiniteDifference
 from SuPyMode.eigensolver import EIGENSOLVER  # type: ignore
 from SuPyMode.model_parameters import ModelParameters  # type: ignore
+from SuPyMode.superset import SuperSet
+from SuPyMode.units import (
+    Finite,
+    Length,
+    Matrix,
+    NoUnit,
+    Positive,
+    Quantity,
+    Scalar,
+    Vector,
+    unit_validator,
+    ureg,
+    validate_quantity,
+)
 
 
 class SuPySolver(EIGENSOLVER):
@@ -25,9 +33,9 @@ class SuPySolver(EIGENSOLVER):
     mesh : numpy.ndarray
         The refractive index geometry of the optical structure.
     x : numpy.ndarray
-        The x-coordinate vector of the mesh.
+        The x-coordinate vector, as a length quantity or legacy SI meters.
     y : numpy.ndarray
-        The y-coordinate vector of the mesh.
+        The y-coordinate vector, as a length quantity or legacy SI meters.
     tolerance : float, optional
         Absolute tolerance for the propagation constant computation (default is 1e-8).
     max_iteration : int, optional
@@ -40,11 +48,12 @@ class SuPySolver(EIGENSOLVER):
         Debug output level from the C++ binding, where 0 is no output and higher values provide more detail (default is 1).
     """
 
+    @unit_validator
     def __init__(
         self,
-        mesh: numpy.typing.NDArray,
-        x: numpy.typing.NDArray,
-        y: numpy.typing.NDArray,
+        mesh: NoUnit[Matrix, Finite, Positive],
+        x: Length[Vector, Finite] | NoUnit[Vector, Finite],
+        y: Length[Vector, Finite] | NoUnit[Vector, Finite],
         tolerance: float = 1e-8,
         max_iteration: int = 10_000,
         accuracy: int = 2,
@@ -54,6 +63,20 @@ class SuPySolver(EIGENSOLVER):
         """
         Initialize the solver with the given parameters.
         """
+        for name, value in (("x", x), ("y", y)):
+            if isinstance(value, Quantity):
+                validate_quantity(value, unit="meter", name=name, registry=ureg)
+
+        x = numpy.asarray(
+            x.to("meter").magnitude if isinstance(x, Quantity) else x, dtype=float
+        )
+        y = numpy.asarray(
+            y.to("meter").magnitude if isinstance(y, Quantity) else y, dtype=float
+        )
+
+        if x.size < 2 or y.size < 2:
+            raise ValueError("x and y require at least two coordinates per axis.")
+
         self.mesh = mesh
 
         dx = abs(x[0] - x[1])
@@ -112,12 +135,13 @@ class SuPySolver(EIGENSOLVER):
             finit_diff_matrix._triplet.array[:, 2],
         ]
 
+    @unit_validator
     def init_superset(
         self,
-        wavelength: float,
+        wavelength: Length[Scalar, Finite, Positive] | NoUnit[Scalar, Finite, Positive],
         n_step: int = 300,
-        itr_initial: float = 1.0,
-        itr_final: float = 0.1,
+        itr_initial: NoUnit[Scalar, Finite, Positive] = 1.0,
+        itr_final: NoUnit[Scalar, Finite, Positive] = 0.1,
     ) -> None:
         """
         Initialize a SuperSet instance containing computed supermodes over a range of inverse taper ratios (ITR).
@@ -125,7 +149,7 @@ class SuPySolver(EIGENSOLVER):
         Parameters
         ----------
         wavelength : float
-            Wavelength for the mode computation.
+            Wavelength as a length quantity or legacy SI value in meters.
         n_step : int, optional
             Number of steps for the ITR interpolation (default is 300).
         itr_initial : float, optional
@@ -144,12 +168,13 @@ class SuPySolver(EIGENSOLVER):
             model_parameters=self.model_parameters,
         )
 
+    @unit_validator
     def add_modes(
         self,
         n_sorted_mode: int,
         boundaries: Boundaries,
         n_added_mode: int = 4,
-        index_guess: float = 0.0,
+        index_guess: NoUnit[Scalar, Finite] = 0.0,
         auto_label: bool = True,
     ) -> None:
         """

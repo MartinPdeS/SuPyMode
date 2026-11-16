@@ -1,3 +1,4 @@
+#include <utils/units.h>
 #include <pybind11/pybind11.h>
 #include "model_parameters.h"
 
@@ -59,14 +60,17 @@ PYBIND11_MODULE(model_parameters, module) {
 
         )pbdoc")
         .def(
-            pybind11::init<
-                const pybind11::array_t<double>&,
-                const pybind11::array_t<double>&,
-                const pybind11::array_t<double>&,
-                const double,
-                const double,
-                const int
-            >(),
+            pybind11::init([](pybind11::object mesh, pybind11::object x_vector,
+                pybind11::object y_vector, pybind11::object dx, pybind11::object dy, int debug_mode) {
+                auto indices = pybind11::array_t<double>::ensure(numerical_input(mesh, "", "mesh", 2, true));
+                auto x = pybind11::array_t<double>::ensure(numerical_input(x_vector, "meter", "x_vector", 1));
+                auto y = pybind11::array_t<double>::ensure(numerical_input(y_vector, "meter", "y_vector", 1));
+                if (x.size() < 2 || y.size() < 2 || indices.shape(0) != y.size() || indices.shape(1) != x.size())
+                    throw pybind11::value_error("mesh shape must match y_vector and x_vector, with at least two coordinates per axis.");
+                return ModelParameters(indices, x, y,
+                    numerical_input(dx, "meter", "dx", 0, true).cast<double>(),
+                    numerical_input(dy, "meter", "dy", 0, true).cast<double>(), debug_mode);
+            }),
             pybind11::arg("mesh"),
             pybind11::arg("x_vector"),
             pybind11::arg("y_vector"),
@@ -142,7 +146,12 @@ PYBIND11_MODULE(model_parameters, module) {
         )
         .def(
             "initialize",
-            &ModelParameters::initialize,
+            [](ModelParameters& self, pybind11::object wavelength, pybind11::object itr_initial,
+                pybind11::object itr_final, size_t n_step) {
+                self.initialize(numerical_input(wavelength, "meter", "wavelength", 0, true).cast<double>(),
+                    numerical_input(itr_initial, "", "itr_initial", 0, true).cast<double>(),
+                    numerical_input(itr_final, "", "itr_final", 0, true).cast<double>(), n_step);
+            },
             pybind11::arg("wavelength"),
             pybind11::arg("itr_initial"),
             pybind11::arg("itr_final"),

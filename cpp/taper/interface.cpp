@@ -1,3 +1,4 @@
+#include <utils/units.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
@@ -174,7 +175,13 @@ PYBIND11_MODULE(taper, module_handle) {
                 This binding currently exposes scalar convenience properties.
             )pdoc"
         )
-        .def(py::init<std::vector<double>, std::vector<double>, double, double>(),
+        .def(py::init([](py::object z_array, py::object radius_array, py::object initial, py::object final) {
+                return TaperSection(
+                    numerical_input(z_array, "meter", "z_array", 1).cast<std::vector<double>>(),
+                    numerical_input(radius_array, "meter", "radius_array", 1, true).cast<std::vector<double>>(),
+                    numerical_input(initial, "meter", "heating_length_initial", 0, false, false).cast<double>(),
+                    numerical_input(final, "meter", "heating_length_final", 0, false, false).cast<double>());
+            }),
             py::arg("z_array"),
             py::arg("radius_array"),
             py::arg("heating_length_initial") = std::numeric_limits<double>::quiet_NaN(),
@@ -338,7 +345,10 @@ PYBIND11_MODULE(taper, module_handle) {
             The numpy properties return zero copy views. They are invalidated if you call initialize again.
         )pdoc")
         .def(
-            py::init<double, std::size_t, bool, std::string, bool>(),
+            py::init([](py::object initial_radius, size_t n_point, bool symmetric, std::string label, bool add_end) {
+                return AlphaProfile(numerical_input(initial_radius, "meter", "initial_radius", 0, true).cast<double>(),
+                    n_point, symmetric, label, add_end);
+            }),
             py::arg("initial_radius") = 1.0,
             py::arg("n_point") = 200,
             py::arg("symmetric") = false,
@@ -369,7 +379,11 @@ PYBIND11_MODULE(taper, module_handle) {
 
         .def(
             "add_taper_segment",
-            &AlphaProfile::add_taper_segment,
+            [](AlphaProfile& self, py::object alpha, py::object heating, py::object stretching, size_t n_point) {
+                self.add_taper_segment(numerical_input(alpha, "", "alpha", 0).cast<double>(),
+                    numerical_input(heating, "meter", "initial_heating_length", 0, true).cast<double>(),
+                    numerical_input(stretching, "meter", "stretching_length", 0).cast<double>(), n_point);
+            },
             py::arg("alpha"),
             py::arg("initial_heating_length"),
             py::arg("stretching_length"),
@@ -401,7 +415,9 @@ PYBIND11_MODULE(taper, module_handle) {
 
         .def(
             "add_constant_segment",
-            &AlphaProfile::add_constant_segment,
+            [](AlphaProfile& self, py::object length, size_t n_point) {
+                self.add_constant_segment(numerical_input(length, "meter", "length", 0).cast<double>(), n_point);
+            },
             py::arg("length"),
             py::arg("n_point") = 100,
             R"pdoc(
@@ -737,7 +753,9 @@ PYBIND11_MODULE(taper, module_handle) {
         )
         .def(
             "evaluate_adiabatic_factor",
-            [](AlphaProfile& profile, py::array_t<double, py::array::c_style | py::array::forcecast> itr_array) {
+            [](AlphaProfile& profile, py::object itr) {
+                auto itr_array = py::array_t<double, py::array::c_style | py::array::forcecast>::ensure(
+                    numerical_input(itr, "", "itr", 1, true));
                 const auto buffer = itr_array.request();
                 const auto* data_ptr = static_cast<const double*>(buffer.ptr);
 
@@ -770,7 +788,9 @@ PYBIND11_MODULE(taper, module_handle) {
         )
         .def(
             "evaluate_distance_vs_itr",
-            [](AlphaProfile& profile, py::array_t<double, py::array::c_style | py::array::forcecast> distance_array) {
+            [](AlphaProfile& profile, py::object distance) {
+                auto distance_array = py::array_t<double, py::array::c_style | py::array::forcecast>::ensure(
+                    numerical_input(distance, "", "itr", 1, true));
                 const auto buffer = distance_array.request();
                 const auto* data_ptr = static_cast<const double*>(buffer.ptr);
 

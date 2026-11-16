@@ -1,16 +1,27 @@
+#include <utils/units.h>
 #include "mesh.h"
 
 PYBIND11_MODULE(mesh, module) {
     module.def(
         "get_rho_gradient_5p",
-        &get_rho_gradient_py,
+        [](pybind11::object mesh, pybind11::object x_vector, pybind11::object y_vector) {
+            return get_rho_gradient_py(
+                pybind11::array_t<double>::ensure(numerical_input(mesh, "", "mesh", 2)),
+                pybind11::array_t<double>::ensure(numerical_input(x_vector, "meter", "x_vector", 1)),
+                pybind11::array_t<double>::ensure(numerical_input(y_vector, "meter", "y_vector", 1)));
+        },
         pybind11::arg("mesh"),
         pybind11::arg("x_vector"),
         pybind11::arg("y_vector")
     );
     module.def(
         "get_rho_gradient_time_rho_5p",
-        &get_rho_gradient_time_rho_py,
+        [](pybind11::object mesh, pybind11::object x_vector, pybind11::object y_vector) {
+            return get_rho_gradient_time_rho_py(
+                pybind11::array_t<double>::ensure(numerical_input(mesh, "", "mesh", 2)),
+                pybind11::array_t<double>::ensure(numerical_input(x_vector, "meter", "x_vector", 1)),
+                pybind11::array_t<double>::ensure(numerical_input(y_vector, "meter", "y_vector", 1)));
+        },
         pybind11::arg("mesh"),
         pybind11::arg("x_vector"),
         pybind11::arg("y_vector")
@@ -18,7 +29,12 @@ PYBIND11_MODULE(mesh, module) {
 
     pybind11::class_<Geometry>(module, "GEOMETRY")
         .def(
-            pybind11::init<const pybind11::array_t<double>&, const pybind11::array_t<double>&, const pybind11::array_t<double>&>(),
+            pybind11::init([](pybind11::object mesh, pybind11::object x, pybind11::object y) {
+                return Geometry(
+                    pybind11::array_t<double>::ensure(numerical_input(mesh, "", "mesh", 2)),
+                    pybind11::array_t<double>::ensure(numerical_input(x, "meter", "x", 1)),
+                    pybind11::array_t<double>::ensure(numerical_input(y, "meter", "y", 1)));
+            }),
             pybind11::arg("mesh"),
             pybind11::arg("x"),
             pybind11::arg("y")

@@ -1,27 +1,30 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Built-in imports
 import logging
 import pickle
 from dataclasses import dataclass
 from itertools import combinations, product
 from pathlib import Path
 from typing import List, Optional
-
 import numpy
-
-# Third-party imports
 from scipy.integrate import solve_ivp
 from scipy.interpolate import interp1d
-
-# Local imports
 from SuPyMode.model_parameters import ModelParameters
-from SuPyMode.supermode import SUPERMODE
-
-from SuPyMode.taper import AlphaProfile
 from SuPyMode.propagation import Propagation
+from SuPyMode.supermode import SUPERMODE
 from SuPyMode.superset_plots import SuperSetPlots
+from SuPyMode.taper import AlphaProfile
+from SuPyMode.units import (
+    Finite,
+    Length,
+    NoUnit,
+    Positive,
+    Quantity,
+    Scalar,
+    Vector,
+    unit_validator,
+)
 from SuPyMode.utils import parse_filename
 
 
@@ -331,12 +334,15 @@ class SuperSet(SuperSetPlots):
 
         return sub_distance, sub_itr_vector, sub_t_matrix
 
+    @unit_validator
     def propagate(
         self,
         *,
         profile: AlphaProfile,
-        initial_amplitude: list,
-        max_step: Optional[float] = None,
+        initial_amplitude: NoUnit[Vector, Finite],
+        max_step: (
+            Length[Scalar, Finite, Positive] | NoUnit[Scalar, Finite, Positive] | None
+        ) = None,
         add_coupling: bool = True,
         method: str = "RK45",
         **kwargs: dict,
@@ -364,6 +370,9 @@ class SuperSet(SuperSetPlots):
         Propagation
             A Propagation object containing the results of the propagation.
         """
+        if isinstance(max_step, Quantity):
+            max_step = float(max_step.to("meter").magnitude)
+
         initial_amplitude = numpy.asarray(initial_amplitude, dtype=complex)
 
         if max_step is None:

@@ -33,6 +33,7 @@ requirements:
     - numpy >=2.0,<3  # [py<314]
     - numpy >=2.3.3,<3  # [py>=314]
   run:
+    - martinpdes::typedunit >=0.6.0,<0.7
     - martinpdes::pyoptik
     - martinpdes::mpsplots
     - martinpdes::fiberfusing

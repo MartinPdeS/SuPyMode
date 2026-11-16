@@ -1,22 +1,31 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from FiberFusing.fiber import FiberLoader
-from FiberFusing.profile import Profile, StructureType  # noqa: F401
-from FiberFusing.graded_index import GradedIndex  # noqa: F401
-from PyFinitDiff import BoundaryValue  # noqa: F401
-from SuPyMode.taper import AlphaProfile  # noqa: F401
-
-from FiberFusing import DomainAlignment
-from typing import List, Union, Optional, Tuple
 from pathlib import Path
-from FiberFusing import Geometry, BackGround
+from typing import Any, List, Optional, Tuple, Union
+from FiberFusing import BackGround, DomainAlignment, Geometry
+from FiberFusing.fiber import FiberLoader
 from FiberFusing.fiber.generic_fiber import GenericFiber
-from SuPyMode.solver import SuPySolver
-from PyFinitDiff.finite_difference_2D import Boundaries
+from FiberFusing.graded_index import GradedIndex  # noqa: F401
+from FiberFusing.profile import Profile, StructureType  # noqa: F401
+from pydantic import ConfigDict, model_validator
 from pydantic.dataclasses import dataclass
-from pydantic import ConfigDict
-
+from pydantic_core import ArgsKwargs
+from PyFinitDiff import BoundaryValue  # noqa: F401
+from PyFinitDiff.finite_difference_2D import Boundaries
+from SuPyMode.solver import SuPySolver
+from SuPyMode.taper import AlphaProfile  # noqa: F401
+from SuPyMode.units import (
+    Finite,
+    NoUnit,
+    Positive,
+    Quantity,
+    Scalar,
+    Vector,
+    ureg,
+    validate_annotation,
+    validate_quantity,
+)
 
 fiber_loader = FiberLoader()
 
@@ -36,7 +45,7 @@ class Workflow:
     Parameters
     ----------
     wavelength : float
-        Wavelength at which the simulation is evaluated.
+        Wavelength as an explicit length quantity or legacy SI meters.
     resolution : int
         Resolution of the simulation mesh.
     n_sorted_mode : int
@@ -50,7 +59,7 @@ class Workflow:
     n_step : int
         Number of steps to iterate through the ITR section.
     clad_rotation : float
-        Rotation of the clad structure in degrees.
+        Rotation as an angle quantity or legacy degrees.
     accuracy : int
         Accuracy level of the finite difference method.
     debug_mode : int
@@ -81,16 +90,20 @@ class Workflow:
     """
 
     # Geometry attributes
-    wavelength: float
+    wavelength: float | Quantity
     boundaries: List[Boundaries]
     resolution: int
-    clad_rotation: Optional[float] = 0
+    clad_rotation: float | Quantity | None = 0
     capillary_tube: Optional[object] = None
     clad_structure: Optional[object] = None
     background_index: Optional[float] = 1.0
     fiber_list: Optional[List[GenericFiber]] = ()
-    x_bounds: Union[DomainAlignment, Tuple[float, float]] = DomainAlignment.CENTERING
-    y_bounds: Union[DomainAlignment, Tuple[float, float]] = DomainAlignment.CENTERING
+    x_bounds: Union[DomainAlignment, Tuple[float, float], Quantity] = (
+        DomainAlignment.CENTERING
+    )
+    y_bounds: Union[DomainAlignment, Tuple[float, float], Quantity] = (
+        DomainAlignment.CENTERING
+    )
     air_padding_factor: Optional[float] = 1.2
     gaussian_filter_factor: Optional[float] = None
 
@@ -108,6 +121,100 @@ class Workflow:
     # Extra attributes
     debug_mode: Optional[int] = 1
     auto_label: Optional[bool] = False
+
+    @model_validator(mode="before")
+    @classmethod
+    def validate_inputs(cls, data: Any) -> Any:
+        """Validate supplied unit contracts before Pydantic coerces scalars.
+
+        Parameters
+        ----------
+        data : Any
+            Constructor arguments supplied to the dataclass.
+
+        Returns
+        -------
+        Any
+            Original arguments, with quantities and their units preserved.
+
+        Raises
+        ------
+        ValueError
+            If units, scalar shapes, finiteness, or signs are invalid.
+        """
+        values = data.kwargs or {} if isinstance(data, ArgsKwargs) else data
+
+        if not isinstance(values, dict):
+            return data
+
+        for name in (
+            "background_index",
+            "itr_initial",
+            "itr_final",
+            "air_padding_factor",
+            "gaussian_filter_factor",
+            "core_position_scrambling",
+            "index_scrambling",
+        ):
+            value = values.get(name)
+
+            if value is None:
+                continue
+
+            annotation = (
+                NoUnit[Scalar, Finite, Positive]
+                if name
+                in (
+                    "background_index",
+                    "itr_initial",
+                    "itr_final",
+                    "air_padding_factor",
+                )
+                else NoUnit[Scalar, Finite]
+            )
+
+            validate_annotation(value, annotation=annotation, name=name)
+
+        for name, unit in (("wavelength", "meter"), ("clad_rotation", "degree")):
+            value = values.get(name)
+
+            if value is None:
+                continue
+
+            if isinstance(value, Quantity):
+                validate_quantity(
+                    value,
+                    unit=unit,
+                    name=name,
+                    registry=ureg,
+                    shape=(),
+                    positive=name == "wavelength",
+                )
+            else:
+                annotation = (
+                    NoUnit[Scalar, Finite, Positive]
+                    if name == "wavelength"
+                    else NoUnit[Scalar, Finite]
+                )
+
+                validate_annotation(value, annotation=annotation, name=name)
+
+        for name in ("x_bounds", "y_bounds"):
+            value = values.get(name)
+
+            if value is None or isinstance(value, DomainAlignment):
+                continue
+
+            if isinstance(value, Quantity):
+                validate_quantity(
+                    value, unit="meter", name=name, registry=ureg, shape=(2,)
+                )
+            else:
+                validate_annotation(
+                    value, annotation=NoUnit[Vector[2], Finite], name=name
+                )
+
+        return data
 
     @property
     def superset(self):
@@ -220,8 +327,16 @@ class Workflow:
         structures.extend(self.fiber_list)
 
         self.geometry = Geometry(
-            x_bounds=self.x_bounds,
-            y_bounds=self.y_bounds,
+            x_bounds=(
+                tuple(self.x_bounds.to("meter").magnitude)
+                if isinstance(self.x_bounds, Quantity)
+                else self.x_bounds
+            ),
+            y_bounds=(
+                tuple(self.y_bounds.to("meter").magnitude)
+                if isinstance(self.y_bounds, Quantity)
+                else self.y_bounds
+            ),
             resolution=self.resolution,
             index_scrambling=self.index_scrambling,
             boundary_pad_factor=self.air_padding_factor,
@@ -247,7 +362,11 @@ class Workflow:
         )
 
         if self.clad_rotation != 0:
-            self.clad_structure.rotate(self.clad_rotation)
+            self.clad_structure.rotate(
+                self.clad_rotation.to("degree").magnitude
+                if isinstance(self.clad_rotation, Quantity)
+                else self.clad_rotation
+            )
 
 
 # -
