@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 
-REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 
 
 def run_tool(name: str, *arguments: str) -> subprocess.CompletedProcess:
