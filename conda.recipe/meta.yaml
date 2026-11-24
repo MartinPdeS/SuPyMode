@@ -80,7 +80,8 @@ test:
     - pytest-json-report ==1.5
     - coverage ==7.6
   commands:
-    - python -m pytest
+    # Only the installed package and runtime tests are staged here.
+    - python -m pytest --ignore=tests/packaging
   source_files:
     - tests
 
