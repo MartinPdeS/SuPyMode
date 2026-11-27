@@ -57,3 +57,7 @@ cmake_install.cmake
 
 # Package specifics
 SuPyMode/user_data/*
+
+!/readme.yml
+
+!/USAGE.rst

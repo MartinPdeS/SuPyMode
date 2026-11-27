@@ -1,182 +1,160 @@
-.. image:: https://raw.githubusercontent.com/MartinPdeS/SuPyMode/master/docs/source/_static/logo.png
-   :width: 760px
-   :alt: SuPyMode logo
+SuPyMode
+========
 
-..  figure:: https://github.com/MartinPdeS/SuPyMode/blob/master/docs/images/mode_propagation.gif?raw=true
-   :alt: Propagation of mode in an adiabatic 2x1 modally-specific photonic lantern.
-   :class: with-shadow
-   :width: 800px
-   :align: center
+.. image:: https://raw.githubusercontent.com/MartinPdeS/SuPyMode/HEAD/docs/source/_static/logo.png
+   :alt: SuPyMode logo
+   :width: 100%
 
 .. list-table::
+   :width: 100%
    :widths: 35 65
    :header-rows: 1
-   :align: center
 
    * - Badge
      - Status
    * - Python versions
-     - |python|
+     - |mps-python|
    * - Documentation
-     - |docs|
-   * - Continuous integration
-     - |ci/cd|
-   * - Test coverage
-     - |coverage|
-   * - Google Colab
-     - |colab|
-   * - PyPI package
-     - |PyPi|
-   * - PyPI downloads
-     - |PyPi_download|
-   * - Anaconda package
-     - |anaconda|
-   * - Anaconda downloads
-     - |anaconda_download|
-   * - Latest Anaconda release
-     - |anaconda_date|
+     - |mps-docs|
+   * - Tests
+     - |mps-ci| |mps-coverage|
+   * - PyPI
+     - |mps-pypi| |mps-downloads|
+   * - Conda
+     - |mps-conda| |mps-conda-downloads| |mps-conda-release|
 
-SuPyMode
-========
+A package for light propagation in fiber optics.
 
-This project aims to develop an useful tool design and optimize fiber optic tapered component.
-SuPyMode is a Python library linked to a c++ core allowing for a flexible interface and fast computing core.
-The library also aims to offer the end-user a great vizual tools for data analysis.
-To this day, SuPyMode as been proven a useful tool to develop very-short 2x1 and 3x1 modally specific photonic lantern with very low loss and cross-talk.
+Compute guided supermodes along a tapered optical component and study how a changing
+cross-section couples them. Start by comparing taper profiles at fixed stretch before
+solving for optical propagation.
 
-Features
---------
-- Fast and efficient simulation of fiber optic tapered components.
-- User-friendly interface for easy integration into existing workflows.
-- Comprehensive visualization tools for data analysis and interpretation.
+See the `usage guide <https://github.com/MartinPdeS/SuPyMode/blob/HEAD/USAGE.rst>`__ for further examples and implementation details.
+Open the `project notebook in Colab <https://colab.research.google.com/github/MartinPdeS/SuPyMode/blob/master/notebook.ipynb>`__.
+
+.. figure:: https://raw.githubusercontent.com/MartinPdeS/SuPyMode/HEAD/docs/images/mode_propagation.gif
+
+   Mode propagation in a tapered photonic lantern.
 
 Installation
 ------------
-**SuPyMode** is available on PyPI and Anaconda.  Install it with:
 
-.. code-block:: bash
+Requires Python ``>=3.11``.
 
-   pip install SuPyMode
-   conda install SuPyMode
+.. code-block:: console
 
-See the `online documentation <https://martinpdes.github.io/SuPyMode/>`_ for detailed
-usage and additional examples.
+   $ python -m pip install SuPyMode
 
+Install from the ``martinpdes`` Conda channel:
 
-Quick example
--------------
-Below is a short example computing the mode propgation in a simple fiber.
+.. code-block:: console
+
+   $ conda install -c martinpdes supymode
+
+For an editable source installation:
+
+.. code-block:: console
+
+   $ git clone https://github.com/MartinPdeS/SuPyMode.git
+   $ cd SuPyMode
+   $ python -m pip install -e .
+
+Compare taper heating lengths
+-----------------------------
 
 .. code-block:: python
 
-   from SuPyMode.workflow import Workflow, fiber_loader, Boundaries, BoundaryValue, DomainAlignment
+   """
+   Compare heating lengths
+   =======================
 
-   wavelength = 1550e-9
+   For the same stretch, a longer hot zone produces a gentler radius reduction.
+   Distances and heating lengths are in metres; the radius is normalised to its
+   initial value. This example compares profiles, not optical mode solutions.
+   """
 
-   fiber = fiber_loader.load_fiber('SMF28', clad_refractive_index=1.4444, remove_cladding=False)
+   import matplotlib.pyplot as plt
+   from SuPyMode.workflow import AlphaProfile
 
-   boundaries = [
-      Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.SYMMETRIC),
-      Boundaries(right=BoundaryValue.SYMMETRIC, top=BoundaryValue.ANTI_SYMMETRIC)
-   ]
-
-
-   workflow = Workflow(
-      fiber_list=[fiber],             # List of fiber to be added in the mesh, the order matters.
-      wavelength=wavelength,          # Wavelength used for the mode computation.
-      resolution=80,                  # Number of point in the x and y axis [is divided by half if symmetric or anti-symmetric boundaries].
-      x_bounds=DomainAlignment.LEFT,  # Mesh x-boundary structure.
-      y_bounds=DomainAlignment.BOTTOM,# Mesh y-boundary structure.
-      boundaries=boundaries,          # Set of symmetries to be evaluated, each symmetry add a round of simulation
-      n_sorted_mode=3,                # Total computed and sorted mode.
-      n_added_mode=2,                 # Additional computed mode that are not considered later except for field comparison [the higher the better but the slower].
-      plot_geometry=True,             # Plot the geometry mesh before computation.
-      auto_label=True,                # Auto labeling the mode. Label are not always correct and should be verified afterwards.
-      itr_final=0.05,                 # Final value of inverse taper ratio to simulate
-      index_scrambling=0              # Scrambling of refractive index value in order to lift mode degeneracy [useful for some analysis]
+   fig, ax = plt.subplots()
+   for heating_length in (4e-3, 8e-3, 12e-3):
+       profile = AlphaProfile(
+           initial_radius=1.0, symmetric=False, add_end_of_taper_section=False
+       )
+       profile.add_taper_segment(
+           alpha=0.2, initial_heating_length=heating_length, stretching_length=4e-3
+       )
+       profile.initialize()
+       ax.plot(
+           profile.distance * 1e3, profile.itr_list, label=f"{heating_length * 1e3:g} mm"
+       )
+   ax.set(
+       xlabel="Distance (mm)",
+       ylabel="Inverse taper ratio",
+       title="Effect of heating length",
    )
+   ax.legend(title="Heating length")
+   plt.show()
 
-   workflow.superset.plot(plot_type='field', itr_list=[1.0, 0.1])
+Documentation
+-------------
 
-   workflow.superset.plot(plot_type='index')
+Use the `SuPyMode documentation <https://martinpdes.github.io/SuPyMode/>`__ to work through
+examples and look up the inputs and return values of individual functions.
 
-   workflow.superset.plot(plot_type='normalized-coupling')
+Citation
+--------
 
-   workflow.superset.plot(plot_type='adiabatic')
+Cite the `SuPyMode paper in Optics Continuum <https://opg.optica.org/optcon/abstract.cfm?uri=optcon-3-2-242>`__ when using the solver in a publication.
 
+Contributing
+------------
 
-Building from source
---------------------
-For development or manual compilation, clone the repository and run:
-
-.. code-block:: bash
-
-   git submodule update --init
-   mkdir build && cd build
-   cmake ../ -G"Unix Makefiles"
-   sudo make install
-   cd ..
-   python -m pip install .
-
-Testing
--------
-Run the unit tests with:
-
-.. code-block:: bash
-
-   pip install SuPyMode[testing]
-   pytest
-
-Citing SuPyMode
----------------
-If you use SuPyMode in academic work, please cite:
-
-.. code-block:: none
-
-   @article{de2024supymode,
-      title={SuPyMode: an open-source library for design and optimization of fiber optic components},
-      author={de Sivry-Houle, Martin Poinsinet and Becerra Deana, Rodrigo Itzamna and Virally, St{\'e}phane and Godbout, Nicolas and Boudoux, Caroline},
-      journal={Optics Continuum},
-      volume={3},
-      number={2},
-      pages={242--255},
-      year={2024},
-      publisher={Optica Publishing Group}
-   }
+Bug reports, worked examples, and documentation corrections are welcome.
+To set up a development checkout and run the tests, follow the `contributing guide <https://github.com/MartinPdeS/SuPyMode/blob/HEAD/CONTRIBUTING.md>`__.
 
 Contact
 -------
-For questions or contributions, contact `martin.poinsinet.de.sivry@gmail.com <mailto:martin.poinsinet.de.sivry@gmail.com>`_.
 
-.. |python| image:: https://img.shields.io/badge/Made%20with-Python-1f425f.svg
-    :alt: Python
-    :target: https://www.python.org/
-.. |zenodo| image:: https://zenodo.org/badge/366930899.svg
-   :target: https://opg.optica.org/optcon/viewmedia.cfm?uri=optcon-3-2-242&html=true
-   :alt: Scientific article
-.. |colab| image:: https://colab.research.google.com/assets/colab-badge.svg
-   :alt: Google Colab
-   :target: https://colab.research.google.com/github/MartinPdeS/SuPyMode/blob/master/notebook.ipynb
-.. |docs| image:: https://github.com/martinpdes/supymode/actions/workflows/deploy_documentation.yml/badge.svg
-   :target: https://martinpdes.github.io/SuPyMode/
-   :alt: Documentation Status
-.. |PyPi| image:: https://badge.fury.io/py/SuPyMode.svg
+For questions, contact `Martin Poinsinet de Sivry-Houle <mailto:martin.poinsinet.de.sivry@gmail.com?subject=SuPyMode>`__.
+
+License
+-------
+
+See the `SuPyMode license <https://github.com/MartinPdeS/SuPyMode/blob/HEAD/LICENSE>`__ for terms of use.
+
+.. |mps-python| image:: https://img.shields.io/pypi/pyversions/supymode.svg
+   :alt: Supported Python versions
+   :target: https://pypi.org/project/supymode/
+
+.. |mps-pypi| image:: https://img.shields.io/pypi/v/supymode.svg
    :alt: PyPI version
-   :target: https://pypi.org/project/SuPyMode/
-.. |PyPi_download| image:: https://img.shields.io/pypi/dm/supymode.svg
-   :alt: PyPI downloads
+   :target: https://pypi.org/project/supymode/
+
+.. |mps-downloads| image:: https://img.shields.io/pypi/dm/supymode.svg
+   :alt: Monthly PyPI downloads
    :target: https://pypistats.org/packages/supymode
-.. |coverage| image:: https://raw.githubusercontent.com/MartinPdeS/SuPyMode/python-coverage-comment-action-data/badge.svg
-   :alt: Unittest coverage
+
+.. |mps-docs| image:: https://github.com/MartinPdeS/SuPyMode/actions/workflows/deploy_documentation.yml/badge.svg
+   :alt: Documentation
+   :target: https://martinpdes.github.io/SuPyMode/
+
+.. |mps-ci| image:: https://github.com/MartinPdeS/SuPyMode/actions/workflows/tests.yml/badge.svg
+   :alt: Tests
+   :target: https://github.com/MartinPdeS/SuPyMode/actions/workflows/tests.yml
+
+.. |mps-coverage| image:: https://raw.githubusercontent.com/MartinPdeS/SuPyMode/python-coverage-comment-action-data/badge.svg
+   :alt: Test coverage
    :target: https://htmlpreview.github.io/?https://github.com/MartinPdeS/SuPyMode/blob/python-coverage-comment-action-data/htmlcov/index.html
-.. |ci/cd| image:: https://github.com/martinpdes/supymode/actions/workflows/deploy_coverage.yml/badge.svg
-    :alt: Unittest Status
-.. |anaconda| image:: https://anaconda.org/martinpdes/supymode/badges/version.svg
-    :alt: Anaconda version
-    :target: https://anaconda.org/martinpdes/supymode
-.. |anaconda_download| image:: https://anaconda.org/martinpdes/supymode/badges/downloads.svg
-    :alt: Anaconda downloads
-    :target: https://anaconda.org/martinpdes/supymode
-.. |anaconda_date| image:: https://anaconda.org/martinpdes/supymode/badges/latest_release_relative_date.svg
-    :alt: Latest release date
-    :target: https://anaconda.org/martinpdes/supymode
+
+.. |mps-conda| image:: https://anaconda.org/martinpdes/supymode/badges/version.svg
+   :alt: Anaconda version
+   :target: https://anaconda.org/martinpdes/supymode
+
+.. |mps-conda-downloads| image:: https://anaconda.org/martinpdes/supymode/badges/downloads.svg
+   :alt: Anaconda downloads
+   :target: https://anaconda.org/martinpdes/supymode
+
+.. |mps-conda-release| image:: https://anaconda.org/martinpdes/supymode/badges/latest_release_relative_date.svg
+   :alt: Latest Anaconda release
+   :target: https://anaconda.org/martinpdes/supymode

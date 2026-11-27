@@ -1,0 +1,17 @@
+introduction: |-
+  Compute guided supermodes along a tapered optical component and study how a changing
+  cross-section couples them. Start by comparing taper profiles at fixed stretch before
+  solving for optical propagation.
+
+  See the `usage guide <https://github.com/MartinPdeS/SuPyMode/blob/HEAD/USAGE.rst>`__ for further examples and implementation details.
+  Open the `project notebook in Colab <https://colab.research.google.com/github/MartinPdeS/SuPyMode/blob/master/notebook.ipynb>`__.
+figure:
+  path: docs/images/mode_propagation.gif
+  caption: Mode propagation in a tapered photonic lantern.
+quickstart:
+  title: Compare taper heating lengths
+  source: docs/examples/alpha_profile/plot_heating_length.py
+sections:
+- title: Citation
+  content: Cite the `SuPyMode paper in Optics Continuum <https://opg.optica.org/optcon/abstract.cfm?uri=optcon-3-2-242>`__
+    when using the solver in a publication.

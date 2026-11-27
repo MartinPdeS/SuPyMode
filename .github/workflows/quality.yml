@@ -16,3 +16,9 @@ jobs:
       python-versions: '["3.11", "3.12"]'
       install-command: python -m pip install "ruff>=0.6,<1"
       quality-command: python -m ruff check SuPyMode tests
+
+  readme:
+    uses: MartinPdeS/MPSActions/.github/workflows/run_quality.yml@v2
+    with:
+      install-command: python -m pip install --upgrade pip && python -m pip install --group readme
+      quality-command: mps-maintenance readme --check
